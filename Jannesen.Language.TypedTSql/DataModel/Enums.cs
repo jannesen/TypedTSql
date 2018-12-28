@@ -1,0 +1,108 @@
+﻿using System;
+
+namespace Jannesen.Language.TypedTSql.DataModel
+{
+    [Flags]
+    public enum ValueFlags: uint
+    {
+        None                = 0,
+        Flags               = 0x0000000F,
+            Nullable        = 0x00000001,
+        ColumnFlags         = 0x0000FFF0,
+            Unnammed        = 0x00000010,
+            AnsiPadded      = 0x00000020,
+            Rowguidcol      = 0x00000040,
+            Identity        = 0x00000080,
+            Computed        = 0x00000100,
+            Filestream      = 0x00000200,
+            XmlDocument     = 0x00000400,
+            Sparse          = 0x00000800,
+            ColumnSet       = 0x00001000,
+            PrimaryKey      = 0x00002000,
+            HasDefault      = 0x00008000,
+        SourceFlags         = 0x00FF0000,
+            NULL            = 0x00010000,
+            Const           = 0x00020000,
+            Column          = 0x00040000,
+            Variable        = 0x00080000,
+            RowSet          = 0x00100000,
+            Function        = 0x00200000,
+
+        ValueExpression     = 0x01000000,
+        BooleanExpression   = 0x02000000,
+        Aggregaat           = 0x04000000,
+        Cast                = 0x10000000,
+        Collate             = 0x20000000,
+        Error               = 0x80000000,
+    }
+
+    [Flags]
+    public enum QueryOptions
+    {
+        NONE                                    = 0,
+        FORCE_ORDER                             = 0X00000001,
+        KEEP_PLAN                               = 0X00000002,
+        KEEPFIXED_PLAN                          = 0X00000004,
+        ROBUST_PLAN                             = 0X00000008,
+        RECOMPILE                               = 0X00000010,
+        LOOP_JOIN                               = 0X00000020,
+        MERGE_JOIN                              = 0X00000040,
+        HASH_JOIN                               = 0X00000080,
+        HASH_GROUP                              = 0X00000100,
+        ORDER_GROUP                             = 0X00000200,
+        CONCAT_UNION                            = 0X00000400,
+        HASH_UNION                              = 0X00000800,
+        MERGE_UNION                             = 0X00001000,
+        EXPAND_VIEWS                            = 0X00002000,
+        FORCE_EXTERNALPUSHDOWN                  = 0X00004000,
+        DISABLE_EXTERNALPUSHDOWN                = 0X00008000,
+        PARAMETERIZATION_SIMPLE                 = 0X00010000,
+        PARAMETERIZATION_FORCED                 = 0X00020000,
+        NO_PERFORMANCE_SPOOL                    = 0X00040000,
+        IGNORE_NONCLUSTERED_COLUMNSTORE_INDEX   = 0X00080000,
+        FAST                                    = 0x00100000,
+        MAXDOP                                  = 0X00300000,
+        MAXRECURSION                            = 0X00400000,
+        OPTIMIZE_FOR_UNKNOWN                    = 0X00800000,
+        OPTIMIZE_FOR_VARIABLE                   = 0X01000000,
+        MIN_GRANT_PERCENT                       = 0X02000000,
+        MAX_GRANT_PERCENT                       = 0X04000000,
+        USE_PLAN                                = 0X08000000,
+    }
+
+    public enum SystemType: Int16
+    {
+        Unknown             = 0,
+        Bit                 = 1,
+        TinyInt,
+        SmallInt,
+        Int,
+        BigInt,
+        SmallMoney,
+        Money,
+        Numeric,
+        Decimal,
+        Real,
+        Float,
+        Char,
+        NChar,
+        VarChar,
+        NVarChar,
+        Binary,
+        VarBinary,
+        Date,
+        Time,
+        SmallDateTime,
+        DateTime,
+        DateTime2,
+        DateTimeOffset,
+        Text,
+        NText,
+        Image,
+        UniqueIdentifier,
+        SqlVariant,
+        Timestamp,
+        Xml,
+        Clr
+    }
+}

@@ -1,0 +1,5 @@
+﻿// See all available icons here http://glyphlist.azurewebsites.net/knownmonikers/
+
+// Typed T-SQL
+[$RootKey$\ShellFileAssociations\.ttsql]
+"DefaultIconMoniker"="KnownMonikers.DatabaseStoredProcedures"

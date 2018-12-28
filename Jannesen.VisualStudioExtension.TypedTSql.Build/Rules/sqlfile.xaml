@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Rule
+    Name="SqlFile"
+    DisplayName="Source"
+    PageTemplate="generic"
+    Description="Sql file"
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.DataSource>
+        <DataSource Persistence="ProjectFile" Label="Configuration" ItemType="SqlFile" HasConfigurationCondition="false" />
+    </Rule.DataSource>
+
+    <IntProperty Name="BuildOrder" DisplayName="BuildOrder">
+        <IntProperty.DataSource>
+            <DataSource Persistence="ProjectFile" Label="Configuration" ItemType="SqlFile" HasConfigurationCondition="false" />
+        </IntProperty.DataSource>
+    </IntProperty>
+
+    <StringProperty Name="DependentUpon" DisplayName="Dependent Upon" >
+        <StringProperty.DataSource>
+            <DataSource Persistence="ProjectFile" Label="Configuration" ItemType="SqlFile" HasConfigurationCondition="false" />
+        </StringProperty.DataSource>
+    </StringProperty>
+    <BoolProperty   Name="Visible"       Visible="false" />
+    <StringProperty Name="Link"          Visible="false" />
+</Rule>

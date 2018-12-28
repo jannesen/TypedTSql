@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Rule
+    Name="ConfigurationGeneralBrowseObject"
+    DisplayName="General"
+    PageTemplate="generic"
+    Description="General"
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.Categories>
+        <Category Name="General" DisplayName="General" Description="General" />
+    </Rule.Categories>
+
+    <Rule.DataSource>
+        <DataSource Persistence="ProjectFile" />
+    </Rule.DataSource>
+
+    <StringProperty Name="FileName" DisplayName="Project File" ReadOnly="True">
+        <StringProperty.DataSource>
+            <DataSource Persistence="ProjectFile" PersistedName="MSBuildProjectFile" />
+        </StringProperty.DataSource>
+    </StringProperty>
+    <StringProperty Name="FullPath" DisplayName="Project Folder" ReadOnly="True">
+        <StringProperty.DataSource>
+            <DataSource Persistence="ProjectFile" PersistedName="MSBuildProjectDirectory" />
+        </StringProperty.DataSource>
+    </StringProperty>
+</Rule>

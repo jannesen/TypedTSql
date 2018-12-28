@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+	<TemplateData>
+		<Name>Text file</Name>
+		<Description>Text file</Description>
+		<Icon Package="{2FFE45C4-5C73-493C-B187-F2E955FF875E}" ID="3"></Icon>
+		<TemplateID>Jannesen.VisualStudioExtension.TypedTSql.textfile</TemplateID>
+		<ProjectType>TypedTSql</ProjectType>
+		<DefaultName>newfile.txt</DefaultName>
+	</TemplateData>
+	<TemplateContent>
+		<ProjectItem ReplaceParameters="true">textfile.txt</ProjectItem>
+	</TemplateContent>
+</VSTemplate>

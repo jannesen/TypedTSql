@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+	<TemplateData>
+		<Name>TTSql file</Name>
+		<Description>Typed Transact Sql file</Description>
+		<Icon Package="{39C9C826-8EF8-4079-8C95-428F5B1C323F}" ID="4529"/>
+		<TemplateID>Jannesen.VisualStudioExtension.TypedTSql.ttsql</TemplateID>
+		<ProjectType>TypedTSql</ProjectType>
+		<DefaultName>newfile.ttsql</DefaultName>
+	</TemplateData>
+	<TemplateContent>
+		<ProjectItem>ttsql.ttsql</ProjectItem>
+	</TemplateContent>
+</VSTemplate>

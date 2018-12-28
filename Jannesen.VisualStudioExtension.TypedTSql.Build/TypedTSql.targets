@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Import Project="$(MSBuildProjectFullPath).user" Condition="Exists('$(MSBuildProjectFullPath).user')"/>
+
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|AnyCPU">
+			<Configuration>Debug</Configuration>
+			<Platform>AnyCPU</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|AnyCPU">
+			<Configuration>Release</Configuration>
+			<Platform>AnyCPU</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectCapability Include="ProjectConfigurationsDeclaredAsItems" />
+		<ProjectCapability Include="DeclaredSourceItems" />
+		<ProjectCapability Include="TypedTSql" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\ProjectItemsSchema.xaml"/>
+
+		<!-- Project -->
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\general.xaml;$(MSBuildThisFileDirectory)Rules\user.xaml">
+			<Context>Project</Context>
+		</PropertyPageSchema>
+
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\general.browseobject.xaml">
+			<Context>BrowseObject</Context>
+		</PropertyPageSchema>
+
+		<!-- SCC -->
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\scc.xaml">
+			<Context>Invisible</Context>
+		</PropertyPageSchema>
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- folder & Item-None  -->
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\folder.xaml;$(MSBuildThisFileDirectory)Rules\none.xaml; ">
+			<Context>File;BrowseObject</Context>
+		</PropertyPageSchema>
+
+		<!-- item general -->
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\general_file.xaml">
+			<Context>File</Context>
+		</PropertyPageSchema>
+
+		<!-- Item-SqlFile -->
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\sqlfile.xaml;">
+			<Context>File</Context>
+		</PropertyPageSchema>
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\sqlfile.browseobject.xaml;">
+			<Context>BrowseObject</Context>
+		</PropertyPageSchema>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectCapability Include="DependenciesTree;ProjectReferences;ReferenceManagerProjects" />
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\ProjectReference.xaml">
+			<Context>Project;BrowseObject</Context>
+		</PropertyPageSchema>
+		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\ResolvedProjectReference.xaml">
+			<Context>ProjectSubscriptionService;BrowseObject</Context>
+		</PropertyPageSchema>
+	</ItemGroup>
+
+	<PropertyGroup>
+		<BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">$(MSBuildProjectDirectory)\obj</BaseIntermediateOutputPath>
+		<TypedTSqlBuildStatusFile>$(BaseIntermediateOutputPath)\typedtsqlbuild.status</TypedTSqlBuildStatusFile>
+		<JLRebuildSet></JLRebuildSet>
+	</PropertyGroup>
+
+	<UsingTask TaskName="TypedTSqlBuild"           AssemblyFile="$(MSBuildThisFileDirectory)Jannesen.VisualStudioExtension.TypedTSql.Build.dll" />
+	<UsingTask TaskName="ResolveProjectReferences" AssemblyFile="$(MSBuildThisFileDirectory)Jannesen.VisualStudioExtension.TypedTSql.Build.dll" />
+
+	<Target Name="TypedTSqlSetRebuild">
+		<PropertyGroup>
+			<TypedTSqlRebuild>true</TypedTSqlRebuild>
+		</PropertyGroup>
+	</Target>
+
+	<Target Name="TypedTSqlCleanup" >
+		<Delete Files="$(TypedTSqlBuildStatusFile)" />
+	</Target>
+
+	<Target Name="TypedTSqlBuild" Condition="'@(SqlFile)' != ''">
+		<ItemGroup>
+			<SqlDatabaseName				Include="$(SqlDatabaseName)"			/>
+			<TypedTSqlRebuildScript			Include="$(TypedTSqlRebuildScript)"   Condition="'$(TypedTSqlRebuild)' == 'true'" />
+			<TypedTSqlExtensions			Include="$(TypedTSqlExtensions)"			/>
+			<TypedTSqlInitRebuild			Include="$(TypedTSqlInitRebuild)"			/>
+			<TypedTSqlDontEmitComment		Include="$(TypedTSqlDontEmitComment)"		/>
+			<TypedTSqlDontEmitCustomComment	Include="$(TypedTSqlDontEmitCustomComment)"	/>
+		</ItemGroup>
+		<Error Condition="'$(SqlDatabaseName)' == ''"
+			   Text="SqlDatabaseName not defined in project." />
+		<TypedTSqlBuild ProjectDirectory="$(MSBuildProjectDirectory)"
+						DatabaseName="$(SqlDatabaseName)"
+						SqlFiles="@(SqlFile)"
+						RebuildScript="@(TypedTSqlRebuildScript)"
+						InitRebuildScript="@(TypedTSqlInitRebuild)"
+						Extensions="@(TypedTSqlExtensions)"
+						StatusFile="$(TypedTSqlBuildStatusFile)"
+						DontEmitComment="$(TypedTSqlDontEmitComment)"
+						DontEmitCustomComment="$(TypedTSqlDontEmitCustomComment)"
+		/>
+	</Target>
+
+	<Target Name="ResolveProjectReferencesDesignTime" DependsOnTargets="ResolveProjectReferences" Returns="@(_ResolvedProjectReferences)" />
+	<Target Name="ResolveProjectReferences" Returns="@(_ResolvedProjectReferences)">
+		<ResolveProjectReferences ProjectReferences="@(ProjectReference)"
+								  ProjectDirectory="$(MSBuildProjectDirectory)"
+								  ProjectConfiguration="$(Configuration)"
+								  ProjectPlatform="$(Platform)"
+								  Build="false">
+			<Output TaskParameter="ResolvedProjectReferences" ItemName="_ResolvedProjectReferences"/>
+		</ResolveProjectReferences>
+	</Target>
+
+	<Target Name="Cleanup" DependsOnTargets="TypedTSqlCleanup"/>
+	<Target Name="Build"   DependsOnTargets="TypedTSqlBuild"/>
+	<Target Name="Rebuild" DependsOnTargets="TypedTSqlSetRebuild">
+		<CallTarget Targets="Cleanup" />
+		<CallTarget Targets="Build" />
+	</Target>
+</Project>

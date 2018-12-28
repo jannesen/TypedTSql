@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Rule Name="ResolvedProjectReference"
+      DisplayName="Resolved Project Reference"
+      PageTemplate="generic"
+      Description="Reference Properties"
+      xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.DataSource>
+        <DataSource Persistence="ResolvedReference"
+                    ItemType="ProjectReference"
+                    HasConfigurationCondition="False"
+                    SourceType="TargetResults"
+                    MSBuildTarget="ResolveProjectReferencesDesignTime"
+                    SourceOfDefaultValue="AfterContext" />
+    </Rule.DataSource>
+
+    <!-- Visible properties -->
+    <StringProperty Name="Alias"                        DisplayName="Alias"         Description="Alias to this reference.">
+        <StringProperty.DataSource>
+            <DataSource Persistence="ProjectFile" ItemType="ProjectReference" HasConfigurationCondition="False" SourceOfDefaultValue="AfterContext" />
+        </StringProperty.DataSource>
+    </StringProperty>
+    <StringProperty Name="ProjectType"    ReadOnly="True" DisplayName="Project Type"    Description="The project type."/>
+    <StringProperty Name="OutputAssembly" ReadOnly="True" DisplayName="Output assembly" Description="Output assemble."/>
+    <StringProperty Name="ResolvedPath"   ReadOnly="True" DisplayName="Path"            Description="Location of the file being referenced.">
+        <StringProperty.DataSource>
+            <DataSource PersistedName="Identity" SourceOfDefaultValue="AfterContext" />
+        </StringProperty.DataSource>
+    </StringProperty>
+
+    <!-- Hidden properties -->
+    <StringProperty Name="HintPath"          Visible="false" />
+
+    <!-- This is the metadata we store on the reference item when we add it. -->
+    <BoolProperty Name="IsWinMDFile"         Visible="false"                 />
+    <StringProperty Name="Project"           Visible="False"                  Description="the Guid the solution tracks an individual project reference target with" />
+
+    <!-- These are metadata added to the resolved item by MSBuild that we don't show to the user but use internally. -->
+    <BoolProperty   Name="WinMDFile"         Visible="false" ReadOnly="True" />
+    <StringProperty Name="OriginalItemSpec"  Visible="False" ReadOnly="True"  Description="The evaluated item name of the original reference item whose resolution resulted in this resolved reference item." />
+    <StringProperty Name="FusionName"        Visible="False" ReadOnly="True" />
+    <StringProperty Name="Name"              Visible="false" ReadOnly="True" />
+    <BoolProperty   Name="Visible"           Visible="False" ReadOnly="True" />
+</Rule>

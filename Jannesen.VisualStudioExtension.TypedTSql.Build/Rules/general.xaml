@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Rule
+    Name="ConfigurationGeneral"
+    DisplayName="General"
+    PageTemplate="generic"
+    Description="General"
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.Categories>
+        <Category Name="General" DisplayName="General" Description="General" />
+    </Rule.Categories>
+
+    <Rule.DataSource>
+        <DataSource Persistence="ProjectFile" Label="Configuration"  HasConfigurationCondition="False" />
+    </Rule.DataSource>
+
+    <StringProperty Name="TypedTSqlBuild" Visible="False" />
+    <StringProperty Name="ProjectGuid" Visible="False">
+        <StringProperty.DataSource>
+            <DataSource Persistence="ProjectFile" Label="Globals" HasConfigurationCondition="False" />
+        </StringProperty.DataSource>
+    </StringProperty>
+
+    <StringProperty Name="TypedTSqlRebuildScript"   Visible="true" DisplayName="Typed T-Sql target for rebuild script (rebuildonly)." Description="Typed T-Sql target for rebuild script." />
+    <BoolProperty   Name="TypedTSqlInitRebuild"     Visible="true" DisplayName="Typed T-Sql drop all code on rebuild" Description="Typed T-Sql drop all code on rebuild" />
+    <BoolProperty   Name="TypedTSqlDontEmitComment" Visible="True" DisplayName="Typed T-Sql don't emit comments" Description="Typed T-Sql don't emit comments">
+        <BoolProperty.DataSource>
+            <DataSource Persistence="ProjectFile" HasConfigurationCondition="True"/>
+        </BoolProperty.DataSource>
+    </BoolProperty>
+    <BoolProperty   Name="TypedTSqlDontEmitCustomComment" Visible="True" DisplayName="Typed T-Sql don't emit customized code as comments" Description="Typed T-Sql don't emit customized code as comments">
+        <BoolProperty.DataSource>
+            <DataSource Persistence="ProjectFile" HasConfigurationCondition="True"/>
+        </BoolProperty.DataSource>
+    </BoolProperty>
+    <StringProperty Name="TypedTSqlExtensions"     Visible="true" DisplayName="Typed T-Sql extensions" Description="Typed T-Sql extensions." />
+</Rule>

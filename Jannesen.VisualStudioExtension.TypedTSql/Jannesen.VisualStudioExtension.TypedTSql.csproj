@@ -1,0 +1,384 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{D3E10662-B8C2-4B73-852D-C04ECEB5179B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Jannesen.VisualStudioExtension.TypedTSql</RootNamespace>
+    <AssemblyName>Jannesen.VisualStudioExtension.TypedTSql</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <UseCodebase>true</UseCodebase>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootSuffix Exp</StartArguments>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>true</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <CreateVsixContainer>True</CreateVsixContainer>
+    <CopyVsixExtensionFiles>True</CopyVsixExtensionFiles>
+    <CopyVsixExtensionLocation>..\Bin\VisualStudioExtensions\.vsix</CopyVsixExtensionLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DeployExtension>True</DeployExtension>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <DeployExtension>False</DeployExtension>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
+    <OutputPath>bin\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Imaging.Interop.14.0.DesignTime.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Language.Intellisense, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Build, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>True</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Build.Framework, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>True</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Build.Utilities.Core, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>True</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.ComponentModelHost">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.ComponentModelHost.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.CoreUtility">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.CoreUtility.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Editor">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.ImageCatalog">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.ImageCatalog.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Imaging">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Imaging.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Language.StandardClassification">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\CommonExtensions\Microsoft\Editor\Microsoft.VisualStudio.Language.StandardClassification.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.OLE.Interop">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
+      <Private>False</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.15.0">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Shell.15.0.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Framework">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.Shell.Framework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v2.0\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
+      <Private>False</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.10.0">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v2.0\Microsoft.VisualStudio.Shell.Interop.10.0.dll</HintPath>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.15.3.DesignTime">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Shell.Interop.15.3.DesignTime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.Shell.Interop.8.0.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop.9.0">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v2.0\Microsoft.VisualStudio.Shell.Interop.9.0.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Text.Data">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Text.Data.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Text.Logic">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Text.Logic.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Text.UI">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Text.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Text.UI.Wpf">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Text.UI.Wpf.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TextManager.Interop">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v2.0\Microsoft.VisualStudio.TextManager.Interop.dll</HintPath>
+      <Private>False</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Threading">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Threading.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Utilities">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Utilities.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Validation">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VSSDK\VisualStudioIntegration\Common\Assemblies\v4.0\Microsoft.VisualStudio.Validation.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\PrivateAssemblies\System.Collections.Immutable.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.Composition">
+      <HintPath>..\packages\Microsoft.VisualStudio.Composition.15.3.38\lib\net45\Microsoft.VisualStudio.Composition.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.ProjectSystem">
+      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.15.3.224\lib\net46\Microsoft.VisualStudio.ProjectSystem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.ProjectSystem.Interop">
+      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.15.3.224\lib\net46\Microsoft.VisualStudio.ProjectSystem.Interop.dll</HintPath>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Validation">
+      <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.3.15\lib\net45\Microsoft.VisualStudio.Validation.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.ProjectSystem.VS">
+      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.15.3.224\lib\net46\Microsoft.VisualStudio.ProjectSystem.VS.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Jannesen.Language.TypedTSql.WebService\Jannesen.Language.TypedTSql.WebService.csproj">
+      <Project>{e776ef11-1585-4107-a531-37484b7681b5}</Project>
+      <Name>Jannesen.Language.TypedTSql.WebService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jannesen.Language.TypedTSql\Jannesen.Language.TypedTSql.csproj">
+      <Project>{d812b8b4-b1fe-4e62-9e32-d0aed385a6af}</Project>
+      <Name>Jannesen.Language.TypedTSql</Name>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.Build\Jannesen.VisualStudioExtension.TypedTSql.Build.csproj">
+      <Project>{091f7030-6776-45e3-b0fa-dbed1edff4d0}</Project>
+      <Name>Jannesen.VisualStudioExtension.TypedTSql.Build</Name>
+      <InstallRoot>MSBuild</InstallRoot>
+      <VSIXSubPath>Jannesen.TypedTSql</VSIXSubPath>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate\Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate.csproj">
+      <Project>{50e9ba1f-9572-4294-87fa-6de934e6c095}</Project>
+      <Name>Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate\Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate.csproj">
+      <Project>{48b31bea-1e10-42ff-8c91-bf8fe2fde856}</Project>
+      <Name>Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CPS\AlwaysAllowValidProjectReferenceChecker.cs" />
+    <Compile Include="CPS\ProjectProperties.cs" />
+    <Compile Include="CPS\TypedTSqlConfiguredProject.cs" />
+    <Compile Include="CPS\TypedTSqlUnconfiguredProject.cs" />
+    <Compile Include="CatalogExplorer\ContentControl.xaml.cs">
+      <DependentUpon>ContentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CatalogExplorer\Item.cs" />
+    <Compile Include="CatalogExplorer\ItemColumn.cs" />
+    <Compile Include="CatalogExplorer\ItemColumns.cs" />
+    <Compile Include="CatalogExplorer\ItemEntity.cs" />
+    <Compile Include="CatalogExplorer\ItemEntityFunction.cs" />
+    <Compile Include="CatalogExplorer\ItemEntityFunctionScalar.cs" />
+    <Compile Include="CatalogExplorer\ItemEntityFunctionTable.cs" />
+    <Compile Include="CatalogExplorer\ItemEntityStoredProcedure.cs" />
+    <Compile Include="CatalogExplorer\ItemEntityTableUser.cs" />
+    <Compile Include="CatalogExplorer\ItemEntityTrigger.cs" />
+    <Compile Include="CatalogExplorer\ItemEntityType.cs" />
+    <Compile Include="CatalogExplorer\ItemEntityView.cs" />
+    <Compile Include="CatalogExplorer\ItemFolder.cs" />
+    <Compile Include="CatalogExplorer\ItemFolderBase.cs" />
+    <Compile Include="CatalogExplorer\ItemParameter.cs" />
+    <Compile Include="CatalogExplorer\ItemParameters.cs" />
+    <Compile Include="CatalogExplorer\ItemProject.cs" />
+    <Compile Include="CatalogExplorer\ItemReturnValue.cs" />
+    <Compile Include="CatalogExplorer\ItemValue.cs" />
+    <Compile Include="CatalogExplorer\ItemValues.cs" />
+    <Compile Include="CatalogExplorer\Panel.cs" />
+    <Page Include="CatalogExplorer\ContentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CatalogExplorer\Styling.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="Commands\CommandHandler2K.cs" />
+    <Compile Include="Commands\CommandHandler97.cs" />
+    <Compile Include="Commands\CustomMenuCommand.cs" />
+    <Content Include="Commands\CustomMenuIcons.png" />
+    <Compile Include="Rename\DatabaseItem.cs" />
+    <Compile Include="Rename\FileItem.cs" />
+    <Compile Include="Rename\FileLocationItem.cs" />
+    <Compile Include="Rename\PreviewList.cs" />
+    <Compile Include="Rename\RenameDialog.xaml.cs">
+      <DependentUpon>RenameDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Rename\Renamer.cs" />
+    <Page Include="Rename\RenameDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="Editor\Classifier.cs" />
+    <Compile Include="Editor\ClassifierDefinitions.cs" />
+    <Compile Include="Editor\ContextMenu.cs" />
+    <Compile Include="Editor\ErrorTagger.cs" />
+    <Compile Include="Editor\ExtensionBase.cs" />
+    <Compile Include="Editor\OutliningTagger.cs" />
+    <Compile Include="Editor\QuickInfoController.cs" />
+    <Compile Include="Editor\QuickInfoSource.cs" />
+    <Compile Include="Editor\TextViewCreationListener.cs" />
+    <Compile Include="LanguageService\ErrorList.cs" />
+    <Compile Include="LanguageService\FileResult.cs" />
+    <Compile Include="LanguageService\OutliningRegion.cs" />
+    <Compile Include="LanguageService\Project.cs" />
+    <Compile Include="LanguageService\QuickInfo.cs" />
+    <Compile Include="LanguageService\Service.cs" />
+    <Compile Include="LanguageService\SimpleLibrary\NavInfo.cs" />
+    <Compile Include="LanguageService\SimpleLibrary\SimpleLibrary.cs" />
+    <Compile Include="LanguageService\SimpleLibrary\SimpleObject.cs" />
+    <Compile Include="LanguageService\SimpleLibrary\SimpleObjectList.cs" />
+    <Compile Include="LanguageService\SimpleLibrary\SimpleObjectSymbolReference.cs" />
+    <Compile Include="LanguageService\TextBufferLanguageServiceProject.cs" />
+    <Compile Include="Library\Helpers.cs" />
+    <Compile Include="Library\StandardGlyphGroup.cs" />
+    <Compile Include="FileAndContentTypeDefinitions.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Microsoft.Internal.VisualStudio.Shell.Interop.cs" />
+    <Compile Include="VSPackage.cs" />
+    <EmbeddedResource Include="Resources.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VSPackage.resx">
+      <MergeWithCTO>true</MergeWithCTO>
+      <SubType>Designer</SubType>
+      <ManifestResourceName>VSPackage</ManifestResourceName>
+    </EmbeddedResource>
+    <VSCTCompile Include="Commands\CustomMenu.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
+    </VSCTCompile>
+    <Content Include="FileIcons.pkgdef">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="TypedTSql.ico">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <None Include="PostBuild.cmd" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="source.extension.vsixmanifest" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <BuildSystemToCopy Include="BuildSystem\DeployedBuildSystem\**\*" />
+      <RulesToCopy Include="BuildSystem\Rules\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BuildSystemToCopy)" DestinationFiles="@(BuildSystemToCopy->'$(LocalAppData)\CustomProjectSystems\WindowsScript\%(RecursiveDir)%(FileName)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(RulesToCopy)" DestinationFiles="@(RulesToCopy->'$(LocalAppData)\CustomProjectSystems\WindowsScript\Rules\%(RecursiveDir)%(FileName)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+  <Import Project="..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.15.3.224\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.15.3.224\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.15.3.224\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.15.3.224\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.33\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.33\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.33\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.33\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>$(ProjectDir)PostBuild.cmd</PostBuildEvent>
+  </PropertyGroup>
+</Project>

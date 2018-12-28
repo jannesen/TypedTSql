@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions xmlns="http://schemas.microsoft.com/build/2009/properties">
+    <ItemType Name="None"               DisplayName="Does not participate in build"                 />
+    <ItemType Name="Folder"             DisplayName="Folder"                                        />
+    <ItemType Name="SqlFile"            DisplayName="Sql file"                                      />
+
+    <ContentType Name="TEXT"            DisplayName="Text file"                 ItemType="None"     />
+    <ContentType Name="CMD"             DisplayName="Cmd batch file"            ItemType="None"     />
+    <ContentType Name="CONFIG"          DisplayName="Config file"               ItemType="None"     />
+    <ContentType Name="DOCX"            DisplayName="Word file"                 ItemType="None"     />
+    <ContentType Name="SQL"             DisplayName="Sql script"                ItemType="SqlFile"  />
+    <ContentType Name="TTSQL"           DisplayName="Typed T-Sql file"          ItemType="SqlFile"  />
+
+    <FileExtension Name=".cmd"          ContentType="CMD"           />
+    <FileExtension Name=".docx"         ContentType="DOCX"          />
+    <FileExtension Name=".sql"          ContentType="SQL"           />
+    <FileExtension Name=".ttsql"        ContentType="TTSQL"          />
+    <FileExtension Name=".txt"          ContentType="TEXT"          />
+</ProjectSchemaDefinitions>

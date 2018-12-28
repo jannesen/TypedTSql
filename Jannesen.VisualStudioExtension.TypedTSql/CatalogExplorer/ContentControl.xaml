@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer.ContentControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:utilities="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Utilities"
+             xmlns:vsp="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+             xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="200"
+             Name="userctl" Loaded="_userctl_Loaded" Unloaded="_userctl_Unloaded"
+             Background="{DynamicResource {x:Static vsp:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+             Foreground="{DynamicResource {x:Static vsp:EnvironmentColors.ToolWindowTextBrushKey}}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styling.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid vsp:ImageThemingUtilities.ImageBackgroundColor="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="28" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Height="28" Background="{DynamicResource {x:Static vsp:EnvironmentColors.CommandBarGradientBrushKey }}" >
+            <ToggleButton  x:Name="filter_datatype"           Style="{StaticResource ToggleButton}" ToolTip="DataType"          Click="_filter_Click" >
+                <ToggleButton.Content>
+                    <imaging:CrispImage Moniker="{x:Static catalog:KnownMonikers.UserDefinedDataType}"  />
+                </ToggleButton.Content>
+            </ToggleButton>
+            <ToggleButton  x:Name="filter_table"              Style="{StaticResource ToggleButton}" ToolTip="Table"              Click="_filter_Click" >
+                <ToggleButton.Content>
+                    <imaging:CrispImage Moniker="{x:Static catalog:KnownMonikers.Table}" />
+                </ToggleButton.Content>
+            </ToggleButton>
+            <ToggleButton  x:Name="filter_view"               Style="{StaticResource ToggleButton}" ToolTip="View"               Click="_filter_Click" >
+                <ToggleButton.Content>
+                    <imaging:CrispImage Moniker="{x:Static catalog:KnownMonikers.View}" />
+                </ToggleButton.Content>
+            </ToggleButton>
+            <ToggleButton  x:Name="filter_function_scalar"    Style="{StaticResource ToggleButton}" ToolTip="Function scalar"    Click="_filter_Click" >
+                <ToggleButton.Content>
+                    <imaging:CrispImage Moniker="{x:Static catalog:KnownMonikers.ScalarFunction}" />
+                </ToggleButton.Content>
+            </ToggleButton>
+            <ToggleButton  x:Name="filter_function_tabular"   Style="{StaticResource ToggleButton}" ToolTip="Function tabular"   Click="_filter_Click" >
+                <ToggleButton.Content>
+                    <imaging:CrispImage Moniker="{x:Static catalog:KnownMonikers.TableFunction}" />
+                </ToggleButton.Content>
+            </ToggleButton>
+            <ToggleButton  x:Name="filter_storedprocedure"    Style="{StaticResource ToggleButton}" ToolTip="Stored procedure"   Click="_filter_Click" >
+                <ToggleButton.Content>
+                    <imaging:CrispImage Moniker="{x:Static catalog:KnownMonikers.StoredProcedure}" />
+                </ToggleButton.Content>
+            </ToggleButton>
+            <ToggleButton  x:Name="filter_trigger"            Style="{StaticResource ToggleButton}" ToolTip="Trigger"            Click="_filter_Click" >
+                <ToggleButton.Content>
+                    <imaging:CrispImage Moniker="{x:Static catalog:KnownMonikers.Trigger}" />
+                </ToggleButton.Content>
+            </ToggleButton>
+        </StackPanel>
+        <TreeView Grid.Row="1" BorderThickness="0" x:Name="treeView" ItemContainerStyle="{DynamicResource TreeViewItemStyle}" />
+    </Grid>
+</UserControl>

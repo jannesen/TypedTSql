@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+	<Metadata>
+		<Identity Id="Jannesen.VisualStudioExtension.TypedTSql" Version="1.08.00.000" Language="en-US" Publisher="Jannesen B.V."/> <!-- @VERSIONINFO -->
+		<DisplayName>Typed Transact SQL Visual Studio Extensions</DisplayName>
+		<Description xml:space="preserve">Typed Transact SQL extensions for Visual Studio 2017</Description>
+		<Icon>TypedTSql.ico</Icon>
+	</Metadata>
+	<Installation AllUsers="true" >
+		<InstallationTarget Id="Microsoft.VisualStudio.Community"  Version="[15.0]" />
+		<InstallationTarget Id="Microsoft.VisualStudio.Pro"        Version="[15.0]" />
+		<InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[15.0]" />
+	</Installation>
+	<Dependencies>
+		<Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.6]" />
+		<Dependency Id="Microsoft.VisualStudio.MPF.15.0" DisplayName="Visual Studio MPF 15.0" d:Source="Installed" Version="[15.0,16.0)" />
+	</Dependencies>
+	<Assets>
+		<Asset Type="Microsoft.VisualStudio.MefComponent"    d:Source="Project" d:ProjectName="Jannesen.VisualStudioExtension.TypedTSql"                  Path="|Jannesen.VisualStudioExtension.TypedTSql|"											/>
+		<Asset Type="Microsoft.VisualStudio.VsPackage"       d:Source="Project" d:ProjectName="Jannesen.VisualStudioExtension.TypedTSql"                  Path="|Jannesen.VisualStudioExtension.TypedTSql;PkgdefProjectOutputGroup|"				/>
+		<Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate"  d:TargetPath="|Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+		<Asset Type="Microsoft.VisualStudio.ItemTemplate"    d:Source="Project" d:ProjectName="Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate"     d:TargetPath="|Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate;TemplateProjectOutputGroup|"    Path="ItemTemplates"    d:VsixSubPath="ItemTemplates" />
+		<Asset Type="Microsoft.VisualStudio.VsPackage"       d:Source="File"                                                                              Path="FileIcons.pkgdef"																	/>
+	</Assets>
+	<Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
+	</Prerequisites>
+</PackageManifest>

@@ -1,0 +1,61 @@
+========== SQL CODE
+SET NOCOUNT                 ON;
+SET ANSI_WARNINGS           ON;
+SET ANSI_NULLS              ON;
+SET ANSI_PADDING            ON;
+SET QUOTED_IDENTIFIER       ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET NUMERIC_ROUNDABORT      OFF;
+SET LANGUAGE                US_ENGLISH;
+SET DATEFORMAT              YMD;
+SET DATEFIRST               7;
+SET ARITHABORT              ON;
+GO
+IF EXISTS (SELECT * FROM sys.sysobjects WHERE [id] = object_id('dbo.[test/test.spj*get]') AND [type] in ('P'))
+    DROP PROCEDURE dbo.[test/test.spj*get]
+GO
+PRINT '# create servicemethod                  dbo.[test/test.spj*get]';
+GO
+CREATE PROCEDURE dbo.[test/test.spj*get]  
+(
+    @id     int      = NULL
+)
+AS
+begin
+    SET NOCOUNT,ANSI_NULLS,ANSI_PADDING,ANSI_WARNINGS,ARITHABORT,CONCAT_NULL_YIELDS_NULL,XACT_ABORT ON;
+    SET NUMERIC_ROUNDABORT OFF;
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+--	RETURNS ( SELECT [username] FROM [net/account] WHERE [account_id] = @id )
+
+      
+        SELECT [account_id]   = [account_id],
+               [username]     = [username],
+               [device]       =  (
+                                    SELECT top(1)
+                                           [device_id] = [device_id],
+                                           [devicekey] = [devicekey]
+                                      FROM dbo.[net/device] d
+                                     WHERE d.[account_id] = a.[account_id]
+                                 FOR XML RAW('object'),TYPE),
+               [data]         =  (
+                                     SELECT [*] = [device_id]
+                                       FROM dbo.[net/device] d
+                                      WHERE d.[account_id] = a.[account_id]
+                                 FOR XML PATH('value'),ROOT('array'),TYPE),
+               [devices]      =  (
+                                    SELECT top(5)
+                                           [device_id] = [device_id],
+                                           [devicekey] = [devicekey]
+                                      FROM dbo.[net/device] d
+                                     WHERE d.[account_id] = a.[account_id]
+                                 FOR XML RAW('object'),ROOT('array'),TYPE),
+               [emailaddress] = [emailaddress]
+          FROM dbo.[net/account] a
+         WHERE [account_id] = @id
+	 FOR XML RAW('object'),TYPE  OPTION (FORCE ORDER);
+end
+GO
+GRANT execute ON dbo.[test/test.spj*get] TO [grpDBA]
+GO
+========== NO ERRORS 

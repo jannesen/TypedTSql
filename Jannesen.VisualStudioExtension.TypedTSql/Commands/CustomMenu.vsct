@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<Extern href="stdidcmd.h"/>
+	<Extern href="vsshlids.h"/>
+
+	<Commands package="guidVSPackage">
+		<Buttons>
+			<Button guid="guidCustomMenuCommand" id="DatabaseExplorerCommandId" priority="0x0100" type="Button">
+				<Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+				<Icon guid="guidImages" id="bmpDatabaseExplorer" />
+				<Strings>
+					<ButtonText>TypedTSql Catalog Explorer</ButtonText>
+				</Strings>
+			</Button>
+		</Buttons>
+
+		<Bitmaps>
+			<Bitmap guid="guidImages" href="CustomMenuIcons.png" usedList="bmpDatabaseExplorer"/>
+		</Bitmaps>
+	</Commands>
+
+	<Symbols>
+		<GuidSymbol name="guidVSPackage" value="{FCFDB553-8F52-420F-9195-E183E9E501DE}" />
+
+		<GuidSymbol name="guidCustomMenuCommand" value="{60132958-8fc4-4928-8033-bc96d8172d8d}">
+			<IDSymbol name="DatabaseExplorerCommandId" value="0x0100" />
+		</GuidSymbol>
+
+		<GuidSymbol name="guidImages" value="{a7d499dd-4234-4a71-8b06-3c56c10b86e0}" >
+			<IDSymbol name="bmpDatabaseExplorer" value="1" />
+		</GuidSymbol>
+	</Symbols>
+</CommandTable>

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+	<PropertyGroup>
+		<TypedTSqlBuild Condition="'$(TypedTSqlBuild)'==''">$(MSBuildExtensionsPath)\Jannesen.TypedTSql\</TypedTSqlBuild>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" Label="Configuration">
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Label="Configuration">
+	</PropertyGroup>
+
+	<Import Project="$(TypedTSqlBuild)TypedTSql.props" />
+
+	<ItemGroup>
+	</ItemGroup>
+
+	<Import Project="$(TypedTSqlBuild)TypedTSql.targets" />
+</Project>

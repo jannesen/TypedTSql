@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Rule
+    Name="ConfigurationUser"
+    DisplayName="User"
+    PageTemplate="generic"
+    Description="User"
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <Rule.Categories>
+        <Category Name="User" DisplayName="User" Description="User" />
+    </Rule.Categories>
+
+    <Rule.DataSource>
+        <DataSource Persistence="UserFile" HasConfigurationCondition="False" />
+    </Rule.DataSource>
+
+    <StringProperty Name="SqlDatabaseName" Visible="true" Description="Database for (Typed)TSql files." />
+
+    <BoolProperty Name="ShowAllFiles" Visible="False" />
+    <BoolProperty Name="AutoRefresh" Visible="False" />
+</Rule>

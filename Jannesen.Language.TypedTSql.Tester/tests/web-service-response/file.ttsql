@@ -1,0 +1,42 @@
+﻿schema [dbo]
+
+webservice [test]
+schema [dbo]
+webconfig '.' database='TAS2'
+
+
+webmethod [test]::[test.spj]  method 'GET' handler 'sql-json'  
+(
+    @id     int     source      'querystring'
+)
+grant execute to [grpDBA]
+begin
+--	RETURNS ( SELECT [username] FROM [net/account] WHERE [account_id] = @id )
+
+    RETURNS OBJECT (
+        SELECT [account_id]   = [account_id],
+               [username]     = [username],
+               [device]       = OBJECT (
+                                    SELECT top(1)
+                                           [device_id] = [device_id],
+                                           [devicekey] = [devicekey]
+                                      FROM [net/device] d
+                                     WHERE d.[account_id] = a.[account_id]
+                                ),
+               [data]         = ARRAY VALUE (
+                                     SELECT [device_id]
+                                       FROM [net/device] d
+                                      WHERE d.[account_id] = a.[account_id]
+                                ),
+               [devices]      = ARRAY OBJECT (
+                                    SELECT top(5)
+                                           [device_id] = [device_id],
+                                           [devicekey] = [devicekey]
+                                      FROM [net/device] d
+                                     WHERE d.[account_id] = a.[account_id]
+                                ),
+               [emailaddress] = [emailaddress]
+          FROM [net/account] a
+         WHERE [account_id] = @id
+	) OPTION (FORCE ORDER)
+end

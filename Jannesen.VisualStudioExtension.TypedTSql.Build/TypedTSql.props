@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<ProjectSystemBase>$(MSBuildThisFileDirectory)</ProjectSystemBase>
+		<Name Condition="'$(Name)'==''">$(MSBuildProjectName)</Name>
+		<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+		<Platform Condition="'$(Platform)'==''">AnyCPU</Platform>
+		<TargetFramework Condition="'$(TargetFramework)'==''">net</TargetFramework>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration" />
+	<PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration"/>
+</Project>

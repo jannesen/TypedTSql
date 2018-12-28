@@ -1,0 +1,556 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D812B8B4-B1FE-4E62-9E32-D0AED385A6AF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Jannesen.Language.TypedTSql</RootNamespace>
+    <AssemblyName>Jannesen.Language.TypedTSql</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <FileAlignment>512</FileAlignment>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>Jannesen.Language.TypedTSql.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="BuildIn\Aggregate\AVG.cs" />
+    <Compile Include="BuildIn\Aggregate\BINARY_CHECKSUM.cs" />
+    <Compile Include="BuildIn\Aggregate\CHECKSUM.cs" />
+    <Compile Include="BuildIn\Aggregate\CHECKSUM_AGG.cs" />
+    <Compile Include="BuildIn\Aggregate\COUNT.cs" />
+    <Compile Include="BuildIn\Aggregate\COUNT_BIG.cs" />
+    <Compile Include="BuildIn\Aggregate\MAX.cs" />
+    <Compile Include="BuildIn\Aggregate\MIN.cs" />
+    <Compile Include="BuildIn\Aggregate\STDEV.cs" />
+    <Compile Include="BuildIn\Aggregate\STDEVP.cs" />
+    <Compile Include="BuildIn\Aggregate\SUM.cs" />
+    <Compile Include="BuildIn\Aggregate\VAR.cs" />
+    <Compile Include="BuildIn\Aggregate\VARP.cs" />
+    <Compile Include="BuildIn\Catalog.cs" />
+    <Compile Include="BuildIn\Conversion\CAST.cs" />
+    <Compile Include="BuildIn\Conversion\CONVERT.cs" />
+    <Compile Include="BuildIn\Conversion\PARSE.cs" />
+    <Compile Include="BuildIn\Conversion\TRY_CAST.cs" />
+    <Compile Include="BuildIn\Conversion\TRY_CONVERT.cs" />
+    <Compile Include="BuildIn\Conversion\TRY_PARSE.cs" />
+    <Compile Include="BuildIn\Cryptographic\ASYMKEYPROPERTY.cs" />
+    <Compile Include="BuildIn\Cryptographic\ASYMKEY_ID.cs" />
+    <Compile Include="BuildIn\Cryptographic\CERTENCODED.cs" />
+    <Compile Include="BuildIn\Cryptographic\CERTPRIVATEKEY.cs" />
+    <Compile Include="BuildIn\Cryptographic\CERTPROPERTY.cs" />
+    <Compile Include="BuildIn\Cryptographic\CERT_ID.cs" />
+    <Compile Include="BuildIn\Cryptographic\CRYPT_GEN_RANDOM.cs" />
+    <Compile Include="BuildIn\Cryptographic\DECRYPTBYASYMKEY.cs" />
+    <Compile Include="BuildIn\Cryptographic\DECRYPTBYCERT.cs" />
+    <Compile Include="BuildIn\Cryptographic\DECRYPTBYKEY.cs" />
+    <Compile Include="BuildIn\Cryptographic\DECRYPTBYKEYAUTOASYMKEY.cs" />
+    <Compile Include="BuildIn\Cryptographic\DECRYPTBYKEYAUTOCERT.cs" />
+    <Compile Include="BuildIn\Cryptographic\DECRYPTBYPASSPHRASE.cs" />
+    <Compile Include="BuildIn\Cryptographic\ENCRYPTBYASYMKEY.cs" />
+    <Compile Include="BuildIn\Cryptographic\ENCRYPTBYCERT.cs" />
+    <Compile Include="BuildIn\Cryptographic\ENCRYPTBYKEY.cs" />
+    <Compile Include="BuildIn\Cryptographic\ENCRYPTBYPASSPHRASE.cs" />
+    <Compile Include="BuildIn\Cryptographic\HASHBYTES.cs" />
+    <Compile Include="BuildIn\Cryptographic\IS_OBJECTSIGNED.cs" />
+    <Compile Include="BuildIn\Cryptographic\KEY_GUID.cs" />
+    <Compile Include="BuildIn\Cryptographic\KEY_ID.cs" />
+    <Compile Include="BuildIn\Cryptographic\KEY_NAME.cs" />
+    <Compile Include="BuildIn\Cryptographic\SIGNBYASYMKEY.cs" />
+    <Compile Include="BuildIn\Cryptographic\SIGNBYCERT.cs" />
+    <Compile Include="BuildIn\Cryptographic\SYMKEYPROPERTY.cs" />
+    <Compile Include="BuildIn\Cryptographic\VERIFYSIGNEDBYASYMKEY.cs" />
+    <Compile Include="BuildIn\Cryptographic\VERIFYSIGNEDBYCERT.cs" />
+    <Compile Include="BuildIn\DateTime\CURRENT_TIMESTAMP.cs" />
+    <Compile Include="BuildIn\DateTime\DATEADD.cs" />
+    <Compile Include="BuildIn\DateTime\DATEDIFF.cs" />
+    <Compile Include="BuildIn\DateTime\DATEDIFF_BIG.cs" />
+    <Compile Include="BuildIn\DateTime\DATEFROMPARTS.cs" />
+    <Compile Include="BuildIn\DateTime\DATENAME.cs" />
+    <Compile Include="BuildIn\DateTime\DATEPART.cs" />
+    <Compile Include="BuildIn\DateTime\DATETIME2FROMPARTS.cs" />
+    <Compile Include="BuildIn\DateTime\DATETIMEFROMPARTS.cs" />
+    <Compile Include="BuildIn\DateTime\DATETIMEOFFSETFROMPARTS.cs" />
+    <Compile Include="BuildIn\DateTime\DAY.cs" />
+    <Compile Include="BuildIn\DateTime\EOMONTH.cs" />
+    <Compile Include="BuildIn\DateTime\GETDATE.cs" />
+    <Compile Include="BuildIn\DateTime\GETUTCDATE.cs" />
+    <Compile Include="BuildIn\DateTime\ISDATE.cs" />
+    <Compile Include="BuildIn\DateTime\MONTH.cs" />
+    <Compile Include="BuildIn\DateTime\SMALLDATETIMEFROMPARTS.cs" />
+    <Compile Include="BuildIn\DateTime\SWITCHOFFSET.cs" />
+    <Compile Include="BuildIn\DateTime\SYSDATETIME.cs" />
+    <Compile Include="BuildIn\DateTime\SYSDATETIMEOFFSET.cs" />
+    <Compile Include="BuildIn\DateTime\SYSUTCDATETIME.cs" />
+    <Compile Include="BuildIn\DateTime\TIMEFROMPARTS.cs" />
+    <Compile Include="BuildIn\DateTime\TODATETIMEOFFSET.cs" />
+    <Compile Include="BuildIn\DateTime\YEAR.cs" />
+    <Compile Include="BuildIn\Extensions\FILEBINARY.cs" />
+    <Compile Include="BuildIn\Extensions\IS_EQUAL.cs" />
+    <Compile Include="BuildIn\Extensions\IS_NOT_EQUAL.cs" />
+    <Compile Include="BuildIn\Func_Aggragate.cs" />
+    <Compile Include="BuildIn\Func_Math_Float.cs" />
+    <Compile Include="BuildIn\Func_Scalar.cs" />
+    <Compile Include="BuildIn\Func_WithOutArgs.cs" />
+    <Compile Include="BuildIn\Json\ISJSON.cs" />
+    <Compile Include="BuildIn\Json\JSON_MODIFY .cs" />
+    <Compile Include="BuildIn\Json\JSON_QUERY.cs" />
+    <Compile Include="BuildIn\Json\JSON_VALUE.cs" />
+    <Compile Include="BuildIn\Logical\CHOOSE.cs" />
+    <Compile Include="BuildIn\Logical\EXISTS.cs" />
+    <Compile Include="BuildIn\Logical\IIF.cs" />
+    <Compile Include="BuildIn\Logical\ISNULL.cs" />
+    <Compile Include="BuildIn\Logical\UPDATE.cs" />
+    <Compile Include="BuildIn\Mathematical\ABS.cs" />
+    <Compile Include="BuildIn\Mathematical\ACOS.cs" />
+    <Compile Include="BuildIn\Mathematical\ASIN.cs" />
+    <Compile Include="BuildIn\Mathematical\ATAN.cs" />
+    <Compile Include="BuildIn\Mathematical\ATN2.cs" />
+    <Compile Include="BuildIn\Mathematical\CEILING.cs" />
+    <Compile Include="BuildIn\Mathematical\COS.cs" />
+    <Compile Include="BuildIn\Mathematical\COT.cs" />
+    <Compile Include="BuildIn\Mathematical\DEGREES.cs" />
+    <Compile Include="BuildIn\Mathematical\EXP.cs" />
+    <Compile Include="BuildIn\Mathematical\FLOOR.cs" />
+    <Compile Include="BuildIn\Mathematical\LOG.cs" />
+    <Compile Include="BuildIn\Mathematical\LOG10.cs" />
+    <Compile Include="BuildIn\Mathematical\PI.cs" />
+    <Compile Include="BuildIn\Mathematical\POWER.cs" />
+    <Compile Include="BuildIn\Mathematical\RADIANS.cs" />
+    <Compile Include="BuildIn\Mathematical\RAND.cs" />
+    <Compile Include="BuildIn\Mathematical\ROUND.cs" />
+    <Compile Include="BuildIn\Mathematical\SIGN.cs" />
+    <Compile Include="BuildIn\Mathematical\SIN.cs" />
+    <Compile Include="BuildIn\Mathematical\SQRT.cs" />
+    <Compile Include="BuildIn\Mathematical\SQUARE.cs" />
+    <Compile Include="BuildIn\Mathematical\TAN.cs" />
+    <Compile Include="BuildIn\Metadata\APPLOCK_MODE.cs" />
+    <Compile Include="BuildIn\Metadata\APPLOCK_TEST.cs" />
+    <Compile Include="BuildIn\Metadata\APP_NAME.cs" />
+    <Compile Include="BuildIn\Metadata\ASSEMBLYPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\COLUMNPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\COL_LENGTH.cs" />
+    <Compile Include="BuildIn\Metadata\COL_NAME.cs" />
+    <Compile Include="BuildIn\Metadata\DATABASEPROPERTYEX.cs" />
+    <Compile Include="BuildIn\Metadata\DATABASE_PRINCIPAL_ID.cs" />
+    <Compile Include="BuildIn\Metadata\DB_ID.cs" />
+    <Compile Include="BuildIn\Metadata\DB_NAME.cs" />
+    <Compile Include="BuildIn\Metadata\FILEGROUPPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\FILEGROUP_ID.cs" />
+    <Compile Include="BuildIn\Metadata\FILEGROUP_NAME.cs" />
+    <Compile Include="BuildIn\Metadata\FILEPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\FILE_ID.cs" />
+    <Compile Include="BuildIn\Metadata\FILE_IDEX.cs" />
+    <Compile Include="BuildIn\Metadata\FILE_NAME.cs" />
+    <Compile Include="BuildIn\Metadata\FULLTEXTCATALOGPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\FULLTEXTSERVICEPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\INDEXKEY_PROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\INDEXPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\INDEX_COL.cs" />
+    <Compile Include="BuildIn\Metadata\OBJECTPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\OBJECTPROPERTYEX.cs" />
+    <Compile Include="BuildIn\Metadata\OBJECT_DEFINITION.cs" />
+    <Compile Include="BuildIn\Metadata\OBJECT_ID.cs" />
+    <Compile Include="BuildIn\Metadata\OBJECT_NAME.cs" />
+    <Compile Include="BuildIn\Metadata\OBJECT_SCHEMA_NAME.cs" />
+    <Compile Include="BuildIn\Metadata\ORIGINAL_DB_NAME.cs" />
+    <Compile Include="BuildIn\Metadata\PARSENAME.cs" />
+    <Compile Include="BuildIn\Metadata\SCHEMA_ID.cs" />
+    <Compile Include="BuildIn\Metadata\SCHEMA_NAME.cs" />
+    <Compile Include="BuildIn\Metadata\SERVERPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\STATS_DATE.cs" />
+    <Compile Include="BuildIn\Metadata\TYPEPROPERTY.cs" />
+    <Compile Include="BuildIn\Metadata\TYPE_ID.cs" />
+    <Compile Include="BuildIn\Metadata\TYPE_NAME.cs" />
+    <Compile Include="BuildIn\RowSet\OPENJSON.cs" />
+    <Compile Include="BuildIn\RowSet\OPENQUERY.cs" />
+    <Compile Include="BuildIn\RowSet\OPENROWSET.cs" />
+    <Compile Include="BuildIn\RowSet\OPENXML.cs" />
+    <Compile Include="BuildIn\Rowset\STRING_SPLIT.cs" />
+    <Compile Include="BuildIn\Security\CURRENT_USER.cs" />
+    <Compile Include="BuildIn\Security\HAS_DBACCESS.cs" />
+    <Compile Include="BuildIn\Security\HAS_PERMS_BY_NAME.cs" />
+    <Compile Include="BuildIn\Security\IS_MEMBER.cs" />
+    <Compile Include="BuildIn\Security\IS_ROLEMEMBER.cs" />
+    <Compile Include="BuildIn\Security\IS_SRVROLEMEMBER.cs" />
+    <Compile Include="BuildIn\Security\ORIGINAL_LOGIN.cs" />
+    <Compile Include="BuildIn\Security\PERMISSIONS.cs" />
+    <Compile Include="BuildIn\Security\SESSION_USER.cs" />
+    <Compile Include="BuildIn\Security\SUSER_ID.cs" />
+    <Compile Include="BuildIn\Security\SUSER_NAME.cs" />
+    <Compile Include="BuildIn\Security\SUSER_SID.cs" />
+    <Compile Include="BuildIn\Security\SUSER_SNAME.cs" />
+    <Compile Include="BuildIn\Security\SYSTEM_USER.cs" />
+    <Compile Include="BuildIn\Security\USER.cs" />
+    <Compile Include="BuildIn\Security\USER_ID.cs" />
+    <Compile Include="BuildIn\Security\USER_NAME.cs" />
+    <Compile Include="BuildIn\String\ASCII.cs" />
+    <Compile Include="BuildIn\String\CHAR.cs" />
+    <Compile Include="BuildIn\String\CHARINDEX.cs" />
+    <Compile Include="BuildIn\String\CONCAT.cs" />
+    <Compile Include="BuildIn\String\DIFFERENCE.cs" />
+    <Compile Include="BuildIn\String\FORMAT.cs" />
+    <Compile Include="BuildIn\String\LEFT.cs" />
+    <Compile Include="BuildIn\String\LEN.cs" />
+    <Compile Include="BuildIn\String\LOWER.cs" />
+    <Compile Include="BuildIn\String\LTRIM.cs" />
+    <Compile Include="BuildIn\String\NCHAR.cs" />
+    <Compile Include="BuildIn\String\PATINDEX.cs" />
+    <Compile Include="BuildIn\String\QUOTENAME.cs" />
+    <Compile Include="BuildIn\String\REPLACE.cs" />
+    <Compile Include="BuildIn\String\REPLICATE.cs" />
+    <Compile Include="BuildIn\String\REVERSE.cs" />
+    <Compile Include="BuildIn\String\RIGHT.cs" />
+    <Compile Include="BuildIn\String\RTRIM.cs" />
+    <Compile Include="BuildIn\String\SOUNDEX.cs" />
+    <Compile Include="BuildIn\String\SPACE.cs" />
+    <Compile Include="BuildIn\String\STR.cs" />
+    <Compile Include="BuildIn\String\STRING_ESCAPE.cs" />
+    <Compile Include="BuildIn\String\STUFF.cs" />
+    <Compile Include="BuildIn\String\SUBSTRING.cs" />
+    <Compile Include="BuildIn\String\TRANSLATE.cs" />
+    <Compile Include="BuildIn\String\TRIM .cs" />
+    <Compile Include="BuildIn\String\UNICODE.cs" />
+    <Compile Include="BuildIn\String\UPPER.cs" />
+    <Compile Include="BuildIn\System\COMPRESS.cs" />
+    <Compile Include="BuildIn\System\CONNECTIONPROPERTY.cs" />
+    <Compile Include="BuildIn\System\CONTEXT_INFO.cs" />
+    <Compile Include="BuildIn\System\CURRENT_REQUEST_ID.cs" />
+    <Compile Include="BuildIn\System\CURRENT_TRANSACTION_ID.cs" />
+    <Compile Include="BuildIn\System\CURSOR_STATUS.cs" />
+    <Compile Include="BuildIn\System\DATALENGTH.cs" />
+    <Compile Include="BuildIn\System\DECOMPRESS.cs" />
+    <Compile Include="BuildIn\System\ERROR_LINE.cs" />
+    <Compile Include="BuildIn\System\ERROR_MESSAGE.cs" />
+    <Compile Include="BuildIn\System\ERROR_NUMBER.cs" />
+    <Compile Include="BuildIn\System\ERROR_PROCEDURE.cs" />
+    <Compile Include="BuildIn\System\ERROR_SEVERITY.cs" />
+    <Compile Include="BuildIn\System\ERROR_STATE.cs" />
+    <Compile Include="BuildIn\System\FORMATMESSAGE.cs" />
+    <Compile Include="BuildIn\System\GETANSINULL.cs" />
+    <Compile Include="BuildIn\System\GET_FILESTREAM_TRANSACTION_CONTEXT.cs" />
+    <Compile Include="BuildIn\System\HOST_ID.cs" />
+    <Compile Include="BuildIn\System\HOST_NAME.cs" />
+    <Compile Include="BuildIn\System\IDENTITY.cs" />
+    <Compile Include="BuildIn\System\IDENT_CURRENT.cs" />
+    <Compile Include="BuildIn\System\IDENT_INCR.cs" />
+    <Compile Include="BuildIn\System\IDENT_SEED.cs" />
+    <Compile Include="BuildIn\System\ISNUMERIC.cs" />
+    <Compile Include="BuildIn\System\MIN_ACTIVE_ROWVERSION.cs" />
+    <Compile Include="BuildIn\System\NEWID.cs" />
+    <Compile Include="BuildIn\System\NEWSEQUENTIALID.cs" />
+    <Compile Include="BuildIn\System\ROWCOUNT_BIG.cs" />
+    <Compile Include="BuildIn\System\SCOPE_IDENTITY.cs" />
+    <Compile Include="BuildIn\System\SESSION_CONTEXT.cs" />
+    <Compile Include="BuildIn\System\SESSION_ID.cs" />
+    <Compile Include="BuildIn\System\SQL_VARIANT_PROPERTY.cs" />
+    <Compile Include="BuildIn\System\XACT_STATE.cs" />
+    <Compile Include="Core\AstNode.cs" />
+    <Compile Include="Core\AstParseErrorNode.cs" />
+    <Compile Include="Core\AstParseNode.cs" />
+    <Compile Include="Core\EmitWriter.cs" />
+    <Compile Include="Core\LexerReader.cs" />
+    <Compile Include="Core\ParseEnum.cs" />
+    <Compile Include="Core\ParserReader.cs" />
+    <Compile Include="Core\Token.cs" />
+    <Compile Include="Core\TokenID.cs" />
+    <Compile Include="DataModel\Column.cs" />
+    <Compile Include="DataModel\ColumnDS.cs" />
+    <Compile Include="DataModel\ColumnExpr.cs" />
+    <Compile Include="DataModel\ColumnList.cs" />
+    <Compile Include="DataModel\ColumnListDynamic.cs" />
+    <Compile Include="DataModel\ColumnListErrorStub.cs" />
+    <Compile Include="DataModel\ColumnListResult.cs" />
+    <Compile Include="DataModel\ColumnNative.cs" />
+    <Compile Include="DataModel\ColumnUnion.cs" />
+    <Compile Include="DataModel\ColumnUnknown.cs" />
+    <Compile Include="DataModel\ColumnWith.cs" />
+    <Compile Include="DataModel\Cursor.cs" />
+    <Compile Include="DataModel\DatabasePrincipal.cs" />
+    <Compile Include="DataModel\DatabaseSchema.cs" />
+    <Compile Include="DataModel\DocumentSpan.cs" />
+    <Compile Include="DataModel\Entity.cs" />
+    <Compile Include="DataModel\EntityAssembly.cs" />
+    <Compile Include="DataModel\EntityName.cs" />
+    <Compile Include="DataModel\EntityObject.cs" />
+    <Compile Include="DataModel\EntityObjectCode.cs" />
+    <Compile Include="DataModel\EntityObjectTable.cs" />
+    <Compile Include="DataModel\EntityService.cs" />
+    <Compile Include="DataModel\EntityType.cs" />
+    <Compile Include="DataModel\EntityTypeExternal.cs" />
+    <Compile Include="DataModel\EntityTypeTable.cs" />
+    <Compile Include="DataModel\EntityTypeUser.cs" />
+    <Compile Include="DataModel\Enums.cs" />
+    <Compile Include="DataModel\IExprResult.cs" />
+    <Compile Include="DataModel\ISqlType.cs" />
+    <Compile Include="DataModel\ISymbol.cs" />
+    <Compile Include="DataModel\ITable.cs" />
+    <Compile Include="DataModel\Index.cs" />
+    <Compile Include="DataModel\IndexColumn.cs" />
+    <Compile Include="DataModel\Interface.cs" />
+    <Compile Include="DataModel\Label.cs" />
+    <Compile Include="DataModel\Parameter.cs" />
+    <Compile Include="DataModel\RowSet.cs" />
+    <Compile Include="DataModel\SqlType.cs" />
+    <Compile Include="DataModel\SqlTypeAny.cs" />
+    <Compile Include="DataModel\SqlTypeCursorRef.cs" />
+    <Compile Include="DataModel\JsonSchema.cs" />
+    <Compile Include="DataModel\SqlTypeJson.cs" />
+    <Compile Include="DataModel\SqlTypeNative.cs" />
+    <Compile Include="DataModel\SqlTypeResponseNode.cs" />
+    <Compile Include="DataModel\SqlTypeTable.cs" />
+    <Compile Include="DataModel\SqlTypeVoid.cs" />
+    <Compile Include="DataModel\SymbolType.cs" />
+    <Compile Include="DataModel\TempTable.cs" />
+    <Compile Include="DataModel\ValueField.cs" />
+    <Compile Include="DataModel\ValueRecord.cs" />
+    <Compile Include="DataModel\ValueRecordField.cs" />
+    <Compile Include="DataModel\Variable.cs" />
+    <Compile Include="DataModel\VariableGlobal.cs" />
+    <Compile Include="DataModel\VariableLocal.cs" />
+    <Compile Include="EmitError.cs" />
+    <Compile Include="EmitOptions.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="GlobalCatalog.cs" />
+    <Compile Include="Internal\BuildinFunctionEntry.cs" />
+    <Compile Include="Internal\EntityDeclarationSort.cs" />
+    <Compile Include="Library\EmitContext.cs" />
+    <Compile Include="Library\EntityDeclaration.cs" />
+    <Compile Include="Library\FilePosition.cs" />
+    <Compile Include="Library\FileUpdate.cs" />
+    <Compile Include="Library\ICollectionDebugView.cs" />
+    <Compile Include="Library\Library.cs" />
+    <Compile Include="Logic\JsonPathParser.cs" />
+    <Compile Include="Library\ListHash.cs" />
+    <Compile Include="Library\AttrNodeParser.cs" />
+    <Compile Include="Library\ParseEntityName.cs" />
+    <Compile Include="Library\SourceMap.cs" />
+    <Compile Include="Library\SqlStatic.cs" />
+    <Compile Include="Logic\Calculator.cs" />
+    <Compile Include="Logic\LogicHelpers.cs" />
+    <Compile Include="Logic\LogicStatic.cs" />
+    <Compile Include="Logic\NodeHelpers.cs" />
+    <Compile Include="Logic\QuickFix.cs" />
+    <Compile Include="Logic\TypeHelpers.cs" />
+    <Compile Include="Logic\Validate.cs" />
+    <Compile Include="Logic\Xml.cs" />
+    <Compile Include="Node\Node_AS.cs" />
+    <Compile Include="Node\Declarations\Declaration.cs" />
+    <Compile Include="Node\Declarations\DeclarationEntity.cs" />
+    <Compile Include="Node\Declarations\DeclarationObjectCode.cs" />
+    <Compile Include="Node\Declarations\DeclarationService.cs" />
+    <Compile Include="Node\Declarations\DeclarationServiceComplexType.cs" />
+    <Compile Include="Node\Declarations\DeclarationServiceMethod.cs" />
+    <Compile Include="Node\Declarations\Declaration_ASSEMBLY.cs" />
+    <Compile Include="Node\Declarations\Declaration_FUNCTION.cs" />
+    <Compile Include="Node\Declarations\Declaration_PROCEDURE.cs" />
+    <Compile Include="Node\Declarations\Declaration_TRIGGER.cs" />
+    <Compile Include="Node\Declarations\Declaration_TYPE.cs" />
+    <Compile Include="Node\Declarations\Declaration_VIEW.cs" />
+    <Compile Include="Node\Declarations\Declarations.cs" />
+    <Compile Include="Node\Expr\Expr.cs" />
+    <Compile Include="Node\Expr\Expr_CASE.cs" />
+    <Compile Include="Node\Expr\Expr_Collection.cs" />
+    <Compile Include="Node\Expr\Expr_Constant.cs" />
+    <Compile Include="Node\Expr\Expr_ObjectMethodProperty.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_AndOr.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_BETWEEN.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_Calculation.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_Collate.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_Compare.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_IN.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_LIKE.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_NOT.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_NULL.cs" />
+    <Compile Include="Node\Expr\Expr_Operator_Unary.cs" />
+    <Compile Include="Node\Expr\Expr_PrimativeValue.cs" />
+    <Compile Include="Node\Expr\Expr_ResponseNode.cs" />
+    <Compile Include="Node\Expr\Expr_ServiceComplexType.cs" />
+    <Compile Include="Node\Expr\Expr_SimpleWrapper.cs" />
+    <Compile Include="Node\Expr\Expr_SubExpr.cs" />
+    <Compile Include="Node\Expr\Expr_Subquery.cs" />
+    <Compile Include="Node\Expr\Expr_TypeStatic.cs" />
+    <Compile Include="Node\Interfaces.cs" />
+    <Compile Include="Node\Node\Node_CursorName.cs" />
+    <Compile Include="Node\Node\Node_CustomNode.cs" />
+    <Compile Include="Node\Node\Node_Datatype.cs" />
+    <Compile Include="Node\Node\Node_EXEC_Parameter.cs" />
+    <Compile Include="Node\Node\Node_EntityNameDefine.cs" />
+    <Compile Include="Node\Node\Node_EntityNameReference.cs" />
+    <Compile Include="Node\Node\Node_External.cs" />
+    <Compile Include="Node\Node\Node_InstallInto.cs" />
+    <Compile Include="Node\Node\Node_Interface.cs" />
+    <Compile Include="Node\Node\Node_InterfaceList.cs" />
+    <Compile Include="Node\Node\Node_ObjectGrant.cs" />
+    <Compile Include="Node\Node\Node_ObjectGrantList.cs" />
+    <Compile Include="Node\Node\Node_Parameter.cs" />
+    <Compile Include="Node\Node\Node_ParameterList.cs" />
+    <Compile Include="Node\Node\Node_ParseOptions.cs" />
+    <Compile Include="Node\Node\Node_ProgrammabilityOptions.cs" />
+    <Compile Include="Node\Node\Node_QueryOptions.cs" />
+    <Compile Include="Node\Node\Node_ServiceMethodName.cs" />
+    <Compile Include="Node\Node\Node_TableHints.cs" />
+    <Compile Include="Node\Node\Node_TableVariable.cs" />
+    <Compile Include="Node\Node\Node_ValueField.cs" />
+    <Compile Include="Node\Node\Node_ValueRecord.cs" />
+    <Compile Include="Node\Node\Node_Values.cs" />
+    <Compile Include="Node\Query\Query_Select.cs" />
+    <Compile Include="Node\Query\Query_Select_Column.cs" />
+    <Compile Include="Node\Query\Query_Select_ColumnAssign.cs" />
+    <Compile Include="Node\Query\Query_Select_ColumnExpression.cs" />
+    <Compile Include="Node\Query\Query_Select_ColumnList.cs" />
+    <Compile Include="Node\Query\Query_Select_ColumnResponse.cs" />
+    <Compile Include="Node\Query\Query_Select_ColumnWildcard.cs" />
+    <Compile Include="Node\Query\Query_Select_FOR.cs" />
+    <Compile Include="Node\Query\Query_Select_GroupBy.cs" />
+    <Compile Include="Node\Query\Query_Select_OrderBy.cs" />
+    <Compile Include="Node\Query\Query_Select_OrderByItem.cs" />
+    <Compile Include="Node\Query\Query_Select_SELECT.cs" />
+    <Compile Include="Node\Query\TableSource.cs" />
+    <Compile Include="Node\Query\TableSource_RowSet.cs" />
+    <Compile Include="Node\Query\TableSource_RowSet_alias.cs" />
+    <Compile Include="Node\Query\TableSource_RowSet_function.cs" />
+    <Compile Include="Node\Query\TableSource_RowSet_inserted_deleted.cs" />
+    <Compile Include="Node\Query\TableSource_RowSet_join.cs" />
+    <Compile Include="Node\Query\TableSource_RowSet_local.cs" />
+    <Compile Include="Node\Query\TableSource_RowSet_object.cs" />
+    <Compile Include="Node\Query\TableSource_RowSet_subquery.cs" />
+    <Compile Include="Node\Query\TableSource_WithDeclaration.cs" />
+    <Compile Include="Node\Query\TableSource_WithDeclarationColumn.cs" />
+    <Compile Include="Node\Statement\Statement.cs" />
+    <Compile Include="Node\Statement\StatementBlock.cs" />
+    <Compile Include="Node\Statement\Statement_BEGIN_END.cs" />
+    <Compile Include="Node\Statement\Statement_BEGIN_TRANSACTION.cs" />
+    <Compile Include="Node\Statement\Statement_BREAK.cs" />
+    <Compile Include="Node\Statement\Statement_CLOSE.cs" />
+    <Compile Include="Node\Statement\Statement_COMMIT.cs" />
+    <Compile Include="Node\Statement\Statement_CONTINUE.cs" />
+    <Compile Include="Node\Statement\Statement_CREATE_TABLE.cs" />
+    <Compile Include="Node\Statement\Statement_DEALLOCATE.cs" />
+    <Compile Include="Node\Statement\Statement_DECLARE.cs" />
+    <Compile Include="Node\Statement\Statement_DECLARE_CURSOR.cs" />
+    <Compile Include="Node\Statement\Statement_DECLARE_TABLE.cs" />
+    <Compile Include="Node\Statement\Statement_DELETE.cs" />
+    <Compile Include="Node\Statement\Statement_DELETE_UPDATE.cs" />
+    <Compile Include="Node\Statement\Statement_DROP.cs" />
+    <Compile Include="Node\Statement\Statement_EXECUTE_expression.cs" />
+    <Compile Include="Node\Statement\Statement_EXECUTE_procedure.cs" />
+    <Compile Include="Node\Statement\Statement_EXEC_SQL.cs" />
+    <Compile Include="Node\Statement\Statement_FETCH.cs" />
+    <Compile Include="Node\Statement\Statement_GOTO.cs" />
+    <Compile Include="Node\Statement\Statement_IF.cs" />
+    <Compile Include="Node\Statement\Statement_INSERT.cs" />
+    <Compile Include="Node\Statement\Statement_OPEN.cs" />
+    <Compile Include="Node\Statement\Statement_PRINT.cs" />
+    <Compile Include="Node\Statement\Statement_RAISERROR.cs" />
+    <Compile Include="Node\Statement\Statement_RETURN.cs" />
+    <Compile Include="Node\Statement\Statement_ROLLBACK.cs" />
+    <Compile Include="Node\Statement\Statement_SELECT.cs" />
+    <Compile Include="Node\Statement\Statement_SET_assign.cs" />
+    <Compile Include="Node\Statement\Statement_SET_option.cs" />
+    <Compile Include="Node\Statement\Statement_THROW.cs" />
+    <Compile Include="Node\Statement\Statement_STORE.cs" />
+    <Compile Include="Node\Statement\Statement_TRY_CATCH.cs" />
+    <Compile Include="Node\Statement\Statement_UPDATE.cs" />
+    <Compile Include="Node\Statement\Statement_WAITFOR.cs" />
+    <Compile Include="Node\Statement\Statement_WHILE.cs" />
+    <Compile Include="Node\Statement\Statement_label.cs" />
+    <Compile Include="Node\Table\Table.cs" />
+    <Compile Include="Node\Table\Table_Column.cs" />
+    <Compile Include="Node\Table\Table_ColumnData.cs" />
+    <Compile Include="Node\Table\Table_ComputedColumn.cs" />
+    <Compile Include="Node\Table\Table_Constraint.cs" />
+    <Compile Include="Node\Table\Table_ConstraintCheck.cs" />
+    <Compile Include="Node\Table\Table_ConstraintIndex.cs" />
+    <Compile Include="Node\Type\TypeDeclaration.cs" />
+    <Compile Include="Node\Type\TypeDeclaration_External.cs" />
+    <Compile Include="Node\Type\TypeDeclaration_Table.cs" />
+    <Compile Include="Node\Type\TypeDeclaration_User.cs" />
+    <Compile Include="SourceFile.cs" />
+    <Compile Include="SqlDatabase.cs" />
+    <Compile Include="SymbolReference.cs" />
+    <Compile Include="Token\Binary.cs" />
+    <Compile Include="Token\BlockComment.cs" />
+    <Compile Include="Token\DataIsland.cs" />
+    <Compile Include="Token\EOF.cs" />
+    <Compile Include="Token\InvalidToken.cs" />
+    <Compile Include="Token\Keyword.cs" />
+    <Compile Include="Token\KeywordWithSymbol.cs" />
+    <Compile Include="Token\LineComment.cs" />
+    <Compile Include="Token\LocalName.cs" />
+    <Compile Include="Token\Name.cs" />
+    <Compile Include="Token\Number.cs" />
+    <Compile Include="Token\Operator.cs" />
+    <Compile Include="Token\QuotedName.cs" />
+    <Compile Include="Token\String.cs" />
+    <Compile Include="Token\WhiteSpace.cs" />
+    <Compile Include="Transpile\Context.cs" />
+    <Compile Include="Transpile\ContextBlock.cs" />
+    <Compile Include="Transpile\ContextInit.cs" />
+    <Compile Include="Transpile\ContextParent.cs" />
+    <Compile Include="Transpile\ContextRoot.cs" />
+    <Compile Include="Transpile\ContextRowSets.cs" />
+    <Compile Include="Transpile\ContextStatementQuery.cs" />
+    <Compile Include="Transpile\ContextSubquery.cs" />
+    <Compile Include="Transpiler.cs" />
+    <Compile Include="TypedTSqlMessage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
+    <None Include="Jannesen.Language.TypedTSql.ruleset">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SqlScripts\DropAllCode.sql" />
+    <EmbeddedResource Include="SqlScripts\KillConnections.sql" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Core\doc\statement\assembly.html" />
+    <Content Include="Core\doc\statement\function.html" />
+    <Content Include="Core\doc\statement\procedure.html" />
+    <Content Include="Core\doc\statement\trigger.html" />
+    <Content Include="Core\doc\statement\type.html" />
+    <Content Include="Core\doc\statement\view.html" />
+    <Content Include="Core\doc\style.css" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
