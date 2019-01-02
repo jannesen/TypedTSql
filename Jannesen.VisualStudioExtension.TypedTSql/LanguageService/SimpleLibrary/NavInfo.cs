@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 

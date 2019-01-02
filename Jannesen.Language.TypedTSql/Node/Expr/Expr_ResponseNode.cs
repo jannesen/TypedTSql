@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -111,8 +111,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 var nodeName = fieldname != null ? SqlStatic.QuoteString(fieldname) : "'root'";
 
-                switch(n_NodeType)
-                {
+                switch(n_NodeType) {
                 case DataModel.ResponseNodeType.Object:
                 case DataModel.ResponseNodeType.ObjectMandatory: emitWriter.WriteText("RAW(" + nodeName + ")");                break;
                 case DataModel.ResponseNodeType.ArrayValue:      emitWriter.WriteText("PATH(''),ROOT(" + nodeName + ")");      break;

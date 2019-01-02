@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Text;
@@ -120,8 +120,7 @@ namespace Jannesen.Language.TypedTSql.Core
         }
         internal    static          Token                   Create(TokenID id, Library.FilePosition beginning, Library.FilePosition ending, string text)
         {
-            switch(id)
-            {
+            switch(id) {
             case TokenID.InvalidCharacter:  return new TypedTSql.Token.InvalidCharacter(beginning, ending, text);
             case TokenID.WhiteSpace:        return new TypedTSql.Token.WhiteSpace(beginning, ending, text);
             case TokenID.LineComment:       return new TypedTSql.Token.LineComment(beginning, ending, text);

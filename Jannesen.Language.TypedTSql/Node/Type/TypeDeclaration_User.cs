@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Jannesen.Language.TypedTSql.Logic;
@@ -19,8 +19,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 do {
                     DataModel.SqlTypeFlags  f;
 
-                    switch(f = _parseEnum.Parse(this, reader))
-                    {
+                    switch(f = _parseEnum.Parse(this, reader)) {
                     case DataModel.SqlTypeFlags.CheckTSql:
                     case DataModel.SqlTypeFlags.CheckSave:
                     case DataModel.SqlTypeFlags.CheckStrong:
@@ -78,8 +77,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (reader.CurrentToken.isToken(Core.TokenID.LrBracket)) {
                 ParseToken(reader, Core.TokenID.LrBracket);
 
-                switch(reader.CurrentToken.validateToken(Core.TokenID.Number, "MAX"))
-                {
+                switch(reader.CurrentToken.validateToken(Core.TokenID.Number, "MAX")) {
                 case Core.TokenID.Number:
                     n_Parm1 = ParseInteger(reader);
 
@@ -160,8 +158,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     emitWriter.WriteText(" AND [system_type_id]=");
                     emitWriter.WriteText(_nativeType.SystemTypeId.ToString());
 
-                    switch(_nativeType.SystemType)
-                    {
+                    switch(_nativeType.SystemType) {
                     case DataModel.SystemType.Binary:
                     case DataModel.SystemType.VarBinary:
                     case DataModel.SystemType.Char:

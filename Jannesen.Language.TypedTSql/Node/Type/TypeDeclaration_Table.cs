@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Logic;
 
@@ -70,8 +70,7 @@ namespace Jannesen.Language.TypedTSql.Node
                             emitWriter.WriteText(" AND [system_type_id]=");
                             emitWriter.WriteText(nativeType.SystemTypeId.ToString());
 
-                            switch(nativeType.SystemType)
-                            {
+                            switch(nativeType.SystemType) {
                             case DataModel.SystemType.Binary:
                             case DataModel.SystemType.VarBinary:
                             case DataModel.SystemType.Char:

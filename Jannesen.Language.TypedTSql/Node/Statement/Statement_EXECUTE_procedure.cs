@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.Library;
@@ -73,8 +73,7 @@ namespace Jannesen.Language.TypedTSql.Node
             }
 
             if (n_ProcedureReference.Entity != null) {
-                switch(n_ProcedureReference.Entity.Type)
-                {
+                switch(n_ProcedureReference.Entity.Type) {
                 case DataModel.SymbolType.StoredProcedure:
                 case DataModel.SymbolType.StoredProcedure_clr:
                 case DataModel.SymbolType.ServiceMethod:

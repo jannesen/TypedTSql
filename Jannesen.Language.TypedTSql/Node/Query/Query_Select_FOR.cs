@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -42,8 +42,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             ForOptions allowed = ForOptions.None;
 
-            switch(Mode)
-            {
+            switch(Mode) {
             case ForMode.XML_AUTO:
                 allowed = ForOptions.TYPE | ForOptions.ROOT | ForOptions.ELEMENTS_XSINIL | ForOptions.ELEMENTS_ABSENT | ForOptions.ELEMENTS | ForOptions.BINARY_BASE64 | ForOptions.XMLDATA | ForOptions.XMLSCHEMA;
                 break;
@@ -71,8 +70,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 Options |= Options;
 
-                switch(option)
-                {
+                switch(option) {
                 case ForOptions.ROOT:
                     Root = _parseOptionName(reader);
                     break;

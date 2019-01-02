@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Library;
 using Jannesen.Language.TypedTSql.Logic;
@@ -52,8 +52,7 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseToken(reader, Core.TokenID.INSERT);
             ParseOptionalToken(reader, Core.TokenID.INTO);
 
-            switch(reader.CurrentToken.validateToken(Core.TokenID.LocalName, Core.TokenID.Name, Core.TokenID.QuotedName))
-            {
+            switch(reader.CurrentToken.validateToken(Core.TokenID.LocalName, Core.TokenID.Name, Core.TokenID.QuotedName)) {
             case Core.TokenID.LocalName:
                 n_Target = AddChild(new Node_TableVariable(reader));
                 break;
@@ -82,8 +81,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_InsertColumns = columns.ToArray();
             }
 
-            switch(reader.CurrentToken.validateToken(Core.TokenID.VALUES, Core.TokenID.SELECT, Core.TokenID.EXEC, Core.TokenID.EXECUTE))
-            {
+            switch(reader.CurrentToken.validateToken(Core.TokenID.VALUES, Core.TokenID.SELECT, Core.TokenID.EXEC, Core.TokenID.EXECUTE)) {
             case Core.TokenID.VALUES:
                 {
                     ParseToken(reader, Core.TokenID.VALUES);

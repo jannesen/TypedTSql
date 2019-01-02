@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -51,8 +51,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 n_Hints |= hint;
 
-                switch(hint)
-                {
+                switch(hint) {
                 case Hint._INDEX:
                     if (indexes == null)
                         indexes = new List<Core.TokenWithSymbol>();

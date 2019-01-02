@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -179,8 +179,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
         private                 void                    _addMethod(Method method)
         {
-            switch(method.HttpHandler)
-            {
+            switch(method.HttpHandler) {
             case "sql-json":
             case "sql-json2":
             case "sql-raw":

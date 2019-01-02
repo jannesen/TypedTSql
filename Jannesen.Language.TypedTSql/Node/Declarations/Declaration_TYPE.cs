@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Jannesen.Language.TypedTSql.Logic;
@@ -40,8 +40,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             n_Name = AddChild(new Node_EntityNameDefine(reader));
 
-            switch(reader.CurrentToken.validateToken("FROM", "EXTERNAL", "AS"))
-            {
+            switch(reader.CurrentToken.validateToken("FROM", "EXTERNAL", "AS")) {
             case "FROM":        n_TypeDeclaration = AddChild(new TypeDeclaration_User(reader));     break;
             case "EXTERNAL":    n_TypeDeclaration = AddChild(new TypeDeclaration_External(reader)); break;
             case "AS":          n_TypeDeclaration = AddChild(new TypeDeclaration_Table(reader));    break;

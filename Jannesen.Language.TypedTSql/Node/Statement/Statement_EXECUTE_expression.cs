@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Library;
 
@@ -40,8 +40,7 @@ namespace Jannesen.Language.TypedTSql.Node
             var executeExpression = new List<Core.IAstNode>();
 
             do {
-                switch(reader.CurrentToken.validateToken(Core.TokenID.LocalName, Core.TokenID.String))
-                {
+                switch(reader.CurrentToken.validateToken(Core.TokenID.LocalName, Core.TokenID.String)) {
                 case Core.TokenID.LocalName:
                     executeExpression.Add(AddChild(new Expr_PrimativeValue(reader, true)));
                     break;

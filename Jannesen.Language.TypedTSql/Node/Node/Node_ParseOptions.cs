@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Jannesen.Language.TypedTSql.Node
 {
@@ -13,8 +13,7 @@ namespace Jannesen.Language.TypedTSql.Node
             Core.Token  token;
 
             while ((token = ParseOptionalToken(reader, Core.TokenID.SCHEMA)) != null) {
-                switch(token.ID)
-                {
+                switch(token.ID) {
                 case Core.TokenID.SCHEMA:
                     Schema = (n_Schema = ParseName(reader)).ValueString;
                     break;

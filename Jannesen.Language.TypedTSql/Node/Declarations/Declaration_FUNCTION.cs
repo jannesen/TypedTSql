@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Jannesen.Language.TypedTSql.Core;
@@ -85,19 +85,16 @@ namespace Jannesen.Language.TypedTSql.Node
 
             ParseOptionalToken(reader, Core.TokenID.AS);
 
-            switch(_functionType)
-            {
+            switch(_functionType) {
             case DataModel.SymbolType.FunctionScalar:
             case DataModel.SymbolType.FunctionMultistatementTable:
-                switch(reader.CurrentToken.validateToken(Core.TokenID.BEGIN, Core.TokenID.EXTERNAL))
-                {
+                switch(reader.CurrentToken.validateToken(Core.TokenID.BEGIN, Core.TokenID.EXTERNAL)) {
                 case Core.TokenID.BEGIN:
                     ParseStatementBlock(reader, false);
                     break;
 
                 case Core.TokenID.EXTERNAL:
-                    switch(_functionType)
-                    {
+                    switch(_functionType) {
                     case DataModel.SymbolType.FunctionScalar:               _functionType = DataModel.SymbolType.FunctionScalar_clr;                break;
                     case DataModel.SymbolType.FunctionMultistatementTable:  _functionType = DataModel.SymbolType.FunctionMultistatementTable_clr;   break;
                     }
@@ -125,8 +122,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Parameters?.TranspileNode(context);
                 TranspileOptions(context);
 
-                switch(_functionType)
-                {
+                switch(_functionType) {
                 case DataModel.SymbolType.FunctionScalar:
                     n_ReturnType.TranspileNode(context);
                     _returnType = ((Node_Datatype)n_ReturnType).SqlType;
@@ -166,8 +162,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 _declarationTranspiled = true;
             }
 
-            switch(_functionType)
-            {
+            switch(_functionType) {
             case DataModel.SymbolType.FunctionInlineTable:
                 break;
 

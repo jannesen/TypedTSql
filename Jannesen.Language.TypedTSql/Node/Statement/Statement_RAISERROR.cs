@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.Library;
@@ -57,8 +57,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Severity.TranspileNode(context);
             n_State.TranspileNode(context);
 
-            switch(n_Message.SqlType.NativeType.SystemType)
-            {
+            switch(n_Message.SqlType.NativeType.SystemType) {
             case DataModel.SystemType.Int:
             case DataModel.SystemType.Char:
             case DataModel.SystemType.VarChar:

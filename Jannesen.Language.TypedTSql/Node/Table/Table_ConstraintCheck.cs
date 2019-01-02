@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Jannesen.Language.TypedTSql.Node
 {
@@ -26,8 +26,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      static      bool                        CanParse(Core.ParserReader reader, TableType type)
         {
-            switch(type)
-            {
+            switch(type) {
             case TableType.Temp:
                 return reader.CurrentToken.isToken(Core.TokenID.CONSTRAINT) &&
                        reader.Peek(3)[2].isToken(Core.TokenID.CHECK);

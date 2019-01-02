@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -63,8 +63,7 @@ namespace Jannesen.Language.TypedTSql.Core
             if (c == '/' && _charAt(_curpos) == '*')                                return _readBlockComment();
 
             if (_charAt(_curpos) == '=') {
-                switch(c)
-                {
+                switch(c) {
                 case '>':   ++_curpos;  return _newToken(Core.TokenID.GreaterEqual);
                 case '<':   ++_curpos;  return _newToken(Core.TokenID.LessEqual);
                 case '!':   ++_curpos;  return _newToken(Core.TokenID.NotEqual);
@@ -84,8 +83,7 @@ namespace Jannesen.Language.TypedTSql.Core
                 return _newToken(Core.TokenID.NotEqual);
             }
 
-            switch(c)
-            {
+            switch(c) {
             case '=':       return _newToken(Core.TokenID.Equal);
             case '>':       return _newToken(Core.TokenID.Greater);
             case '<':       return _newToken(Core.TokenID.Less);

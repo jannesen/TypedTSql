@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,8 +27,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                 this.ReturnValue = null;
                 this.Values      = null;
 
-                switch(entity)
-                {
+                switch(entity) {
                 case LTTS_DataModel.EntityObjectCode entityCode:
                     {
                         this.Parameters = entityCode.Parameters;
@@ -75,8 +74,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 
         public      static      bool                        hasItemObject(LTTS_DataModel.SymbolType type)
         {
-            switch(type)
-            {
+            switch(type) {
             case LTTS_DataModel.SymbolType.TypeUser:
             case LTTS_DataModel.SymbolType.TypeExternal:
             case LTTS_DataModel.SymbolType.TypeTable:
@@ -101,8 +99,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         }
         public      static      ItemEntity                  Create(ItemWithName parent, string name, LTTS_DataModel.Entity entity)
         {
-            switch(entity.Type)
-            {
+            switch(entity.Type) {
             case LTTS_DataModel.SymbolType.TypeUser:                            return new ItemEntityType(parent, name, entity);
             case LTTS_DataModel.SymbolType.TypeExternal:                        return new ItemEntityType(parent, name, entity);
             case LTTS_DataModel.SymbolType.TypeTable:                           return new ItemEntityType(parent, name, entity);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -69,14 +69,12 @@ namespace Jannesen.Language.TypedTSql.Node
 
             var nativeType = sqlType.NativeType;
 
-            switch(nativeType.SystemType)
-            {
+            switch(nativeType.SystemType) {
             case DataModel.SystemType.TinyInt:
             case DataModel.SystemType.SmallInt:
             case DataModel.SystemType.Int:
             case DataModel.SystemType.BigInt:
-                switch(n_Operator.ID)
-                {
+                switch(n_Operator.ID) {
                 case Core.TokenID.Minus:
                 case Core.TokenID.Plus:
                 case Core.TokenID.BitNot:
@@ -90,8 +88,7 @@ namespace Jannesen.Language.TypedTSql.Node
             case DataModel.SystemType.Money:
             case DataModel.SystemType.Float:
             case DataModel.SystemType.Real:
-                switch(n_Operator.ID)
-                {
+                switch(n_Operator.ID) {
                 case Core.TokenID.Minus:
                 case Core.TokenID.Plus:
                     return ;
@@ -106,8 +103,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                  Int32                           _calculate(Int32 value)
         {
-            switch(n_Operator.ID)
-            {
+            switch(n_Operator.ID) {
             case Core.TokenID.Minus:        return -value;
             case Core.TokenID.Plus:         return value;
             case Core.TokenID.BitNot:       return ~value;
@@ -116,8 +112,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                  Int64                           _calculate(Int64 value)
         {
-            switch(n_Operator.ID)
-            {
+            switch(n_Operator.ID) {
             case Core.TokenID.Minus:        return -value;
             case Core.TokenID.Plus:         return value;
             case Core.TokenID.BitNot:       return ~value;
@@ -126,8 +121,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                  decimal                         _calculate(decimal value)
         {
-            switch(n_Operator.ID)
-            {
+            switch(n_Operator.ID) {
             case Core.TokenID.Minus:        return -value;
             case Core.TokenID.Plus:         return value;
             default:                        throw new TranspileException(this, "Can't calculate '" + n_Operator + "'.");
@@ -135,8 +129,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                  double                          _calculate(double value)
         {
-            switch(n_Operator.ID)
-            {
+            switch(n_Operator.ID) {
             case Core.TokenID.Minus:        return -value;
             case Core.TokenID.Plus:         return value;
             default:                        throw new TranspileException(this, "Can't calculate '" + n_Operator + "'.");

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
@@ -43,8 +43,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 
         private     static  string                                          _mapClassification(LTTS.TypedTSqlMessageClassification classification)
         {
-            switch(classification)
-            {
+            switch(classification) {
             case LTTS.TypedTSqlMessageClassification.ParseError:        return PredefinedErrorTypeNames.SyntaxError;
             case LTTS.TypedTSqlMessageClassification.TranspileError:    return PredefinedErrorTypeNames.CompilerError;
             case LTTS.TypedTSqlMessageClassification.TranspileWarning:  return PredefinedErrorTypeNames.Warning;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Transpile;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -33,8 +33,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public                                          Expr_Constant(Core.ParserReader reader)
         {
-            switch((n_Value = ParseToken(reader, Core.TokenID.Number, Core.TokenID.String, Core.TokenID.BinaryValue, Core.TokenID.NULL, Core.TokenID.Plus, Core.TokenID.Minus)).ID)
-            {
+            switch((n_Value = ParseToken(reader, Core.TokenID.Number, Core.TokenID.String, Core.TokenID.BinaryValue, Core.TokenID.NULL, Core.TokenID.Plus, Core.TokenID.Minus)).ID) {
             case Core.TokenID.Plus:
             case Core.TokenID.Minus:
                 n_Sign = n_Value;
@@ -55,8 +54,7 @@ namespace Jannesen.Language.TypedTSql.Node
             _constValue = null;
 
             try {
-                switch(n_Value.ID)
-                {
+                switch(n_Value.ID) {
                 case Core.TokenID.Number:           _transpile_Number();                    break;
                 case Core.TokenID.String:           _transpile_String();                    break;
                 case Core.TokenID.BinaryValue:      _transpile_BinaryValue();               break;

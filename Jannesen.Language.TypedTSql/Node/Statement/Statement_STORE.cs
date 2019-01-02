@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Jannesen.Language.TypedTSql.Core;
@@ -47,8 +47,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     ParseToken(reader, "DENY");
 
                     do {
-                        switch(ParseToken(reader, "INSERT", "UPDATE", "DELETE", "UPDATEOF").Text.ToUpper())
-                        {
+                        switch(ParseToken(reader, "INSERT", "UPDATE", "DELETE", "UPDATEOF").Text.ToUpper()) {
                         case "INSERT":      n_DenyInsert = true;        break;
                         case "UPDATE":      n_DenyUpdate = true;        break;
                         case "DELETE":      n_DenyDelete = true;        break;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Transpile;
 using Jannesen.Language.TypedTSql.Logic;
 
@@ -50,8 +50,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             var exprType = n_Expr.ExpressionType;
 
-            switch(exprType)
-            {
+            switch(exprType) {
             case ExprType.Const:
             case ExprType.Variable:
                 _exprType = exprType;

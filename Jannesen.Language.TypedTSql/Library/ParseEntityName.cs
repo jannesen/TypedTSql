@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 
 namespace Jannesen.Language.TypedTSql.Library
@@ -19,8 +19,7 @@ namespace Jannesen.Language.TypedTSql.Library
             while (pos < fullname.Length) {
                 char c = fullname[pos++];
 
-                switch(c)
-                {
+                switch(c) {
                 case '[':
                     if (q) {
                         if (pos < fullname.Length)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -15,8 +15,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      static new  bool                            CanParse(Core.ParserReader reader)
         {
-            switch(reader.CurrentToken.ID)
-            {
+            switch(reader.CurrentToken.ID) {
             case Core.TokenID.Equal:
             case Core.TokenID.NotEqual:
             case Core.TokenID.Less:

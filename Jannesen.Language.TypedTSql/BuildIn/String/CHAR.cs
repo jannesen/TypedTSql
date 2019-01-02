@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Node;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.BuildIn;
@@ -20,8 +20,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             if (sqlType is DataModel.SqlTypeAny)
                 return new DataModel.SqlTypeNative(DataModel.SystemType.Char, maxLength:1);
 
-            switch (sqlType.NativeType.SystemType)
-            {
+            switch (sqlType.NativeType.SystemType) {
             case DataModel.SystemType.TinyInt:
             case DataModel.SystemType.SmallInt:
             case DataModel.SystemType.Int:

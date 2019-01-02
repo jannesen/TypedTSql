@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 using Jannesen.Language.TypedTSql.Node;
 
@@ -10,8 +10,7 @@ namespace Jannesen.Language.TypedTSql.Logic
 
         public  static  DataModel.ISqlType          Transpile(Transpile.Context context, Core.IAstNode node, string methodName, IExprNode[] arguments)
         {
-            switch(methodName.ToLower())
-            {
+            switch(methodName.ToLower()) {
             case "query":
                 Validate.NumberOfArguments(arguments, 1);
                 _transpileXQuery(context, node, arguments[0]);

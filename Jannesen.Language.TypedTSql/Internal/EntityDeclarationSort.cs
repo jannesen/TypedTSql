@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Library;
 
@@ -97,8 +97,7 @@ namespace Jannesen.Language.TypedTSql.Internal
         {
             EntityDeclarationHashList   listhash;
 
-            switch(entityDeclaration.EntityType)
-            {
+            switch(entityDeclaration.EntityType) {
             case DataModel.SymbolType.Assembly:
                 listhash = _assemblies;
                 break;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,8 +41,7 @@ namespace Jannesen.Language.TypedTSql.Library
 
         internal    static      DataModel.SymbolType    ParseObjectType(string stype)
         {
-            switch(stype)
-            {
+            switch(stype) {
             case "AF":          return DataModel.SymbolType.FunctionAggregateFunction_clr;
             case "C ":          return DataModel.SymbolType.Constraint_Check;
             case "D ":          return DataModel.SymbolType.Default;

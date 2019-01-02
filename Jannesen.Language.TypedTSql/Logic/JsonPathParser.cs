@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 
 namespace Jannesen.Language.TypedTSql.Logic
@@ -43,8 +43,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             Token currentToken;
 
             for (;;) {
-                switch((currentToken = _readToken()).id)
-                {
+                switch((currentToken = _readToken()).id) {
                 case TokenId.EOP:
                     return _schema;
 
@@ -62,8 +61,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                     if (_readToken().id != TokenId.CloseBracket)
                         throw new FormatException("Expect ']'.");
 
-                    switch(currentToken.id)
-                    {
+                    switch(currentToken.id) {
                     case TokenId.Integer:
                         _selectArray();
                         break;
@@ -90,8 +88,7 @@ namespace Jannesen.Language.TypedTSql.Logic
 
             char c = _path[_pos++];
 
-            switch(c)
-            {
+            switch(c) {
             case '$':       return new Token() { id = TokenId.DollarSign      };
             case '.':       return new Token() { id = TokenId.Dot             };
             case '[':       return new Token() { id = TokenId.OpeningBracket  };

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -67,8 +67,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             while (permissions != 0) {
                 if ((permissions & p) != 0) {
-                    switch(p)
-                    {
+                    switch(p) {
                     case Permissions.SELECT:            emitWriter.WriteText("SELECT");             break;
                     case Permissions.INSERT:            emitWriter.WriteText("INSERT");             break;
                     case Permissions.UPDATE:            emitWriter.WriteText("UPDATE");             break;

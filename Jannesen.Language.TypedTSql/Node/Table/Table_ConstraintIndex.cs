@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Library;
 
@@ -59,8 +59,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      static      bool                        CanParse(Core.ParserReader reader, TableType type)
         {
-            switch(type)
-            {
+            switch(type) {
             case TableType.Temp:
                 return reader.CurrentToken.isToken(Core.TokenID.CONSTRAINT) &&
                        reader.Peek(3)[2].isToken(Core.TokenID.PRIMARY, Core.TokenID.UNIQUE);
@@ -74,8 +73,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                                              Table_ConstraintIndex(Core.ParserReader reader, TableType type): base (reader, type)
         {
-            switch(reader.CurrentToken.validateToken(Core.TokenID.PRIMARY, Core.TokenID.UNIQUE))
-            {
+            switch(reader.CurrentToken.validateToken(Core.TokenID.PRIMARY, Core.TokenID.UNIQUE)) {
             case Core.TokenID.PRIMARY:
                 ParseToken(reader, Core.TokenID.PRIMARY);
                 ParseToken(reader, Core.TokenID.KEY);

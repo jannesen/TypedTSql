@@ -1,4 +1,4 @@
-﻿DECLARE @cmd        varchar(128);
+DECLARE @cmd        varchar(128);
 
 DECLARE ccmd CURSOR LOCAL STATIC
     FOR SELECT 'KILL '+convert(varchar, s.[session_id])

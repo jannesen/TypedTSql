@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Jannesen.Language.TypedTSql.Node
 {
@@ -36,8 +36,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 var token  = reader.CurrentToken;
                 var option = ParseEnum<Option>(reader, _parseEnum);
 
-                switch(option)
-                {
+                switch(option) {
                 case Option.EXECUTE_AS_PRINCIPEL:
                     m_Principel = (Token.String)ParseToken(reader, Core.TokenID.String);
                     break;
@@ -67,8 +66,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         private     static          Option                  _allowedOption(DataModel.SymbolType type)
         {
-            switch(type)
-            {
+            switch(type) {
             case DataModel.SymbolType.View:
                 return Option.ENCRYPTION | Option.SCHEMABINDING | Option.VIEW_METADATA;
 

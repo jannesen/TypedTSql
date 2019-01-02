@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Library;
 
@@ -20,8 +20,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         protected               void                                ParseTarget(Core.ParserReader reader)
         {
-            switch(reader.CurrentToken.validateToken(Core.TokenID.Name, Core.TokenID.QuotedName, Core.TokenID.LocalName))
-            {
+            switch(reader.CurrentToken.validateToken(Core.TokenID.Name, Core.TokenID.QuotedName, Core.TokenID.LocalName)) {
             case Core.TokenID.Name:
             case Core.TokenID.QuotedName:
                 n_Target = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.Unknown));

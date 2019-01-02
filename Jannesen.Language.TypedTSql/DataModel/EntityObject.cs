@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
@@ -19,8 +19,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             var entityType = Library.SqlStatic.ParseObjectType(dataReader.GetString(2));
             var entityName = new DataModel.EntityName(database, dataReader.GetString(0), dataReader.GetString(1));
 
-            switch(entityType)
-            {
+            switch(entityType) {
             case SymbolType.TableInternal:
             case SymbolType.TableSystem:
             case SymbolType.TableUser:

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -259,8 +259,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         }
         private                 Regex                               _getValidator()
         {
-            switch(_symbolType)
-            {
+            switch(_symbolType) {
             case LTTS.DataModel.SymbolType.TypeUser:
             case LTTS.DataModel.SymbolType.TypeExternal:
             case LTTS.DataModel.SymbolType.TypeTable:
@@ -323,8 +322,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         }
         private                 DatabaseItem                        _constructDatabaseItem(LTTS.DataModel.ISymbol symbol)
         {
-            switch(symbol.Type)
-            {
+            switch(symbol.Type) {
             case LTTS.DataModel.SymbolType.TableUser:
                 {
                     if (symbol is LTTS.DataModel.EntityObjectTable entityTable && entityTable.EntityName.Database == null) {

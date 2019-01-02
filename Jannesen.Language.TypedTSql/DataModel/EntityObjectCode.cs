@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -116,8 +116,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         public      override    string                          DatabaseReadFromCmd()
         {
-            switch(Type)
-            {
+            switch(Type) {
             case SymbolType.View:
             case SymbolType.FunctionInlineTable:
             case SymbolType.FunctionMultistatementTable:

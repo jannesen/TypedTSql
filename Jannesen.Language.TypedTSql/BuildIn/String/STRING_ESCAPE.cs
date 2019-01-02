@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Node;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.BuildIn;
@@ -23,8 +23,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             if (sqlType is DataModel.SqlTypeAny)
                 return sqlType;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.Char:
             case DataModel.SystemType.VarChar:
                 return DataModel.SqlTypeNative.VarChar_MAX;

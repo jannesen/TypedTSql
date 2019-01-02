@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Jannesen.Language.TypedTSql.Library;
@@ -48,8 +48,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             ParseOptionalAS(reader);
 
-            switch(reader.CurrentToken.validateToken(Core.TokenID.BEGIN, Core.TokenID.EXTERNAL))
-            {
+            switch(reader.CurrentToken.validateToken(Core.TokenID.BEGIN, Core.TokenID.EXTERNAL)) {
             case Core.TokenID.BEGIN:
                 _procedureType = DataModel.SymbolType.StoredProcedure;
                 ParseStatementBlock(reader, true);

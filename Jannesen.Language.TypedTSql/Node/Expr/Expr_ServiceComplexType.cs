@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Library;
 using Jannesen.Language.TypedTSql.Logic;
@@ -133,8 +133,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 var nodeName = fieldname != null ? SqlStatic.QuoteString(fieldname) : "'root'";
 
                 emitWriter.WriteText(" FOR XML ");
-                switch(((Expr_ResponseNode)_complexType.n_Statement).n_NodeType)
-                {
+                switch(((Expr_ResponseNode)_complexType.n_Statement).n_NodeType) {
                 case DataModel.ResponseNodeType.Object:
                 case DataModel.ResponseNodeType.ObjectMandatory:  emitWriter.WriteText("RAW(" + nodeName + ")");                break;
                 case DataModel.ResponseNodeType.ArrayValue:      emitWriter.WriteText("PATH('value'),ROOT(" + nodeName + ")"); break;

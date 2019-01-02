@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Core;
 using Jannesen.Language.TypedTSql.Logic;
 
@@ -18,15 +18,13 @@ namespace Jannesen.Language.TypedTSql.Node
             var propertymethod = ParseToken(reader, TokenID.PROPERTY, TokenID.METHOD).ID;
 
             if (ParseOptionalToken(reader, TokenID.STATIC) != null) {
-                switch(propertymethod)
-                {
+                switch(propertymethod) {
                 case TokenID.METHOD:    n_Type = DataModel.SymbolType.ExternalStaticMethod;     break;
                 case TokenID.PROPERTY:  n_Type = DataModel.SymbolType.ExternalStaticProperty;   break;
                 }
             }
             else {
-                switch(propertymethod)
-                {
+                switch(propertymethod) {
                 case TokenID.METHOD:    n_Type = DataModel.SymbolType.ExternalMethod;           break;
                 case TokenID.PROPERTY:  n_Type = DataModel.SymbolType.ExternalProperty;         break;
                 }

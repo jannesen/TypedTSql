@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Jannesen.Language.TypedTSql.Node
 {
@@ -40,12 +40,10 @@ namespace Jannesen.Language.TypedTSql.Node
 
             n_Join = ParseToken(reader, Core.TokenID.INNER, Core.TokenID.LEFT, Core.TokenID.RIGHT, Core.TokenID.FULL, Core.TokenID.CROSS, Core.TokenID.OUTER, Core.TokenID.JOIN);
 
-            switch(n_Join.ID)
-            {
+            switch(n_Join.ID) {
             default:
                 if (!n_Join.isToken(Core.TokenID.JOIN)) {
-                    switch(n_Join.ID)
-                    {
+                    switch(n_Join.ID) {
                     case Core.TokenID.INNER:    _n_JoinType = JoinType.INNER;       break;
                     case Core.TokenID.LEFT:     _n_JoinType = JoinType.LEFT_OUTER;  break;
                     case Core.TokenID.RIGHT:    _n_JoinType = JoinType.RIGHT_OUTER; break;
@@ -58,8 +56,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     n_JoinOption = ParseOptionalToken(reader, "LOOP", "HASH", "MERGE", "REMOTE");
 
                     if (n_JoinOption != null) {
-                        switch(n_JoinOption.Text.ToUpper())
-                        {
+                        switch(n_JoinOption.Text.ToUpper()) {
                         case "LOOP":    n_JoinOptions = JoinOption.LOOP;        break;
                         case "HASH":    n_JoinOptions = JoinOption.HASH;        break;
                         case "MERGE":   n_JoinOptions = JoinOption.MERGE;       break;
@@ -74,8 +71,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 break;
 
             case Core.TokenID.CROSS:
-                switch(ParseToken(reader, Core.TokenID.JOIN, Core.TokenID.APPLY).ID)
-                {
+                switch(ParseToken(reader, Core.TokenID.JOIN, Core.TokenID.APPLY).ID) {
                 case Core.TokenID.JOIN:     _n_JoinType = JoinType.CROSS_JOIN;      break;
                 case Core.TokenID.APPLY:    _n_JoinType = JoinType.CROSS_APPLY;     break;
                 }
@@ -89,8 +85,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             n_RowSet = AddChild(TableSource_RowSet_alias.Parse(reader, true));
 
-            switch (_n_JoinType)
-            {
+            switch (_n_JoinType) {
             case JoinType.INNER:
             case JoinType.LEFT_OUTER:
             case JoinType.RIGHT_OUTER:

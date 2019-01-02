@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -64,8 +64,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 if (n_EntityName.Entity == null)
                     return ;
 
-                switch(n_EntityName.Entity.Type)
-                {
+                switch(n_EntityName.Entity.Type) {
                 case DataModel.SymbolType.TypeUser:
                     _expressionType = ExprType.Const;
                     _transpile_userdatatype(context);

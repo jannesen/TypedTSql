@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio;
 using OLE = Microsoft.VisualStudio.OLE.Interop;
@@ -42,8 +42,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Library
 
         private                         uint                    _getSupportedCategoryFields(uint category)
         {
-            switch (category)
-            {
+            switch (category) {
             case (uint)LIB_CATEGORY.LC_LISTTYPE:
                 return (uint)_LIB_LISTTYPE.LLT_HIERARCHY;
             }

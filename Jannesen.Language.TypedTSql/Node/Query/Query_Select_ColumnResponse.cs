@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Core;
 
@@ -36,8 +36,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override        void                    TranspileNode(Transpile.Context context)
         {
-            switch(n_SelectContext)
-            {
+            switch(n_SelectContext) {
             case Query_SelectContext.ExpressionResponseObject:
                 if (n_FieldName == null)
                     context.AddError(this, "Field name missing");

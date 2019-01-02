@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Node;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.BuildIn;
@@ -26,8 +26,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 
             var nativeType = sqlType.NativeType;
 
-            switch (nativeType.SystemType)
-            {
+            switch (nativeType.SystemType) {
             case DataModel.SystemType.SmallInt:
             case DataModel.SystemType.Int:
             case DataModel.SystemType.BigInt:

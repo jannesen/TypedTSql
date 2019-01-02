@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 
 namespace Jannesen.Language.TypedTSql.DataModel
@@ -56,8 +56,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                  bool                isVarLength
         {
             get {
-                switch(SystemType)
-                {
+                switch(SystemType) {
                 case SystemType.VarBinary:
                 case SystemType.VarChar:
                 case SystemType.NVarChar:
@@ -71,8 +70,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                  bool                isUnicode
         {
             get {
-                switch(SystemType)
-                {
+                switch(SystemType) {
                 case SystemType.NChar:
                 case SystemType.NVarChar:
                     return true;
@@ -100,8 +98,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                  byte                SystemTypeId
         {
             get {
-                switch(SystemType)
-                {
+                switch(SystemType) {
                 case SystemType.Image:              return   34;
                 case SystemType.Text:               return   35;
                 case SystemType.UniqueIdentifier:   return   36;
@@ -140,8 +137,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                  string              NativeTypeString
         {
             get {
-                switch(SystemType)
-                {
+                switch(SystemType) {
                 case SystemType.BigInt:             return "bigint";
                 case SystemType.Binary:             return "binary("            + _maxLengthToString() + ")";
                 case SystemType.Bit:                return "bit";
@@ -179,8 +175,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         public                                      SqlTypeNative(SystemType systemType, int maxLength=0, byte precision=0, byte scale=0)
         {
-            switch(systemType)
-            {
+            switch(systemType) {
             case SystemType.Binary:
             case SystemType.VarBinary:
             case SystemType.Char:
@@ -207,8 +202,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                 break;
             }
 
-            switch(systemType)
-            {
+            switch(systemType) {
             case SystemType.Numeric:
             case SystemType.Decimal:
                 if (precision < 1 || precision > 38)
@@ -250,8 +244,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         {
             var         systemType = _mapSystemType(dataReader.GetByte(colOffset));
 
-            switch(systemType)
-            {
+            switch(systemType) {
             case SystemType.Binary:
             case SystemType.VarBinary:
             case SystemType.Char:
@@ -326,8 +319,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             byte            precision;
             byte            scale;
 
-            switch(systemType)
-            {
+            switch(systemType) {
             case SystemType.Binary:
             case SystemType.VarBinary:
             case SystemType.Char:
@@ -433,8 +425,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         }
         public      static      SystemType          ParseSystemType(string typeName)
         {
-            switch(typeName)
-            {
+            switch(typeName) {
             case "bigint":              return SystemType.BigInt;
             case "binary":              return SystemType.Binary;
             case "bit":                 return SystemType.Bit;
@@ -483,8 +474,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         {
             name = name.ToLower();
 
-            switch(name)
-            {
+            switch(name) {
             case "hierarchyid":
             case "geometry":
             case "geography":
@@ -500,8 +490,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         }
         public      static      int                 SystemTypeMaxLength(SystemType systemType)
         {
-            switch(systemType)
-            {
+            switch(systemType) {
             case SystemType.Binary:
             case SystemType.VarBinary:
                 return 8000;
@@ -573,8 +562,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         private     static      SqlTypeNative       _constructSimpleType(SystemType systemType)
         {
-            switch(systemType)
-            {
+            switch(systemType) {
             case SystemType.Unknown:        throw new ArgumentException("Invalid system type id.");
 
             case SystemType.Bit:                return Bit;
@@ -599,8 +587,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         private     static      SystemType          _mapSystemType(byte system_type_id)
         {
-            switch(system_type_id)
-            {
+            switch(system_type_id) {
             case  34:   return SystemType.Image;
             case  35:   return SystemType.Text;
             case  36:   return SystemType.UniqueIdentifier;

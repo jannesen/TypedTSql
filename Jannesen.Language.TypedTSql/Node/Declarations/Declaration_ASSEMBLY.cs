@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Library;
 
@@ -44,8 +44,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             ParseToken(reader, Core.TokenID.FROM);
 
-            switch(reader.CurrentToken.validateToken(Core.TokenID.String, "FILEBINARY"))
-            {
+            switch(reader.CurrentToken.validateToken(Core.TokenID.String, "FILEBINARY")) {
             case Core.TokenID.String:
                 reader.AddError(new ParseException(reader.CurrentToken, "Assembly declaration only supported with filebinary."));
                 ParseToken(reader);

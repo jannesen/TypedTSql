@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.Library;
 
@@ -24,8 +24,7 @@ namespace Jannesen.Language.TypedTSql.Node
             string option = ParseToken(reader, "ANSI_DEFAULTS", "ANSI_NULLS", "ANSI_NULL_DFLT_OFF", "ANSI_NULL_DFLT_ON", "ANSI_PADDING", "ANSI_WARNINGS", "ARITHABORT", "ARITHIGNORE", "CONCAT_NULL_YIELDS_NULL", "CONTEXT_INFO", "CURSOR_CLOSE_ON_COMMIT", "DATEFIRST", "DATEFORMAT", "DEADLOCK_PRIORITY", "FIPS_FLAGGER", "FORCEPLAN", "IDENTITY_INSERT", "IMPLICIT_TRANSACTIONS", "LANGUAGE", "LOCK_TIMEOUT", "NOCOUNT", "NOEXEC", "NUMERIC_ROUNDABORT", "PARSEONLY", "QUERY_GOVERNOR_COST_LIMIT", "QUOTED_IDENTIFIER", "REMOTE_PROC_TRANSACTIONS", "ROWCOUNT", "SHOWPLAN_ALL", "SHOWPLAN_TEXT", "SHOWPLAN_XML", "STATISTICSIO", "STATISTICSPROFILE", "STATISTICSTIME", "STATISTICSXML", "TEXTSIZE", "TRANSACTION", "XACT_ABORT").Text.ToUpper();
             n_Options = new string[] { option };
 
-            switch(option)
-            {
+            switch(option) {
             // https://msdn.microsoft.com/en-us/library/ms187768.aspx
             case "CONTEXT_INFO":
                 n_Value = ParseSimpleExpression(reader);
@@ -43,8 +42,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             // https://msdn.microsoft.com/en-us/library/ms186736.aspx
             case "DEADLOCK_PRIORITY":
-                switch(reader.CurrentToken.ID)
-                {
+                switch(reader.CurrentToken.ID) {
                 case Core.TokenID.Name:         n_Value = ParseToken(reader, new string[] { "LOW", "NORMAL", "HIGH"});  break;
                 default:                        n_Value = ParseSimpleExpression(reader);                                break;
                 }
@@ -90,8 +88,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 ParseToken(reader, "ISOLATION");
                 ParseToken(reader, "LEVEL");
 
-                switch(ParseToken(reader, "READ", "REPEATABLE", "SNAPSHOT", "SERIALIZABLE").Text.ToUpper())
-                {
+                switch(ParseToken(reader, "READ", "REPEATABLE", "SNAPSHOT", "SERIALIZABLE").Text.ToUpper()) {
                 case "READ":
                     ParseToken(reader, "UNCOMMITTED", "COMMITTED");
                     break;
@@ -123,8 +120,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (n_Value is IExprNode valueExpr) {
                 valueExpr.TranspileNode(context);
 
-                switch(n_Options[0])
-                {
+                switch(n_Options[0]) {
                 case "DEADLOCK_PRIORITY":
                     Validate.ValueInt(valueExpr);
 

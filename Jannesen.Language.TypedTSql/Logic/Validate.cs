@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Jannesen.Language.TypedTSql.Logic
@@ -55,8 +55,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             if (sqlType == null || sqlType is DataModel.SqlTypeAny)
                 return;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.TinyInt:
             case DataModel.SystemType.SmallInt:
             case DataModel.SystemType.Int:
@@ -73,8 +72,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             if (sqlType == null || sqlType is DataModel.SqlTypeAny)
                 return null;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.TinyInt:
             case DataModel.SystemType.SmallInt:
             case DataModel.SystemType.Int:
@@ -101,8 +99,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             if (sqlType == null || sqlType is DataModel.SqlTypeAny)
                 return null;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.TinyInt:
             case DataModel.SystemType.SmallInt:
             case DataModel.SystemType.Int:
@@ -130,8 +127,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             if (sqlType == null || sqlType is DataModel.SqlTypeAny)
                 return null;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.Char:
             case DataModel.SystemType.NChar:
             case DataModel.SystemType.VarChar:
@@ -158,8 +154,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             if (sqlType == null || sqlType is DataModel.SqlTypeAny)
                 return;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.TinyInt:
             case DataModel.SystemType.SmallInt:
             case DataModel.SystemType.Int:
@@ -182,8 +177,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             if (sqlType == null || sqlType is DataModel.SqlTypeAny)
                 return;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.Char:
             case DataModel.SystemType.NChar:
             case DataModel.SystemType.VarChar:
@@ -201,8 +195,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             if (sqlType == null || sqlType is DataModel.SqlTypeAny)
                 return;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.Char:
             case DataModel.SystemType.NChar:
             case DataModel.SystemType.VarChar:
@@ -224,8 +217,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             if (sqlType == null || sqlType is DataModel.SqlTypeAny)
                 return sqlType;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.Date:
                 if (mode == DatePartMode.Time)
                     throw new TranspileException(expr, "Not allowed to add time to date.");
@@ -267,8 +259,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             if (sqlType == null || sqlType is DataModel.SqlTypeAny)
                 return ;
 
-            switch(sqlType.NativeType.SystemType)
-            {
+            switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.Binary:
             case DataModel.SystemType.VarBinary:
                 return;
@@ -302,8 +293,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         {
             Core.TokenWithSymbol.SetNoSymbol(datepart);
 
-            switch(datepart.Text.ToUpper())
-            {
+            switch(datepart.Text.ToUpper()) {
             case "YEAR":
             case "YY":
             case "QUARTER":
@@ -370,8 +360,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      bool                        ConvertStyle(DataModel.SqlTypeNative nativeType, int style)
         {
-            switch(nativeType.SystemType)
-            {
+            switch(nativeType.SystemType) {
             case DataModel.SystemType.SmallMoney:
             case DataModel.SystemType.Money:
                 return (style == 0 || style == 1 || style == 2);
@@ -471,8 +460,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                     if (targetType.NativeType == sourceType.NativeType)
                         return true;
 
-                    switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType))
-                    {
+                    switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType)) {
                     case ConversionType.Save:
                         return true;
                     }
@@ -481,8 +469,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                     if (targetType.NativeType == sourceType.NativeType)
                         return true;
 
-                    switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType))
-                    {
+                    switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType)) {
                     case ConversionType.Save:
                     case ConversionType.SaveCalculated_Implicit:
                     case ConversionType.Implicit:
@@ -578,8 +565,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         {
             var nativeType = sqlType.NativeType;
 
-            switch(nativeType.SystemType)
-            {
+            switch(nativeType.SystemType) {
             case DataModel.SystemType.Bit:
                 if (!(constValue is Int32 && ((Int32)constValue == 0 || (Int32)constValue == 1)))
                     throw new TranspileException(errorNode, "Expect boolean const.");
@@ -794,8 +780,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                         return true;
 
                     if (sourceFlags.isComputedFunction() && !output) {
-                        switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType))
-                        {
+                        switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType)) {
                         case ConversionType.Save:
                         case ConversionType.SaveCalculated_Implicit:
                             return true;
@@ -811,8 +796,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                         return true;
 
                     if (!output) {
-                        switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType))
-                        {
+                        switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType)) {
                         case ConversionType.Save:
                             return true;
 
@@ -831,8 +815,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                         return true;
 
                     if (!output) {
-                        switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType))
-                        {
+                        switch(TypeHelpers.Conversion(sourceType.NativeType, targetType.NativeType)) {
                         case ConversionType.Save:
                         case ConversionType.SaveCalculated_Implicit:
                         case ConversionType.Implicit:

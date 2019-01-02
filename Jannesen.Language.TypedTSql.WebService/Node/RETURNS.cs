@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Xml;
 using LTTSQL = Jannesen.Language.TypedTSql;
@@ -102,8 +102,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         public      static      void                                WriteResponseXml(XmlWriter xmlWriter, LTTSQL.DataModel.ISqlType sqlType)
         {
             if (sqlType is LTTSQL.DataModel.SqlTypeResponseNode reponseNodeType) {
-                switch(reponseNodeType.NodeType)
-                {
+                switch(reponseNodeType.NodeType) {
                 case LTTSQL.DataModel.ResponseNodeType.Object:
                     xmlWriter.WriteAttributeString("type", "object");
                     _writeResponseObject(xmlWriter, reponseNodeType);

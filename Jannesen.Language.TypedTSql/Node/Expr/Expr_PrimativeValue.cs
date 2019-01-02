@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Logic;
 
@@ -63,8 +63,7 @@ namespace Jannesen.Language.TypedTSql.Node
             }
             else {
                 do {
-                    switch(reader.CurrentToken.ID)
-                    {
+                    switch(reader.CurrentToken.ID) {
                     case Core.TokenID.Name:
                     case Core.TokenID.QuotedName:
                         if (reader.NextPeek().isToken(Core.TokenID.LrBracket)) {

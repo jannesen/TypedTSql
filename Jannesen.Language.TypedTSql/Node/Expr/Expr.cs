@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -124,8 +124,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         private     static      IExprNode               _precedence8_Primative(Core.ParserReader reader)
         {
-            switch (reader.CurrentToken.ID)
-            {
+            switch (reader.CurrentToken.ID) {
             // Constant
             case Core.TokenID.Number:
             case Core.TokenID.String:

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Library;
 
@@ -16,8 +16,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             ParseToken(reader, Core.TokenID.THROW);
 
-            switch(reader.CurrentToken.validateToken(Core.TokenID.Number, Core.TokenID.LocalName, Core.TokenID.String))
-            {
+            switch(reader.CurrentToken.validateToken(Core.TokenID.Number, Core.TokenID.LocalName, Core.TokenID.String)) {
             case Core.TokenID.Number:
             case Core.TokenID.LocalName:
                 n_ErrorNumber = _parseArgument(reader, Core.TokenID.Number, Core.TokenID.LocalName);

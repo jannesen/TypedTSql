@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Node;
 using Jannesen.Language.TypedTSql.Logic;
 
@@ -57,18 +57,15 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             if (sqlType1 is DataModel.SqlTypeAny || sqlType2 is DataModel.SqlTypeAny)
                 return true;
 
-            switch(sqlType1.NativeType.SystemType)
-            {
+            switch(sqlType1.NativeType.SystemType) {
             case DataModel.SystemType.Time:
-                switch(sqlType2.NativeType.SystemType)
-                {
+                switch(sqlType2.NativeType.SystemType) {
                 case DataModel.SystemType.Time:             return true;
                 default:                                    return false;
                 }
 
             case DataModel.SystemType.Date:
-                switch(sqlType2.NativeType.SystemType)
-                {
+                switch(sqlType2.NativeType.SystemType) {
                 case DataModel.SystemType.Date:             return true;
                 default:                                    return false;
                 }
@@ -76,8 +73,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             case DataModel.SystemType.SmallDateTime:
             case DataModel.SystemType.DateTime:
             case DataModel.SystemType.DateTime2:
-                switch(sqlType2.NativeType.SystemType)
-                {
+                switch(sqlType2.NativeType.SystemType) {
                 case DataModel.SystemType.SmallDateTime:    return true;
                 case DataModel.SystemType.DateTime:         return true;
                 case DataModel.SystemType.DateTime2:        return true;

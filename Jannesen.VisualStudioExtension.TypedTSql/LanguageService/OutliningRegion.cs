@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.VisualStudio.Text.Tagging;
 using LTTS_Core       = Jannesen.Language.TypedTSql.Core;
 using LTTS_Node       = Jannesen.Language.TypedTSql.Node;
@@ -67,8 +67,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         }
         private static  string              _typedtsqlobjecttypeToString(LTTS_DataModel.SymbolType type)
         {
-            switch(type)
-            {
+            switch(type) {
             case LTTS_DataModel.SymbolType.Assembly:                            return "assembly";
             case LTTS_DataModel.SymbolType.TypeUser:                            return "type";
             case LTTS_DataModel.SymbolType.Default:                             return "default";

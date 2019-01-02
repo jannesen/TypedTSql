@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -373,8 +373,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                     if (_globalChangeCount > 0)
                         _setWork(WorkFlags.Delay);
 
-                    switch(work)
-                    {
+                    switch(work) {
                     case WorkFlags.Delay:
                         System.Diagnostics.Debug.WriteLine(Name + ": Delay");
                         try {

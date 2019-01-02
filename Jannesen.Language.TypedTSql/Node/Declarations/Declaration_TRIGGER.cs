@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Jannesen.Language.TypedTSql.Library;
@@ -43,8 +43,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             ParseWith(reader, DataModel.SymbolType.Trigger);
 
-            switch(ParseToken(reader, "FOR", "AFTER", "INSTEAD").Text.ToUpper())
-            {
+            switch(ParseToken(reader, "FOR", "AFTER", "INSTEAD").Text.ToUpper()) {
             case "INSTEAD":
                 ParseToken(reader, Core.TokenID.OF);
                 break;

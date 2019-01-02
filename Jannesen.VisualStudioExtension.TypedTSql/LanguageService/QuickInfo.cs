@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,8 +21,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
         public                                  QuickInfo(ITrackingSpan span, LTTS_Core.Token token, LTTS_DataModel.ISymbol symbol)
         {
-            switch(VSPackage.GetCurrentTheme())
-            {
+            switch(VSPackage.GetCurrentTheme()) {
             case VSPackage.ColorTheme.Dark:
                 _colorCategory = Brushes.MediumSeaGreen;
                 _colorType     = Brushes.CornflowerBlue;
@@ -44,8 +43,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         private             UIElement           _processSymbol(LTTS_DataModel.ISymbol symbol)
         {
             try {
-                switch(symbol.Type)
-                {
+                switch(symbol.Type) {
                 //case LTTS_DataModel.SymbolType.Assembly:
                 case LTTS_DataModel.SymbolType.TypeUser:                                return _processTypeUser((LTTS_DataModel.EntityTypeUser)symbol);
                 //case LTTS_DataModel.SymbolType.TypeAssembly:

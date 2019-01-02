@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using Jannesen.Language.TypedTSql.DataModel;
 using Jannesen.Language.TypedTSql.Internal;
@@ -59,8 +59,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn
 
             foreach(var type in types) {
                 if (type.IsClass && type.IsPublic) {
-                    switch(type.Namespace)
-                    {
+                    switch(type.Namespace) {
                     case "Jannesen.Language.TypedTSql.BuildIn.Func":
                         ScalarFunctions.Add(new BuildinFunctionDeclaration(type, false));
                         break;

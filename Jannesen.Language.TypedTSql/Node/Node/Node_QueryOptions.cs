@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.Library;
@@ -58,8 +58,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 n_Options |= option;
 
-                switch(option)
-                {
+                switch(option) {
                 case DataModel.QueryOptions.FAST:
                     n_Fast = ParseInteger(reader);
                     break;

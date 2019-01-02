@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
@@ -125,8 +125,7 @@ namespace Jannesen.Language.TypedTSql
         }
         public                  Entity                                          GetEntity(SymbolType type, EntityName name, bool loadDatabase=true)
         {
-            switch(type)
-            {
+            switch(type) {
             case SymbolType.Assembly:
                 {
                     var rtn = GetAssembly(name);

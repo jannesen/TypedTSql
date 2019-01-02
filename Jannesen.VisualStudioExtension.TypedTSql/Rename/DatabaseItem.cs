@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
@@ -80,8 +80,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         }
         public              _VSTREESTATECHANGEREFRESH           ToggleState()
         {
-            switch (CheckState)
-            {
+            switch (CheckState) {
             case __PREVIEWCHANGESITEMCHECKSTATE.PCCS_Checked:
                 CheckState = __PREVIEWCHANGESITEMCHECKSTATE.PCCS_Unchecked;
                 break;
@@ -120,8 +119,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         }
         private             string                              _cmd()
         {
-            switch(_renameType)
-            {
+            switch(_renameType) {
             case RenameType.TABLE:           return "EXEC sp_rename " + LTTS.Library.SqlStatic.QuoteString(_srcname) + ", " + LTTS.Library.SqlStatic.QuoteString(_getNewName()) + ", 'OBJECT'";
             case RenameType.COLUMN:          return "EXEC sp_rename " + LTTS.Library.SqlStatic.QuoteString(_srcname) + ", " + LTTS.Library.SqlStatic.QuoteString(_getNewName()) + ", 'COLUMN'";
             case RenameType.INDEX:           return "EXEC sp_rename " + LTTS.Library.SqlStatic.QuoteString(_srcname) + ", " + LTTS.Library.SqlStatic.QuoteString(_getNewName()) + ", 'INDEX'";
@@ -132,8 +130,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         private             string                              _setProperty()
         {
 
-            switch(_renameType)
-            {
+            switch(_renameType) {
             case RenameType.TABLE:              return _setProperty("refactor:orgname", _src[0] + "." + LTTS.Library.SqlStatic.QuoteName(_src[1]), "SCHEMA", _src[0], "TABLE", _src[1]);
             case RenameType.COLUMN:             return _setProperty("refactor:orgname", _src[2],                                                   "SCHEMA", _src[0], "TABLE", _src[1], "COLUMN", _src[2]);
             case RenameType.INDEX:              return _setProperty("refactor:orgname", _src[2],                                                   "SCHEMA", _src[0], "TABLE", _src[1], "INDEX", _src[2]);

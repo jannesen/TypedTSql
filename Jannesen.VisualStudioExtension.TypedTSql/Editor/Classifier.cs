@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text;
@@ -121,8 +121,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
             LTTS_DM.ISymbol symbol = (token as LTTS_Core.TokenWithSymbol)?.Symbol;
 
             if (symbol != null) {
-                switch(symbol.Type)
-                {
+                switch(symbol.Type) {
                 case LTTS_DM.SymbolType.BuildinFunction:                        return _cfBuildIn;
                 case LTTS_DM.SymbolType.TypeUser:                               return _cfType;
                 case LTTS_DM.SymbolType.TypeExternal:                           return _cfType;
@@ -147,8 +146,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
                 }
             }
 
-            switch(token.ID)
-            {
+            switch(token.ID) {
             case LTTS_Core.TokenID.BlockComment:                    return _cfComment;
             case LTTS_Core.TokenID.LineComment:                     return _cfComment;
             case LTTS_Core.TokenID.Name:                            return token.isKeyword ? _cfKeyword : _cfName;

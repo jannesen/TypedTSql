@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Node;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.BuildIn;
@@ -19,8 +19,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             if (arguments[0].isConstant()) {
                 var property = arguments[0].ConstValue() as string;
 
-                switch(property)
-                {
+                switch(property) {
                 case "net_transport":           return DataModel.SqlTypeNative.NVarChar_40;
                 case "protocol_type":           return DataModel.SqlTypeNative.NVarChar_40;
                 case "auth_scheme":             return DataModel.SqlTypeNative.NVarChar_40;

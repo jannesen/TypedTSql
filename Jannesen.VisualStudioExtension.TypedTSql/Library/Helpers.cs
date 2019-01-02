@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using LTTS = Jannesen.Language.TypedTSql;
 
@@ -20,8 +20,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Library
 
         public  static      string      SymbolTypeToString(LTTS.DataModel.SymbolType type)
         {
-            switch(type)
-            {
+            switch(type) {
             case LTTS.DataModel.SymbolType.Assembly:                            return "assembly";
             case LTTS.DataModel.SymbolType.TypeUser:                     return "user-defined-type";
             case LTTS.DataModel.SymbolType.TypeExternal:                        return "clr-type";

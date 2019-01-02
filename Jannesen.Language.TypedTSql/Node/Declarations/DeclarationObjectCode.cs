@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Library;
 
@@ -159,8 +159,7 @@ namespace Jannesen.Language.TypedTSql.Node
                             addLine = false;
 
                             foreach(string option in ((Statement_SET_option)child).n_Options) {
-                                switch(option)
-                                {
+                                switch(option) {
                                 case "ANSI_NULLS":                  setANSI_NULLS                  = false; break;
                                 case "ANSI_PADDING":                setANSI_PADDING                = false; break;
                                 case "ANSI_WARNINGS":               setANSI_WARNINGS               = false; break;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -55,8 +55,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
             bool fUnchecked = false;
 
             foreach(var item in LocationItem) {
-                switch(item.CheckState)
-                {
+                switch(item.CheckState) {
                 case __PREVIEWCHANGESITEMCHECKSTATE.PCCS_Checked:       fChecked   = true;      break;
                 case __PREVIEWCHANGESITEMCHECKSTATE.PCCS_Unchecked:     fUnchecked = true;      break;
                 }
@@ -119,8 +118,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         }
         public              _VSTREESTATECHANGEREFRESH           ToggleState()
         {
-            switch (CheckState)
-            {
+            switch (CheckState) {
             case __PREVIEWCHANGESITEMCHECKSTATE.PCCS_Checked:
                 CheckState = __PREVIEWCHANGESITEMCHECKSTATE.PCCS_Unchecked;
                 break;

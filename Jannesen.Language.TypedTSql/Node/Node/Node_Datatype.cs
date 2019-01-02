@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Jannesen.Language.TypedTSql.Node
 {
@@ -134,8 +134,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (n_Parm2 is Token.Number) context.ValidateInteger(n_Parm2, 0,   38);
 
             if (n_Parm1 == null && DefaultLength) {
-                switch(systemTypeId)
-                {
+                switch(systemTypeId) {
                 case DataModel.SystemType.Binary:
                 case DataModel.SystemType.VarBinary:
                 case DataModel.SystemType.Char:

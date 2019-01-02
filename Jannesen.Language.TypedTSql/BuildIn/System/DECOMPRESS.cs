@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Node;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.BuildIn;
@@ -19,8 +19,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 
             var sqlType = arguments[0].SqlType;
             if (!(sqlType == null || sqlType is DataModel.SqlTypeAny)) {
-                switch(sqlType.NativeType.SystemType)
-                {
+                switch(sqlType.NativeType.SystemType) {
                 case DataModel.SystemType.Binary:
                 case DataModel.SystemType.VarBinary:
                     break;

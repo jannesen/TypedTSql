@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
@@ -73,8 +73,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build.Library
             int         rpos = 0;
 
             for (int i = 0 ; i < fileparts.Length ; ++i) {
-                switch(fileparts[i])
-                {
+                switch(fileparts[i]) {
                 case "..":
                     if (rpos <= 0)
                         throw new BuildException("Invalid filename '" + filename + "'.");

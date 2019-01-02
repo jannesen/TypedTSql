@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,8 +47,7 @@ namespace Jannesen.Language.TypedTSql.Logic
 
         private static  Int32       _calculate(Core.TokenID operation, Int32 value1, Int32 value2)
         {
-            switch(operation)
-            {
+            switch(operation) {
             case Core.TokenID.Plus:         return value1 + value2;
             case Core.TokenID.Minus:        return value1 - value2;
             case Core.TokenID.BitAnd:       return value1 & value2;
@@ -62,8 +61,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         private static  Int64       _calculate(Core.TokenID operation, Int64 value1, Int64 value2)
         {
-            switch(operation)
-            {
+            switch(operation) {
             case Core.TokenID.Plus:         return value1 + value2;
             case Core.TokenID.Minus:        return value1 - value2;
             case Core.TokenID.BitAnd:       return value1 & value2;
@@ -77,8 +75,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         private static  decimal     _calculate(Core.TokenID operation, decimal value1, decimal value2)
         {
-            switch(operation)
-            {
+            switch(operation) {
             case Core.TokenID.Plus:         return value1 + value2;
             case Core.TokenID.Minus:        return value1 - value2;
             case Core.TokenID.Star:         return value1 * value2;
@@ -88,8 +85,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         private static  double      _calculate(Core.TokenID operation, double value1, double value2)
         {
-            switch(operation)
-            {
+            switch(operation) {
             case Core.TokenID.Plus:         return value1 + value2;
             case Core.TokenID.Minus:        return value1 - value2;
             case Core.TokenID.Star:         return value1 * value2;
@@ -99,8 +95,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         private static  string      _calculate(Core.TokenID operation, string value1, string value2)
         {
-            switch(operation)
-            {
+            switch(operation) {
             case Core.TokenID.Plus:         return value1 + value2;
             default:                        throw new InvalidOperationException();
             }

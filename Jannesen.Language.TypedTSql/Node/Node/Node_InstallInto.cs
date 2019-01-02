@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Jannesen.Language.TypedTSql.Logic;
@@ -158,8 +158,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 bool   rtn  = true;
                 string msg  = null;
 
-                switch(step)
-                {
+                switch(step) {
                 case 1:
                     if (!_emit_1())
                         return true;
@@ -403,8 +402,7 @@ namespace Jannesen.Language.TypedTSql.Node
                         _emit(" <> ");
                         _emit("c.");
                         _emit(columnName);
-                        switch(column.SqlType.NativeType.SystemType)
-                        {
+                        switch(column.SqlType.NativeType.SystemType) {
                         case DataModel.SystemType.VarChar:
                         case DataModel.SystemType.NVarChar:
                         case DataModel.SystemType.Char:
@@ -524,8 +522,7 @@ namespace Jannesen.Language.TypedTSql.Node
             {
                 string      columnName = setName + Library.SqlStatic.QuoteName(column.Name);
 
-                switch(column.SqlType.NativeType.SystemType)
-                {
+                switch(column.SqlType.NativeType.SystemType) {
                 case DataModel.SystemType.Bit:
                 case DataModel.SystemType.TinyInt:
                 case DataModel.SystemType.SmallInt:

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
@@ -437,8 +437,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         private static              ClassificationColor                     _getDefaultClassificationColor(VSPackage.ColorTheme theme, DefaultClassificationColor defaultColor)
         {
             if (defaultColor != null) {
-                switch(theme)
-                {
+                switch(theme) {
                 case VSPackage.ColorTheme.Dark:
                     return defaultColor.Dark;
 
@@ -449,8 +448,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
                 }
             }
             else {
-                switch(theme)
-                {
+                switch(theme) {
                 case VSPackage.ColorTheme.Dark:
                     return new ClassificationColor(Colors.White);
 

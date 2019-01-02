@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -68,8 +68,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public                  DataModel.EntityName            getReferencedEntity(DeclarationObjectCode declarationObjectCode)
         {
-            switch(ReferenceType)
-            {
+            switch(ReferenceType) {
             case EntityReferenceType.Object:
             case EntityReferenceType.Table:
             case EntityReferenceType.TableOrView:
@@ -110,8 +109,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             Validate.Schema(context, n_Schema);
 
-            switch (ReferenceType)
-            {
+            switch (ReferenceType) {
             case EntityReferenceType.Table:
             case EntityReferenceType.TableOrView:
             case EntityReferenceType.StoredProcedure:
@@ -188,8 +186,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (name.StartsWith("#"))
                 return null;
 
-            switch(ReferenceType)
-            {
+            switch(ReferenceType) {
             case EntityReferenceType.StoredProcedure:
                 if (name.StartsWith("sp_") ||
                     name.StartsWith("xp_"))
@@ -216,19 +213,16 @@ namespace Jannesen.Language.TypedTSql.Node
 
         private                 void                            _validateReference(DataModel.SymbolType entityType, EntityReferenceType referenceType)
         {
-            switch (referenceType)
-            {
+            switch (referenceType) {
             case EntityReferenceType.Table:
-                switch(entityType)
-                {
+                switch(entityType) {
                 case DataModel.SymbolType.TableUser:
                     return;
                 }
                 break;
 
             case EntityReferenceType.TableOrView:
-                switch(entityType)
-                {
+                switch(entityType) {
                 case DataModel.SymbolType.TableInternal:
                 case DataModel.SymbolType.TableSystem:
                 case DataModel.SymbolType.TableUser:
@@ -238,8 +232,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 break;
 
             case EntityReferenceType.StoredProcedure:
-                switch(entityType)
-                {
+                switch(entityType) {
                 case DataModel.SymbolType.StoredProcedure:
                 case DataModel.SymbolType.StoredProcedure_clr:
                 case DataModel.SymbolType.StoredProcedure_extended:
@@ -249,8 +242,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 break;
 
             case EntityReferenceType.FunctionTable:
-                switch(entityType)
-                {
+                switch(entityType) {
                 case DataModel.SymbolType.FunctionInlineTable:
                 case DataModel.SymbolType.FunctionMultistatementTable:
                 case DataModel.SymbolType.FunctionMultistatementTable_clr:
@@ -259,8 +251,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 break;
 
             case EntityReferenceType.UserDataType:
-                switch(entityType)
-                {
+                switch(entityType) {
                 case DataModel.SymbolType.TypeUser:
                 case DataModel.SymbolType.TypeExternal:
                 case DataModel.SymbolType.TypeTable:

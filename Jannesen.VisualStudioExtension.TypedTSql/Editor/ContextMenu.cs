@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using OLE = Microsoft.VisualStudio.OLE.Interop;
@@ -35,23 +35,20 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
             Task t;
 
             if (pguidCmdGroup == VSConstants.GUID_VSStandardCommandSet97) {
-                switch (nCmdID)
-                {
+                switch (nCmdID) {
                 case (uint)VSConstants.VSStd97CmdID.GotoDefn:                       t = Exec_GotoDefn();            return VSConstants.S_OK;
                 case (uint)VSConstants.VSStd97CmdID.FindReferences:                 t = Exec_FindReferences();      return VSConstants.S_OK;
                 }
             }
             else if (pguidCmdGroup == VSConstants.VSStd2K)
             {
-                switch (nCmdID)
-                {
+                switch (nCmdID) {
                 case (uint)VSConstants.VSStd2KCmdID.RENAME:                         t = Exec_Rename();              return VSConstants.S_OK;
                 }
             }
             else if (pguidCmdGroup == VSConstants.VsStd14)
             {
-                switch (nCmdID)
-                {
+                switch (nCmdID) {
                 case (uint)VSConstants.VSStd14CmdID.ShowQuickFixes:
                 case (uint)VSConstants.VSStd14CmdID.ShowQuickFixesForPosition:      t = Exec_ShowQuickFixes();      return VSConstants.S_OK;
                 }
@@ -63,23 +60,20 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         private         bool                    Query(ref Guid pguidCmdGroup, uint cmdid)
         {
             if (pguidCmdGroup == VSConstants.GUID_VSStandardCommandSet97) {
-                switch (cmdid)
-                {
+                switch (cmdid) {
                 case (uint)VSConstants.VSStd97CmdID.GotoDefn:                       return true;
                 case (uint)VSConstants.VSStd97CmdID.FindReferences:                 return true;
                 }
             }
             else if (pguidCmdGroup == VSConstants.VSStd2K)
             {
-                switch (cmdid)
-                {
+                switch (cmdid) {
                 case (uint)VSConstants.VSStd2KCmdID.RENAME:                         return true;
                 }
             }
             else if (pguidCmdGroup == VSConstants.VsStd14)
             {
-                switch (cmdid)
-                {
+                switch (cmdid) {
                 case (uint)VSConstants.VSStd14CmdID.ShowQuickFixes:                 return true;
                 case (uint)VSConstants.VSStd14CmdID.ShowQuickFixesForPosition:      return true;
                 }

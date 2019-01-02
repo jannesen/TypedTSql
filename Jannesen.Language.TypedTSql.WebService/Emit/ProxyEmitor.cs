@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using LTTSQL = Jannesen.Language.TypedTSql;
@@ -480,8 +480,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 else
                     name = parameter.n_Name.Text.Substring(1);
 
-                switch(source)
-                {
+                switch(source) {
                 case "querystring":
                 case "textjson":
                     {
@@ -562,8 +561,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
             private                 DeclareType                             _getTypeResponseNode(LTTSQL.Node.IExprResponseNode exprResponseNode)
             {
-                switch(exprResponseNode.ResponseNodeType)
-                {
+                switch(exprResponseNode.ResponseNodeType) {
                 case LTTSQL.DataModel.ResponseNodeType.Object:
                 case LTTSQL.DataModel.ResponseNodeType.ObjectMandatory:
                     return _getTypeResponseNodeObject(exprResponseNode);
@@ -616,8 +614,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                     return _proxyFile.getSimpleType(typeMapEntry.From, typeMapEntry.Expression);
 
                 if (sqlType is LTTSQL.DataModel.SqlTypeNative nativeType) {
-                    switch(nativeType.SystemType)
-                    {
+                    switch(nativeType.SystemType) {
                     case LTTSQL.DataModel.SystemType.Bit:
                         return _proxyFile.getSimpleType("jc3/jannesen.datatype", "Boolean");
 
@@ -667,8 +664,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
             private                 void                                    _addSimpleParameter(string source, string name, DeclareType type)
             {
-                switch(source)
-                {
+                switch(source) {
                 case "querystring":
                     _callArgs.Add(new RecordField() { Name = name, Type = type });
                     break;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
@@ -35,8 +35,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         private     static      PrincipalType           _mapDatabaseTypeToPrincipalType(string type)
         {
-            switch(type)
-            {
+            switch(type) {
             case "A":       return PrincipalType.APPLICATION_ROLE;
             case "C":       return PrincipalType.CERTIFICATE_MAPPED_USER;
             case "E":       return PrincipalType.EXTERNAL_USER;

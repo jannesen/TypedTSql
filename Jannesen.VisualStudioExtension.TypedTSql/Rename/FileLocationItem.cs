@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.VisualStudioExtension.TypedTSql.Library;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;

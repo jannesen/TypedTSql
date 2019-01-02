@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -26,8 +26,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 }
                 public      override        void                                TranspileNode(LTTSQL.Transpile.Context context)
                 {
-                    switch(n_Name)
-                    {
+                    switch(n_Name) {
                     case "timeout":
                         if (!int.TryParse(n_Value, out var value) || value < 5 || value > 300)
                             context.AddError(this, "Invalid timeout value.");
@@ -65,8 +64,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     n_Methods = methods.ToArray();
                 }
 
-                switch(Core.TokenWithSymbol.SetKeyword(ParseToken(reader, "HANDLER", "PROXY")).Text.ToUpper())
-                {
+                switch(Core.TokenWithSymbol.SetKeyword(ParseToken(reader, "HANDLER", "PROXY")).Text.ToUpper()) {
                 case "HANDLER":
                     n_HttpHandler = ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString;
                     break;
@@ -146,8 +144,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 for (int i = 0 ; i < path.Length ; ++i) {
                     char c = path[i];
 
-                    switch(c)
-                    {
+                    switch(c) {
                     case '{':
                         if (n == 0)
                             rtn.Append("{X}");
@@ -342,8 +339,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 if (ParseOptionalToken(reader, Core.TokenID.KEY) != null)
                     n_Key = true;
 
-                switch(reader.CurrentToken.ID)
-                {
+                switch(reader.CurrentToken.ID) {
                 case LTTSQL.Core.TokenID.REQUIRED:
                     ParseToken(reader);
                     n_Required = true;
@@ -561,8 +557,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 {
                     ParseToken(reader, "ARRAY");
 
-                    switch(reader.CurrentToken.validateToken("OBJECT", "VALUE"))
-                    {
+                    switch(reader.CurrentToken.validateToken("OBJECT", "VALUE")) {
                     case "OBJECT":
                         n_JsonSchemaElement = new JsonSchemaObject(reader);
                         break;

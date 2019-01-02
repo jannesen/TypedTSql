@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.DataModel

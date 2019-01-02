@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Jannesen.Language.TypedTSql.Node;
 using Jannesen.Language.TypedTSql.Logic;
 
@@ -19,8 +19,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn
             if (sqlType is DataModel.SqlTypeAny)
                 return DataModel.SqlTypeNative.Float;
 
-            switch (sqlType.NativeType.SystemType)
-            {
+            switch (sqlType.NativeType.SystemType) {
             case DataModel.SystemType.Numeric:
             case DataModel.SystemType.Decimal:
             case DataModel.SystemType.Real:
@@ -47,8 +46,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn
             if (sqlType is DataModel.SqlTypeAny)
                 return DataModel.SqlTypeNative.Float;
 
-            switch (sqlType.NativeType.SystemType)
-            {
+            switch (sqlType.NativeType.SystemType) {
             case DataModel.SystemType.Numeric:
             case DataModel.SystemType.Decimal:
             case DataModel.SystemType.Real:

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -33,8 +33,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Library
 
         public      override    string                  GetText(VSTREETEXTOPTIONS tto)
         {
-            switch(tto)
-            {
+            switch(tto) {
             case VSTREETEXTOPTIONS.TTO_DEFAULT:
             case VSTREETEXTOPTIONS.TTO_SEARCHTEXT:
             case VSTREETEXTOPTIONS.TTO_SORTTEXT:
@@ -46,8 +45,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Library
         }
         public      override    int                     GoToSource(VSOBJGOTOSRCTYPE srcType)
         {
-            switch(srcType)
-            {
+            switch(srcType) {
             case VSOBJGOTOSRCTYPE.GS_REFERENCE:
                 // When navigating with a mouse click in de Find Symbol Result window. Opening a document gives a E_ABORT error.
                 // Work around a problem using to navigate async.

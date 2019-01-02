@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.VisualStudio;
@@ -14,8 +14,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Commands
     {
         public                  CommandStatusResult     GetCommandStatus(IImmutableSet<IProjectTree> nodes, long commandId, bool focused, string commandText, CommandStatus progressiveStatus)
         {
-            switch ((VSConstants.VSStd97CmdID)commandId)
-            {
+            switch ((VSConstants.VSStd97CmdID)commandId) {
             case VSConstants.VSStd97CmdID.Refresh:
                 if (_languageServiceProject(nodes) != null)
                     return new CommandStatusResult(true, commandText,  progressiveStatus | CommandStatus.Enabled | CommandStatus.Supported);
@@ -26,8 +25,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Commands
         }
         public                  bool                    TryHandleCommand(IImmutableSet<IProjectTree> nodes, long commandId, bool focused, long commandExecuteOptions, IntPtr variantArgIn, IntPtr variantArgOut)
         {
-            switch ((VSConstants.VSStd97CmdID)commandId)
-            {
+            switch ((VSConstants.VSStd97CmdID)commandId) {
             case VSConstants.VSStd97CmdID.Refresh:
                 try {
                     var lsp = _languageServiceProject(nodes);
