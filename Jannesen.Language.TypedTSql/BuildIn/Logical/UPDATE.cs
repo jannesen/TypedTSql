@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Jannesen.Language.TypedTSql.Node;
 
 namespace Jannesen.Language.TypedTSql.BuildIn.Func

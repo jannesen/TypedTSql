@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Jannesen.Language.TypedTSql.Transpile;
 
 namespace Jannesen.Language.TypedTSql.Node

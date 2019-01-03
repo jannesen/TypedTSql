@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.VisualStudio.Text.Tagging;
 using LTTS_Core       = Jannesen.Language.TypedTSql.Core;
 using LTTS_Node       = Jannesen.Language.TypedTSql.Node;

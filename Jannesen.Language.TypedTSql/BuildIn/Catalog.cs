@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using Jannesen.Language.TypedTSql.DataModel;
 using Jannesen.Language.TypedTSql.Internal;

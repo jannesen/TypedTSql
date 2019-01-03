@@ -2,7 +2,7 @@ root = true
 
 [*.{cs,ttsql,sql,ts,tsx,js,css,scss,json,xml}]
 end_of_line = crlf
-charset = utf-8
+charset = utf-8-bom
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true

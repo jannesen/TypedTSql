@@ -1,4 +1,4 @@
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Utilities;
 
 namespace Jannesen.VisualStudioExtension.TypedTSql

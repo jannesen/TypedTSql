@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Node;
 using Jannesen.Language.TypedTSql.Logic;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Text.Editor;
