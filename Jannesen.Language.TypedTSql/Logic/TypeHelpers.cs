@@ -1455,6 +1455,8 @@ namespace Jannesen.Language.TypedTSql.Logic
             case DataModel.SystemType.TinyInt:
             case DataModel.SystemType.SmallInt:
                 switch(expr.SqlType.NativeType.SystemType) {
+                case DataModel.SystemType.TinyInt:
+                case DataModel.SystemType.SmallInt:
                 case DataModel.SystemType.Int:
                     Validate.ConstByType(nativeType, expr);
                     return nativeType;
