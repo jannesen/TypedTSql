@@ -144,11 +144,12 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
                 var position   = _textView.Caret.Position.BufferPosition.Position;
                 var tblsp      = _getTexBufferLanguageServiceProject();
                 await tblsp.LanguageService.WhenReady((project) => {
+                                                            var filePath = tblsp.FilePath;
                                                             (new Rename.Renamer(_serviceProvider,
                                                                                 project,
-                                                                                tblsp.FilePath,
+                                                                                filePath,
                                                                                 position,
-                                                                                project.FindReferencesAt(tblsp.FilePath, position))).Run();
+                                                                                project.FindReferencesAt(filePath, position))).Run();
                                                       });
             }
             catch(Exception err) {
@@ -158,11 +159,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 
         private         LanguageService.TextBufferLanguageServiceProject   _getTexBufferLanguageServiceProject()
         {
-            var textBufferLanguageService = LanguageService.TextBufferLanguageServiceProject.GetLanguageServiceProject(_serviceProvider, _textView.TextBuffer);
-            if (textBufferLanguageService == null)
-                throw new Exception("File is not part of TypedTSqlproject.");
-
-            return textBufferLanguageService;
+            return LanguageService.TextBufferLanguageServiceProject.GetLanguageServiceProject(_serviceProvider, _textView.TextBuffer);
         }
     }
 }

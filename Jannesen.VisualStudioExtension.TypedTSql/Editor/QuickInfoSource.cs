@@ -40,9 +40,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 
             try {
                 var tblsp = LanguageService.TextBufferLanguageServiceProject.GetLanguageServiceProject(_serviceProvider, _textBuffer);
-                if (tblsp == null)
-                    throw new Exception("File is not part of a project.");
-
                 var quickInfo = tblsp.LanguageService.GetQuickInfoAt(tblsp.FilePath, triggerPoint.Value);
                 if (quickInfo != null) {
                     applicableToSpan = quickInfo.Span;
