@@ -10,20 +10,16 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 {
     public class ItemReturnValue: TreeViewItem
     {
-        public                  ItemEntity                      ItemObject              { get ; private set; }
-
         public                                                  ItemReturnValue(ItemEntity itemObject, LTTS_DataModel.ISqlType sqlType)
         {
-            this.ItemObject = itemObject;
-
             var control = itemObject.ItemProject.Control;
             base.Style  = control.GetStyle("TreeViewItemStyle");
-            base.Header = new TextBlock() { Text  = "Returns : " + ItemObject.TypeName(sqlType) };
+            base.Header = new TextBlock() { Text  = "Returns : " + itemObject.TypeName(sqlType) };
         }
 
-        public                  void                                Refresh(LTTS_DataModel.ISqlType sqlType)
+        public                  void                            Refresh(ItemEntity itemObject, LTTS_DataModel.ISqlType sqlType)
         {
-            ((TextBlock)base.Header).Text = "Returns : " + ItemObject.TypeName(sqlType);
+            ((TextBlock)base.Header).Text = "Returns : " + itemObject.TypeName(sqlType);
         }
     }
 }

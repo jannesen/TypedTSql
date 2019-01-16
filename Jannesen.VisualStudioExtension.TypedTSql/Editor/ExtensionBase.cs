@@ -31,8 +31,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         }
         protected                   LanguageService.FileResult                      GetFileResult()
         {
-            var tblsp = LanguageService.TextBufferLanguageServiceProject.GetLanguageServiceProject(ServiceProvider, TextBuffer);
-            return tblsp?.LanguageService.GetFileResult(tblsp.FilePath);
+            return LanguageService.TextBufferLanguageServiceProject.GetLanguageServiceProject(ServiceProvider, TextBuffer).GetFileResult();
         }
 
         private                     void                                            _onContentTypeChanged(object sender, ContentTypeChangedEventArgs e)

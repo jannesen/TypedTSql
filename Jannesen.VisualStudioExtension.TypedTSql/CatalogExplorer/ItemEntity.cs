@@ -129,12 +129,12 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                         OnCreateContextMenu1(entity);
                         OnCreateContextMenu2(entity);
 
-                        var data = new EntityData(entity);
+                        var data           = new EntityData(entity);
                         var curParameters  = _getChild<ItemParameters>();
                         var curValues      = _getChild<ItemValues>();
                         var curColumns     = _getChild<ItemColumns>();
                         var curReturnValue = _getChild<ItemReturnValue>();
-                        var items = new List<TreeViewItem>();
+                        var items          = new List<TreeViewItem>();
 
                         if (data.Parameters  != null) {
                             if (curParameters != null) {
@@ -162,7 +162,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                         }
                         if (data.ReturnValue != null) {
                             if (curReturnValue != null) {
-                                curReturnValue.Refresh(data.ReturnValue);
+                                curReturnValue.Refresh(this, data.ReturnValue);
                                 items.Add(curReturnValue);
                             }
                             else

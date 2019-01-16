@@ -21,6 +21,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 
         public                  void                            Refresh(ItemColumns itemColumns, LTTS_DataModel.Column column)
         {
+            this.ColumnName  = column.Name;
             var text = column.Name + " : " + ItemEntity.TypeName(column.SqlType);
 
             if (((TextBlock)base.Header).Text != text)

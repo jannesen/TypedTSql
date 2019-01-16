@@ -11,7 +11,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 {
     public class ItemValue: Item
     {
-        public                  string                          EntityName          { get ; private set; }
         public                  string                          ValueName           { get ; private set; }
 
         public                                                  ItemValue(ItemValues itemValues, LTTS_DataModel.ValueRecord value): base(itemValues)
@@ -23,6 +22,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 
         public                  void                            Refresh(LTTS_DataModel.ValueRecord value)
         {
+            this.ValueName  = value.Name;
             var text = LTTS_Library.SqlStatic.QuoteName(value.Name);
 
             if (((TextBlock)base.Header).Text != text)

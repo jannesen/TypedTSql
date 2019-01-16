@@ -20,6 +20,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 
         public                  void                            Refresh(ItemParameters itemParameters, LTTS_DataModel.Parameter parameter)
         {
+            this.ParameterName  = parameter.Name;
             var text = parameter.Name + " : " + ItemEntity.TypeName(parameter.SqlType);
 
             if (((TextBlock)base.Header).Text != text)

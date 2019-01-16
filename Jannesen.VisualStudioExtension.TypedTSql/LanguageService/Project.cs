@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
@@ -21,16 +22,15 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
     internal sealed class Project: IDisposable
     {
-
-        public class SourceFile
+        public class SourceFile: IDisposable
         {
-            public              Project                     Project;
-            public              string                      FullPath;
-            public              int                         PrevVersionNumber;
-            public              ITextBuffer                 TextBuffer;
-            public              ITextSnapshot               TextSnapshot;
-            public              LTTS.SourceFile             TypedTSqlSourceFile;
-            public  volatile    FileResult                  Result;
+            public              Project             Project;
+            public  readonly    string              FullPath;
+            public              int                 PrevVersionNumber;
+            public              ITextBuffer         TextBuffer;
+            public              ITextSnapshot       TextSnapshot;
+            public              LTTS.SourceFile     TypedTSqlSourceFile;
+            public  volatile    FileResult          Result;
 
             public                                  SourceFile(Project project, string fullPath, LTTS.SourceFile typedTSqlSourceFile)
             {
@@ -38,6 +38,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 this.FullPath            = fullPath;
                 this.PrevVersionNumber   = -1;
                 this.TypedTSqlSourceFile = typedTSqlSourceFile;
+            }
+            public              void                Dispose()
+            {
+                Project             = null;
+                TextBuffer          = null;
+                TextSnapshot        = null;
+                TypedTSqlSourceFile = null;
+                Result              = null;
             }
 
             public              bool                SetTextBuffer(ITextBuffer textBuffer)
@@ -84,7 +92,57 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             private             void                _TextBuffer_Changed(object sender, EventArgs e)
             {
-                Project.TextBuffer_Changed(this);
+                Project?.TextBuffer_Changed(this);
+            }
+        }
+
+        class HierarchyListener : IVsHierarchyEvents, IDisposable
+        {
+            private             Project             _project;
+            private             IVsHierarchy        _hierarchy;
+            private             uint                _cookie;
+
+            public                                  HierarchyListener(Project project, IVsHierarchy hierarchy)
+            {
+                _project   = project;
+                _hierarchy = hierarchy;
+                ErrorHandler.ThrowOnFailure(_hierarchy.AdviseHierarchyEvents(this, out _cookie));
+            }
+            public              void                Dispose()
+            {
+                var hr = _hierarchy.UnadviseHierarchyEvents(_cookie);
+                if (hr != VSConstants.S_OK)
+                {
+                    System.Diagnostics.Debug.WriteLine("UnadviseHierarchyEvents FAILED!");
+                }
+            }
+
+            public              int                 OnItemAdded(uint itemidParent, uint itemidSiblingPrev, uint itemidAdded)
+            {
+                _project.SyncProject();
+                return VSConstants.S_OK;
+            }
+            public              int                 OnItemsAppended(uint itemidParent)
+            {
+                _project.SyncProject();
+                return VSConstants.S_OK;
+            }
+            public              int                 OnItemDeleted(uint itemid)
+            {
+                _project.SyncProject();
+                return VSConstants.S_OK;
+            }
+            public              int                 OnPropertyChanged(uint itemid, int propid, uint flags)
+            {
+                return VSConstants.S_OK;
+            }
+            public              int                 OnInvalidateItems(uint itemidParent)
+            {
+                return VSConstants.S_OK;
+            }
+            public              int                 OnInvalidateIcon(IntPtr hicon)
+            {
+                return VSConstants.S_OK;
             }
         }
 
@@ -107,6 +165,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         public                  string                                          Name                { get; private set; }
         public                  IVsProject                                      VSProject           { get; private set; }
         public                  Service                                         Service             { get; private set; }
+        private                 HierarchyListener                               _hierarchyListener;
         private                 WorkFlags                                       _workFlags;
         private                 CancellationTokenSource                         _cancelWait;
         private                 Task                                            _workTask;
@@ -136,6 +195,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             _transpiler          = new LTTS.Transpiler();
             _errorList           = new ErrorList(Service, VSProject);
             _lockObject          = new object();
+
+            _hierarchyListener = new HierarchyListener(this, (IVsHierarchy)vsproject);
             System.Diagnostics.Debug.WriteLine(Name + ": Create LanguageService");
         }
 
@@ -151,13 +212,21 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 _workFlags = WorkFlags.Stopped;
                 _cancelWait.Dispose();
 
-                foreach(var s in _sourceFiles)
-                    s.Value.SetTextBuffer();
+                foreach(var s in _sourceFiles) {
+                    s.Value.Dispose();
+                }
+
+                _sourceFiles.Clear();
             }
 
             Task.Run(async () =>
                     {
                         await VSThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                        if (_hierarchyListener != null) {
+                            _hierarchyListener.Dispose();
+                            _hierarchyListener = null;
+                        }
 
                         if (_errorList != null) {
                             _errorList.Dispose();
@@ -315,12 +384,27 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             }
         }
 
-        internal                void                                TextBufferConnected(TextBufferLanguageServiceProject textBufferLanguageService)
+        internal                void                                SyncProject()
         {
-            System.Diagnostics.Debug.WriteLine(Name + ": TestBufferConnected: " + textBufferLanguageService.FilePath);
-
-            if (_setWork(WorkFlags.SyncOpenDocuments))
+            if (_setWork(WorkFlags.SyncProject))
                 Start();
+        }
+        internal                SourceFile                          TextBufferConnected(TextBufferLanguageServiceProject textBufferLanguageService)
+        {
+            var filePath = textBufferLanguageService.FilePath;
+            System.Diagnostics.Debug.WriteLine(Name + ": TextBufferConnected: " + filePath);
+
+            SourceFile sourceFile;
+
+            lock(_lockObject)
+            {
+                if (_setWork(WorkFlags.SyncOpenDocuments))
+                    Start();
+
+                _sourceFiles.TryGetValue(filePath.ToUpper(), out sourceFile);
+            }
+
+            return sourceFile;
         }
         internal                FileResult                          GetFileResult(string fullname)
         {
@@ -433,7 +517,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         private     async       Task                                _syncProjectAsync()
         {
             System.Diagnostics.Debug.WriteLine(Name + ": SyncProject");
-
             WorkFlags   setWork = WorkFlags.None;
 
             try {
@@ -459,8 +542,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
                         foreach (var item in project.GetItems("SqlFile")) {
                             string fullpath = item.GetMetadataValue("FullPath");
-                            if (LTTS.SourceFile.isTypedTSqlFile(fullpath))
+                            if (LTTS.SourceFile.isTypedTSqlFile(fullpath)) {
                                 projectFiles.Add(fullpath);
+                            }
                         }
                     }
                 }
@@ -483,21 +567,28 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                     var hashset = new HashSet<string>();
 
                     foreach(var fullpath in projectFiles) {
-                        var fp = fullpath.ToUpper();
+                        var fullpath_U = fullpath.ToUpper();
 
-                        hashset.Add(fp);
+                        hashset.Add(fullpath_U);
 
-                        if (!_sourceFiles.ContainsKey(fp)) {
-                            _sourceFiles.Add(fp, new SourceFile(this, fullpath, _transpiler.AddFile(fullpath)));
-                            setWork |= WorkFlags.SyncOpenDocuments | WorkFlags.Parse;
+                        if (!_sourceFiles.ContainsKey(fullpath_U)) {
+                            System.Diagnostics.Debug.WriteLine(Name + ": Add file " + fullpath_U);
+                            var tsf = _transpiler.AddFile(fullpath);
+                            _sourceFiles.Add(fullpath_U, new SourceFile(this, fullpath, tsf));
+                            setWork |= WorkFlags.SyncOpenDocuments | WorkFlags.Parse | WorkFlags.Transpile;
                         }
                     }
 
-                    foreach(var fullpath in new List<string>(_sourceFiles.Keys)) {
-                        if (!hashset.Contains(fullpath)) {
-                            _transpiler.RemoveFile(fullpath);
-                            _sourceFiles.Remove(fullpath);
-                            setWork |= WorkFlags.Parse;
+                    foreach(var fullpath_U in new List<string>(_sourceFiles.Keys)) {
+                        if (!hashset.Contains(fullpath_U)) {
+                            System.Diagnostics.Debug.WriteLine(Name + ": Remove file " + fullpath_U);
+                            _transpiler.RemoveFile(fullpath_U);
+
+                            if (_sourceFiles.TryGetValue(fullpath_U, out var sourceFile)) {
+                                _sourceFiles.Remove(fullpath_U);
+                                sourceFile.Dispose();
+                            }
+                            setWork |= WorkFlags.Transpile;
                         }
                     }
                 }

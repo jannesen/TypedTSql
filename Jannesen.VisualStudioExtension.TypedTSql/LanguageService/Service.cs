@@ -20,7 +20,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         private                 EnvDTE.Events                       _events;
         private                 EnvDTE.BuildEvents                  _buildEvents;
         private                 EnvDTE.DocumentEvents               _documentEvents;
-        private                 EnvDTE.ProjectItemsEvents           _projectItemsEvents;
         private                 EnvDTE.SolutionEvents               _solutionEvents;
         private                 uint                                _objectLibraryCookie;
         private                 object                              _lockObject;
@@ -103,20 +102,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         {
             foreach(var languageService in _toArray())
                 languageService.Document_Closed(Document?.FullName);
-        }
-        private                 void                                _event_ProjectItem_AddedRemoved(EnvDTE.ProjectItem ProjectItem)
-        {
-            var languageService = _findLanguageService(VSPackage.GetContainingProject(CPS.TypedTSqlUnconfiguredProject.ProjectTypeGuid, ProjectItem.Document?.FullName));
-
-            if (languageService != null)
-                languageService.Project_Changed();
-        }
-        private                 void                                _event_ProjectItem_Rename(EnvDTE.ProjectItem ProjectItem, string oldFileName)
-        {
-            var languageService = _findLanguageService(VSPackage.GetContainingProject(CPS.TypedTSqlUnconfiguredProject.ProjectTypeGuid, ProjectItem.Document?.FullName));
-
-            if (languageService != null)
-                languageService.Project_Changed();
         }
         private                 void                                _eventSolution_BeforeClosing()
         {
@@ -221,10 +206,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             _buildEvents.OnBuildDone        += new EnvDTE._dispBuildEvents_OnBuildDoneEventHandler(_event_Build_Done);
             _documentEvents = _events.DocumentEvents;
             _documentEvents.DocumentClosing += new EnvDTE._dispDocumentEvents_DocumentClosingEventHandler(_event_Document_Closed);
-            _projectItemsEvents = _events.SolutionItemsEvents;
-            _projectItemsEvents.ItemAdded   += _event_ProjectItem_AddedRemoved;
-            _projectItemsEvents.ItemRemoved += _event_ProjectItem_AddedRemoved;
-            _projectItemsEvents.ItemRenamed += new EnvDTE._dispProjectItemsEvents_ItemRenamedEventHandler(_event_ProjectItem_Rename);
             _solutionEvents = _events.SolutionEvents;
             _solutionEvents.BeforeClosing   += new EnvDTE._dispSolutionEvents_BeforeClosingEventHandler(_eventSolution_BeforeClosing);
             _solutionEvents.ProjectRemoved  += new EnvDTE._dispSolutionEvents_ProjectRemovedEventHandler(_eventSolution_ProjectRemoved);
@@ -233,13 +214,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         {
             _buildEvents.OnBuildDone        -= new EnvDTE._dispBuildEvents_OnBuildDoneEventHandler(_event_Build_Done);
             _documentEvents.DocumentClosing -= new EnvDTE._dispDocumentEvents_DocumentClosingEventHandler(_event_Document_Closed);
-            _projectItemsEvents.ItemAdded   -= new EnvDTE._dispProjectItemsEvents_ItemAddedEventHandler(_event_ProjectItem_AddedRemoved);
-            _projectItemsEvents.ItemRemoved -= new EnvDTE._dispProjectItemsEvents_ItemRemovedEventHandler(_event_ProjectItem_AddedRemoved);
-            _projectItemsEvents.ItemRenamed -= new EnvDTE._dispProjectItemsEvents_ItemRenamedEventHandler(_event_ProjectItem_Rename);
             _solutionEvents.BeforeClosing   -= new EnvDTE._dispSolutionEvents_BeforeClosingEventHandler(_eventSolution_BeforeClosing);
             _solutionEvents.ProjectRemoved  -= new EnvDTE._dispSolutionEvents_ProjectRemovedEventHandler(_eventSolution_ProjectRemoved);
             _solutionEvents     = null;
-            _projectItemsEvents = null;
             _documentEvents     = null;
             _buildEvents        = null;
             _events             = null;
