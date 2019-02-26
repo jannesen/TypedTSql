@@ -254,8 +254,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                 return new SqlTypeNative(systemType,
                                             maxLength: dataReader.GetInt16(colOffset + 1));
 
-            case SystemType.Float:
-                {
+            case SystemType.Float: {
                     var precision = dataReader.GetByte (colOffset + 2);
                     return (precision == 53) ? Float : new SqlTypeNative(systemType,
                                                                             precision: precision);

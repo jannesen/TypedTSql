@@ -71,8 +71,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     n_Maxrecursion = ParseInteger(reader);
                     break;
 
-                case DataModel.QueryOptions.OPTIMIZE_FOR_VARIABLE:
-                    {
+                case DataModel.QueryOptions.OPTIMIZE_FOR_VARIABLE: {
                         var optimizeForVariable = new List<OptimizeForVariable>();
 
                         do {

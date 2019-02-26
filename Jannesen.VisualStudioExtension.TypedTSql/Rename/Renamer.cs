@@ -323,16 +323,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         private                 DatabaseItem                        _constructDatabaseItem(LTTS.DataModel.ISymbol symbol)
         {
             switch(symbol.Type) {
-            case LTTS.DataModel.SymbolType.TableUser:
-                {
+            case LTTS.DataModel.SymbolType.TableUser: {
                     if (symbol is LTTS.DataModel.EntityObjectTable entityTable && entityTable.EntityName.Database == null) {
                         return new DatabaseItem(this, new string[] { entityTable.EntityName.Schema, entityTable.EntityName.Name }, DatabaseItem.RenameType.TABLE);
                     }
                 }
                 break;
 
-            case LTTS.DataModel.SymbolType.Column:
-                {
+            case LTTS.DataModel.SymbolType.Column: {
                     if (symbol is LTTS.DataModel.ColumnDS column &&
                         column.Parent is LTTS.DataModel.EntityObjectTable entityTable &&
                         entityTable.Type == LTTS.DataModel.SymbolType.TableUser &&
@@ -344,8 +342,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
                 }
                 break;
 
-            case LTTS.DataModel.SymbolType.Index:
-                {
+            case LTTS.DataModel.SymbolType.Index: {
                     if (symbol is LTTS.DataModel.Index index &&
                         index.Parent is LTTS.DataModel.EntityObjectTable entityTable &&
                         entityTable.Type == LTTS.DataModel.SymbolType.TableUser &&
@@ -357,8 +354,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
                 }
                 break;
 
-            case LTTS.DataModel.SymbolType.TypeUser:
-                {
+            case LTTS.DataModel.SymbolType.TypeUser: {
                     if (symbol is LTTS.DataModel.EntityTypeUser entityTypeUser &&
                         entityTypeUser.EntityName.Database == null &&
                         entityTypeUser.EntityName.Schema   != "sys")

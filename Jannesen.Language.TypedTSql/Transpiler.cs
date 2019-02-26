@@ -111,8 +111,7 @@ namespace Jannesen.Language.TypedTSql
                 workers[i] = new Thread(() => {
                                                 for (;;) {
                                                     int n;
-                                                    lock(sourceFiles)
-                                                    {
+                                                    lock(sourceFiles) {
                                                         if (next >= filenames.Length)
                                                             return;
                                                         n = next++;

@@ -111,8 +111,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     xmlWriter.WriteAttributeString("type", "object:mandatory");
                     _writeResponseObject(xmlWriter, reponseNodeType);
                     break;
-                case LTTSQL.DataModel.ResponseNodeType.ArrayValue:
-                    {
+                case LTTSQL.DataModel.ResponseNodeType.ArrayValue: {
                         var arrayItemType = reponseNodeType.Columns[0].SqlType;
 
                         if (arrayItemType is DataModel.SqlTypeResponseNode responseNode) {

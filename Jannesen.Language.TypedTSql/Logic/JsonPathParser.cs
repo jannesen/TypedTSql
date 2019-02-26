@@ -94,8 +94,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             case '[':       return new Token() { id = TokenId.OpeningBracket  };
             case ']':       return new Token() { id = TokenId.CloseBracket    };
             case '\'':
-            case '\"':
-                {
+            case '\"': {
                     var   s = new StringBuilder();
                     char  e = c;
 

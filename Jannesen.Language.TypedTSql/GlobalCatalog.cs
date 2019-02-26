@@ -126,8 +126,7 @@ namespace Jannesen.Language.TypedTSql
         public                  Entity                                          GetEntity(SymbolType type, EntityName name, bool loadDatabase=true)
         {
             switch(type) {
-            case SymbolType.Assembly:
-                {
+            case SymbolType.Assembly: {
                     var rtn = GetAssembly(name);
                     if (rtn == null || rtn.Type != type)
                         throw new GlobalCatalogException("Unknown assembly '" + name + "'.");
@@ -136,8 +135,7 @@ namespace Jannesen.Language.TypedTSql
 
             case SymbolType.TypeUser:
             case SymbolType.TypeExternal:
-            case SymbolType.TypeTable:
-                {
+            case SymbolType.TypeTable: {
                     var rtn = GetType(name, loadDatabase);
                     if (rtn == null || rtn.Type != type)
                         throw new GlobalCatalogException("Unknown type '" + name + "'.");
@@ -278,8 +276,7 @@ namespace Jannesen.Language.TypedTSql
             this._objects    = new EntityList<EntityObject>(4096);
             this._principals = new DatabasePrincipalList(64);
 
-            lock(Database)
-            {
+            lock(Database) {
                 try {
                     using (SqlDataReader dataReader = Database.ExecuteDataReader("SELECT DATABASEPROPERTYEX(DB_NAME(), 'Collation')\n"+
                                                                                  DatabaseSchema.SqlStatementCatalog + "\n" +
@@ -337,8 +334,7 @@ namespace Jannesen.Language.TypedTSql
         private                 EntityObject                                    _loadFromDatabase(EntityName name)
         {
             try {
-                lock(Database)
-                {
+                lock(Database) {
                     using (var dataReader = Database.ExecuteDataReader(EntityObject.SqlStatementByName(name)))
                     {
                         if (dataReader.Read()) {
@@ -355,8 +351,7 @@ namespace Jannesen.Language.TypedTSql
         private                 void                                            _loadFromDatabase(Entity entity)
         {
             try {
-                lock(Database)
-                {
+                lock(Database) {
                     using (SqlDataReader dataReader = Database.ExecuteDataReader(entity.DatabaseReadFromCmd()))
                         entity.DatabaseReadFromResult(this, dataReader);
                 }

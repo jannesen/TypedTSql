@@ -128,15 +128,13 @@ namespace Jannesen.Language.TypedTSql.Node
                     _returnType = ((Node_Datatype)n_ReturnType).SqlType;
                     break;
 
-                case DataModel.SymbolType.FunctionInlineTable:
-                    {
+                case DataModel.SymbolType.FunctionInlineTable: {
                         TranspileStatement(context, query:true);
                         _returnType = new DataModel.SqlTypeTable(Entity, ((Query_Select)n_Statement).Resultset?.GetUniqueNamedList(), null);
                     }
                     break;
 
-                case DataModel.SymbolType.FunctionMultistatementTable:
-                    {
+                case DataModel.SymbolType.FunctionMultistatementTable: {
                         n_ReturnType.TranspileNode(context);
                         var table = (Table)n_ReturnType;
                         var returnType = new DataModel.SqlTypeTable(Entity, table.Columns, table.Indexes);

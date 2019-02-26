@@ -52,8 +52,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             Project project = null;
             bool    start = false;
 
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 for (int i = 0 ; i < _projects.Count ; ++i) {
                     if (object.Equals(_projects[i].VSProject, vsproject)) {
                         project = _projects[i];
@@ -75,8 +74,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         }
         public                  Project                             FindLangaugeServiceByName(string projectName)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 for (int i = 0 ; i < _projects.Count ; ++i) {
                     if (String.Compare(_projects[i].Name, projectName, true) == 0)
                         return _projects[i];
@@ -87,8 +85,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         }
         public                  void                                DeRegisterLanguageService(Project languageService)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 _projects.Remove(languageService);
             }
         }
@@ -113,8 +110,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 var         vsproject = VSPackage.GetIVsProject(null, Project.FullName);
                 Project     project   = null;
 
-                lock(_lockObject)
-                {
+                lock(_lockObject) {
                     for (int i = 0 ; i < _projects.Count ; ++i) {
                         if (object.Equals(_projects[i].VSProject, vsproject)) {
                             project = _projects[i];
@@ -130,15 +126,13 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
         private                 Project[]                           _toArray()
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 return _projects.ToArray();
             }
         }
         private                 Project                             _findLanguageService(IVsProject vsproject)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 for (int i = 0 ; i < _projects.Count ; ++i) {
                     if (object.Equals(_projects[i].VSProject, vsproject))
                         return _projects[i];
@@ -151,8 +145,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         {
             Project[]   languageServices;
 
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 languageServices = _projects.ToArray();
                 _projects.Clear();
             }

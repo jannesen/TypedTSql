@@ -111,8 +111,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             public              void                Dispose()
             {
                 var hr = _hierarchy.UnadviseHierarchyEvents(_cookie);
-                if (hr != VSConstants.S_OK)
-                {
+                if (hr != VSConstants.S_OK) {
                     System.Diagnostics.Debug.WriteLine("UnadviseHierarchyEvents FAILED!");
                 }
             }
@@ -207,8 +206,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             var errorList = _errorList;
 
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 _workFlags = WorkFlags.Stopped;
                 _cancelWait.Dispose();
 
@@ -236,8 +234,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         }
         public                  void                                Start()
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 if (_setWork(WorkFlags.Active)) {
                     System.Diagnostics.Debug.WriteLine(Name + ": Start LanguageService");
                     _workTask = Task.Run(_workTaskAsync);
@@ -250,8 +247,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             bool    dispose;
 
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 _workFlags = (_workFlags & ~WorkFlags.AllWork) | WorkFlags.Stopped;
                 _cancelWait.Cancel();
                 dispose = (_workFlags & WorkFlags.Active) == 0;
@@ -275,8 +271,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             for (;;) {
                 Task task;
 
-                lock(_lockObject)
-                {
+                lock(_lockObject) {
                     if ((_workFlags & WorkFlags.Active) == 0 || end < DateTime.UtcNow) {
                         if (_cancelWait.IsCancellationRequested) {
                             _cancelWait.Dispose();
@@ -316,15 +311,13 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
         public                  bool                                ContainsFile(string fullpath)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 return _sourceFiles.ContainsKey(fullpath.ToUpper());
             }
         }
         public                  LTTS_DataModel.DocumentSpan         GetDeclarationAt(string fullpath, int filePosition)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 _available();
                 var symbol = _getSymbolAt(fullpath, filePosition);
 
@@ -336,8 +329,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         }
         public                  LTTS_DataModel.DocumentSpan         GetDocumentSpan(object declaration)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 _available();
                 return _transpiler.GetDocumentSpan(declaration);
             }
@@ -354,24 +346,21 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         }
         public                  LTTS.SymbolReferenceList            FindReferencesAt(string fullpath, int filePosition)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 _available();
                 return _transpiler.GetReferences(_getSymbolAt(fullpath, filePosition));
             }
         }
         public                  LTTS.SymbolReferenceList            FindReferences(LTTS.DataModel.ISymbol symbol)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 _available();
                 return _transpiler.GetReferences(symbol);
             }
         }
         public                  QuickInfo                           GetQuickInfoAt(string fullpath, SnapshotPoint point)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 _available();
                 var sourceFile = _sourceFiles[fullpath.ToUpper()];
 
@@ -396,8 +385,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             SourceFile sourceFile;
 
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 if (_setWork(WorkFlags.SyncOpenDocuments))
                     Start();
 
@@ -408,8 +396,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         }
         internal                FileResult                          GetFileResult(string fullname)
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 return _sourceFiles.TryGetValue(fullname.ToUpper(), out var sourceFile) ? sourceFile.Result : null;
             }
         }
@@ -505,8 +492,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
                 (((IServiceProvider)Service.Package).GetService(typeof(SVsStatusbar)) as IVsStatusbar)?.SetText("TTSQL Language service failed: " + err.Message);
 
-                lock (_lockObject)
-                {
+                lock (_lockObject) {
                     _workTask  = null;
                     _workFlags = _workFlags & ~WorkFlags.Active;
                 }
@@ -550,8 +536,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 }
 
 
-                lock(_lockObject)
-                {
+                lock(_lockObject) {
                     if (_databaseName != databaseName) {
                         _databaseName    = databaseName;
                         setWork |= WorkFlags.GlobalCatalog;
@@ -621,8 +606,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                     if (_sourceFiles.TryGetValue(fullpath, out SourceFile sourceFile)) {
                         files.Add(fullpath);
 
-                        lock(_lockObject)
-                        {
+                        lock(_lockObject) {
                             if (sourceFile.SetTextBuffer(adapter.GetDataBuffer((Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer)d.DocData)))
                                 setWork |= WorkFlags.Parse;
                         }
@@ -631,8 +615,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
                 foreach(var s in _sourceFiles) {
                     if (!files.Contains(s.Key) && s.Value.TextBuffer != null) {
-                        lock(_lockObject)
-                        {
+                        lock(_lockObject) {
                             s.Value.SetTextBuffer();
                             setWork |= WorkFlags.Parse;
                         }
@@ -643,8 +626,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                     if (!CatalogExplorer.Panel.IsCatalogExplorerActive(Service.Package)) {
                         bool stop = false;
 
-                        lock(_lockObject)
-                        {
+                        lock(_lockObject) {
                             if ((_workFlags & WorkFlags.SyncOpenDocuments) == 0) {
                                 _workFlags = (_workFlags & ~WorkFlags.AllWork) | WorkFlags.Stopped;
                                 stop = true;
@@ -760,8 +742,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         {
             bool        rtn = false;
 
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 WorkFlags   cur = _workFlags;
 
                 if ((cur & WorkFlags.Stopped) == 0) {
@@ -774,8 +755,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         }
         private                 WorkFlags                           _getWork()
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 WorkFlags   flags = _workFlags;
 
                 if ((flags & WorkFlags.Stopped) == 0) {
@@ -799,8 +779,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
         private                 CancellationToken                   _getCancellationToken()
         {
-            lock(_lockObject)
-            {
+            lock(_lockObject) {
                 return _cancelWait.Token;
             }
         }

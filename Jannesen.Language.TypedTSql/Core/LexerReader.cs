@@ -137,8 +137,7 @@ namespace Jannesen.Language.TypedTSql.Core
 
             TextID  textID;
 
-            lock(_nameDictionary)
-            {
+            lock(_nameDictionary) {
                 if (!_nameDictionary.TryGetValue(text, out textID))
                     _nameDictionary.Add(text, textID = new TextID(text, _nameDictionary.TryGetValue(text.ToUpper(), out var upperTextID) ? upperTextID.ID : TokenID.Name));
             }

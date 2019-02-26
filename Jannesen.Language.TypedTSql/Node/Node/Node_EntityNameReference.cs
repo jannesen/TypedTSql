@@ -155,8 +155,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 }
                 break;
 
-            case EntityReferenceType.UserDataType:
-                {
+            case EntityReferenceType.UserDataType: {
                     var entity = context.Catalog.GetType(n_EntityName);
                     if (entity == null) {
                         context.AddError(this, "Unknown user-type '" + n_EntityName + "'.");

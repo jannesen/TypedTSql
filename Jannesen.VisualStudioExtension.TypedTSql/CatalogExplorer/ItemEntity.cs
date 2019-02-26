@@ -28,8 +28,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                 this.Values      = null;
 
                 switch(entity) {
-                case LTTS_DataModel.EntityObjectCode entityCode:
-                    {
+                case LTTS_DataModel.EntityObjectCode entityCode: {
                         this.Parameters = entityCode.Parameters;
 
                         var returns = entityCode.Returns;
@@ -42,14 +41,12 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                     }
                     break;
 
-                case LTTS_DataModel.EntityObjectTable entityTable:
-                    {
+                case LTTS_DataModel.EntityObjectTable entityTable: {
                         this.Columns = entityTable.Columns;
                     }
                     break;
 
-                case LTTS_DataModel.EntityTypeUser entityType:
-                    {
+                case LTTS_DataModel.EntityTypeUser entityType: {
                         if ((entityType.TypeFlags & LTTS_DataModel.SqlTypeFlags.Values) != 0 && entityType.Values != null)
                             this.Values = entityType.Values;
 

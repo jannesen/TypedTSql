@@ -482,8 +482,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                 switch(source) {
                 case "querystring":
-                case "textjson":
-                    {
+                case "textjson": {
                         DeclareType type;
 
                         var @as = parameter.n_As;

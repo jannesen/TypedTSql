@@ -82,8 +82,7 @@ namespace Jannesen.Language.TypedTSql.Node
             }
 
             switch(reader.CurrentToken.validateToken(Core.TokenID.VALUES, Core.TokenID.SELECT, Core.TokenID.EXEC, Core.TokenID.EXECUTE)) {
-            case Core.TokenID.VALUES:
-                {
+            case Core.TokenID.VALUES: {
                     ParseToken(reader, Core.TokenID.VALUES);
 
                     var values = new List<ValueList>();

@@ -51,8 +51,7 @@ namespace Jannesen.Language.TypedTSql.Node
                         case "INSERT":      n_DenyInsert = true;        break;
                         case "UPDATE":      n_DenyUpdate = true;        break;
                         case "DELETE":      n_DenyDelete = true;        break;
-                        case "UPDATEOF":
-                            {
+                        case "UPDATEOF": {
                                 var columns = new List<Core.TokenWithSymbol>();
 
                                 ParseToken(reader, TokenID.LrBracket);

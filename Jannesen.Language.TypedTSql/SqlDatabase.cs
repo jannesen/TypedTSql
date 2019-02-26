@@ -71,8 +71,7 @@ namespace Jannesen.Language.TypedTSql
         }
         public                  void                                    Output(StreamWriter streamWriter, bool leaveOpen)
         {
-            lock(this)
-            {
+            lock(this) {
                 _outputClose();
                 _output          = streamWriter;
                 _outputLeaveOpen = leaveOpen;
@@ -80,8 +79,7 @@ namespace Jannesen.Language.TypedTSql
         }
         public                  void                                    InitRebuild()
         {
-            lock(this)
-            {
+            lock(this) {
                 if (_output != null) {
                     _output.Write("USE ");
                     _output.WriteLine(Library.SqlStatic.QuoteName(DatabaseName));
@@ -104,8 +102,7 @@ namespace Jannesen.Language.TypedTSql
         }
         public                  void                                    ResetSettings()
         {
-            lock(this)
-            {
+            lock(this) {
                 if (_needsResetSettings) {
                     try {
                         ExecuteStatement("SET NOCOUNT                 ON;\r\n" +
@@ -129,8 +126,7 @@ namespace Jannesen.Language.TypedTSql
         }
         public                  void                                    ExecuteStatement(string statement)
         {
-            lock(this)
-            {
+            lock(this) {
                 if (_output != null) {
                     _output.Write(statement);
 
@@ -153,8 +149,7 @@ namespace Jannesen.Language.TypedTSql
         }
         public                  int                                     ExecuteStatement(string statement, Library.SourceMap sourceMap, Action<SqlError> onExecuteError, Action<string> onExecuteMessage=null)
         {
-            lock(this)
-            {
+            lock(this) {
                 _sourceMap        = sourceMap;
                 _onExecuteError   = onExecuteError;
                 _onExecuteMessage = onExecuteMessage;
@@ -186,8 +181,7 @@ namespace Jannesen.Language.TypedTSql
         {
             int         errcnt          = 0;
 
-            lock(this)
-            {
+            lock(this) {
                 ResetSettings();
 
                 int         beginpos        = 0;
@@ -230,16 +224,14 @@ namespace Jannesen.Language.TypedTSql
         }
         public                  int                                     ExecuteFile(string filename, Action<SqlError> onExecuteError)
         {
-            lock(this)
-            {
+            lock(this) {
                 using (StreamReader streamReader = new StreamReader(filename))
                     return ExecuteFile(filename, streamReader.ReadToEnd(), onExecuteError);
             }
         }
         public                  void                                    ExecuteScript(string name)
         {
-            lock(this)
-            {
+            lock(this) {
                 try {
                     Stream stream = this.GetType().Assembly.GetManifestResourceStream(name);
 
@@ -256,8 +248,7 @@ namespace Jannesen.Language.TypedTSql
         }
         public                  void                                    Print(string text)
         {
-            lock(this)
-            {
+            lock(this) {
                 if (_output != null) {
                     _output.Write("PRINT ");
                     _output.Write(Library.SqlStatic.QuoteString(text));

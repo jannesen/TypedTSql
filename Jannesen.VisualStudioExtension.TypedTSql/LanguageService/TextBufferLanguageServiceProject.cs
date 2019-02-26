@@ -25,8 +25,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         }
         public                      Project                             LanguageService
         {
-            get
-            {
+            get {
                 lock(this) {
                     _updateLink();
 
@@ -52,8 +51,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
         internal                    FileResult                          GetFileResult()
         {
-            lock(this)
-            {
+            lock(this) {
                 _updateLink();
                 return _sourceFile != null && _sourceFile.TextBuffer == _textBuffer ? _sourceFile.Result : null;
             }
