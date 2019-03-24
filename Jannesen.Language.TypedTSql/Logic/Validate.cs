@@ -456,7 +456,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                         return true;
                 }
                 else
-                if (targetCheckMode >= DataModel.SqlTypeFlags.CheckSave || sourceCheckMode >= DataModel.SqlTypeFlags.CheckSave) {
+                if (targetCheckMode >= DataModel.SqlTypeFlags.CheckSafe || sourceCheckMode >= DataModel.SqlTypeFlags.CheckSafe) {
                     if (targetType.NativeType == sourceType.NativeType)
                         return true;
 
@@ -788,7 +788,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                     }
                 }
                 else
-                if (targetCheckMode >= DataModel.SqlTypeFlags.CheckSave || sourceCheckMode >= DataModel.SqlTypeFlags.CheckSave) {
+                if (targetCheckMode >= DataModel.SqlTypeFlags.CheckSafe || sourceCheckMode >= DataModel.SqlTypeFlags.CheckSafe) {
                     if (sourceFlags.isNullOrConstant() && Validate.ConstByType(targetType.NativeType, sourceExpr))
                         return true;
 

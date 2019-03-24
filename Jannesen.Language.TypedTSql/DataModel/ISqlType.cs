@@ -16,7 +16,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         ReponseNode     = 0x0080,
         CheckMode       = 0x0300,
         CheckTSql       = 0x0000,
-        CheckSave       = 0x0100,
+        CheckSafe       = 0x0100,
         CheckStrong     = 0x0200,
         CheckStrict     = 0x0300,
         Flags           = 0x1000,

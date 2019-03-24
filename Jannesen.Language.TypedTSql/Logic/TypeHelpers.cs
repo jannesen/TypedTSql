@@ -142,7 +142,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                     }
                 }
                 else
-                if (checkMode1 == DataModel.SqlTypeFlags.CheckSave || checkMode2 == DataModel.SqlTypeFlags.CheckSave) {
+                if (checkMode1 == DataModel.SqlTypeFlags.CheckSafe || checkMode2 == DataModel.SqlTypeFlags.CheckSafe) {
                     var const1 = expr1.isNullOrConstant();
                     var const2 = expr2.isNullOrConstant();
 

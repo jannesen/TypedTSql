@@ -21,7 +21,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                     switch(f = _parseEnum.Parse(this, reader)) {
                     case DataModel.SqlTypeFlags.CheckTSql:
-                    case DataModel.SqlTypeFlags.CheckSave:
+                    case DataModel.SqlTypeFlags.CheckSafe:
                     case DataModel.SqlTypeFlags.CheckStrong:
                     case DataModel.SqlTypeFlags.CheckStrict:
                         n_TypeFlags = (n_TypeFlags & ~DataModel.SqlTypeFlags.CheckMode) | f;
@@ -42,7 +42,7 @@ namespace Jannesen.Language.TypedTSql.Node
             private static  Core.ParseEnum<DataModel.SqlTypeFlags>  _parseEnum = new Core.ParseEnum<DataModel.SqlTypeFlags>(
                                                                                         "Type option",
                                                                                         new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckTSql,    "TYPECHECK",    "TSQL"),
-                                                                                        new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckSave,    "TYPECHECK",    "SAVE"),
+                                                                                        new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckSafe,    "TYPECHECK",    "SAFE"),
                                                                                         new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckStrong,  "TYPECHECK",    "STRONG"),
                                                                                         new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckStrict,  "TYPECHECK",    "STRICT"),
                                                                                         new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.Flags,        "FLAGS"),
@@ -138,7 +138,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public      override    void                            Transpiled()
         {
-            _entity.Transpiled((n_With != null ? n_With.n_TypeFlags : DataModel.SqlTypeFlags.CheckSave),
+            _entity.Transpiled((n_With != null ? n_With.n_TypeFlags : DataModel.SqlTypeFlags.CheckSafe),
                                n_Values?.Fields,
                                n_Values?.ValuesRecords);
         }
