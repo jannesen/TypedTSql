@@ -23,7 +23,7 @@ Typed T-Sql adds the following:
 ## DROP ... IF EXISTS meer nodig / rechten
 
 T-SQL:
-``` T-SQL
+```
 DROP PROCEDDURE IF EXISTS dbo.hello_world
 GO
 CREATE PROCEDURE dbo.hello_world
@@ -37,7 +37,7 @@ GO
 ```
 
 Typed T-SQL
-``` SQL
+```
 PROCEDURE hello_world
 GRANT EXECUTE TO public
 BEGIN
@@ -67,7 +67,7 @@ Typed T-SQL has 4 different levels of type checking:
 SQL Server has [Type alias](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-type-transact-sql).
 This type of alias can also be defined and used in Typed T-SQL.
 Sample:
-``` SQL
+```
 TYPE [relation_id] FROM INT WITH TYPECHECK STRICT
 TYPE [person_id] FROM INT WITH TYPECHECK STRICT
 
@@ -82,7 +82,7 @@ SET @p1 = @r2 -- Niet toegestaan
 
 ## constanten
 Typed T-SQL supports define constant. Sample:
-``` SQL
+```
 TYPE [t]
 FROM INT
 WITH TYPECHECK STRICT
