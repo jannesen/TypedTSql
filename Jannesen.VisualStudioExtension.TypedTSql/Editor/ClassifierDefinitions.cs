@@ -5,6 +5,9 @@ using System.Windows.Media;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
+// Disable CS0618 warning for now.
+#pragma warning disable CS0618 
+
 namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 {
     static class ClassifierClassificationTypes

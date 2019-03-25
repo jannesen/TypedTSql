@@ -9,5 +9,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark        ("")]
 [assembly: AssemblyCulture          ("")]
 [assembly: ComVisible               (false)]
-[assembly: AssemblyVersion          ("1.08.00.001")] /*@VERSIONINFO*/
-[assembly: AssemblyFileVersion      ("1.08.00.001")] /*@VERSIONINFO*/
+[assembly: AssemblyVersion          ("1.08.00.002")] /*@VERSIONINFO*/
+[assembly: AssemblyFileVersion      ("1.08.00.002")] /*@VERSIONINFO*/
