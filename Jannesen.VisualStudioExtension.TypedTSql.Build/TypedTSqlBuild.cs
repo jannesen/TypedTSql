@@ -250,8 +250,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             foreach (UsingFile usingFile in usingFiles) {
                 if (usingFile.isTsql) {
                     if (usingFile.Changed || !_incbuild) {
-                        Log.LogMessage(MessageImportance.Normal, "Execute: " + usingFile.Filename);
-                        errcnt += database.ExecuteFile(Path.Combine(ProjectDirectory, usingFile.Filename), _onEmitError);
+                        var fullfilename = Path.Combine(ProjectDirectory, usingFile.Filename);
+                        var filename = fullfilename;
+                        if (filename.StartsWith(ProjectDirectory + "\\")) {
+                            filename = filename.Substring(ProjectDirectory.Length + 1);
+                        }
+                        Log.LogMessage(MessageImportance.Normal, "Execute: " + filename);
+                        database.Print("# EXECUTE '" + filename + "'...");
+                        errcnt += database.ExecuteFile(fullfilename, _onEmitError);
                     }
                 }
             }
