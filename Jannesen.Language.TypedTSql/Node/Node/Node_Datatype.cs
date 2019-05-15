@@ -3,7 +3,7 @@
 namespace Jannesen.Language.TypedTSql.Node
 {
     // Datatype::= Name ('(' max | INTEGER (',' INTEGER) ? ')') ?
-    public class Node_Datatype: Core.AstParseNode
+    public class Node_Datatype: Core.AstParseNode, ISqlType
     {
         public      readonly    Boolean                     DefaultLength;
         public      readonly    Core.Token                  n_Schema;

@@ -57,7 +57,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             throw new InvalidOperationException(this.GetType().Name + ": no data to reade from database");
         }
 
-        protected               void                    testTranspiled()
+        public                  void                    testTranspiled()
         {
             if ((EntityFlags & EntityFlags.NeedsTranspile) != 0)
                 throw new NeedsTranspileException();

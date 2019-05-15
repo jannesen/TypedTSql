@@ -429,7 +429,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 _reqArgs  = new List<RecordField>();
 
                 foreach(Node.WEBMETHOD.ServiceParameter parameter in webMethod.n_Parameters.n_Parameters) {
-                    if (parameter.n_Type is Node.WEBMETHOD.JsonType jsonType) {
+                    if (parameter.n_Type is Node.JsonType jsonType) {
                         if (parameter.n_Source != null && parameter.n_Source.n_Source != "body:json")
                             throw new InvalidOperationException("json only supported with source='body:json'.");
 
@@ -487,7 +487,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                         var @as = parameter.n_As;
                         if (@as == null) {
-                            if (parameter.n_Type is Node.WEBMETHOD.ComplexType complexType)
+                            if (parameter.n_Type is Node.ComplexType complexType)
                                 type = _getAsType(complexType.WebComplexType.n_As);
                             else
                                 type = _getType(parameter.n_Type, parameter.SqlType);
@@ -521,7 +521,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                     break;
                 }
             }
-            private                 DeclareType                             _getByJsonScheme(Node.WEBMETHOD.JsonSchema.JsonSchemaElement element)
+            private                 DeclareType                             _getByJsonScheme(Node.JsonType.JsonSchema.JsonSchemaElement element)
             {
                 DeclareType type;
 
@@ -529,17 +529,17 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                     type = _getAsType(element.n_As);
                 }
                 else {
-                    if (element is Node.WEBMETHOD.JsonSchema.JsonSchemaValue value) {
-                        if (value.n_Type is Node.WEBMETHOD.ComplexType complexType)
+                    if (element is Node.JsonType.JsonSchema.JsonSchemaValue value) {
+                        if (value.n_Type is Node.ComplexType complexType)
                             type = _getAsType(complexType.WebComplexType.n_As);
                         else
                             type = _getType(value.n_Type, ((LTTSQL.Node.Node_Datatype)value.n_Type).SqlType);
                     }
-                    else if (element is Node.WEBMETHOD.JsonSchema.JsonSchemaArray array)
+                    else if (element is Node.JsonType.JsonSchema.JsonSchemaArray array)
                     {
                         type = _proxyFile.getSet(_getByJsonScheme(array.n_JsonSchemaElement));
                     }
-                    else if (element is Node.WEBMETHOD.JsonSchema.JsonSchemaObject obj)
+                    else if (element is Node.JsonType.JsonSchema.JsonSchemaObject obj)
                     {
                         var properties = obj.n_Properties;
                         var fields     = new RecordField[properties.Length];
@@ -552,7 +552,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                     else
                         throw new InvalidOperationException("Invalid jsonschema type.");
 
-                    if ((element.n_Flags & DataModel.JsonFlags.Required) != 0 && element is Node.WEBMETHOD.JsonSchema.JsonSchemaValue)
+                    if ((element.n_Flags & DataModel.JsonFlags.Required) != 0 && element is Node.JsonType.JsonSchema.JsonSchemaValue)
                         type = _proxyFile.getRequired(type);
                 }
 

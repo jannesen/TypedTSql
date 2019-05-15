@@ -30,4 +30,9 @@ namespace Jannesen.Language.TypedTSql.Node
         DataModel.IColumnList       getColumnList(Transpile.Context context, Node.IExprNode docexpr, Node.IExprNode pathexpr);
         void                        TranspileNode(Transpile.Context context);
     }
+
+    public interface ISqlType
+    {
+        DataModel.ISqlType          SqlType             { get; }
+    }
 }
