@@ -199,6 +199,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             System.Diagnostics.Debug.WriteLine(Name + ": Create LanguageService");
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_hierarchyListener")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_errorList")]
         public                  void                                Dispose()
         {

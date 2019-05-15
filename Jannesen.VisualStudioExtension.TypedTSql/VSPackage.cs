@@ -86,9 +86,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            EnvDTE.DTE      dte = Package.GetGlobalService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
-
-            if (dte == null)
+            if (!(Package.GetGlobalService(typeof(EnvDTE.DTE)) is EnvDTE.DTE dte))
                 throw new Exception("Failed to get the EnvDTE.DTE.");
 
             return dte;
@@ -96,9 +94,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         public      static      IVsSolution                             GetIVsSolution()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            IVsSolution     solution = Package.GetGlobalService(typeof(SVsSolution)) as IVsSolution;
 
-            if (solution == null)
+            if (!(Package.GetGlobalService(typeof(SVsSolution)) is IVsSolution solution))
                 throw new Exception("Failed to get the solution.");
 
             return solution;
