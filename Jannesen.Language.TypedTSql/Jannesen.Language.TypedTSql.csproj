@@ -543,14 +543,5 @@
     <EmbeddedResource Include="SqlScripts\KillConnections.sql" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Content Include="Core\doc\statement\assembly.html" />
-    <Content Include="Core\doc\statement\function.html" />
-    <Content Include="Core\doc\statement\procedure.html" />
-    <Content Include="Core\doc\statement\trigger.html" />
-    <Content Include="Core\doc\statement\type.html" />
-    <Content Include="Core\doc\statement\view.html" />
-    <Content Include="Core\doc\style.css" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
