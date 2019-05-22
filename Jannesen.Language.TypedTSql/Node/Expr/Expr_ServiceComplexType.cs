@@ -41,12 +41,13 @@ namespace Jannesen.Language.TypedTSql.Node
 
             var expressions = new List<IExprNode>();
 
-            while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
+            do {
                 expressions.Add(ParseExpression(reader));
-
-            n_Arguments = expressions.ToArray();
+            }  while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
 
             ParseToken(reader, Core.TokenID.RrBracket);
+
+            n_Arguments = expressions.ToArray();
         }
 
         public                  DataModel.EntityName            getReferencedEntity(DeclarationObjectCode declarationObjectCode)

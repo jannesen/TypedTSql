@@ -218,8 +218,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 _sourceFiles.Clear();
             }
 
-            Task.Run(async () =>
-                    {
+            Task.Run(async () => {
                         await VSThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
                         if (_hierarchyListener != null) {
