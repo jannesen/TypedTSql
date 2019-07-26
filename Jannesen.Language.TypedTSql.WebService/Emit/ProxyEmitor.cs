@@ -182,12 +182,12 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                     return false;
 
                 for (int i = 0 ; i < fields.Length ; ++i) {
-                    if (Fields[i].Name != fields[i].Name &&
+                    if (Fields[i].Name != fields[i].Name ||
                         Fields[i].Type != fields[i].Type)
                         return false;
                 }
 
-                return false;
+                return true;
             }
         }
         class DeclareSet: DeclareComplexType
