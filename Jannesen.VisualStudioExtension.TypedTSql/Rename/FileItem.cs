@@ -78,7 +78,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         {
             try {
                 var items    = LocationItem;
-                var textView = VSPackage.OpenDocumentView(Renamer.Project.VSProject, Filename);
+                var textView = VSPackage.OpenDocumentView(Renamer.ServiceProvider, Renamer.LanguageServiceProject.VSProject, Filename);
 
                 for (int n = items.Length - 1 ; n >= 0 ; --n)
                     items[n].ApplyChange(pane, textView);
@@ -137,7 +137,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         {
             if (_buffer == null) {
                 ErrorHandler.ThrowOnFailure(Renamer.ServiceProvider.GetService<IVsInvisibleEditorManager>(typeof(SVsInvisibleEditorManager))
-                                                   .RegisterInvisibleEditor(Filename, Renamer.Project.VSProject, (uint)_EDITORREGFLAGS.RIEF_ENABLECACHING, null, out var editor));
+                                                   .RegisterInvisibleEditor(Filename, Renamer.LanguageServiceProject.VSProject, (uint)_EDITORREGFLAGS.RIEF_ENABLECACHING, null, out var editor));
                 var guid = typeof(IVsTextLines).GUID;
                 ErrorHandler.ThrowOnFailure(editor.GetDocData(0, ref guid, out var buffer));
                 try {

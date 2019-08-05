@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Language.StandardClassification;
 using LTTS_Core = Jannesen.Language.TypedTSql.Core;
 using LTTS_DM   = Jannesen.Language.TypedTSql.DataModel;
 
@@ -374,11 +373,13 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 #pragma warning disable 0649
         [Import]
         private                     IClassificationTypeRegistryService          classificationRegistry;
+        [Import]
+        private                     SVsServiceProvider                          ServiceProvider;
 #pragma warning restore 0649
 
         public                      IClassifier                                 GetClassifier(ITextBuffer textBuffer)
         {
-            return textBuffer.Properties.GetOrCreateSingletonProperty<Classifier>(typeof(Classifier), () => new Classifier(VSPackage.ServiceProvider, textBuffer, this.classificationRegistry));
+            return textBuffer.Properties.GetOrCreateSingletonProperty<Classifier>(typeof(Classifier), () => new Classifier(ServiceProvider, textBuffer, this.classificationRegistry));
         }
     }
 }

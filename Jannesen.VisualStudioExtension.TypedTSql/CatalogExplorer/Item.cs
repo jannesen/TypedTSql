@@ -28,6 +28,13 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
     {
         public                  Item                    ItemParent              { get ; private set; }
 
+        public                  IServiceProvider        ServiceProvider
+        {
+            get {
+                return ItemProject.Control.ServiceProvider;
+            }
+        }
+
         public                  ItemEntity              ItemEntity
         {
             get {

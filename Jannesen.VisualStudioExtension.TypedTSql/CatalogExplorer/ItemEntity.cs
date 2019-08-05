@@ -381,7 +381,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                 await ItemProject.WhenReady((project) => {
                         var entity = project.GlobalCatalog.GetEntity(EntityType, EntityName);
                         if (entity.Declaration != null)
-                            VSPackage.NavigateTo(null, project.GetDocumentSpan(entity.Declaration));
+                            VSPackage.NavigateTo(ServiceProvider, null, project.GetDocumentSpan(entity.Declaration));
                     });
             }
             catch(Exception err) {
@@ -392,7 +392,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         {
             try {
                 await ItemProject.WhenReady((project) => {
-                        project.Service.Library.SearchReferences(VSPackage.ServiceProvider, ItemProject.VSProject, project.FindReferences(project.GlobalCatalog.GetEntity(EntityType, EntityName)));
+                        project.Service.Library.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(project.GlobalCatalog.GetEntity(EntityType, EntityName)));
                     });
             }
             catch(Exception err) {

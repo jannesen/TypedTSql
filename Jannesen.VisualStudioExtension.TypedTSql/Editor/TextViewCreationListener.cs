@@ -16,13 +16,16 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 #pragma warning disable 0649
         [Import]
         private             IVsEditorAdaptersFactoryService         adaptersFactory;
+
+        [Import]
+        private             SVsServiceProvider                      ServiceProvider;
 #pragma warning restore 0649
 
         public              void                                    VsTextViewCreated(IVsTextView textViewAdapter)
         {
             IWpfTextView textView = adaptersFactory.GetWpfTextView(textViewAdapter);
 
-            new ContextMenu(VSPackage.ServiceProvider, textViewAdapter, textView);
+            new ContextMenu(ServiceProvider, textViewAdapter, textView);
 
             textView.Options.SetOptionValue<int>(DefaultOptions.IndentSizeOptionId, 4);
             textView.Options.SetOptionValue<int>(DefaultOptions.TabSizeOptionId, 4);

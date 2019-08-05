@@ -88,7 +88,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
                 var tblsp    = _getTexBufferLanguageServiceProject();
 
                 await tblsp.LanguageService.WhenReady((p) => {
-                        VSPackage.NavigateTo(tblsp.LanguageService.VSProject, p.GetDeclarationAt(tblsp.FilePath, position));
+                        VSPackage.NavigateTo(_serviceProvider, tblsp.LanguageService.VSProject, p.GetDeclarationAt(tblsp.FilePath, position));
                     });
 
             }
@@ -121,7 +121,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
                         if (quickFix == null)
                             throw new Exception("No quickfix available.");
 
-                        var textView = VSPackage.OpenDocumentView(tblsp.LanguageService.VSProject, quickFix.Location.Filename);
+                        var textView = VSPackage.OpenDocumentView(_serviceProvider, tblsp.LanguageService.VSProject, quickFix.Location.Filename);
                         textView.SetCaretPos (quickFix.Location.Beginning.Lineno-1, quickFix.Location.Beginning.Linepos-1);
                         textView.SetSelection(quickFix.Location.Beginning.Lineno-1, quickFix.Location.Beginning.Linepos-1, quickFix.Location.Ending.Lineno-1 , quickFix.Location.Ending.Linepos-1);
                         textView.GetSelectedText(out string selectedText);

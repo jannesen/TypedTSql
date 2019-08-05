@@ -4,11 +4,10 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 
-namespace Jannesen.VisualStudioExtension.TypedTSql.CPS
+namespace Jannesen.VisualStudioExtension.TypedTSql
 {
     [Export]
-    [AppliesTo(TypedTSqlUnconfiguredProject.UniqueCapability)]
-    internal partial class ProjectProperties : StronglyTypedPropertyAccess
+    internal partial class ProjectProperties: StronglyTypedPropertyAccess
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectProperties"/> class.

@@ -5,14 +5,16 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 {
-    [Guid("ed4f63ae-6861-4a7d-b3aa-7a365432aabe")]
+    [Guid(Panel.GUID)]
     public class Panel: ToolWindowPane
     {
+        public      const           string          GUID = "ed4f63ae-6861-4a7d-b3aa-7a365432aabe";
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public                                      Panel() : base(null)
+        public                                      Panel(IServiceProvider serviceProvider) : base(null)
         {
             this.Caption = "TypedTSql Catalog Explorer";
-            this.Content = new ContentControl();
+            this.Content = new ContentControl(serviceProvider);
         }
 
         protected   override        void            Dispose(bool disposing)
@@ -24,15 +26,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
             base.Dispose(disposing);
         }
 
-        public      static          void            ShowCatalogExplorer(VSPackage package)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            ToolWindowPane panel = package.FindToolWindow(typeof(Panel), 0, true);
-            if (panel == null || panel.Frame == null)
-                throw new NotSupportedException("Cannot create TypedTSql Catalog Explorer tool window.");
-
-            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(((IVsWindowFrame)panel.Frame).Show());
-        }
         public      static          bool            IsCatalogExplorerActive(VSPackage package)
         {
             ThreadHelper.ThrowIfNotOnUIThread();

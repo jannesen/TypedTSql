@@ -24,8 +24,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         private static          Regex                               _regexVariableName = new Regex(@"^@[a-zA-Z_][a-zA-Z0-9_@]*$",                  RegexOptions.Singleline|RegexOptions.CultureInvariant);
         private static          Regex                               _regexTempTable    = new Regex(@"^(\#[a-zA-Z_][a-zA-Z0-9_]*|\[\#[a-zA-Z0-9_@\-\+.\,\:\;\~\`\!\#\$\%\%\^\&\*\/\\\(\)\{\}\[\]]*\])$", RegexOptions.Singleline|RegexOptions.CultureInvariant);
 
-        private                 IServiceProvider                    _serviceProvider;
-        private                 LanguageService.Project             _languageServiceProject;
+        public  readonly        IServiceProvider                    ServiceProvider;
+        public  readonly        LanguageService.Project             LanguageServiceProject;
         private                 string                              _srcfilename;
         private                 LTTS.Library.FilePosition           _srcposition;
         private                 LTTS.DataModel.SymbolType           _symbolType;
@@ -37,18 +37,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         private                 IRootItem[]                         _rootItems;
         private                 PreviewList                         _previewList;
 
-        public                  IServiceProvider                    ServiceProvider
-        {
-            get {
-                return _serviceProvider;
-            }
-        }
-        public                  LanguageService.Project             Project
-        {
-            get {
-                return _languageServiceProject;
-            }
-        }
         public                  string                              OldName
         {
             get {
@@ -100,8 +88,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
 
         public                                                      Renamer(IServiceProvider serviceProvider, LanguageService.Project languageServiceProject, LTTS.DataModel.ISymbol symbol)
         {
-            _serviceProvider        = serviceProvider;
-            _languageServiceProject = languageServiceProject;
+            ServiceProvider         = serviceProvider;
+            LanguageServiceProject  = languageServiceProject;
             _symbolType             = symbol.Type;
             _oldName                = LTTS.Library.SqlStatic.QuoteName(symbol.Name);
             _newName                = _oldName;
@@ -125,8 +113,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
             if (srcitem == null)
                 throw new InvalidOperationException("Can't find source in referencelist.");
 
-            _serviceProvider        = serviceProvider;
-            _languageServiceProject = languageServiceProject;
+            ServiceProvider         = serviceProvider;
+            LanguageServiceProject  = languageServiceProject;
             _srcfilename            = srcfilename;
             _srcposition            = srcitem.Token.Beginning;
             _symbolType             = referenceList.Symbol.Type;
@@ -151,7 +139,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         {
             if (_showDialog()) {
                 if (_previewChanges) {
-                    _serviceProvider.GetService<IVsPreviewChangesService>(typeof(SVsPreviewChangesService))
+                    ServiceProvider.GetService<IVsPreviewChangesService>(typeof(SVsPreviewChangesService))
                                     .PreviewChanges(this);
                 } else {
                     ApplyChanges();
@@ -169,9 +157,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
             try {
                 var pane = _outputPane();
 
-                (lsp = _languageServiceProject).GlobalChange(true);
+                (lsp = LanguageServiceProject).GlobalChange(true);
 
-                if ((linkedUndo = _serviceProvider.GetService<IVsLinkedUndoTransactionManager>(typeof(SVsLinkedUndoTransactionManager))).OpenLinkedUndo((uint)LinkedTransactionFlags.mdtStrict, "TypedTSql refactor.") != VSConstants.S_OK)
+                if ((linkedUndo = ServiceProvider.GetService<IVsLinkedUndoTransactionManager>(typeof(SVsLinkedUndoTransactionManager))).OpenLinkedUndo((uint)LinkedTransactionFlags.mdtStrict, "TypedTSql refactor.") != VSConstants.S_OK)
                     throw new InvalidOperationException("linkedUndo.OpenLinkedUndo failed.");
 
                 pane.Clear();
@@ -185,7 +173,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
                 }
 
                 if (databaseRefresh)
-                    Project.Refresh();
+                    LanguageServiceProject.Refresh();
 
                 if (linkedUndo.CloseLinkedUndo() != VSConstants.S_OK)
                     throw new InvalidOperationException("linkedUndo.CloseLinkedUndo failed.");
@@ -195,7 +183,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
                 lsp = null;
 
                 if (_srcfilename != null)
-                    VSPackage.NavigateTo(Project.VSProject, _srcfilename, _srcposition.Lineno, _srcposition.Linepos);
+                    VSPackage.NavigateTo(ServiceProvider, LanguageServiceProject.VSProject, _srcfilename, _srcposition.Lineno, _srcposition.Linepos);
             }
             catch(Exception err) {
                 if (linkedUndo != null) {
@@ -373,7 +361,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         }
         private                 IVsOutputWindowPane                 _outputPane()
         {
-            var outWin = _serviceProvider.GetService<IVsOutputWindow>(typeof(IVsOutputWindow));
+            var outWin = ServiceProvider.GetService<IVsOutputWindow>(typeof(IVsOutputWindow));
             var guid   = new Guid("B7BB9216-8534-4B91-8804-366B0DDCA09C");
 
             if (outWin.GetPane(ref guid, out var pane) != VSConstants.S_OK) {

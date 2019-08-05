@@ -61,9 +61,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
     [Export(typeof(IQuickInfoSourceProvider)), ContentType(FileAndContentTypeDefinitions.TypedTSqlContentTypeName), Name("ToolTip QuickInfo Source"), Order(Before = "Default Quick Info Presenter")]
     internal class QuickInfoSourceProvider: IQuickInfoSourceProvider
     {
+#pragma warning disable 0649
+        [Import]
+        private             SVsServiceProvider                      ServiceProvider;
+#pragma warning restore 0649
+
         public              IQuickInfoSource                        TryCreateQuickInfoSource(ITextBuffer textBuffer)
         {
-            return new QuickInfoSource(VSPackage.ServiceProvider, textBuffer);
+            return new QuickInfoSource(ServiceProvider, textBuffer);
         }
     }
 }

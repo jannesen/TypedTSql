@@ -12,8 +12,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Library
         {
             var rtn = seviceProvider.GetService(type) as T;
 
-            if (rtn == null)
+            if (rtn == null) { 
                 throw new InvalidOperationException("Can't get service '" + type.FullName + "'.");
+            }
 
             return rtn;
         }
@@ -22,7 +23,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Library
         {
             switch(type) {
             case LTTS.DataModel.SymbolType.Assembly:                            return "assembly";
-            case LTTS.DataModel.SymbolType.TypeUser:                     return "user-defined-type";
+            case LTTS.DataModel.SymbolType.TypeUser:                            return "user-defined-type";
             case LTTS.DataModel.SymbolType.TypeExternal:                        return "clr-type";
             case LTTS.DataModel.SymbolType.TypeTable:                           return "table-type";
             case LTTS.DataModel.SymbolType.Default:                             return "default";

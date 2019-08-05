@@ -14,6 +14,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
     {
         private                 EnvDTE.SolutionEvents       _solutionEvents;
 
+        public  readonly        IServiceProvider            ServiceProvider;
         public                  ItemList                    Projects                { get; private set; }
 
         public                  ItemType                    Filter
@@ -33,8 +34,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
             }
         }
 
-        public                                              ContentControl()
+        public                                              ContentControl(IServiceProvider serviceProvider)
         {
+            this.ServiceProvider = serviceProvider;
             this.InitializeComponent();
             this.Projects = new ItemList();
         }

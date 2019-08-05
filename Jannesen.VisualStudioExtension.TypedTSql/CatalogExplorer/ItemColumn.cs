@@ -55,7 +55,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         {
             try {
                 await ItemProject.WhenReady((project) => {
-                        project.Service.Library.SearchReferences(VSPackage.ServiceProvider, ItemProject.VSProject, project.FindReferences(_getColumn(project)));
+                        project.Service.Library.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(_getColumn(project)));
                     });
             }
             catch(Exception err) {
@@ -66,7 +66,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         {
             try {
                 await ItemProject.WhenReady((project) => {
-                                                (new Rename.Renamer(VSPackage.ServiceProvider,
+                                                (new Rename.Renamer(ServiceProvider,
                                                                     project,
                                                                     _getColumn(project))).Run();
                                             });
@@ -75,7 +75,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                 VSPackage.DisplayError(new Exception("OnRenamer failed.", err));
             }
         }
-        private                 LTTS_DataModel.Column          _getColumn(LanguageService.Project project)
+        private                 LTTS_DataModel.Column           _getColumn(LanguageService.Project project)
         {
             var itemEntity  = ItemEntity;
             var entityTable = (LTTS_DataModel.EntityObjectTable)project.GlobalCatalog.GetEntity(itemEntity.EntityType, itemEntity.EntityName);

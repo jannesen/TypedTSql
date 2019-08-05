@@ -18,7 +18,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Library
             var     objects = new List<SimpleObject>();
 
             foreach (var r in referenceList)
-                objects.Add(new SimpleObjectSymbolReference(project, r));
+                objects.Add(new SimpleObjectSymbolReference(serviceProvider, project, r));
 
             _presentNavInfo(serviceProvider, "typed-TSql references", new NavInfo(new SimpleObjectList(objects)));
         }

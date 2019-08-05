@@ -6,9 +6,9 @@ using Jannesen.VisualStudioExtension.TypedTSql;
 [assembly: AssemblyTitle("Jannesen.VisualStudioExtension.TypedTSql")]
 [assembly: AssemblyDescription("Type Transact Sql visual studio extensions")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Jannesen Holding B.V.")]
+[assembly: AssemblyCompany("Jannesen B.V.")]
 [assembly: AssemblyProduct("Jannesen.VisualStudioExtension.TypedTSql")]
-[assembly: AssemblyCopyright("Copyright (c) 2015-2017 Jannesen Holding B.V.")]
+[assembly: AssemblyCopyright("Copyright (c) 2015-2019 Jannesen B.V.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

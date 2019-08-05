@@ -42,9 +42,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
     [Export(typeof(ITaggerProvider)), ContentType(FileAndContentTypeDefinitions.TypedTSqlContentTypeName), TagType(typeof(IOutliningRegionTag))]
     internal class OutliningTaggerProvider : ITaggerProvider
     {
+#pragma warning disable 0649
+        [Import]
+        private                     SVsServiceProvider                          ServiceProvider;
+#pragma warning restore 0649
+
         public                      ITagger<T>                                  CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            return buffer.Properties.GetOrCreateSingletonProperty(typeof(OutliningTagger), () => new OutliningTagger(VSPackage.ServiceProvider, buffer) as ITagger<T>);
+            return buffer.Properties.GetOrCreateSingletonProperty(typeof(OutliningTagger), () => new OutliningTagger(ServiceProvider, buffer) as ITagger<T>);
         }
     }
 }

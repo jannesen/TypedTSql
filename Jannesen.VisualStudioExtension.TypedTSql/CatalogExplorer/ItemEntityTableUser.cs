@@ -37,7 +37,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                                                     if (!(entityTable is LTTS_DataModel.EntityObjectTable))
                                                         throw new Exception("Can't find table '" + entityName.Fullname + "' in global catalog");
 
-                                                    (new Rename.Renamer(VSPackage.ServiceProvider,
+                                                    (new Rename.Renamer(ServiceProvider,
                                                                         project,
                                                                         entityTable)).Run();
                                             });

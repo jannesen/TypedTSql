@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using STask=System.Threading.Tasks;
 using System.ComponentModel.Design;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio;
@@ -15,15 +17,15 @@ using LTTS_DataModel = Jannesen.Language.TypedTSql.DataModel;
 
 namespace Jannesen.VisualStudioExtension.TypedTSql
 {
-    [PackageRegistration(UseManagedResourcesOnly = true)]
+    [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [InstalledProductRegistration("#110", "#112", VSPackage.Version, IconResourceID = 400)]
     [Guid(VSPackage.PackageGuid)]
     [Description("Typed Transact Sql visual studio extensions")]
-    [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids80.SolutionExists)]
+    [ProvideAutoLoad(Microsoft.VisualStudio.Shell.Interop.UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(CatalogExplorer.Panel))]
     [ProvideService(typeof(LanguageService.Service), ServiceName = "TypedTSql Language Services")]
-    public sealed class VSPackage: Package, IDisposable
+    public sealed class VSPackage: AsyncPackage, IDisposable
     {
         public enum ColorTheme
         {
@@ -34,7 +36,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         }
 
         public      const       string                                  PackageGuid     = "FCFDB553-8F52-420F-9195-E183E9E501DE";
-        public      const       string                                  Version         = "1.08.01.002";        //@VERSIONINFO
+        public      const       string                                  Version         = "1.09.00.000";        //@VERSIONINFO
         private static readonly Dictionary<Guid, ColorTheme>            _colorThemes    = new Dictionary<Guid, ColorTheme>()
                                                                                             {
                                                                                                 { new Guid("de3dbbcd-f642-433c-8353-8f1df4370aba"), ColorTheme.Light },
@@ -42,10 +44,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
                                                                                                 { new Guid("1ded0138-47ce-435e-84ef-9ec1f439b749"), ColorTheme.Dark },
                                                                                             };
 
-
-        public      static      IServiceProvider                        ServiceProvider { get { return (IServiceProvider)_instance; } }
-
-        private     static      VSPackage                               _instance;
         private                 Commands.CustomMenuCommand              _customMenuCommand;
 
         public                                                          VSPackage()
@@ -59,15 +57,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         {
             Dispose(true);
         }
-        protected   override    void                                    Initialize()
+
+        protected override      STask.Task                              InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            base.Initialize();
+            this.AddService(typeof(LanguageService.Service), _createLanguageServiceAsync, true);
 
-            ((IServiceContainer)this).AddService(typeof(LanguageService.Service), (context, type) => new LanguageService.Service(this));
+            _customMenuCommand = new Commands.CustomMenuCommand(this);
 
-            _instance = this;
-
-            _customMenuCommand            = new Commands.CustomMenuCommand(this);
+            return STask.Task.FromResult<object>(null);
         }
         protected   override    void                                    Dispose(bool disposing)
         {
@@ -78,7 +75,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
                     _customMenuCommand.Dispose();
                     _customMenuCommand = null;
                 }
-                _instance = null;
             }
         }
 
@@ -86,8 +82,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (!(Package.GetGlobalService(typeof(EnvDTE.DTE)) is EnvDTE.DTE dte))
-                throw new Exception("Failed to get the EnvDTE.DTE.");
+            if (!(Package.GetGlobalService(typeof(EnvDTE.DTE)) is EnvDTE.DTE dte)) { 
+                throw new InvalidOperationException("Failed to get the EnvDTE.DTE.");
+            }
 
             return dte;
         }
@@ -95,8 +92,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (!(Package.GetGlobalService(typeof(SVsSolution)) is IVsSolution solution))
-                throw new Exception("Failed to get the solution.");
+            if (!(Package.GetGlobalService(typeof(SVsSolution)) is IVsSolution solution)) {
+                throw new InvalidOperationException("Failed to get the solution.");
+            }
 
             return solution;
         }
@@ -165,10 +163,10 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
                 return ColorTheme.Unknown;
             }
         }
-        public      static      bool                                    NavigateTo(IVsProject project, string fullPath, int line, int column)
+        public      static      bool                                    NavigateTo(IServiceProvider serviceProvider, IVsProject project, string fullPath, int line, int column)
         {
             try {
-                OpenDocumentView(project, fullPath).SetCaretPos(line-1, column-1);
+                OpenDocumentView(serviceProvider, project, fullPath).SetCaretPos(line-1, column-1);
                 return true;
             }
             catch(Exception err) {
@@ -176,10 +174,10 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
                 return false;
             }
         }
-        public      static      bool                                    NavigateTo(IVsProject project, string fullPath, int line, int column, int endLine, int endColumn)
+        public      static      bool                                    NavigateTo(IServiceProvider serviceProvider, IVsProject project, string fullPath, int line, int column, int endLine, int endColumn)
         {
             try {
-                var textView = OpenDocumentView(project, fullPath);
+                var textView = OpenDocumentView(serviceProvider, project, fullPath);
                 textView.SetCaretPos(line-1, column-1);
                 textView.SetSelection(line-1, column-1, endLine-1 , endColumn-1);
 
@@ -190,9 +188,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
                 return false;
             }
         }
-        public      static      bool                                    NavigateTo(IVsProject project, LTTS_DataModel.DocumentSpan documentSpan)
+        public      static      bool                                    NavigateTo(IServiceProvider serviceProvider, IVsProject project, LTTS_DataModel.DocumentSpan documentSpan)
         {
-            return NavigateTo(project,
+            return NavigateTo(serviceProvider, project,
                               documentSpan.Filename,
                               documentSpan.Beginning.Lineno, documentSpan.Beginning.Linepos);
         }
@@ -269,7 +267,19 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
             System.Windows.Forms.MessageBox.Show(msg, "ERROR", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         }
 
-        public      static      IVsTextView                             OpenDocumentView(IVsProject project, string fullPath)
+        public                  void                                    ShowCatalogExplorer()
+        {
+            JoinableTaskFactory.RunAsync(async () => { 
+                    try { 
+                        await ShowToolWindowAsync(typeof(CatalogExplorer.Panel), 0, true, DisposalToken);
+                    }
+                    catch(Exception err) {
+                        DisplayError(new Exception("Failt to Show CatalogExplorer.", err));
+                    }
+                });
+        }
+
+        public      static      IVsTextView                             OpenDocumentView(IServiceProvider serviceProvider, IVsProject project, string fullPath)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -281,7 +291,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
                     throw new Exception("Failed to open file in project: " + result.ToString("X"));
             }
             else
-                windowFrame = VsShellUtilities.OpenDocumentWithSpecificEditor(ServiceProvider, fullPath, Guid.Empty, Guid.Empty);
+                windowFrame = VsShellUtilities.OpenDocumentWithSpecificEditor(serviceProvider, fullPath, Guid.Empty, Guid.Empty);
 
 
             var textView = VsShellUtilities.GetTextView(windowFrame);
@@ -291,6 +301,20 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
             windowFrame.Show();
 
             return textView;
+        }
+
+        public      override    IVsAsyncToolWindowFactory               GetAsyncToolWindowFactory(Guid toolWindowType)
+        {
+            return toolWindowType.Equals(Guid.Parse(CatalogExplorer.Panel.GUID)) ? this : null;
+        }
+        protected   override    STask.Task<object>                      InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken cancellationToken)
+        {
+            return STask.Task.FromResult<object>(this);
+        }
+
+        private                 STask.Task<object>                      _createLanguageServiceAsync(IAsyncServiceContainer container, CancellationToken cancellationToken, Type serviceType)
+        {
+            return STask.Task.FromResult<object>(new LanguageService.Service(this));
         }
     }
 }

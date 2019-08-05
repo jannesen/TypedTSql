@@ -10,11 +10,13 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Library
 {
     class SimpleObjectSymbolReference: SimpleObject
     {
+        private                 IServiceProvider        _serviceProvider;
         private                 IVsProject              _project;
         private                 LTTS.SymbolReference    _symbolReference;
 
-        public                                          SimpleObjectSymbolReference(IVsProject project, LTTS.SymbolReference symbolReference)
+        public                                          SimpleObjectSymbolReference(IServiceProvider serviceProvider, IVsProject project, LTTS.SymbolReference symbolReference)
         {
+            this._serviceProvider = serviceProvider;
             this._project         = project;
             this._symbolReference = symbolReference;
         }
@@ -53,7 +55,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Library
                 Task.Run(async() =>
                             {
                                 await VSThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                                VSPackage.NavigateTo(_project, _symbolReference.DocumentSpan);
+                                VSPackage.NavigateTo(_serviceProvider, _project, _symbolReference.DocumentSpan);
                             });
                 return VSConstants.S_OK;
 

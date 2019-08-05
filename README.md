@@ -1,5 +1,5 @@
 # Typed T-Sql
-Typed T-Sql is a programming language and extension for Visual Studio 2017.
+Typed T-Sql is a programming language and extension for Visual Studio 2019.
 The programming language is based on Transact-SQL and is intended for programming stored procedures, functions and view.
 
 For programming a some procedures, functions, etc Microsoft SQL Server Management Studio is oke.

@@ -55,9 +55,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
     [Export(typeof(IViewTaggerProvider)), ContentType(FileAndContentTypeDefinitions.TypedTSqlContentTypeName), TagType(typeof(ErrorTag))]
     internal class ErrorTaggerProvider: IViewTaggerProvider
     {
+#pragma warning disable 0649
+        [Import]
+        private                     SVsServiceProvider                          ServiceProvider;
+#pragma warning restore 0649
+
         public                      ITagger<T>                                  CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
-            return buffer.Properties.GetOrCreateSingletonProperty(typeof(ErrorTagger), () => new ErrorTagger(VSPackage.ServiceProvider, buffer) as ITagger<T>);
+            return buffer.Properties.GetOrCreateSingletonProperty(typeof(ErrorTagger), () => new ErrorTagger(ServiceProvider, buffer) as ITagger<T>);
         }
     }
 }

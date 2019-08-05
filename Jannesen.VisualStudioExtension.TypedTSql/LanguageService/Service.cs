@@ -33,7 +33,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             _projects   = new List<Project>();
             _lockObject = new object();
 
-            _registerErrorListProvider(package);
+            _registerErrorListProvider();
             _registerLibrary();
             _registerEvents();
         }
@@ -154,10 +154,10 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 project.Stop();
         }
 
-        private                 void                                _registerErrorListProvider(VSPackage package)
+        private                 void                                _registerErrorListProvider()
         {
             try {
-                ErrorListProvider = new ErrorListProvider(package) { ProviderName = "Types T-Sql errors", ProviderGuid = new Guid("7b26e18f-f4c6-4fe1-9629-78eae9ebe322") };
+                ErrorListProvider = new ErrorListProvider(Package) { ProviderName = "Types T-Sql errors", ProviderGuid = new Guid("7b26e18f-f4c6-4fe1-9629-78eae9ebe322") };
             }
             catch(Exception err) {
                 _unregisterErrorListProvider();

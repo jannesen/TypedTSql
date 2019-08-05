@@ -89,7 +89,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         private                 void                                            _onErrorNavigate(object sender, EventArgs e)
         {
             if (sender is ErrorTask errorTask)
-                VSPackage.NavigateTo(_vsproject, errorTask.Document, errorTask.Line + 1, errorTask.Column + 1);
+                VSPackage.NavigateTo(_service.Package, _vsproject, errorTask.Document, errorTask.Line + 1, errorTask.Column + 1);
         }
     }
 }

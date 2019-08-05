@@ -30,7 +30,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Commands
 
         private                             void                ShowCatalogExplorer(object sender, EventArgs e)
         {
-            CatalogExplorer.Panel.ShowCatalogExplorer(_package);
+            _package.ShowCatalogExplorer();
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel.Composition;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
+using Microsoft.VisualStudio.Shell;
 using Jannesen.VisualStudioExtension.TypedTSql.Library;
 
 namespace Jannesen.VisualStudioExtension.TypedTSql.Commands
@@ -12,6 +14,11 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Commands
     [AppliesTo(CPS.TypedTSqlUnconfiguredProject.UniqueCapability)]
     internal class CommandHandler97: ICommandGroupHandler
     {
+#pragma warning disable 0649
+        [Import]
+        private                     SVsServiceProvider                          ServiceProvider;
+#pragma warning restore 0649
+
         public                  CommandStatusResult     GetCommandStatus(IImmutableSet<IProjectTree> nodes, long commandId, bool focused, string commandText, CommandStatus progressiveStatus)
         {
             switch ((VSConstants.VSStd97CmdID)commandId) {
@@ -54,8 +61,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Commands
                     root = i.Current.Root;
                 }
 
-                return VSPackage.ServiceProvider.GetService<LanguageService.Service>(typeof(LanguageService.Service))
-                                                .FindLangaugeServiceByName(((IVsBrowseObjectContext)root).ProjectPropertiesContext.File);
+                var service = ServiceProvider.GetService(typeof(LanguageService.Service)) as LanguageService.Service;
+                return service?.FindLangaugeServiceByName(((IVsBrowseObjectContext)root).ProjectPropertiesContext.File);
             }
             catch(Exception err) {
                 System.Diagnostics.Debug.WriteLine("CommandHandler97._languageServiceProject failed: " + err.Message);
