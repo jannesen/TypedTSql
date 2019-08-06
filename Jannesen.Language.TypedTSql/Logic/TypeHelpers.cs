@@ -18,7 +18,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         Save
     }
 
-    public struct FlagsTypeCollation
+    public struct FlagsTypeCollation: IEquatable<FlagsTypeCollation>
     {
         public      DataModel.ValueFlags        ValueFlags;
         public      DataModel.ISqlType          SqlType;
@@ -29,6 +29,34 @@ namespace Jannesen.Language.TypedTSql.Logic
             ValueFlags    = DataModel.ValueFlags.Error;
             SqlType       = null;
             CollationName = null;
+        }
+
+        public  static      bool            operator == (FlagsTypeCollation p1, FlagsTypeCollation p2)
+        {
+			return p1.ValueFlags    == p2.ValueFlags &&
+                   p1.SqlType       == p2.SqlType &&
+                   p1.CollationName == p2.CollationName;
+        }
+        public  static      bool            operator != (FlagsTypeCollation p1, FlagsTypeCollation p2)
+        {
+            return !(p1 == p2);
+        }
+        public  override    bool            Equals(object obj)
+        {
+            if (obj is FlagsTypeCollation)
+                return this == (FlagsTypeCollation)obj;
+
+            return false;
+        }
+        public              bool            Equals(FlagsTypeCollation o)
+        {
+            return this == o;
+        }
+        public  override    int             GetHashCode()
+        {
+            return ValueFlags.GetHashCode() ^
+                   SqlType.GetHashCode() ^
+                   (CollationName != null ? CollationName.GetHashCode() : 0);
         }
     }
 

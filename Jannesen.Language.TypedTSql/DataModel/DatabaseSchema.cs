@@ -17,7 +17,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             Name          = dataReader.GetString(0);
         }
 
-        internal    static      string                  SqlStatementCatalog = "SELECT [name]" +
+        internal    const       string                  SqlStatementCatalog = "SELECT [name]" +
                                                                                " FROM sys.schemas";
     }
 

@@ -26,7 +26,7 @@ namespace Jannesen.Language.TypedTSql.Library
 
         public  static          bool                    ValidName(string s)
         {
-            if (s == "")
+            if (s.Length == 0)
                 return false;
 
             for (int i = 0 ; i < s.Length ; ++i) {

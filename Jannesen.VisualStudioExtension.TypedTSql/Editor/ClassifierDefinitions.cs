@@ -329,7 +329,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
     [Export]
     public sealed class ClassificationColorManager: IDisposable
     {
-        public struct ClassificationColor
+        internal struct ClassificationColor: IEquatable<ClassificationColor>
         {
             public readonly Color?                  ForegroundColor;
             public readonly Color?                  BackgroundColor;
@@ -338,6 +338,32 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
             {
                 ForegroundColor = foregroundColor;
                 BackgroundColor = backgroundColor;
+            }
+
+            public  static      bool            operator == (ClassificationColor p1, ClassificationColor p2)
+            {
+			    return p1.ForegroundColor == p2.ForegroundColor &&
+                       p1.BackgroundColor == p2.BackgroundColor;
+            }
+            public  static      bool            operator != (ClassificationColor p1, ClassificationColor p2)
+            {
+                return !(p1 == p2);
+            }
+            public  override    bool            Equals(object obj)
+            {
+                if (obj is ClassificationColor)
+                    return this == (ClassificationColor)obj;
+
+                return false;
+            }
+            public              bool            Equals(ClassificationColor o)
+            {
+                return this == o;
+            }
+            public  override    int             GetHashCode()
+            {
+                return (ForegroundColor.HasValue ? ForegroundColor.Value.GetHashCode() : 0) ^
+                       (BackgroundColor.HasValue ? BackgroundColor.Value.GetHashCode() : 0);
             }
         }
         class DefaultClassificationColor
@@ -391,7 +417,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 //            VSColorTheme.ThemeChanged -= _onThemeChanged;
         }
 
-        public                      ClassificationColor                     GetDefaultColors(string category)
+        internal                    ClassificationColor                     GetDefaultColors(string category)
         {
             if (!_defaultColors.TryGetValue(category, out DefaultClassificationColor defaultColor))
                 defaultColor = null;

@@ -49,7 +49,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             }
         }
 
-        internal    static      string                  SqlStatementCatalog = "SELECT [name], [type]" +
+        internal    const       string                  SqlStatementCatalog = "SELECT [name], [type]" +
                                                                                " FROM sys.database_principals";
     }
 

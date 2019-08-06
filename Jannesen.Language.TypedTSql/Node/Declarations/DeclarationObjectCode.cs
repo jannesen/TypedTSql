@@ -139,7 +139,7 @@ namespace Jannesen.Language.TypedTSql.Node
             }
         }
 
-        private                 void                                _insertStandardSettings(StatementBlock  statements)
+        private     static      void                                _insertStandardSettings(StatementBlock  statements)
         {
             bool        addLine                        = true;
             bool        setNOCOUNT                     = true;
@@ -171,7 +171,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                 case "XACT_ABORT":                  setXACT_ABORT                  = false; break;
 
                                 case "ANSI_NULL_DFLT_ON":
-                                    if (string.Compare(((Core.Token)((Statement_SET_option)child).n_Value).Text, "ON", true) == 0) {
+                                    if (string.Compare(((Core.Token)((Statement_SET_option)child).n_Value).Text, "ON", StringComparison.InvariantCultureIgnoreCase) == 0) {
                                         setARITHABORT    = false;
                                         setXACT_ABORT    = false;
                                         setANSI_NULLS    = false;

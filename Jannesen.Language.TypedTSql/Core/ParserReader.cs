@@ -7,11 +7,36 @@ namespace Jannesen.Language.TypedTSql.Core
 {
     public class ParserReader
     {
-        public struct ParsePosition
+        public struct ParsePosition: IEquatable<ParsePosition>
         {
-            public  int         Processed;
-            public  int         CurrentParse;
-        };
+            public              int         Processed;
+            public              int         CurrentParse;
+
+            public  static      bool        operator == (ParsePosition p1, ParsePosition p2)
+            {
+			    return p1.Processed    == p2.Processed &&
+                       p1.CurrentParse == p2.CurrentParse;
+            }
+            public  static      bool        operator != (ParsePosition p1, ParsePosition p2)
+            {
+                return !(p1 == p2);
+            }
+            public  override    bool        Equals(object obj)
+            {
+                if (obj is ParsePosition)
+                    return this == (ParsePosition)obj;
+
+                return false;
+            }
+            public              bool        Equals(ParsePosition o)
+            {
+                return this == o;
+            }
+            public  override    int         GetHashCode()
+            {
+                return Processed.GetHashCode() ^ CurrentParse.GetHashCode();
+            }
+        }
 
         public              Transpiler                  Transpiler          { get; private  set; }
         public              SourceFile                  SourceFile          { get; private  set; }

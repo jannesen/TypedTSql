@@ -224,7 +224,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 else
                     column = new DataModel.ColumnUnion("", expressions, typeResult);
 
-                if (column.Name != "") {
+                if (column.Name.Length > 0) {
                     for (int i = 0 ; i < n_Selects.Length ; ++i)
                         ((Query_Select_ColumnExpression)n_Selects[i].n_Columns.n_Columns[colidx]).n_ColumnName?.SetSymbol(column);
                 }

@@ -35,7 +35,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             return new EntityTypeUser(catalog, entityName, dataReader, coloffset);
         }
 
-        internal    static      string                  SqlStatementCatalog = "SELECT [schema] = schema_name([schema_id])," +   //  0
+        internal    const       string                  SqlStatementCatalog = "SELECT [schema] = schema_name([schema_id])," +   //  0
                                                                                      "[name]," +                                //  1
                                                                                      "[is_table_type]," +                       //  2
                                                                                      "[assemblyname]  = case when t.[system_type_id] = 240 then (SELECT a.[name] FROM sys.type_assembly_usages u INNER JOIN sys.assemblies a ON a.[assembly_id]=u.[assembly_id] WHERE u.[user_type_id]=t.[user_type_id]) end," + //  3

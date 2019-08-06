@@ -29,7 +29,7 @@ namespace Jannesen.Language.TypedTSql.Node
             Core.Token token = ParseOptionalToken(reader, "NEXT", "PRIOR", "FIRST", "LAST", "ABSOLUTE", "RELATIVE");
 
             if (token != null) {
-                switch (token.Text.ToUpper()) {
+                switch (token.Text.ToUpperInvariant()) {
                 case "ABSOLUTE":
                 case "RELATIVE":
                     n_Position = ParseExpression(reader);

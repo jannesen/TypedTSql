@@ -13,14 +13,17 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         private         IWpfTextView            _textView;
         private         OLE.IOleCommandTarget   _next;
 
-        public                                  ContextMenu(IServiceProvider serviceProvider, IVsTextView textViewAdapter, IWpfTextView textView)
+        public                                  ContextMenu(IServiceProvider serviceProvider, IWpfTextView textView)
         {
             _serviceProvider = serviceProvider;
             _textView        = textView;
+        }
+
+        public          void                    AddCommandFilter(IVsTextView textViewAdapter)
+        {
             textViewAdapter.AddCommandFilter(this, out var next);
             _next = next;
         }
-
         public          int                     QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLE.OLECMD[] prgCmds, IntPtr pCmdText)
         {
             if (Query(ref pguidCmdGroup, prgCmds[0].cmdID)) {
@@ -103,7 +106,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
                 var tblsp    = _getTexBufferLanguageServiceProject();
 
                 await tblsp.LanguageService.WhenReady((p) => {
-                        tblsp.LanguageService.Service.Library.SearchReferences(_serviceProvider, tblsp.LanguageService.VSProject, p.FindReferencesAt(tblsp.FilePath, position));
+                        LanguageService.Library.SimpleLibrary.SearchReferences(_serviceProvider, tblsp.LanguageService.VSProject, p.FindReferencesAt(tblsp.FilePath, position));
                     });
             }
             catch(Exception err) {

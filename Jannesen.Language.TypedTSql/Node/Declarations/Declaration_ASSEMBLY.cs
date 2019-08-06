@@ -90,7 +90,7 @@ namespace Jannesen.Language.TypedTSql.Node
             emitWriter.WriteText("DECLARE @cur VARBINARY(max)=(SELECT f.[content] FROM sys.assemblies a inner join sys.assembly_files f ON f.[assembly_id] = a.[assembly_id] AND f.[file_id] = 1 WHERE a.[name]=" + Library.SqlStatic.QuoteString(n_Name.ValueString) + ")\r\n");
             emitWriter.WriteText("IF @cur is null\r\n");
             emitWriter.WriteText("BEGIN\r\n");
-                if (n_Permissingset != null && n_Permissingset.ValueString.ToUpper() == "SAFE")
+                if (n_Permissingset != null && n_Permissingset.ValueString.ToUpperInvariant() == "SAFE")
                     emitWriter.WriteText("    ALTER DATABASE CURRENT SET TRUSTWORTHY ON\r\n");
                 emitWriter.WriteText("    CREATE ASSEMBLY " + Library.SqlStatic.QuoteName(n_Name.ValueString) + "\r\n");
                 emitWriter.WriteText("      AUTHORIZATION " + Library.SqlStatic.QuoteName(n_Autorisation != null ? n_Autorisation.ValueString : "dbo") + "\r\n");

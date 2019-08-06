@@ -13,13 +13,13 @@ namespace Jannesen.Language.TypedTSql.Token
         public      override        Int32                   ValueInt
         {
             get {
-                return int.Parse(Text);
+                return int.Parse(Text, System.Globalization.CultureInfo.InvariantCulture);
             }
         }
         public      override        Int64                   ValueBigInt
         {
             get {
-                return int.Parse(Text);
+                return int.Parse(Text, System.Globalization.CultureInfo.InvariantCulture);
             }
         }
         public      override        decimal                 ValueDecimal

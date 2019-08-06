@@ -18,7 +18,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             throw new InvalidOperationException("Not allowed to update a locked assembly.");
         }
 
-        internal    static      string                  SqlStatementCatalog = "SELECT [name]" +
+        internal    const       string                  SqlStatementCatalog = "SELECT [name]" +
                                                                            " FROM sys.assemblies";
     }
 }

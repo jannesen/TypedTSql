@@ -50,14 +50,14 @@ namespace Jannesen.Language.TypedTSql.Node
 
             emitWriter.WriteText("BEGIN\r\n");
                 emitWriter.WriteText("    IF (SELECT COUNT(*) FROM sys.all_columns WHERE [object_id]=@table_object_id)<>");
-                    emitWriter.WriteText(n_Table.n_Columns.Length.ToString());
+                    emitWriter.WriteText(n_Table.n_Columns.Length.ToString(System.Globalization.CultureInfo.InvariantCulture));
                     emitWriter.WriteText("\r\n");
 
                 int column_id = 1;
 
                 foreach(var tableColumn in n_Table.n_Columns) {
                     emitWriter.WriteText("    OR NOT EXISTS (SELECT * FROM sys.all_columns WHERE [object_id]=@table_object_id AND [column_id]=");
-                        emitWriter.WriteText(column_id.ToString());
+                        emitWriter.WriteText(column_id.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
                         emitWriter.WriteText(" AND [name]=");
                         emitWriter.WriteText(Library.SqlStatic.QuoteString(tableColumn.n_Name.ValueString));
@@ -68,7 +68,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                         if (columnSqlType is DataModel.SqlTypeNative nativeType) {
                             emitWriter.WriteText(" AND [system_type_id]=");
-                            emitWriter.WriteText(nativeType.SystemTypeId.ToString());
+                            emitWriter.WriteText(nativeType.SystemTypeId.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
                             switch(nativeType.SystemType) {
                             case DataModel.SystemType.Binary:
@@ -78,20 +78,20 @@ namespace Jannesen.Language.TypedTSql.Node
                             case DataModel.SystemType.VarChar:
                             case DataModel.SystemType.NVarChar:
                                 emitWriter.WriteText(" AND [max_length]=");
-                                emitWriter.WriteText(nativeType.MaxLength.ToString());
+                                emitWriter.WriteText(nativeType.MaxLength.ToString(System.Globalization.CultureInfo.InvariantCulture));
                                 break;
 
                             case DataModel.SystemType.Float:
                                 emitWriter.WriteText(" AND [precision]=");
-                                emitWriter.WriteText(nativeType.Precision.ToString());
+                                emitWriter.WriteText(nativeType.Precision.ToString(System.Globalization.CultureInfo.InvariantCulture));
                                 break;
 
                             case DataModel.SystemType.Decimal:
                             case DataModel.SystemType.Numeric:
                                 emitWriter.WriteText(" AND [precision]=");
-                                emitWriter.WriteText(nativeType.Precision.ToString());
+                                emitWriter.WriteText(nativeType.Precision.ToString(System.Globalization.CultureInfo.InvariantCulture));
                                 emitWriter.WriteText(" AND [scale]=");
-                                emitWriter.WriteText(nativeType.Scale.ToString());
+                                emitWriter.WriteText(nativeType.Scale.ToString(System.Globalization.CultureInfo.InvariantCulture));
                                 break;
                             }
                         }

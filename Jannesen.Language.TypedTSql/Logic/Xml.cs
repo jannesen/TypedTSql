@@ -10,7 +10,7 @@ namespace Jannesen.Language.TypedTSql.Logic
 
         public  static  DataModel.ISqlType          Transpile(Transpile.Context context, Core.IAstNode node, string methodName, IExprNode[] arguments)
         {
-            switch(methodName.ToLower()) {
+            switch(methodName.ToLowerInvariant()) {
             case "query":
                 Validate.NumberOfArguments(arguments, 1);
                 _transpileXQuery(context, node, arguments[0]);

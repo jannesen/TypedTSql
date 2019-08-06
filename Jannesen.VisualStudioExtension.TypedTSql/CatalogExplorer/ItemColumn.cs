@@ -55,7 +55,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         {
             try {
                 await ItemProject.WhenReady((project) => {
-                        project.Service.Library.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(_getColumn(project)));
+                        LanguageService.Library.SimpleLibrary.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(_getColumn(project)));
                     });
             }
             catch(Exception err) {

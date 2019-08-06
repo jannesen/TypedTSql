@@ -56,7 +56,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     n_JoinOption = ParseOptionalToken(reader, "LOOP", "HASH", "MERGE", "REMOTE");
 
                     if (n_JoinOption != null) {
-                        switch(n_JoinOption.Text.ToUpper()) {
+                        switch(n_JoinOption.Text.ToUpperInvariant()) {
                         case "LOOP":    n_JoinOptions = JoinOption.LOOP;        break;
                         case "HASH":    n_JoinOptions = JoinOption.HASH;        break;
                         case "MERGE":   n_JoinOptions = JoinOption.MERGE;       break;

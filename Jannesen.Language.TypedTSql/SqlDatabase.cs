@@ -14,7 +14,7 @@ namespace Jannesen.Language.TypedTSql
         public                  string                                  UserName            { get; private set; }
         public                  string                                  Passwd              { get; private set; }
         public                  bool                                    AllCodeDropped      { get; private set; }
-        private                 SqlConnection                           _connection;
+        public                  SqlConnection                           Connection          { get; private set; }
         private                 Action<SqlError>                        _onExecuteError;
         private                 Action<string>                          _onExecuteMessage;
         private                 Library.SourceMap                       _sourceMap;
@@ -28,18 +28,18 @@ namespace Jannesen.Language.TypedTSql
             var s = datasource;
             int i;
 
-            if ((i = s.IndexOf("@")) > 0) {
+            if ((i = s.IndexOf("@", StringComparison.InvariantCulture)) > 0) {
                 var userPasswd = s.Substring(0, i);
                 s = s.Substring(i + 1);
 
-                if ((i = userPasswd.IndexOf(":")) <= 0)
+                if ((i = userPasswd.IndexOf(":", StringComparison.InvariantCulture)) <= 0)
                     throw new FormatException("Invalid username:passwd in datasource '" + datasource + "'");
 
                 this.UserName = userPasswd.Substring(0, i);
                 this.Passwd   = userPasswd.Substring(i + 1);
             }
 
-            if ((i = s.LastIndexOf("\\")) <= 0)
+            if ((i = s.LastIndexOf("\\", StringComparison.InvariantCulture)) <= 0)
                 throw new FormatException("Invalid datasource '" + datasource + "'");
 
             this.ServerName    = s.Substring(0, i);
@@ -130,7 +130,7 @@ namespace Jannesen.Language.TypedTSql
                 if (_output != null) {
                     _output.Write(statement);
 
-                    if (!statement.EndsWith("\n"))
+                    if (!statement.EndsWith("\n", StringComparison.InvariantCulture))
                         _output.WriteLine();
 
                     _output.WriteLine("GO");
@@ -140,7 +140,7 @@ namespace Jannesen.Language.TypedTSql
                 {
                     sqlCmd.CommandText    = statement;
                     sqlCmd.CommandType    = System.Data.CommandType.Text;
-                    sqlCmd.Connection     = _connection;
+                    sqlCmd.Connection     = Connection;
                     sqlCmd.CommandTimeout = 30;
 
                     sqlCmd.ExecuteNonQuery();
@@ -153,8 +153,8 @@ namespace Jannesen.Language.TypedTSql
                 _sourceMap        = sourceMap;
                 _onExecuteError   = onExecuteError;
                 _onExecuteMessage = onExecuteMessage;
-                _connection.FireInfoMessageEventOnUserErrors = true;
-                _connection.InfoMessage += _onInfoMessage;
+                Connection.FireInfoMessageEventOnUserErrors = true;
+                Connection.InfoMessage += _onInfoMessage;
                 _errCnt = 0;
 
                 try {
@@ -167,8 +167,8 @@ namespace Jannesen.Language.TypedTSql
                     throw new ErrorException("Fatal error executing statement.");
                 }
                 finally {
-                    _connection.InfoMessage -= _onInfoMessage;
-                    _connection.FireInfoMessageEventOnUserErrors = false;
+                    Connection.InfoMessage -= _onInfoMessage;
+                    Connection.FireInfoMessageEventOnUserErrors = false;
                     _onExecuteError   = null;
                     _onExecuteMessage = null;
                     _sourceMap        = null;
@@ -258,11 +258,6 @@ namespace Jannesen.Language.TypedTSql
             }
         }
 
-        internal                SqlClient.SqlDataReader                 ExecuteDataReader(string sqlCmd)
-        {
-            return (new SqlClient.SqlCommand(sqlCmd, _connection)).ExecuteReader();
-        }
-
         private                 void                                    _onInfoMessage(object sender, SqlClient.SqlInfoMessageEventArgs e)
         {
             foreach(SqlClient.SqlError sqlError in e.Errors) {
@@ -307,8 +302,8 @@ namespace Jannesen.Language.TypedTSql
                 else
                     connectString += ";Integrated Security=true";
 
-                _connection = new SqlClient.SqlConnection(connectString);
-                _connection.Open();
+                Connection = new SqlClient.SqlConnection(connectString);
+                Connection.Open();
                 _needsResetSettings = true;
             }
             catch(Exception) {
@@ -318,9 +313,9 @@ namespace Jannesen.Language.TypedTSql
         }
         private                 void                                    _connectionClose()
         {
-            if (_connection != null) {
-                _connection.Close();
-                _connection = null;
+            if (Connection != null) {
+                Connection.Close();
+                Connection = null;
             }
         }
         private                 void                                    _outputClose()

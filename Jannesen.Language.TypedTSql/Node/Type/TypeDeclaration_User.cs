@@ -156,7 +156,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 emitWriter.WriteText("    IF NOT EXISTS (");
                     emitWriter.WriteText("SELECT * FROM sys.types WHERE [user_type_id] = @user_type_id");
                     emitWriter.WriteText(" AND [system_type_id]=");
-                    emitWriter.WriteText(_nativeType.SystemTypeId.ToString());
+                    emitWriter.WriteText(_nativeType.SystemTypeId.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
                     switch(_nativeType.SystemType) {
                     case DataModel.SystemType.Binary:
@@ -166,20 +166,20 @@ namespace Jannesen.Language.TypedTSql.Node
                     case DataModel.SystemType.VarChar:
                     case DataModel.SystemType.NVarChar:
                         emitWriter.WriteText(" AND [max_length]=");
-                        emitWriter.WriteText(_nativeType.MaxLength.ToString());
+                        emitWriter.WriteText(_nativeType.MaxLength.ToString(System.Globalization.CultureInfo.InvariantCulture));
                         break;
 
                     case DataModel.SystemType.Float:
                         emitWriter.WriteText(" AND [precision]=");
-                        emitWriter.WriteText(_nativeType.Precision.ToString());
+                        emitWriter.WriteText(_nativeType.Precision.ToString(System.Globalization.CultureInfo.InvariantCulture));
                         break;
 
                     case DataModel.SystemType.Decimal:
                     case DataModel.SystemType.Numeric:
                         emitWriter.WriteText(" AND [precision]=");
-                        emitWriter.WriteText(_nativeType.Precision.ToString());
+                        emitWriter.WriteText(_nativeType.Precision.ToString(System.Globalization.CultureInfo.InvariantCulture));
                         emitWriter.WriteText(" AND [scale]=");
-                        emitWriter.WriteText(_nativeType.Scale.ToString());
+                        emitWriter.WriteText(_nativeType.Scale.ToString(System.Globalization.CultureInfo.InvariantCulture));
                         break;
                     }
 

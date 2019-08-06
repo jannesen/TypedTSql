@@ -25,13 +25,13 @@ namespace Jannesen.Language.TypedTSql.Library
         public                                      AttrNodeParser(string nameToken)
         {
             FirstToken = Core.TokenID.Name;
-            NameToken  = nameToken.ToUpper();
+            NameToken  = nameToken.ToUpperInvariant();
             Prio       = 0;
         }
         public                                      AttrNodeParser(string nameToken, int prio)
         {
             FirstToken = Core.TokenID.Name;
-            NameToken  = nameToken.ToUpper();
+            NameToken  = nameToken.ToUpperInvariant();
             Prio       = prio;
         }
 
@@ -43,7 +43,7 @@ namespace Jannesen.Language.TypedTSql.Library
                 if (NameToken == null)
                     return true;
 
-                if (NameToken == token.Text.ToUpper())
+                if (NameToken == token.Text.ToUpperInvariant())
                     return true;
             }
 

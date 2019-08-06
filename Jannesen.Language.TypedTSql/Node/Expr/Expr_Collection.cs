@@ -6,7 +6,7 @@ namespace Jannesen.Language.TypedTSql.Node
 {
     public class Expr_Collection: Core.AstParseNode
     {
-        private                 IExprNode[]         _zeroArch = new IExprNode[0];
+        private                 IExprNode[]         _zeroArch = Array.Empty<IExprNode>();
 
         public      readonly    IExprNode[]         n_Expressions;
 

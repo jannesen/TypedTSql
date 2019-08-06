@@ -62,7 +62,7 @@ namespace Jannesen.Language.TypedTSql.Library
         {
             get {
                 if (index<0 || (uint)index >= (uint)_size)
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(index));
 
                 return _buckets[index].item;
             }
@@ -483,7 +483,7 @@ namespace Jannesen.Language.TypedTSql.Library
             }
         }
 
-        private                 int                                 _hashtablesize(int n)
+        private     static  int                     _hashtablesize(int n)
         {
             for (int i = 0 ; i < _primes.Length ; ++i) {
                 if (_primes[i] > n)
@@ -520,7 +520,7 @@ while (n < 64000)
     console.log('' + n);
 }
 */
-        private     static      int[]                               _primes = new int[] {3,7,11,17,23,31,41,53,71,97,127,163,211,269,347,439,557,701,881,1103,1381,1733,2179,2729,3413,4271,5347,6689,8363,10457,13093,16369,20477,25601,32003,40009,50021,62533 };
+        private     static  int[]                   _primes = new int[] {3,7,11,17,23,31,41,53,71,97,127,163,211,269,347,439,557,701,881,1103,1381,1733,2179,2729,3413,4271,5347,6689,8363,10457,13093,16369,20477,25601,32003,40009,50021,62533 };
     }
 
     public abstract class ListHashName<TItem>: ListHash<TItem, string>
@@ -534,7 +534,7 @@ while (n < 64000)
 
         protected   override    string                              NormalizeKey(string key)
         {
-            return key.ToLower();
+            return key.ToUpperInvariant();
         }
     }
 }

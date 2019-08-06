@@ -278,52 +278,54 @@ namespace Jannesen.Language.TypedTSql
 
             lock(Database) {
                 try {
-                    using (SqlDataReader dataReader = Database.ExecuteDataReader("SELECT DATABASEPROPERTYEX(DB_NAME(), 'Collation')\n"+
-                                                                                 DatabaseSchema.SqlStatementCatalog + "\n" +
-                                                                                 DatabasePrincipal.SqlStatementCatalog + "\n" +
-                                                                                 EntityAssembly.SqlStatementCatalog    + "\n" +
-                                                                                 EntityType.SqlStatementCatalog        + "\n" +
-                                                                                 EntityObject.SqlStatementCatalog))
-                    {
-                        if (!dataReader.Read())
-                            throw new GlobalCatalogException("Failed to read database options.");
+                    using (var sqlCmd = new SqlCommand("SELECT DATABASEPROPERTYEX(DB_NAME(), 'Collation')\n"+
+                                                       DatabaseSchema.SqlStatementCatalog + "\n" +
+                                                       DatabasePrincipal.SqlStatementCatalog + "\n" +
+                                                       EntityAssembly.SqlStatementCatalog    + "\n" +
+                                                       EntityType.SqlStatementCatalog        + "\n" +
+                                                       EntityObject.SqlStatementCatalog, Database.Connection)) { 
+                        using (SqlDataReader dataReader = sqlCmd.ExecuteReader())
+                        {
+                            if (!dataReader.Read())
+                                throw new GlobalCatalogException("Failed to read database options.");
 
-                        _defaultCollation = dataReader.GetString(0);
+                            _defaultCollation = dataReader.GetString(0);
 
-                        if (!dataReader.NextResult())
-                            throw new GlobalCatalogException("Missing principal dataset.");
+                            if (!dataReader.NextResult())
+                                throw new GlobalCatalogException("Missing principal dataset.");
 
-                        while (dataReader.Read())
-                            _schemas.TryAdd(new DatabaseSchema(dataReader));
+                            while (dataReader.Read())
+                                _schemas.TryAdd(new DatabaseSchema(dataReader));
 
-                        if (!dataReader.NextResult())
-                            throw new GlobalCatalogException("Missing principal dataset.");
+                            if (!dataReader.NextResult())
+                                throw new GlobalCatalogException("Missing principal dataset.");
 
-                        while (dataReader.Read())
-                            _principals.TryAdd(new DatabasePrincipal(dataReader));
+                            while (dataReader.Read())
+                                _principals.TryAdd(new DatabasePrincipal(dataReader));
 
-                        if (!dataReader.NextResult())
-                            throw new GlobalCatalogException("Missing Assembly dataset.");
+                            if (!dataReader.NextResult())
+                                throw new GlobalCatalogException("Missing Assembly dataset.");
 
-                        while (dataReader.Read())
-                            _assemblies.Add(new EntityAssembly(dataReader));
+                            while (dataReader.Read())
+                                _assemblies.Add(new EntityAssembly(dataReader));
 
-                        if (!dataReader.NextResult())
-                            throw new GlobalCatalogException("Missing type dataset.");
+                            if (!dataReader.NextResult())
+                                throw new GlobalCatalogException("Missing type dataset.");
 
-                        while (dataReader.Read())
-                            _types.Add(EntityType.NewEntityType(this, dataReader, 0));
+                            while (dataReader.Read())
+                                _types.Add(EntityType.NewEntityType(this, dataReader, 0));
 
-                        if (!dataReader.NextResult())
-                            throw new GlobalCatalogException("Missing object dataset.");
+                            if (!dataReader.NextResult())
+                                throw new GlobalCatalogException("Missing object dataset.");
 
-                        while (dataReader.Read())
-                            _objects.Add(EntityObject.ReadFromDatabase(null, dataReader));
-                    }
+                            while (dataReader.Read())
+                                _objects.Add(EntityObject.ReadFromDatabase(null, dataReader));
+                        }
 
-                    foreach(var obj in _objects) {
-                        if (obj.Type == SymbolType.TableUser)
-                            _loadFromDatabase(obj);
+                        foreach(var obj in _objects) {
+                            if (obj.Type == SymbolType.TableUser)
+                                _loadFromDatabase(obj);
+                        }
                     }
                 }
                 catch(Exception err) {
@@ -335,10 +337,11 @@ namespace Jannesen.Language.TypedTSql
         {
             try {
                 lock(Database) {
-                    using (var dataReader = Database.ExecuteDataReader(EntityObject.SqlStatementByName(name)))
-                    {
-                        if (dataReader.Read()) {
-                            return EntityObject.ReadFromDatabase(name.Database, dataReader);
+                    using (var sqlCmd = new SqlCommand(EntityObject.SqlStatementByName(name), Database.Connection)) { 
+                        using (var dataReader = sqlCmd.ExecuteReader()) {
+                            if (dataReader.Read()) {
+                                return EntityObject.ReadFromDatabase(name.Database, dataReader);
+                            }
                         }
                     }
                 }
@@ -352,8 +355,10 @@ namespace Jannesen.Language.TypedTSql
         {
             try {
                 lock(Database) {
-                    using (SqlDataReader dataReader = Database.ExecuteDataReader(entity.DatabaseReadFromCmd()))
-                        entity.DatabaseReadFromResult(this, dataReader);
+                    using (var sqlCmd = new SqlCommand(entity.DatabaseReadFromCmd(), Database.Connection)) { 
+                        using (SqlDataReader dataReader = sqlCmd.ExecuteReader())
+                            entity.DatabaseReadFromResult(this, dataReader);
+                    }
                 }
             }
             catch(Exception err) {

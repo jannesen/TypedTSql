@@ -96,9 +96,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public      override    int                 GetHashCode()
         {
             if (!_hashcode.HasValue) {
-                _hashcode = Name.ToLower().GetHashCode() ^
-                            (Schema   != null ? Schema.ToLower().GetHashCode() : 0) ^
-                            (Database != null ? Database.ToLower().GetHashCode() : 0);
+                _hashcode = Name.ToUpperInvariant().GetHashCode() ^
+                            (Schema   != null ? Schema.ToUpperInvariant().GetHashCode() : 0) ^
+                            (Database != null ? Database.ToUpperInvariant().GetHashCode() : 0);
             }
 
             return _hashcode.Value;

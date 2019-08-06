@@ -69,7 +69,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn
 
                 string name = (sqlType.TypeFlags & DataModel.SqlTypeFlags.SimpleType) != 0 ? sqlType.NativeType.ToString() : sqlType.GetType().Name;
 
-                rtn += (rtn =="") ? expr.SqlType.ToString() : rtn + ", " + expr.SqlType.ToString();
+                rtn += (rtn.Length == 0) ? expr.SqlType.ToString() : rtn + ", " + expr.SqlType.ToString();
             }
 
             return rtn;

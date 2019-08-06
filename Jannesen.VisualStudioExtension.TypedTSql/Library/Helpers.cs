@@ -73,7 +73,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Library
         {
             if (value == null)      return "NULL";
             if (value is string)    return LTTS.Library.SqlStatic.QuoteString((string)value);
-            if (value is int)       return ((int)value).ToString();
+            if (value is int)       return ((int)value).ToString(System.Globalization.CultureInfo.InvariantCulture);
             if (value is decimal)   return ((decimal)value).ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
             if (value is double)    return ((int)value).ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
             if (value is byte[] v) {

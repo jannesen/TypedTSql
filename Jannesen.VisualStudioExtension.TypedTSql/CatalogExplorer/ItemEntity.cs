@@ -392,7 +392,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         {
             try {
                 await ItemProject.WhenReady((project) => {
-                        project.Service.Library.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(project.GlobalCatalog.GetEntity(EntityType, EntityName)));
+                        LanguageService.Library.SimpleLibrary.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(project.GlobalCatalog.GetEntity(EntityType, EntityName)));
                     });
             }
             catch(Exception err) {

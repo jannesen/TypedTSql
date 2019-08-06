@@ -87,7 +87,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                     Validate.ConstByType(column.SqlType, f.n_Value);
                                 }
                                 else {
-                                    context.AddError(f.n_Name, "Field name don't exists in " + table.Name.ToString() + ".");
+                                    context.AddError(f.n_Name, "Field name don't exists in " + table.Name.ToString(System.Globalization.CultureInfo.InvariantCulture) + ".");
                                     ferror = true;
                                 }
                             }
@@ -132,16 +132,16 @@ namespace Jannesen.Language.TypedTSql.Node
 
         class EmitInstallIntoHelper
         {
-            private     DataModel.ColumnList        _columnList;
-            private     string                      _keyName;
-            private     bool                        _identityInsert;
-            private     string                      _tableFullname;
-            private     int[]                       _columnIndexes;
-            private     Option                      _options;
-            private     DataModel.ValueRecordList   _values;
-            private     StringBuilder               _emitString;
+            private             DataModel.ColumnList        _columnList;
+            private             string                      _keyName;
+            private             bool                        _identityInsert;
+            private             string                      _tableFullname;
+            private             int[]                       _columnIndexes;
+            private             Option                      _options;
+            private             DataModel.ValueRecordList   _values;
+            private             StringBuilder               _emitString;
 
-            public                                  EmitInstallIntoHelper(DataModel.EntityObjectTable table, int[] columIndexes, Option options, DataModel.ValueRecordList values)
+            public                                          EmitInstallIntoHelper(DataModel.EntityObjectTable table, int[] columIndexes, Option options, DataModel.ValueRecordList values)
             {
                 _columnList     = table.ColumnList;
                 _keyName        = Library.SqlStatic.QuoteName(_columnList[0].Name);
@@ -153,7 +153,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 _emitString     = new StringBuilder(4096);
             }
 
-            public      bool                        Emit(EmitContext emitContext, int step)
+            public              bool                        Emit(EmitContext emitContext, int step)
             {
                 bool   rtn  = true;
                 string msg  = null;
@@ -190,7 +190,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 return rtn;
             }
 
-            private     bool                        _emit_1()
+            private             bool                        _emit_1()
             {
                 if (_identityInsert)
                     _emitLine("DECLARE @identity_on BIT = 0;");
@@ -255,14 +255,14 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 return true;
             }
-            private     void                        _emit_2()
+            private             void                        _emit_2()
             {
                 _emit("ALTER TABLE  ");
                     _emit(_tableFullname);
                     _emit(" CHECK CONSTRAINT ALL;");
                     _emitNewline();
             }
-            private     bool                        _emit_1_2(int indent)
+            private             bool                        _emit_1_2(int indent)
             {
                 _emitSpace(indent);
                 _emit("SELECT [cmd] = CASE WHEN c.");
@@ -350,7 +350,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 return true;
             }
-            private     void                        _insert(int indent)
+            private             void                        _insert(int indent)
             {
                 _emitSpace(indent + 25);
                 _emit("THEN N'INSERT INTO ");
@@ -379,7 +379,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     _emitNewline();
 
             }
-            private     void                        _testUpdate(int indent)
+            private             void                        _testUpdate(int indent)
             {
                 bool    first = true;
 
@@ -428,7 +428,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     _emitNewline();
                 }
             }
-            private     void                        _update(int indent)
+            private             void                        _update(int indent)
             {
                 _emitSpace(indent + 25);
                 _emit("THEN N'UPDATE ");
@@ -469,7 +469,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 _emit(_strNewValue("c.", _columnList[0]));
                 _emitNewline();
             }
-            private     void                        _delete(int indent)
+            private             void                        _delete(int indent)
             {
                 _emitSpace(indent + 25);
                 _emit("THEN N'DELETE FROM ");
@@ -483,7 +483,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     _emit(_strNewValue("c.", _columnList[0]));
                     _emitNewline();
             }
-            private     int                         _valueDataSet(int indent)
+            private             int                         _valueDataSet(int indent)
             {
                 var     count      = 0;
                 var     firstRec   = true;
@@ -518,7 +518,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 return count;
             }
-            private     string                      _strNewValue(string setName, DataModel.Column column)
+            private static      string                      _strNewValue(string setName, DataModel.Column column)
             {
                 string      columnName = setName + Library.SqlStatic.QuoteName(column.Name);
 
@@ -559,36 +559,36 @@ namespace Jannesen.Language.TypedTSql.Node
                     throw new InvalidOperationException("Con't know to to emit " + column.SqlType.NativeType.ToString() + ".");
                 }
             }
-            private     void                        _appendColumnValue(DataModel.Column column, object value)
+            private             void                        _appendColumnValue(DataModel.Column column, object value)
             {
                 _emit(Library.SqlStatic.QuoteName(column.Name));
                 _emit("=");
                 _emit(_strColumnValue(column, value));
             }
-            private     string                      _strColumnValue(DataModel.Column column, object value)
+            private static      string                      _strColumnValue(DataModel.Column column, object value)
             {
                 if (value == null)      return "NULL";
                 if (value is string)    return Library.SqlStatic.QuoteString((string)value);
-                if (value is int)       return ((int)value).ToString();
+                if (value is int)       return ((int)value).ToString(System.Globalization.CultureInfo.InvariantCulture);
                 if (value is decimal)   return ((decimal)value).ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
                 if (value is double)    return ((int)value).ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
 
                 throw new InvalidOperationException("Con't know to to emit " + value.GetType().FullName + ".");
             }
-            private     void                        _emit(string s)
+            private             void                        _emit(string s)
             {
                 _emitString.Append(s);
             }
-            private     void                        _emitLine(string s)
+            private             void                        _emitLine(string s)
             {
                 _emit(s);
                 _emitNewline();
             }
-            private     void                        _emitSpace(int c)
+            private             void                        _emitSpace(int c)
             {
                 _emitString.Append(' ', c);
             }
-            private     void                        _emitNewline()
+            private             void                        _emitNewline()
             {
                 _emitString.Append("\r\n");
             }

@@ -144,16 +144,16 @@ namespace Jannesen.Language.TypedTSql.DataModel
                 case SystemType.Char:               return "char("              + _maxLengthToString() + ")";
                 case SystemType.Date:               return "date";
                 case SystemType.DateTime:           return "datetime";
-                case SystemType.DateTime2:          return "datetime2("         + Scale.ToString() + ")";
-                case SystemType.DateTimeOffset:     return "datetimeoffset("    + Scale.ToString() + ")";
-                case SystemType.Decimal:            return "decimal("           + Precision.ToString() + "," + Scale.ToString() + ")";
-                case SystemType.Float:              return "float("             + Precision.ToString() + ")";
+                case SystemType.DateTime2:          return "datetime2("         + Scale.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")";
+                case SystemType.DateTimeOffset:     return "datetimeoffset("    + Scale.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")";
+                case SystemType.Decimal:            return "decimal("           + Precision.ToString(System.Globalization.CultureInfo.InvariantCulture) + "," + Scale.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")";
+                case SystemType.Float:              return "float("             + Precision.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")";
                 case SystemType.Image:              return "image";
                 case SystemType.Int:                return "int";
                 case SystemType.Money:              return "money";
                 case SystemType.NChar:              return "nchar("             + _maxLengthToString() + ")";
                 case SystemType.NText:              return "ntext";
-                case SystemType.Numeric:            return "numeric("           + Precision.ToString() + "," + Scale.ToString() + ")";
+                case SystemType.Numeric:            return "numeric("           + Precision.ToString(System.Globalization.CultureInfo.InvariantCulture) + "," + Scale.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")";
                 case SystemType.NVarChar:           return "nvarchar("          + _maxLengthToString() + ")";
                 case SystemType.Real:               return "real";
                 case SystemType.SmallDateTime:      return "smalldatetime";
@@ -283,7 +283,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             int     b = s.IndexOf('(');
 
             if (b > 0) {
-                if (!s.EndsWith(")"))
+                if (!s.EndsWith(")", StringComparison.InvariantCulture))
                     throw new ArgumentException("Invalid syntax native sql-type.");
 
                 typeName = s.Substring(0, b).Trim();
@@ -300,7 +300,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                 typeArgs = null;
             }
 
-            SystemType systemTypeId = ParseSystemType(typeName.ToLower());
+            SystemType systemTypeId = ParseSystemType(typeName.ToLowerInvariant());
             if (systemTypeId == SystemType.Unknown)
                 throw new ArgumentException("Unknown sqltype '" + typeName + "'");
 
@@ -310,7 +310,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         }
         public      static      SqlTypeNative       ParseNativeType(string name, string parm1, string parm2)
         {
-            return ParseNativeType(ParseSystemType(name.ToLower()), parm1, parm2);
+            return ParseNativeType(ParseSystemType(name.ToLowerInvariant()), parm1, parm2);
         }
         public      static      SqlTypeNative       ParseNativeType(SystemType systemType, string parm1, string parm2)
         {
@@ -328,11 +328,11 @@ namespace Jannesen.Language.TypedTSql.DataModel
                 if (parm1 == null || parm2 != null)
                     throw new ArgumentException("Invalid syntax native sql-type.");
 
-                if (string.Compare(parm1, "MAX", true) == 0)
+                if (string.Compare(parm1, "MAX", StringComparison.InvariantCultureIgnoreCase) == 0)
                     maxLength = -1;
                 else {
                     try {
-                        maxLength =  Int16.Parse(parm1);
+                        maxLength =  Int16.Parse(parm1, System.Globalization.CultureInfo.InvariantCulture);
                     }
                     catch(Exception) {
                         throw new ArgumentException("Invalid syntax native sql-type.");
@@ -353,7 +353,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
                 if (parm1 != null) {
                     try {
-                        precision =  byte.Parse(parm1);
+                        precision =  byte.Parse(parm1, System.Globalization.CultureInfo.InvariantCulture);
                     }
                     catch(Exception) {
                         throw new ArgumentException("Invalid syntax native sql-type.");
@@ -373,7 +373,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                     throw new ArgumentException("Invalid syntax native sql-type.");
 
                 try {
-                    precision =  byte.Parse(parm1);
+                    precision =  byte.Parse(parm1, System.Globalization.CultureInfo.InvariantCulture);
                 }
                 catch(Exception) {
                     throw new ArgumentException("Invalid syntax native sql-type.");
@@ -381,7 +381,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
                 if (parm2 != null) {
                     try {
-                        scale =  byte.Parse(parm2);
+                        scale =  byte.Parse(parm2, System.Globalization.CultureInfo.InvariantCulture);
                     }
                     catch(Exception) {
                         throw new ArgumentException("Invalid syntax native sql-type.");
@@ -404,7 +404,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                     throw new ArgumentException("Invalid syntax native sql-type.");
 
                 try {
-                    scale =  byte.Parse(parm1);
+                    scale =  byte.Parse(parm1, System.Globalization.CultureInfo.InvariantCulture);
                 }
                 catch(Exception) {
                     throw new ArgumentException("Invalid syntax native sql-type.");
@@ -471,7 +471,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         public      static      string              SystemSchema(string name)
         {
-            name = name.ToLower();
+            name = name.ToLowerInvariant();
 
             switch(name) {
             case "hierarchyid":
@@ -556,7 +556,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         private                 string              _maxLengthToString()
         {
-            return MaxLength >= 0 ? MaxLength.ToString() : "max";
+            return MaxLength >= 0 ? MaxLength.ToString(System.Globalization.CultureInfo.InvariantCulture) : "max";
         }
 
         private     static      SqlTypeNative       _constructSimpleType(SystemType systemType)
@@ -619,7 +619,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             case 240:   return SystemType.Clr;
             case 241:   return SystemType.Xml;
 
-            default:    throw new InvalidOperationException("Don't system_type_id#" + system_type_id.ToString() + ".");
+            default:    throw new InvalidOperationException("Don't system_type_id#" + system_type_id.ToString(System.Globalization.CultureInfo.InvariantCulture) + ".");
             }
         }
     }

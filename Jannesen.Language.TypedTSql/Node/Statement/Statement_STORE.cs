@@ -47,7 +47,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     ParseToken(reader, "DENY");
 
                     do {
-                        switch(ParseToken(reader, "INSERT", "UPDATE", "DELETE", "UPDATEOF").Text.ToUpper()) {
+                        switch(ParseToken(reader, "INSERT", "UPDATE", "DELETE", "UPDATEOF").Text.ToUpperInvariant()) {
                         case "INSERT":      n_DenyInsert = true;        break;
                         case "UPDATE":      n_DenyUpdate = true;        break;
                         case "DELETE":      n_DenyDelete = true;        break;
@@ -89,7 +89,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 public                  bool                                denyColumn(string name)
                 {
                     foreach(var c in n_DenyUpdateofColumn) {
-                        if (string.Compare(c.ValueString, name, true) == 0)
+                        if (string.Compare(c.ValueString, name, StringComparison.InvariantCultureIgnoreCase) == 0)
                             return true;
                     }
 
@@ -780,7 +780,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     }
                 }
             }
-            private                 void                                _testEqual(EmitWriter emitWriter, string v1, string v2, bool nullable)
+            private     static      void                                _testEqual(EmitWriter emitWriter, string v1, string v2, bool nullable)
             {
                 if (nullable)
                     emitWriter.WriteText("(", v1, " = ", v2, " OR (", v1, " IS NULL AND ", v2, " IS NULL))");
@@ -810,7 +810,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     Target      = target;
                     targetTable = (DataModel.ITable)target.n_Target.Entity;
                     TD          = new TranspiledData() {
-                                      NamePrefix     = "@ST" + (++context.RootContext.StoreTargetNr).ToString() + "$",
+                                      NamePrefix     = "@ST" + (++context.RootContext.StoreTargetNr).ToString(System.Globalization.CultureInfo.InvariantCulture) + "$",
                                       TargetFullname = (targetTable is DataModel.EntityObjectTable table ? table.EntityName.Fullname : ((DataModel.ISymbol)targetTable).Name),
                                       DefaultCollate = _collateSensitive(context.Catalog.DefaultCollation)
                                   };
@@ -1156,7 +1156,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 private                 ColumnInfo                          _findColumn(string name)
                 {
                     foreach(var c in TD.ColumnsInfo) {
-                        if (String.Compare(c.Column.Name, name, true) == 0)
+                        if (String.Compare(c.Column.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0)
                             return c;
                     }
 
@@ -1213,7 +1213,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override    void                                TranspileNode(Transpile.Context context)
         {
-            _namePrefix = "@ST" + (++context.RootContext.StoreTargetNr).ToString() + "$";
+            _namePrefix = "@ST" + (++context.RootContext.StoreTargetNr).ToString(System.Globalization.CultureInfo.InvariantCulture) + "$";
             n_Targets.TranspileNodes(context);
         }
         public      override    void                                Emit(EmitWriter emitWriter)

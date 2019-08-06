@@ -141,7 +141,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 
         public      new         void                    Sort()
         {
-            base.Sort((i1,i2) => string.Compare(i1.ItemName, i2.ItemName, true));
+            base.Sort((i1,i2) => string.Compare(i1.ItemName, i2.ItemName, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

@@ -56,6 +56,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         public                  void                                    Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected override      STask.Task                              InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
@@ -111,7 +112,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
             ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach(IVsProject project in GetLoadedProjects(projecttypeguid)) {
-                if (string.Compare(GetProjectFileName(project), projectpathname, true) == 0)
+                if (string.Compare(GetProjectFileName(project), projectpathname, StringComparison.InvariantCultureIgnoreCase) == 0)
                     return project;
             }
 
@@ -288,7 +289,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
             if (project != null && project.IsDocumentInProject(fullPath, out int fFound, new VSDOCUMENTPRIORITY[1], out uint itemid) == VSConstants.S_OK && fFound != 0) {
                 var result = project.OpenItem(itemid, Guid.Empty, (IntPtr)(int)-1, out windowFrame);
                 if (result != VSConstants.S_OK)
-                    throw new Exception("Failed to open file in project: " + result.ToString("X"));
+                    throw new Exception("Failed to open file in project: " + result.ToString("X", System.Globalization.CultureInfo.InvariantCulture));
             }
             else
                 windowFrame = VsShellUtilities.OpenDocumentWithSpecificEditor(serviceProvider, fullPath, Guid.Empty, Guid.Empty);

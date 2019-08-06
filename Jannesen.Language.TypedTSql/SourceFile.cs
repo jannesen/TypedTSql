@@ -20,8 +20,6 @@ namespace Jannesen.Language.TypedTSql
         private                 List<TypedTSqlMessage>                          _parseMessages;
         private                 List<TypedTSqlMessage>                          _transpileMessages;
 
-        private static object lock1 = new object();
-
         internal                                                                SourceFile(Transpiler transpiler, string filename)
         {
             this.Transpiler    = transpiler;
@@ -151,7 +149,7 @@ namespace Jannesen.Language.TypedTSql
         public                  SourceFile                                  this[string fullpath]
         {
             get {
-                if (!_sortedlist.TryGetValue(fullpath.ToUpper(), out SourceFile rtn))
+                if (!_sortedlist.TryGetValue(fullpath.ToUpperInvariant(), out SourceFile rtn))
                     throw new KeyNotFoundException("File '" + fullpath + "' does not exists in source file list.");
 
                 return rtn;
@@ -180,11 +178,11 @@ namespace Jannesen.Language.TypedTSql
 
         internal                void                                        Add(SourceFile sourceFile)
         {
-            _sortedlist.Add(sourceFile.Filename.ToUpper(), sourceFile);
+            _sortedlist.Add(sourceFile.Filename.ToUpperInvariant(), sourceFile);
         }
         internal                void                                        Remove(string filename)
         {
-            _sortedlist.Remove(filename.ToUpper());
+            _sortedlist.Remove(filename.ToUpperInvariant());
         }
     }
 }

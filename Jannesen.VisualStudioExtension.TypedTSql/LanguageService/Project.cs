@@ -22,7 +22,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
     internal sealed class Project: IDisposable
     {
-        public class SourceFile: IDisposable
+        public sealed class SourceFile: IDisposable
         {
             public              Project             Project;
             public  readonly    string              FullPath;
@@ -164,7 +164,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         public                  string                                          Name                { get; private set; }
         public                  IVsProject                                      VSProject           { get; private set; }
         public                  Service                                         Service             { get; private set; }
+#pragma warning disable CA2213 // Disposed is called!
         private                 HierarchyListener                               _hierarchyListener;
+#pragma warning restore CA2213
         private                 WorkFlags                                       _workFlags;
         private                 CancellationTokenSource                         _cancelWait;
         private                 Task                                            _workTask;
@@ -172,7 +174,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         private                 SortedList<string, SourceFile>                  _sourceFiles;
         private                 LTTS.GlobalCatalog                              _globalCatalog;
         private                 LTTS.Transpiler                                 _transpiler;
+#pragma warning disable CA2213 // Disposed is called!
         private                 ErrorList                                       _errorList;
+#pragma warning restore CA2213
         private    volatile     int                                             _globalChangeCount;
         private                 object                                          _lockObject;
 
@@ -312,7 +316,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         public                  bool                                ContainsFile(string fullpath)
         {
             lock(_lockObject) {
-                return _sourceFiles.ContainsKey(fullpath.ToUpper());
+                return _sourceFiles.ContainsKey(fullpath.ToUpperInvariant());
             }
         }
         public                  LTTS_DataModel.DocumentSpan         GetDeclarationAt(string fullpath, int filePosition)
@@ -362,7 +366,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         {
             lock(_lockObject) {
                 _available();
-                var sourceFile = _sourceFiles[fullpath.ToUpper()];
+                var sourceFile = _sourceFiles[fullpath.ToUpperInvariant()];
 
                 var token  = _transpiler.GetTokenAt(fullpath, point.TranslateTo(sourceFile.TextSnapshot, PointTrackingMode.Negative).Position);
                 var symbol = (token as LTTS_Core.TokenWithSymbol)?.Symbol;
@@ -389,7 +393,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 if (_setWork(WorkFlags.SyncOpenDocuments))
                     Start();
 
-                _sourceFiles.TryGetValue(filePath.ToUpper(), out sourceFile);
+                _sourceFiles.TryGetValue(filePath.ToUpperInvariant(), out sourceFile);
             }
 
             return sourceFile;
@@ -397,7 +401,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         internal                FileResult                          GetFileResult(string fullname)
         {
             lock(_lockObject) {
-                return _sourceFiles.TryGetValue(fullname.ToUpper(), out var sourceFile) ? sourceFile.Result : null;
+                return _sourceFiles.TryGetValue(fullname.ToUpperInvariant(), out var sourceFile) ? sourceFile.Result : null;
             }
         }
         internal                void                                Build_Done()
@@ -552,7 +556,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                     var hashset = new HashSet<string>();
 
                     foreach(var fullpath in projectFiles) {
-                        var fullpath_U = fullpath.ToUpper();
+                        var fullpath_U = fullpath.ToUpperInvariant();
 
                         hashset.Add(fullpath_U);
 
@@ -594,21 +598,24 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             try {
                 await VSThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                var serviceProvider      = (VSInterop.IServiceProvider)VSPackage.GetGlobalService(typeof(VSInterop.IServiceProvider));
-                var componentModel       = (VSComponentModelHost.IComponentModel)VSPackage.GetGlobalService(typeof(VSComponentModelHost.SComponentModel));
-                var runningDocumentTable = new VSShell.RunningDocumentTable(new VSShell.ServiceProvider(serviceProvider));
-                var adapter              = componentModel.GetService<Microsoft.VisualStudio.Editor.IVsEditorAdaptersFactoryService>();
-                var files                = new HashSet<string>();
+                var files             = new HashSet<string>();
+                var gsServiceProvider = (VSInterop.IServiceProvider)VSPackage.GetGlobalService(typeof(VSInterop.IServiceProvider));
+                var gsComponentModel  = (VSComponentModelHost.IComponentModel)VSPackage.GetGlobalService(typeof(VSComponentModelHost.SComponentModel));
 
-                foreach(var d in runningDocumentTable) {
-                    string      fullpath = d.Moniker.ToUpper();
+                using (var vsserviceProvider = new VSShell.ServiceProvider(gsServiceProvider)) { 
+                    var runningDocumentTable = new VSShell.RunningDocumentTable(vsserviceProvider);
+                    var adapter              = gsComponentModel.GetService<Microsoft.VisualStudio.Editor.IVsEditorAdaptersFactoryService>();
 
-                    if (_sourceFiles.TryGetValue(fullpath, out SourceFile sourceFile)) {
-                        files.Add(fullpath);
+                    foreach(var d in runningDocumentTable) {
+                        string      fullpath = d.Moniker.ToUpperInvariant();
 
-                        lock(_lockObject) {
-                            if (sourceFile.SetTextBuffer(adapter.GetDataBuffer((Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer)d.DocData)))
-                                setWork |= WorkFlags.Parse;
+                        if (_sourceFiles.TryGetValue(fullpath, out SourceFile sourceFile)) {
+                            files.Add(fullpath);
+
+                            lock(_lockObject) {
+                                if (sourceFile.SetTextBuffer(adapter.GetDataBuffer((Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer)d.DocData)))
+                                    setWork |= WorkFlags.Parse;
+                            }
                         }
                     }
                 }
@@ -659,7 +666,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
                     if (!Object.ReferenceEquals(sourceFile.TextSnapshot, snapshot)) {
                         if (sourceFile.PrevVersionNumber == snapshot.Version.VersionNumber || cancelWait.IsCancellationRequested) {
-                            System.Diagnostics.Debug.WriteLine(Name + ": ParseTextBuffer: " + sourceFile.FullPath + "#" + snapshot.Version.VersionNumber.ToString());
+                            System.Diagnostics.Debug.WriteLine(Name + ": ParseTextBuffer: " + sourceFile.FullPath + "#" + snapshot.Version.VersionNumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
                             sourceFile.TypedTSqlSourceFile.ParseContent(snapshot.GetText());
                             sourceFile.TextSnapshot = snapshot;

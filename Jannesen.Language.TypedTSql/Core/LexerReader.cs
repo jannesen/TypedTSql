@@ -139,7 +139,7 @@ namespace Jannesen.Language.TypedTSql.Core
 
             lock(_nameDictionary) {
                 if (!_nameDictionary.TryGetValue(text, out textID))
-                    _nameDictionary.Add(text, textID = new TextID(text, _nameDictionary.TryGetValue(text.ToUpper(), out var upperTextID) ? upperTextID.ID : TokenID.Name));
+                    _nameDictionary.Add(text, textID = new TextID(text, _nameDictionary.TryGetValue(text.ToUpperInvariant(), out var upperTextID) ? upperTextID.ID : TokenID.Name));
             }
 
             return _prevtoken = Core.Token.Create(textID.ID, beginning, _beginpos, textID.Text);

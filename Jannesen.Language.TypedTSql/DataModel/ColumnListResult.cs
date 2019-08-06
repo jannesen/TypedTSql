@@ -29,7 +29,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                                                          ColumnListResult(Column[] columns)
         {
             if (columns == null)
-                throw new ArgumentNullException("columns is null");
+                throw new ArgumentNullException(nameof(columns));
 
             _columns = columns;
         }
@@ -40,7 +40,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             Column  column = null;
 
             foreach(var c in _columns) {
-                if (string.Compare(c.Name, name, true) == 0) {
+                if (string.Compare(c.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0) {
                     if (column == null)
                         column = c;
                     else

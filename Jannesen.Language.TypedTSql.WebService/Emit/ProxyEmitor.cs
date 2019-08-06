@@ -35,7 +35,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                 foreach(var item in this) {
                     if (item.FullEmit && item.Name == null) {
-                        item.Name = prefix + (i++).ToString();
+                        item.Name = prefix + (i++).ToString(System.Globalization.CultureInfo.InvariantCulture);
                     }
                 }
             }
@@ -448,7 +448,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                 var timeout = webMethod.n_Declaration.GetOptionValueByName("timeout");
                 if (timeout != null)
-                    declareProxy.Timeout = int.Parse(timeout) * 1000;
+                    declareProxy.Timeout = int.Parse(timeout, System.Globalization.CultureInfo.InvariantCulture) * 1000;
 
 
                 if (_callArgs.Count > 0)        declareProxy.Callargs_type = _proxyFile.getRecord(_callArgs.ToArray());

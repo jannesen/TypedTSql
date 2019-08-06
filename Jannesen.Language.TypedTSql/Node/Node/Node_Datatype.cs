@@ -87,7 +87,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         // system type
             {
-                var     nameLower    = n_Name.ValueString.ToLower();
+                var     nameLower    = n_Name.ValueString.ToLowerInvariant();
                 var     systemTypeId = DataModel.SqlTypeNative.ParseSystemType(nameLower);
 
                 if (systemTypeId != DataModel.SystemType.Unknown) {

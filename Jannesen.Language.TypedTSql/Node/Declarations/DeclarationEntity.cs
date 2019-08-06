@@ -30,7 +30,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public      virtual     bool                        EmitCode(EmitContext emitContext, SourceFile sourceFile)
         {
-            emitContext.Database.Print("# create " + EntityType.ToString().ToLower().PadRight(30, ' ') + " " + EntityName.ToString());
+            emitContext.Database.Print("# create " + EntityType.ToString().ToLowerInvariant().PadRight(30, ' ') + " " + EntityName.ToString());
             var emitWriter = new Core.EmitWriterSourceMap(emitContext, sourceFile.Filename, Children.FirstNoWhithspaceToken.Beginning.Lineno);
 
             Emit(emitWriter);

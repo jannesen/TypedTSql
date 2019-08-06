@@ -76,7 +76,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         {
             lock(_lockObject) {
                 for (int i = 0 ; i < _projects.Count ; ++i) {
-                    if (String.Compare(_projects[i].Name, projectName, true) == 0)
+                    if (String.Compare(_projects[i].Name, projectName, StringComparison.InvariantCultureIgnoreCase) == 0)
                         return _projects[i];
                 }
             }

@@ -30,7 +30,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             }
         }
 
-        public      static      string                      SqlStatementCatalog = "SELECT [schema]=SCHEMA_NAME([schema_id]),[name],[type]" +
+        public      const       string                      SqlStatementCatalog = "SELECT [schema]=SCHEMA_NAME([schema_id]),[name],[type]" +
                                                                                    " FROM sys.objects" +
                                                                                   " WHERE [type] in ('AF','FN','FS','FT','IF','P ','PC','TA','TF','TR','U ','V ','X ')";
         public      static      string                      SqlStatementByName(EntityName name)

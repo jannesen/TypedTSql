@@ -162,7 +162,7 @@ namespace Jannesen.Language.TypedTSql.Core
         }
         public                      int                     isToken(params TokenNameID[] nameIDs)
         {
-            string text = Text.ToUpper();
+            string text = Text.ToUpperInvariant();
 
             for(int i = 0 ; i < nameIDs.Length ; ++i) {
                 if (nameIDs[i].Name == text)
@@ -174,12 +174,12 @@ namespace Jannesen.Language.TypedTSql.Core
 
         public                      bool                    isToken(string name)
         {
-            return isNameOrKeyword && Text.ToUpper() == name;
+            return isNameOrKeyword && Text.ToUpperInvariant() == name;
         }
         public                      bool                    isToken(params string[] names)
         {
             if (isNameOrKeyword) {
-                string text = Text.ToUpper();
+                string text = Text.ToUpperInvariant();
 
                 for(int i = 0 ; i < names.Length ; ++i) {
                     if (names[i] == text)
@@ -191,7 +191,7 @@ namespace Jannesen.Language.TypedTSql.Core
         }
         public                      bool                    isToken(object id_name)
         {
-            return (id_name is string) ? (isNameOrKeyword && (string)id_name == Text.ToUpper())
+            return (id_name is string) ? (isNameOrKeyword && (string)id_name == Text.ToUpperInvariant())
                                        : ((TokenID)id_name) == ID;
         }
         public                      void                    validateToken(TokenID id)
@@ -224,7 +224,7 @@ namespace Jannesen.Language.TypedTSql.Core
             if (!isNameOrKeyword)
                 throw new ParseException(this, "Expect Name got " + ID.ToString() + ".");
 
-            string text = Text.ToUpper();
+            string text = Text.ToUpperInvariant();
 
             if (name == text)
                 return ;
@@ -236,7 +236,7 @@ namespace Jannesen.Language.TypedTSql.Core
             if (!isNameOrKeyword)
                 throw new ParseException(this, "Expect Name got " + ID.ToString() + ".");
 
-            string text = Text.ToUpper();
+            string text = Text.ToUpperInvariant();
 
             for(int i = 0 ; i < names.Length ; ++i) {
                 if (names[i] == text)
@@ -247,7 +247,7 @@ namespace Jannesen.Language.TypedTSql.Core
         }
         public                      TokenID                 validateToken(params object[] namesandid)
         {
-            string text = Text.ToUpper();
+            string text = Text.ToUpperInvariant();
 
             for(int i = 0 ; i < namesandid.Length ; ++i) {
                 object t = namesandid[i];

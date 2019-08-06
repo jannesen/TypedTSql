@@ -107,7 +107,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         private                 void                        _onSolucationProjectAdded(EnvDTE.Project project)
         {
             try {
-                if (string.Compare(project.Kind, CPS.TypedTSqlUnconfiguredProject.ProjectTypeGuid, true) == 0)
+                if (string.Compare(project.Kind, CPS.TypedTSqlUnconfiguredProject.ProjectTypeGuid, StringComparison.InvariantCultureIgnoreCase) == 0)
                     _refreshDatabases();
             }
             catch(Exception) {
@@ -116,7 +116,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         private                 void                        _onSolucationProjectRemoved(EnvDTE.Project project)
         {
             try {
-                if (string.Compare(project.Kind, CPS.TypedTSqlUnconfiguredProject.ProjectTypeGuid, true) == 0)
+                if (string.Compare(project.Kind, CPS.TypedTSqlUnconfiguredProject.ProjectTypeGuid, StringComparison.InvariantCultureIgnoreCase) == 0)
                     _refreshDatabases();
             }
             catch(Exception) {

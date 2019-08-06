@@ -138,7 +138,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
             default:                            return "";
             }
         }
-        private             string                              _setProperty(string name, string value, string level0type, string level0name, string level1type, string level1name, string level2type = null, string level2name = null)
+
+        private static      string                              _setProperty(string name, string value, string level0type, string level0name, string level1type, string level1name, string level2type = null, string level2name = null)
         {
             var statement = new StringBuilder(256);
 
@@ -156,7 +157,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
 
             return statement.ToString();
         }
-
         private static      void                                _appendString(StringBuilder builder, string value)
         {
             if (value != null) {

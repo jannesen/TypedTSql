@@ -13,10 +13,6 @@ namespace Jannesen.Language.TypedTSql.BuildIn
 
         public  static      void                                Load()
         {
-        }
-
-                static                                          Catalog()
-        {
             GlobalVariable = new DataModel.VariableList(
                                 new VariableGlobal("@@CONNECTIONS",     SqlTypeNative.Int),
                                 new VariableGlobal("@@CPU_BUSY",        SqlTypeNative.Int),

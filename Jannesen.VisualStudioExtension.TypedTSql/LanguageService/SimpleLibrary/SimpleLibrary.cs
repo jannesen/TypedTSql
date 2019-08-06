@@ -11,9 +11,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Library
 {
     internal class SimpleLibrary: IVsSimpleLibrary2
     {
-        public static readonly          Guid                    GUID = new Guid("04a89761-9931-443c-81bf-9316427728c5");
+        public  static readonly         Guid                    GUID = new Guid("04a89761-9931-443c-81bf-9316427728c5");
 
-        public                          void                    SearchReferences(IServiceProvider serviceProvider, IVsProject project, LTTS.SymbolReferenceList referenceList)
+        public  static                  void                    SearchReferences(IServiceProvider serviceProvider, IVsProject project, LTTS.SymbolReferenceList referenceList)
         {
             var     objects = new List<SimpleObject>();
 
@@ -23,7 +23,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Library
             _presentNavInfo(serviceProvider, "typed-TSql references", new NavInfo(new SimpleObjectList(objects)));
         }
 
-        private                         void                    _presentNavInfo(IServiceProvider serviceProvider, string title, NavInfo navInfo)
+        private static                  void                    _presentNavInfo(IServiceProvider serviceProvider, string title, NavInfo navInfo)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -96,7 +96,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Library
                 ppIVsSimpleObjectList2 = _getList(listType, flags, pobSrch);
             }
             catch(Exception err) {
-                System.Diagnostics.Debug.WriteLine("Jannesen.VisualStudioExtensions.TypedTSql.Library.Library.GetList2(0x" + listType.ToString("X") + ", 0x" + flags.ToString("X") +"): " + err.Message);
+                System.Diagnostics.Debug.WriteLine("Jannesen.VisualStudioExtensions.TypedTSql.Library.Library.GetList2(0x" + listType.ToString("X", System.Globalization.CultureInfo.InvariantCulture) + ", 0x" + flags.ToString("X", System.Globalization.CultureInfo.InvariantCulture) +"): " + err.Message);
                 ppIVsSimpleObjectList2 = null;
             }
 

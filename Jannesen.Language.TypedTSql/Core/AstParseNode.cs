@@ -4,15 +4,41 @@ using System.IO;
 
 namespace Jannesen.Language.TypedTSql.Core
 {
-    public struct TokenNameID
+    public struct TokenNameID: IEquatable<TokenNameID>
     {
-        public      string      Name;
-        public      int         Id;
+        public              string      Name;
+        public              int         Id;
 
-        public                  TokenNameID(string name, int id)
+        public                          TokenNameID(string name, int id)
         {
             this.Name = name;
             this.Id   = id;
+        }
+
+        public  static      bool        operator == (TokenNameID p1, TokenNameID p2)
+        {
+			return p1.Name == p2.Name &&
+                   p1.Id   == p2.Id;
+        }
+        public  static      bool        operator != (TokenNameID p1, TokenNameID p2)
+        {
+            return !(p1 == p2);
+        }
+        public  override    bool        Equals(object obj)
+        {
+            if (obj is TokenNameID)
+                return this == (TokenNameID)obj;
+
+            return false;
+        }
+        public              bool        Equals(TokenNameID o)
+        {
+            return this == o;
+        }
+        public  override    int         GetHashCode()
+        {
+            return (Name != null ? Name.GetHashCode() : 0) ^
+                   Id.GetHashCode();
         }
     }
 

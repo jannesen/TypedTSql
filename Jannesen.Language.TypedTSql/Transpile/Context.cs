@@ -38,7 +38,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
         public                  DataModel.IColumnList               ColumnList
         {
             get {
-                return (RowSets != null && RowSets.Count == 1 && RowSets[0].Name == "") ? RowSets[0].Columns : null;
+                return (RowSets != null && RowSets.Count == 1 && RowSets[0].Name.Length == 0) ? RowSets[0].Columns : null;
             }
         }
 
@@ -56,7 +56,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
             if (blockContext == null)
                 throw new InvalidOperationException("VariableDeclare without BlockContext.");
 
-            if (_variableTryGetParent(blockContext, name.Text.ToLower(), out var dummy)) {
+            if (_variableTryGetParent(blockContext, name.Text.ToLowerInvariant(), out var dummy)) {
                 AddError(name, "Variable " + name.Text + " already declared in parent block.");
                 return false;
             }
@@ -91,7 +91,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
         public                  DataModel.Variable                  VariableGet(Core.IAstNode node, string name, bool allowGlobal=false)
         {
             DataModel.Variable variable;
-            string nameLower = name.ToLower();
+            string nameLower = name.ToLowerInvariant();
 
             if (nameLower[1] == '@') {
                 if (!allowGlobal) {
@@ -148,7 +148,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
 
                 try {
                     if ((variable.SqlType.TypeFlags & DataModel.SqlTypeFlags.SimpleType) == 0 || variable.SqlType.NativeType != DataModel.SqlTypeNative.Int)
-                        new Exception("Variable must by of type INT.");
+                        throw new Exception("Variable must by of type INT.");
                 }
                 catch(Exception err) {
                     AddError(name, err);
@@ -184,7 +184,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
                 var value = token.ValueInt;
 
                 if (minValue > value || value > maxValue) {
-                    AddError(token, "Value out of range must be between " + minValue.ToString() + " and " + maxValue.ToString() + ".");
+                    AddError(token, "Value out of range must be between " + minValue.ToString(System.Globalization.CultureInfo.InvariantCulture) + " and " + maxValue.ToString(System.Globalization.CultureInfo.InvariantCulture) + ".");
                     return false;
                 }
             }
@@ -210,7 +210,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
                 }
 
                 if (minValue > value || value > maxValue) {
-                    AddError(expr, "Value out of range must be between " + minValue.ToString() + " and " + maxValue.ToString() + ".");
+                    AddError(expr, "Value out of range must be between " + minValue.ToString(System.Globalization.CultureInfo.InvariantCulture) + " and " + maxValue.ToString(System.Globalization.CultureInfo.InvariantCulture) + ".");
                     return false;
                 }
             }
@@ -228,7 +228,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
                 var value = token.ValueFloat;
 
                 if (minValue > value || value > maxValue) {
-                    AddError(token, "Value out of range must be between " + minValue.ToString() + " and " + maxValue.ToString() + ".");
+                    AddError(token, "Value out of range must be between " + minValue.ToString(System.Globalization.CultureInfo.InvariantCulture) + " and " + maxValue.ToString(System.Globalization.CultureInfo.InvariantCulture) + ".");
                     return false;
                 }
             }
@@ -267,7 +267,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
                 {
                     var returnVariable = declarationFunction.ReturnVariable;
                     if (declarationFunction != null) {
-                        if (returnVariable.Name.ToLower() == nameLower) {
+                        if (returnVariable.Name.ToLowerInvariant() == nameLower) {
                             variable = returnVariable;
                             return true;
                         }

@@ -23,11 +23,11 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                                          ColumnDS(string name, DataModel.ISqlType sqlType, object declaration=null, string collationName=null, ValueFlags flags=ValueFlags.None)
         {
             if (name == null)
-                throw new ArgumentNullException("name is null");
+                throw new ArgumentNullException(nameof(name));
 
             if (sqlType == null) {
                 if ((flags & ValueFlags.Error) == 0)
-                    throw new ArgumentNullException("sqlType is null");
+                    throw new ArgumentNullException(nameof(sqlType));
 
                 sqlType = new SqlTypeAny();
             }

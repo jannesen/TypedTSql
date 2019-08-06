@@ -76,7 +76,7 @@ namespace Jannesen.Language.TypedTSql.Core
                         if (!firstToken.isNameOrKeyword)
                             continue;
 
-                        firstTokenText = firstToken.Text.ToUpper();
+                        firstTokenText = firstToken.Text.ToUpperInvariant();
                     }
                 }
 

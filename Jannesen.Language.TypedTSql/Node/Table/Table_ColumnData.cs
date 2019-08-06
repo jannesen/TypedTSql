@@ -53,7 +53,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_ColumnFlags = DataModel.ValueFlags.Nullable;
 
             while ((optionToken = ParseOptionalToken(reader, "FILESTREAM", "COLLATE", "DEFAULT", "IDENTITY", "PARSE", "NULL", "NOT", "ROWGUIDCOL", "PRIMARY")) != null) {
-                switch(optionToken.Text.ToUpper()) {
+                switch(optionToken.Text.ToUpperInvariant()) {
                 case "COLLATE":
                     n_Collation = ParseToken(reader, Core.TokenID.Name);
                     break;

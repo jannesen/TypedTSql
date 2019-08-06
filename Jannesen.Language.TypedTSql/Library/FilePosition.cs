@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Jannesen.Language.TypedTSql.Library
 {
-    public struct FilePosition
+    public struct FilePosition: IEquatable<FilePosition>
     {
         public              int             Filepos;
         public              int             Lineno;
@@ -47,13 +47,17 @@ namespace Jannesen.Language.TypedTSql.Library
 
             return false;
         }
+        public              bool            Equals(FilePosition o)
+        {
+            return this == o;
+        }
         public  override    int             GetHashCode()
         {
             return Filepos ^ Lineno ^ Linepos;
         }
         public  override    string          ToString()
         {
-            return Lineno.ToString() + "," + Linepos.ToString();
+            return Lineno.ToString(System.Globalization.CultureInfo.InvariantCulture) + "," + Linepos.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public  static      FilePosition    Null

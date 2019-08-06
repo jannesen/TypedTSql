@@ -25,7 +25,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         {
             IWpfTextView textView = adaptersFactory.GetWpfTextView(textViewAdapter);
 
-            new ContextMenu(ServiceProvider, textViewAdapter, textView);
+            new ContextMenu(ServiceProvider, textView).AddCommandFilter(textViewAdapter);
 
             textView.Options.SetOptionValue<int>(DefaultOptions.IndentSizeOptionId, 4);
             textView.Options.SetOptionValue<int>(DefaultOptions.TabSizeOptionId, 4);

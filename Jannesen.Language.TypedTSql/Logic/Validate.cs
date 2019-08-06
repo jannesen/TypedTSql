@@ -293,7 +293,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         {
             Core.TokenWithSymbol.SetNoSymbol(datepart);
 
-            switch(datepart.Text.ToUpper()) {
+            switch(datepart.Text.ToUpperInvariant()) {
             case "YEAR":
             case "YY":
             case "QUARTER":

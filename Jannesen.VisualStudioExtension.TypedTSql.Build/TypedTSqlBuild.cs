@@ -39,7 +39,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             {
                 this.BuildOrder    = int.MinValue;
                 this.Filename      = filename;
-                this.FilenameLower = filename.ToLower();
+                this.FilenameLower = filename.ToLowerInvariant();
                 this.Removed       = true;
                 this.Changed       = true;
             }
@@ -49,7 +49,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                 if (u1.BuildOrder != u2.BuildOrder)
                     return u1.BuildOrder - u2.BuildOrder;
 
-                return string.Compare(u1.FilenameLower, u2.FilenameLower);
+                return string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.InvariantCulture);
             }
         }
 
@@ -111,7 +111,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                         }
 
                         foreach(KeyValuePair<int,List<UsingFile>> buildstep in buildsteps) {
-                            buildstep.Value.Sort((u1, u2) => string.Compare(u1.FilenameLower, u2.FilenameLower));
+                            buildstep.Value.Sort((u1, u2) => string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.InvariantCulture));
 
                             if (rtn)
                                 rtn = _processTSql(database, buildstep.Value);
@@ -174,11 +174,11 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                     int     buildorder  = 1000;
 
                     if (!String.IsNullOrEmpty(sbuildorder))
-                        int.TryParse(sbuildorder, out buildorder);
+                        int.TryParse(sbuildorder, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out buildorder);
 
                     UsingFile usingFile;
 
-                    if (!_usingDictionary.TryGetValue(filename.ToLower(), out usingFile)) {
+                    if (!_usingDictionary.TryGetValue(filename.ToLowerInvariant(), out usingFile)) {
                         _usingFiles.Add(usingFile = new UsingFile(filename));
                         _usingDictionary.Add(usingFile.FilenameLower, usingFile);
                     }
@@ -252,7 +252,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                     if (usingFile.Changed || !_incbuild) {
                         var fullfilename = Path.Combine(ProjectDirectory, usingFile.Filename);
                         var filename = fullfilename;
-                        if (filename.StartsWith(ProjectDirectory + "\\")) {
+                        if (filename.StartsWith(ProjectDirectory + "\\", StringComparison.InvariantCulture)) {
                             filename = filename.Substring(ProjectDirectory.Length + 1);
                         }
                         Log.LogMessage(MessageImportance.Normal, "Execute: " + filename);
@@ -292,7 +292,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             transpiler = new LTTS.Transpiler();
             transpiler.LoadExtensions(Extensions);
             transpiler.Parse(filenames.ToArray());
-            _onEmitMessage("Parsing: " + (DateTime.UtcNow - start).TotalSeconds.ToString("F2") + " sec.");
+            _onEmitMessage("Parsing: " + (DateTime.UtcNow - start).TotalSeconds.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) + " sec.");
 
             if (catalog != null) {
                 catalog.Wait();
@@ -302,7 +302,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             if (transpiler.ErrorCount == 0) {
                 start = DateTime.UtcNow;
                 var passes = transpiler.Transpile(_typedtsqlcatalog);
-                _onEmitMessage("Transpiling: " + (passes > 1 ? passes + " passes " : "1 pass ") + (DateTime.UtcNow - start).TotalSeconds.ToString("F2") + " sec.");
+                _onEmitMessage("Transpiling: " + (passes > 1 ? passes + " passes " : "1 pass ") + (DateTime.UtcNow - start).TotalSeconds.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) + " sec.");
             }
 
             if (transpiler.ErrorCount == 0) {
@@ -319,7 +319,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                                 database,
                                 (_incbuild ? updatedFilenames : null));
 
-                _onEmitMessage("Emiting: " + (DateTime.UtcNow - start).TotalSeconds.ToString("F2") + " sec.");
+                _onEmitMessage("Emiting: " + (DateTime.UtcNow - start).TotalSeconds.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) + " sec.");
 
                 return transpiler.EmitErrors.Count == 0;
             }

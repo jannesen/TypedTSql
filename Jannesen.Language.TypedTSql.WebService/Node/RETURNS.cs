@@ -173,8 +173,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     xmlWriter.WriteEndElement();
                 }
 
-                using (var sha1 = new  System.Security.Cryptography.SHA1Managed())
-                {
+                using (var sha1 = new  System.Security.Cryptography.SHA1Managed()) {
                     return Convert.ToBase64String(sha1.ComputeHash(buffer.GetBuffer(), 0, (int)buffer.Length));
                 }
             }

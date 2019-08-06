@@ -52,7 +52,7 @@ namespace Jannesen.Language.TypedTSql.Core
             }
 
             if (value is int) {
-                WriteText(((int)value).ToString());
+                WriteText(((int)value).ToString(System.Globalization.CultureInfo.InvariantCulture));
                 return;
             }
 
@@ -281,7 +281,7 @@ namespace Jannesen.Language.TypedTSql.Core
         public      override    void                    WriteText(string text)
         {
             if (_full)
-                text.Replace("\r", "").Replace('\n', ' ').Replace("  ", " ");
+                text = text.Replace("\r", "").Replace('\n', ' ').Replace("  ", " ");
 
             _emitWriter.WriteText(text);
             _prevToken      = null;

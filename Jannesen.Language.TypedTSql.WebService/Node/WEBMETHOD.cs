@@ -57,14 +57,14 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     var methods = new List<string>();
 
                     do {
-                        methods.Add(ParseToken(reader, Core.TokenID.String).ValueString.ToUpper());
+                        methods.Add(ParseToken(reader, Core.TokenID.String).ValueString.ToUpperInvariant());
                     }
                     while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
 
                     n_Methods = methods.ToArray();
                 }
 
-                switch(Core.TokenWithSymbol.SetKeyword(ParseToken(reader, "HANDLER", "PROXY")).Text.ToUpper()) {
+                switch(Core.TokenWithSymbol.SetKeyword(ParseToken(reader, "HANDLER", "PROXY")).Text.ToUpperInvariant()) {
                 case "HANDLER":
                     n_HttpHandler = ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString;
                     break;
@@ -100,7 +100,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
                 string name = n_ServiceMethodName.n_ServiceEntitiyName.Name + "/" + _sqlName();
                 foreach(var method in n_Methods)
-                    name += ":" + method.ToUpper();
+                    name += ":" + method.ToUpperInvariant();
 
                 n_EntityName        = new LTTSQL.DataModel.EntityName(n_ServiceMethodName.n_ServiceEntitiyName.Schema, name);
             }

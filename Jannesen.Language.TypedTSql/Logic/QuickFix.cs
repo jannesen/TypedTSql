@@ -37,7 +37,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                                                                 "Invalid type " + expr.SqlType.ToString() + " expect type " + sqlType.ToString() + ".",
                                                                 new QuickFix(context.CreateDocumentSpan(exprConst),
                                                                             (constValue is int)
-                                                                                ? ((int)constValue).ToString()
+                                                                                ? ((int)constValue).ToString(System.Globalization.CultureInfo.InvariantCulture)
                                                                                 : Library.SqlStatic.QuoteString((string)constValue),
                                                                             entityType.EntityName.GetRelativeName(context.Options.Schema) + "::" + Library.SqlStatic.QuoteName(valueName)));
                             }
