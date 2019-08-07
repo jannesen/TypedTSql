@@ -330,7 +330,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 
         protected   override    void                        OnExpanded(RoutedEventArgs e)
         {
-            var t = LoadObjectData();
+            var _ = LoadObjectData();
         }
         protected   override    void                        OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -417,7 +417,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                     return (T)c;
             }
 
-            return default(T);
+            return default;
         }
 
         private     static      LTTS_DataModel.IColumnList  _getColumns(LTTS_DataModel.Entity entity)
@@ -437,7 +437,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         }
         private     static      bool                        _entityHasData(LTTS_DataModel.Entity entity)
         {
-            if (entity is LTTS_DataModel.EntityObjectTable entityTable)
+            if (entity is LTTS_DataModel.EntityObjectTable)
                 return true;
 
             if (entity is LTTS_DataModel.EntityObjectCode  entityCode) {

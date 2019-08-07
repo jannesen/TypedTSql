@@ -59,7 +59,7 @@ namespace Jannesen.Language.TypedTSql.Node
             case ExprType.Complex:
                 object value = n_Expr.ConstValue();
 
-                if (value is Exception err) {
+                if (value is Exception) {
                     context.AddError(n_Expr, "Expression not allowed.");
                     return;
                 }

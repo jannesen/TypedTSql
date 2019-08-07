@@ -34,7 +34,7 @@ namespace Jannesen.Language.TypedTSql.Token
                 string text = Text;
 
                 if (text[text.Length-1] == 'e' || text[text.Length-1] == 'E')
-                    text = text + "0";
+                    text += "0";
 
                 return double.Parse(text, System.Globalization.NumberStyles.AllowDecimalPoint|System.Globalization.NumberStyles.AllowExponent, System.Globalization.CultureInfo.InvariantCulture);
             }

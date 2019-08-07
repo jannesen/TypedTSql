@@ -232,9 +232,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
                 selection.CharRight(false, 1);
 
                 if (activeDocument) {
-#pragma warning disable VSTHRD001 // Avoid legacy threading switching APIs
                     System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input,
-#pragma warning restore VSTHRD001 // Avoid legacy threading switching APIs
                                                 new Action (() => {
                                                     try {
                                                         document.Activate();

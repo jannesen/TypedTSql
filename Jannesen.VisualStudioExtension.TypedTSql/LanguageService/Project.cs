@@ -92,7 +92,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             private             void                _TextBuffer_Changed(object sender, EventArgs e)
             {
-                Project?.TextBuffer_Changed(this);
+                Project?.TextBuffer_Changed();
             }
         }
 
@@ -164,9 +164,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         public                  string                                          Name                { get; private set; }
         public                  IVsProject                                      VSProject           { get; private set; }
         public                  Service                                         Service             { get; private set; }
-#pragma warning disable CA2213 // Disposed is called!
         private                 HierarchyListener                               _hierarchyListener;
-#pragma warning restore CA2213
         private                 WorkFlags                                       _workFlags;
         private                 CancellationTokenSource                         _cancelWait;
         private                 Task                                            _workTask;
@@ -174,9 +172,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         private                 SortedList<string, SourceFile>                  _sourceFiles;
         private                 LTTS.GlobalCatalog                              _globalCatalog;
         private                 LTTS.Transpiler                                 _transpiler;
-#pragma warning disable CA2213 // Disposed is called!
         private                 ErrorList                                       _errorList;
-#pragma warning restore CA2213
         private    volatile     int                                             _globalChangeCount;
         private                 object                                          _lockObject;
 
@@ -373,7 +369,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 if (symbol == null || symbol.Type == LTTS_DataModel.SymbolType.NoSymbol)
                     return null;
 
-                return new QuickInfo(sourceFile.TextSnapshot.CreateTrackingSpan(new Span(token.Beginning.Filepos, token.Ending.Filepos - token.Beginning.Filepos), SpanTrackingMode.EdgeExclusive), token, symbol);
+                return new QuickInfo(sourceFile.TextSnapshot.CreateTrackingSpan(new Span(token.Beginning.Filepos, token.Ending.Filepos - token.Beginning.Filepos), SpanTrackingMode.EdgeExclusive), symbol);
             }
         }
 
@@ -429,7 +425,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             if (_setWork(WorkFlags.SyncProject))
                 Start();
         }
-        internal                void                                TextBuffer_Changed(SourceFile sourceFile)
+        internal                void                                TextBuffer_Changed()
         {
             if (_setWork(WorkFlags.Parse))
                 Start();
@@ -498,7 +494,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
                 lock (_lockObject) {
                     _workTask  = null;
-                    _workFlags = _workFlags & ~WorkFlags.Active;
+                    _workFlags &= ~WorkFlags.Active;
                 }
             }
 

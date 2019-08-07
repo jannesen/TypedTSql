@@ -176,9 +176,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                     if (!String.IsNullOrEmpty(sbuildorder))
                         int.TryParse(sbuildorder, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out buildorder);
 
-                    UsingFile usingFile;
-
-                    if (!_usingDictionary.TryGetValue(filename.ToLowerInvariant(), out usingFile)) {
+                    if (!_usingDictionary.TryGetValue(filename.ToLowerInvariant(), out var usingFile)) {
                         _usingFiles.Add(usingFile = new UsingFile(filename));
                         _usingDictionary.Add(usingFile.FilenameLower, usingFile);
                     }
@@ -208,9 +206,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                     else {
                         usingFile.id = i;
 
-                        List<UsingFile> usingFiles;
-
-                        if (!rtn.TryGetValue(usingFile.BuildOrder, out usingFiles))
+                        if (!rtn.TryGetValue(usingFile.BuildOrder, out var usingFiles))
                             rtn.Add(usingFile.BuildOrder, usingFiles = new List<UsingFile>());
 
                         usingFiles.Add(usingFile);

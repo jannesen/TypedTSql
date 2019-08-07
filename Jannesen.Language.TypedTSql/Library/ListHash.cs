@@ -99,7 +99,7 @@ namespace Jannesen.Language.TypedTSql.Library
                 idx = _buckets[idx].next;
             }
 
-            item = default(TItem);
+            item = default;
             return false;
         }
         public                  bool                                Contains(TItem item)
@@ -276,14 +276,11 @@ namespace Jannesen.Language.TypedTSql.Library
 
         public      static      bool                                operator == (ListHash<TItem,TKey> n1, ListHash<TItem,TKey> n2)
         {
-            if ((object)n1 == null)
-                return ((object)n1 == null);
-
-            if ((object)n2 == null)
-                return false;
-
             if (object.ReferenceEquals(n1, n2))
                 return true;
+
+            if (n1 is null || n2 is null)
+                return false;
 
             if (n1.Count != n2.Count)
                 return false;
@@ -435,7 +432,7 @@ namespace Jannesen.Language.TypedTSql.Library
                 this._list = list;
                 _index = 0;
                 _version = list._version;
-                _current = default(TItem);
+                _current = default;
             }
             public          void                    Dispose()
             {
@@ -453,7 +450,7 @@ namespace Jannesen.Language.TypedTSql.Library
                     throw new InvalidOperationException("Collection changed.");
 
                 _index = _list._size + 1;
-                _current = default(TItem);
+                _current = default;
 
                 return false;
             }
@@ -479,7 +476,7 @@ namespace Jannesen.Language.TypedTSql.Library
                     throw new InvalidOperationException("Collection changed.");
 
                 _index = 0;
-                _current = default(TItem);
+                _current = default;
             }
         }
 

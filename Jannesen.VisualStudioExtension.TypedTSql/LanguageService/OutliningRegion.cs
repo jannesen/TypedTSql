@@ -65,42 +65,5 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             return node.GetType().Name;
         }
-        private static  string              _typedtsqlobjecttypeToString(LTTS_DataModel.SymbolType type)
-        {
-            switch(type) {
-            case LTTS_DataModel.SymbolType.Assembly:                            return "assembly";
-            case LTTS_DataModel.SymbolType.TypeUser:                            return "type";
-            case LTTS_DataModel.SymbolType.Default:                             return "default";
-            case LTTS_DataModel.SymbolType.Rule:                                return "rule";
-            case LTTS_DataModel.SymbolType.TypeTable:                           return "table-type";
-            case LTTS_DataModel.SymbolType.TableInternal:
-            case LTTS_DataModel.SymbolType.TableSystem:
-            case LTTS_DataModel.SymbolType.TableUser:                           return "table";
-            case LTTS_DataModel.SymbolType.Constraint_ForeignKey:
-            case LTTS_DataModel.SymbolType.Constraint_PrimaryKey:
-            case LTTS_DataModel.SymbolType.Constraint_Check:
-            case LTTS_DataModel.SymbolType.Constraint_Unique:                   return "constraint";
-            case LTTS_DataModel.SymbolType.View:                                return "view";
-            case LTTS_DataModel.SymbolType.Function:
-            case LTTS_DataModel.SymbolType.FunctionScalar:
-            case LTTS_DataModel.SymbolType.FunctionScalar_clr:
-            case LTTS_DataModel.SymbolType.FunctionInlineTable:
-            case LTTS_DataModel.SymbolType.FunctionMultistatementTable:
-            case LTTS_DataModel.SymbolType.FunctionMultistatementTable_clr:
-            case LTTS_DataModel.SymbolType.FunctionAggregateFunction_clr:       return "function";
-            case LTTS_DataModel.SymbolType.StoredProcedure:
-            case LTTS_DataModel.SymbolType.StoredProcedure_clr:
-            case LTTS_DataModel.SymbolType.StoredProcedure_extended:            return "procedure";
-            case LTTS_DataModel.SymbolType.Trigger:
-            case LTTS_DataModel.SymbolType.Trigger_clr:                         return "trigger";
-            case LTTS_DataModel.SymbolType.PlanGuide:                           return "plan-guide";
-            case LTTS_DataModel.SymbolType.ReplicationFilterProcedure:          return "filter-procedure";
-            case LTTS_DataModel.SymbolType.SequenceObject:                      return "sequence-object";
-            case LTTS_DataModel.SymbolType.ServiceQueue:                        return "service-queue";
-            case LTTS_DataModel.SymbolType.Synonym:                             return "synonym";
-            case LTTS_DataModel.SymbolType.ServiceMethod:                       return "service-method";
-            default:                                                            return type.ToString();
-            }
-        }
     }
 }

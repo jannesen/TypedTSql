@@ -37,11 +37,5 @@ namespace Jannesen.Language.TypedTSql.DataModel
                     index.SetParent(parent);
             }
         }
-
-        private                 void                    _testTranspiled()
-        {
-            if (_columns == null)
-                throw new NeedsTranspileException();
-        }
     }
 }

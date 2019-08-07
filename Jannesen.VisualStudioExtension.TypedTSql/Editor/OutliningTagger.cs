@@ -22,7 +22,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         }
         public                  IEnumerable<ITagSpan<IOutliningRegionTag>>      GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            var currentSnapshot = TextBuffer.CurrentSnapshot;
             var fileResult      = GetFileResult();
 
             if (fileResult == null || fileResult.OutliningRegions == null)

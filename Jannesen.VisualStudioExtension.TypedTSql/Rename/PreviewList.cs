@@ -103,8 +103,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
             if (pIUnknownTextView == null)
                 return VSConstants.E_POINTER;
 
-            IVsTextView view = pIUnknownTextView as IVsTextView;
-            if (view == null)
+            if (!(pIUnknownTextView is IVsTextView view))
                 return VSConstants.E_NOINTERFACE;
 
             Items[index].DisplayPreview(view);

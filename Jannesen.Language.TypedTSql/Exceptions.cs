@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Serialization;
+
 
 namespace Jannesen.Language.TypedTSql
 {

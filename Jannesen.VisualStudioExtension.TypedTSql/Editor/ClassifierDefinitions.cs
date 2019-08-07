@@ -31,7 +31,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         public const string     UDTValue        = "typedtsql.udtvalue";
 
         // This disables "The field is never used" compiler's warning. Justification: the field is used by MEF.
-#pragma warning disable 169
+#pragma warning disable CS0169
+#pragma warning disable IDE0051
         [Export(typeof(ClassificationTypeDefinition)), Name(Comment)]
         private static      ClassificationTypeDefinition        typeComment;
 
@@ -82,7 +83,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 
         [Export(typeof(ClassificationTypeDefinition)), Name(UDTValue)]
         private static      ClassificationTypeDefinition        typeUDTValue;
-#pragma warning restore 169
+#pragma warning restore IDE0051
+#pragma warning restore CS0169
     }
 
     static class ClassificationFormats
@@ -399,15 +401,11 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
                                         { ClassifierClassificationTypes.UDTValue,        new DefaultClassificationColor(new ClassificationColor(Color.FromRgb(  0,   0,   0)), new ClassificationColor(Color.FromRgb(220, 220, 220))) },
                                     };
 
-        private                     IClassificationFormatMapService         _classificationFormatMapService;
-        private                     IClassificationTypeRegistryService      _classificationTypeRegistry;
         private                     VSPackage.ColorTheme                    _currentTheme;
 
         [ImportingConstructor]
         public ClassificationColorManager(IClassificationFormatMapService classificationFormatMapService, IClassificationTypeRegistryService classificationTypeRegistry)
         {
-            _classificationFormatMapService = classificationFormatMapService;
-            _classificationTypeRegistry     = classificationTypeRegistry;
             _currentTheme                   = VSPackage.GetCurrentTheme();
 //            VSColorTheme.ThemeChanged += _onThemeChanged;
         }

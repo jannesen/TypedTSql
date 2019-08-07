@@ -209,7 +209,6 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      DataModel.ISqlType          ValueDateTime(Node.IExprNode expr, DatePartMode mode)
         {
-            var valueFlags = expr.ValueFlags;
             var sqlType    = expr.SqlType;
 
             Value(expr);

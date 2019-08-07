@@ -304,10 +304,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         {
             public      readonly    string                                  Filename;
 
-            private                 DeclareNameList<DeclareImport>          _imports;
-            private                 DeclareNameList<DeclareName>            _simpletypes;
-            private                 DeclareNameList<DeclareComplexType>     _complextypes;
-            private                 DeclareNameList<DeclareProxy>           _proxys;
+            private     readonly    DeclareNameList<DeclareImport>          _imports;
+            private     readonly    DeclareNameList<DeclareName>            _simpletypes;
+            private     readonly    DeclareNameList<DeclareComplexType>     _complextypes;
+            private     readonly    DeclareNameList<DeclareProxy>           _proxys;
 
             public                                                          ProxyFile(string filename)
             {
@@ -411,8 +411,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         }
         class ProcessMethod
         {
-            private                 ProxyFile                               _proxyFile;
-            private                 Node.WEBSERVICE                         _webService;
+            private     readonly    ProxyFile                               _proxyFile;
+            private     readonly    Node.WEBSERVICE                         _webService;
             private                 List<RecordField>                       _callArgs;
             private                 List<RecordField>                       _reqArgs;
             private                 DeclareType                             _textjson;
@@ -674,7 +674,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
         }
 
-        private                 Dictionary<string, ProxyFile>           _proxyFiles;
+        private     readonly        Dictionary<string, ProxyFile>           _proxyFiles;
 
         public                                                          ProxyEmitor()
         {

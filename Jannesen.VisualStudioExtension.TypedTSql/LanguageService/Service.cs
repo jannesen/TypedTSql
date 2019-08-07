@@ -130,17 +130,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 return _projects.ToArray();
             }
         }
-        private                 Project                             _findLanguageService(IVsProject vsproject)
-        {
-            lock(_lockObject) {
-                for (int i = 0 ; i < _projects.Count ; ++i) {
-                    if (object.Equals(_projects[i].VSProject, vsproject))
-                        return _projects[i];
-                }
-            }
-
-            return null;
-        }
         private                 void                                _stopProjects()
         {
             Project[]   languageServices;

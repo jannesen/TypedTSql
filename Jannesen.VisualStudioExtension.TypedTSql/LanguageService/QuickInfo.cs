@@ -19,7 +19,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         public              Brush               _colorType;
         public              Brush               _colorName;
 
-        public                                  QuickInfo(ITrackingSpan span, LTTS_Core.Token token, LTTS_DataModel.ISymbol symbol)
+        public                                  QuickInfo(ITrackingSpan span, LTTS_DataModel.ISymbol symbol)
         {
             switch(VSPackage.GetCurrentTheme()) {
             case VSPackage.ColorTheme.Dark:

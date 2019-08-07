@@ -50,18 +50,5 @@ namespace Jannesen.Language.TypedTSql.DataModel
             _indexes = IndexList.ReadFromDatabase(_columns, dataReader);
             EntityFlags &= ~EntityFlags.PartialLoaded;
         }
-
-        private                 void                    _setParent()
-        {
-            if (_columns != null) {
-                foreach(var column in _columns)
-                    (column as ColumnDS)?.SetParent(this);
-            }
-
-            if (_indexes != null) {
-                foreach(var index in _indexes)
-                    index.SetParent(this);
-            }
-        }
     }
 }

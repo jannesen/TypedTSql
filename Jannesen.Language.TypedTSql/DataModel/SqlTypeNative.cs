@@ -507,14 +507,11 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         public      static      bool                operator == (SqlTypeNative n1, SqlTypeNative n2)
         {
-            if ((object)n1 == null)
-                return ((object)n1 == null);
-
-            if ((object)n2 == null)
-                return false;
-
             if (object.ReferenceEquals(n1, n2))
                 return true;
+
+            if (n1 is null || n2 is null)
+                return false;
 
             return n1.SystemType == n2.SystemType &&
                    n1.MaxLength    == n2.MaxLength &&

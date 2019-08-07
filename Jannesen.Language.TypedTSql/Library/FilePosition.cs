@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Jannesen.Language.TypedTSql.Library
 {
+    [Serializable]
     public struct FilePosition: IEquatable<FilePosition>
     {
         public              int             Filepos;
@@ -31,9 +32,6 @@ namespace Jannesen.Language.TypedTSql.Library
 
         public  static      bool            operator == (FilePosition p1, FilePosition p2)
         {
-            if ((object)p1 == (object)p2) return true;
-            if ((object)p1 == null || (object)p2 == null) return false;
-
             return p1.Filepos == p2.Filepos && p1.Lineno == p2.Lineno && p1.Linepos == p2.Linepos;
         }
         public  static      bool            operator != (FilePosition p1, FilePosition p2)

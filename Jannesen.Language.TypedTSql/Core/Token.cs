@@ -284,8 +284,8 @@ namespace Jannesen.Language.TypedTSql.Core
 
         public      static          bool                    operator == (Token t1, Token t2)
         {
-            if ((object)t1 == (object)t2) return true;
-            if ((object)t1 == null || (object)t2 == null) return false;
+            if (object.ReferenceEquals(t1, t2)) return true;
+            if (t1 is null || t2 is null) return false;
 
             return (t1.ID == t2.ID && t1.Beginning == t2.Beginning && t1.Ending == t2.Ending && t1.Text == t2.Text);
         }

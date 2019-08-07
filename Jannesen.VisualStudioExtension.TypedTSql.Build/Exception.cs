@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Jannesen.VisualStudioExtension.TypedTSql.Build
 {
-    [Serializable]
     public class BuildException: Exception
     {
         public          BuildException(string message): base(message)
@@ -13,7 +13,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
         }
     }
 
-    [Serializable]
     public class StatusFileException: Exception
     {
         public          StatusFileException(string message): base(message)

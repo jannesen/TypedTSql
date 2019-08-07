@@ -110,8 +110,6 @@ namespace Jannesen.Language.TypedTSql.Node
             for (int i = 0 ; i < n_Columns.Length ; ++i)
                 columns[i] = n_Columns[i].t_IndexColumn;
 
-            var columnList = context.RowSets[0].Columns;
-
             if (n_Name != null) {
                 t_Index = new DataModel.Index(n_Flags,
                                               n_Name.ValueString,

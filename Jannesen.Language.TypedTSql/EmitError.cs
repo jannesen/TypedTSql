@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Jannesen.Language.TypedTSql
 {
-
     public class EmitError: Exception
     {
         public                  string          Filename            { get; private set; }
@@ -32,7 +30,6 @@ namespace Jannesen.Language.TypedTSql
             this.Declaration = declaration;
         }
     }
-
     public class SqlError: EmitError
     {
         public      override    string          Code                { get { return "TSQL" + Number; } }

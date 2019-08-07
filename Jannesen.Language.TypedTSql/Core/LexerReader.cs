@@ -25,7 +25,6 @@ namespace Jannesen.Language.TypedTSql.Core
         private             string                              _text;
         private             Library.FilePosition                _beginpos;
         private             int                                 _curpos;
-        private             Core.Token                          _prevtoken;
 
         public                                                  LexerReader(SourceFile sourceFile, string text, Library.FilePosition startPos)
         {
@@ -142,7 +141,7 @@ namespace Jannesen.Language.TypedTSql.Core
                     _nameDictionary.Add(text, textID = new TextID(text, _nameDictionary.TryGetValue(text.ToUpperInvariant(), out var upperTextID) ? upperTextID.ID : TokenID.Name));
             }
 
-            return _prevtoken = Core.Token.Create(textID.ID, beginning, _beginpos, textID.Text);
+            return Core.Token.Create(textID.ID, beginning, _beginpos, textID.Text);
         }
         private             Core.Token                          _readLocalName()
         {
@@ -302,7 +301,7 @@ namespace Jannesen.Language.TypedTSql.Core
                     _beginpos.Linepos++;
             }
 
-            return _prevtoken = Core.Token.Create(id, beginning, _beginpos, text);
+            return Core.Token.Create(id, beginning, _beginpos, text);
         }
 
         private             int                                 _charAt(int pos)

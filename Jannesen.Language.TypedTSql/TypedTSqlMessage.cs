@@ -47,8 +47,8 @@ namespace Jannesen.Language.TypedTSql
 
         public      static      bool                                operator == (TypedTSqlMessage e1, TypedTSqlMessage e2)
         {
-            if ((object)e1 == (object)e2) return true;
-            if ((object)e1 == null || (object)e2 == null) return false;
+            if (object.ReferenceEquals(e1, e2)) return true;
+            if (e1 is null || e2 is null) return false;
 
             return e1.SourceFile == e2.SourceFile &&
                    e1.Message    == e2.Message    &&

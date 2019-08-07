@@ -26,7 +26,6 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public                                                      Node_ObjectGrant(Core.ParserReader reader, DataModel.SymbolType type)
         {
-            var permissions        = new List<Core.Token>();
             var databaseprincipals = new List<Core.TokenWithSymbol>();
 
             ParseToken(reader, Core.TokenID.GRANT);

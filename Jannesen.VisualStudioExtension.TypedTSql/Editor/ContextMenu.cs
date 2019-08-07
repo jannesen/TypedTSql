@@ -35,25 +35,25 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         }
         public          int                     Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
-            Task t;
+            Task _;
 
             if (pguidCmdGroup == VSConstants.GUID_VSStandardCommandSet97) {
                 switch (nCmdID) {
-                case (uint)VSConstants.VSStd97CmdID.GotoDefn:                       t = Exec_GotoDefn();            return VSConstants.S_OK;
-                case (uint)VSConstants.VSStd97CmdID.FindReferences:                 t = Exec_FindReferences();      return VSConstants.S_OK;
+                case (uint)VSConstants.VSStd97CmdID.GotoDefn:                       _ = Exec_GotoDefn();            return VSConstants.S_OK;
+                case (uint)VSConstants.VSStd97CmdID.FindReferences:                 _ = Exec_FindReferences();      return VSConstants.S_OK;
                 }
             }
             else if (pguidCmdGroup == VSConstants.VSStd2K)
             {
                 switch (nCmdID) {
-                case (uint)VSConstants.VSStd2KCmdID.RENAME:                         t = Exec_Rename();              return VSConstants.S_OK;
+                case (uint)VSConstants.VSStd2KCmdID.RENAME:                         _ = Exec_Rename();              return VSConstants.S_OK;
                 }
             }
             else if (pguidCmdGroup == VSConstants.VsStd14)
             {
                 switch (nCmdID) {
                 case (uint)VSConstants.VSStd14CmdID.ShowQuickFixes:
-                case (uint)VSConstants.VSStd14CmdID.ShowQuickFixesForPosition:      t = Exec_ShowQuickFixes();      return VSConstants.S_OK;
+                case (uint)VSConstants.VSStd14CmdID.ShowQuickFixesForPosition:      _ = Exec_ShowQuickFixes();      return VSConstants.S_OK;
                 }
              }
 

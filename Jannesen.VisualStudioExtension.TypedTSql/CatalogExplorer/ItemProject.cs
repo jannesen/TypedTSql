@@ -29,8 +29,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 
         internal                Task                            WhenReady(LanguageService.ReadyCallback callback)
         {
-            var service = ServiceProvider.GetService(typeof(LanguageService.Service)) as LanguageService.Service;
-            if (service == null) {
+            if (!(ServiceProvider.GetService(typeof(LanguageService.Service)) is LanguageService.Service service)) {
                 throw new InvalidOperationException("LanguageService.Service not registrated.");
             }
 

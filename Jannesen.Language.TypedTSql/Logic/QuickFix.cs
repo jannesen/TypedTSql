@@ -24,9 +24,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                                                                                       sqlType.NativeType.SystemType == DataModel.SystemType.TinyInt))))
             {
                 if (sqlType?.Entity is DataModel.EntityType entityType) {
-                    var exprConst  = expr as Node.Expr_Constant;
-
-                    if (entityType != null && exprConst != null) {
+                    if (entityType != null && expr is Node.Expr_Constant exprConst) {
                         var constValue = expr.ConstValue();
 
                         if (constValue is string || constValue is int) {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using LTTSQL = Jannesen.Language.TypedTSql;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
@@ -23,5 +24,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
     public class TypeMapDictionary: Dictionary<LTTSQL.DataModel.ISqlType, FromExpression>
     {
+        public                          TypeMapDictionary()
+        {
+        }
     }
 }

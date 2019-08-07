@@ -64,9 +64,8 @@ namespace Jannesen.Language.TypedTSql.Node
 
             var complexTypeEntityName = DeclarationServiceComplexType.BuildEntityName(context.GetDeclarationObject<DeclarationServiceMethod>().ServiceName, n_Name.ValueString);
             var complexTypeEntity     = (context.Catalog.GetObject(complexTypeEntityName, false) as DataModel.EntityObjectCode);
-            var complexType           = complexTypeEntity?.DeclarationObjectCode as DeclarationServiceComplexType;
 
-            if (complexType == null) {
+            if (!(complexTypeEntity?.DeclarationObjectCode is DeclarationServiceComplexType complexType)) {
                 context.AddError(n_Name, "Unknown complextype '" + name + "'.");
                 return;
             }

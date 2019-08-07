@@ -76,7 +76,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
                     _openjson_children = openjson.Children;
                     _columns           = new List<Column>(columnList.Count);
 
-                    if (jsonSchema is DataModel.JsonSchemaObject objectSchema) {
+                    if (jsonSchema is DataModel.JsonSchemaObject) {
                         for (int i = 0 ; i < columnList.Count ; ++i) {
                             var c = columnList[i];
 
@@ -84,9 +84,8 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
                                 _columns.Add(new Column(){ Name=c.Name, Type=c.SqlType, Path="$.\"" + c.Name + "\"" });
                             }
                         }
-
                     }
-                    else if (jsonSchema is DataModel.JsonSchemaValue  valueSchema)
+                    else if (jsonSchema is DataModel.JsonSchemaValue valueSchema)
                     {
                         _columns.Add(new Column(){ Name="$value", Type=valueSchema.SqlType, Path="$" });
                     }
@@ -174,9 +173,8 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
             private                 DataModel.JsonSchema            _jsonSchema;
             private                 DataModel.IColumnList           _columnList;
 
-            public                                                  WithScheme(Core.ParserReader reader)
+            public                                                  WithScheme()
             {
-
             }
 
             public                  DataModel.IColumnList           getColumnList(Transpile.Context context, Node.IExprNode docexpr, Node.IExprNode pathexpr)
@@ -274,7 +272,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
                 n_With = AddChild(new TableSource_WithDeclaration(reader));
             }
             else
-                AddBeforeWhitespace(n_With = new WithScheme(reader));
+                AddBeforeWhitespace(n_With = new WithScheme());
 
             ParseTableAlias(reader);
         }

@@ -60,10 +60,10 @@ namespace Jannesen.Language.TypedTSql.DataModel
         {
             int     i;
 
-            if ((object)n1 == null)
+            if (n1 is null)
                 return (n1 == null) ? 0 : -1;
 
-            if ((object)n2 == null)
+            if (n2 is null)
                 return 1;
 
             if ((i = _stringCompare(n1.Database, n2.Database)) != 0)
@@ -76,14 +76,11 @@ namespace Jannesen.Language.TypedTSql.DataModel
         }
         public      static      bool                operator == (EntityName n1, EntityName n2)
         {
-            if ((object)n1 == null)
-                return ((object)n1 == null);
-
-            if ((object)n2 == null)
-                return false;
-
             if (object.ReferenceEquals(n1, n2))
                 return true;
+
+            if (n1 is null || n2 is null)
+                return false;
 
             return _stringCompare(n1.Database, n2.Database) == 0 &&
                    _stringCompare(n1.Schema  , n2.Schema  ) == 0 &&
@@ -105,7 +102,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         }
         public                  bool                Equals(EntityName other)
         {
-            if (other != null) {
+            if (!(other is null)) {
                 if (object.ReferenceEquals(this, other))
                     return true;
 

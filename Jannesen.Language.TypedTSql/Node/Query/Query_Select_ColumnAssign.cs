@@ -10,8 +10,6 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      static          bool                    CanParse(Core.ParserReader reader)
         {
-            Core.Token[]        peek = reader.Peek(2);
-
             return reader.CurrentToken.isToken(Core.TokenID.LocalName) && reader.NextPeek().isToken(Core.TokenID.Equal);
         }
 
