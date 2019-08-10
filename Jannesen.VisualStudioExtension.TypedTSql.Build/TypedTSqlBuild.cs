@@ -100,8 +100,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                 if (buildsteps.Count > 0) {
                     Log.LogMessage(MessageImportance.Normal, "Database: " + DatabaseName);
 
-                    using (LTTS.SqlDatabase database = new LTTS.SqlDatabase(DatabaseName))
-                    {
+                    using (LTTS.SqlDatabase database = new LTTS.SqlDatabase(DatabaseName)) {
                         if (!_incbuild) {
                             if (!string.IsNullOrEmpty(RebuildScript))
                                 database.Output(FullFileName(RebuildScript));
@@ -138,8 +137,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
         private                 bool                                _loadStatus()
         {
             try {
-                using (BinaryReader binaryReader = OpenStatusFile(StatusFile))
-                {
+                using (BinaryReader binaryReader = OpenStatusFile(StatusFile)) {
                     if (binaryReader.ReadInt32() != StatusMagic)
                         throw new StatusFileException("Invalid status-file magic.");
 
@@ -224,8 +222,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
         private                 void                                _saveStatus()
         {
             try {
-                using (BinaryWriter binaryWriter = CreateStatusFile(StatusFile))
-                {
+                using (BinaryWriter binaryWriter = CreateStatusFile(StatusFile)) {
                     binaryWriter.Write(StatusMagic);
                     binaryWriter.Write(this.GetType().Assembly.GetName().Version.ToString());
                     binaryWriter.Write((Int32)_usingFiles.Count);

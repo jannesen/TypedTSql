@@ -14,7 +14,7 @@ namespace Jannesen.Language.TypedTSql.Core
 
             public  static      bool        operator == (ParsePosition p1, ParsePosition p2)
             {
-			    return p1.Processed    == p2.Processed &&
+                return p1.Processed    == p2.Processed &&
                        p1.CurrentParse == p2.CurrentParse;
             }
             public  static      bool        operator != (ParsePosition p1, ParsePosition p2)

@@ -145,8 +145,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             string      filename = BaseDirectory + "\\webservice.config";
 
             try {
-                using (var fileData = new MemoryStream())
-                {
+                using (var fileData = new MemoryStream()) {
                     using (var xmlWriter = XmlWriter.Create(fileData,
                                                             new XmlWriterSettings() {
                                                                 Encoding           = new System.Text.UTF8Encoding(false),

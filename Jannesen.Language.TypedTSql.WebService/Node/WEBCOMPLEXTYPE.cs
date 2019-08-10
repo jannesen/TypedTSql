@@ -51,7 +51,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
             public      override    void                                    Emit(LTTSQL.Core.EmitWriter emitWriter)
             {
-            }                
+            }
         }
 
         public      override    LTTSQL.DataModel.SymbolType             EntityType                  { get { return LTTSQL.DataModel.SymbolType.ServiceComplexType;       } }
@@ -156,7 +156,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     return new LTTSQL.DataModel.JsonSchemaArray(_convertResponseObjectToJsonSchema(type));
 
                 default:
-                    throw new InvalidOperationException("invalid SqlTypeResponseNode.NodeType");                
+                    throw new InvalidOperationException("invalid SqlTypeResponseNode.NodeType");
                 }
             }
 

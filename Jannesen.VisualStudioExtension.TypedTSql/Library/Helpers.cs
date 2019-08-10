@@ -10,7 +10,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Library
 
         public static       T           GetService<T>(this IServiceProvider seviceProvider, Type type) where T: class
         {
-            if (!(seviceProvider.GetService(type) is T rtn)) { 
+            if (!(seviceProvider.GetService(type) is T rtn)) {
                 throw new InvalidOperationException("Can't get service '" + type.FullName + "'.");
             }
 

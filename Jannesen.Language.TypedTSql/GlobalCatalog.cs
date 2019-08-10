@@ -283,9 +283,8 @@ namespace Jannesen.Language.TypedTSql
                                                        DatabasePrincipal.SqlStatementCatalog + "\n" +
                                                        EntityAssembly.SqlStatementCatalog    + "\n" +
                                                        EntityType.SqlStatementCatalog        + "\n" +
-                                                       EntityObject.SqlStatementCatalog, Database.Connection)) { 
-                        using (SqlDataReader dataReader = sqlCmd.ExecuteReader())
-                        {
+                                                       EntityObject.SqlStatementCatalog, Database.Connection)) {
+                        using (SqlDataReader dataReader = sqlCmd.ExecuteReader()) {
                             if (!dataReader.Read())
                                 throw new GlobalCatalogException("Failed to read database options.");
 
@@ -337,7 +336,7 @@ namespace Jannesen.Language.TypedTSql
         {
             try {
                 lock(Database) {
-                    using (var sqlCmd = new SqlCommand(EntityObject.SqlStatementByName(name), Database.Connection)) { 
+                    using (var sqlCmd = new SqlCommand(EntityObject.SqlStatementByName(name), Database.Connection)) {
                         using (var dataReader = sqlCmd.ExecuteReader()) {
                             if (dataReader.Read()) {
                                 return EntityObject.ReadFromDatabase(name.Database, dataReader);
@@ -355,7 +354,7 @@ namespace Jannesen.Language.TypedTSql
         {
             try {
                 lock(Database) {
-                    using (var sqlCmd = new SqlCommand(entity.DatabaseReadFromCmd(), Database.Connection)) { 
+                    using (var sqlCmd = new SqlCommand(entity.DatabaseReadFromCmd(), Database.Connection)) {
                         using (SqlDataReader dataReader = sqlCmd.ExecuteReader())
                             entity.DatabaseReadFromResult(this, dataReader);
                     }

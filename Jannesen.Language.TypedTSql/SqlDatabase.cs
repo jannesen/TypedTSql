@@ -136,8 +136,7 @@ namespace Jannesen.Language.TypedTSql
                     _output.WriteLine("GO");
                 }
 
-                using (SqlClient.SqlCommand sqlCmd = new SqlClient.SqlCommand())
-                {
+                using (SqlClient.SqlCommand sqlCmd = new SqlClient.SqlCommand()) {
                     sqlCmd.CommandText    = statement;
                     sqlCmd.CommandType    = System.Data.CommandType.Text;
                     sqlCmd.Connection     = Connection;

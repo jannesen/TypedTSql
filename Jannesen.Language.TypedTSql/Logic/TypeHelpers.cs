@@ -33,7 +33,7 @@ namespace Jannesen.Language.TypedTSql.Logic
 
         public  static      bool            operator == (FlagsTypeCollation p1, FlagsTypeCollation p2)
         {
-			return p1.ValueFlags    == p2.ValueFlags &&
+            return p1.ValueFlags    == p2.ValueFlags &&
                    p1.SqlType       == p2.SqlType &&
                    p1.CollationName == p2.CollationName;
         }

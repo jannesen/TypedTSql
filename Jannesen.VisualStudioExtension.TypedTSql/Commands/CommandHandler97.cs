@@ -55,8 +55,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Commands
             try {
                 IProjectTree    root;
 
-                using (IEnumerator<IProjectTree> i = nodes.GetEnumerator())
-                {
+                using (IEnumerator<IProjectTree> i = nodes.GetEnumerator()) {
                     i.MoveNext();
                     root = i.Current.Root;
                 }

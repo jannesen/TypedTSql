@@ -160,10 +160,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         private     static      string                              _responseMsgName(DataModel.ISqlType returns)
         {
-            using (var buffer = new MemoryStream())
-            {
-                using (var xmlWriter = XmlWriter.Create(buffer, new XmlWriterSettings()
-                                                                {
+            using (var buffer = new MemoryStream()) {
+                using (var xmlWriter = XmlWriter.Create(buffer, new XmlWriterSettings() {
                                                                     CloseOutput = false,
                                                                     Indent      = false
                                                                 }))

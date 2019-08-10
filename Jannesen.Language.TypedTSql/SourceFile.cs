@@ -30,8 +30,7 @@ namespace Jannesen.Language.TypedTSql
 
         public                  void                                            ParseFile()
         {
-            using (var inputStream = new System.IO.StreamReader(Filename))
-            {
+            using (var inputStream = new System.IO.StreamReader(Filename)) {
                 ParseContent(inputStream.ReadToEnd());
             }
         }

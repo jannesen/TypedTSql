@@ -334,10 +334,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 _proxys.NameOptimalisation("P");
 
                 try {
-                    using (var fileData = new MemoryStream())
-                    {
-                        using (var writer = new StreamWriter(fileData, System.Text.Encoding.UTF8, 256, true))
-                        {
+                    using (var fileData = new MemoryStream()) {
+                        using (var writer = new StreamWriter(fileData, System.Text.Encoding.UTF8, 256, true)) {
                             _imports.EmitFull(writer);
                             writer.WriteLine();
                             _simpletypes.EmitFull(writer);

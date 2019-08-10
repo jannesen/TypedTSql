@@ -83,7 +83,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (!(Package.GetGlobalService(typeof(EnvDTE.DTE)) is EnvDTE.DTE dte)) { 
+            if (!(Package.GetGlobalService(typeof(EnvDTE.DTE)) is EnvDTE.DTE dte)) {
                 throw new InvalidOperationException("Failed to get the EnvDTE.DTE.");
             }
 
@@ -268,8 +268,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
 
         public                  void                                    ShowCatalogExplorer()
         {
-            JoinableTaskFactory.RunAsync(async () => { 
-                    try { 
+            JoinableTaskFactory.RunAsync(async () => {
+                    try {
                         await ShowToolWindowAsync(typeof(CatalogExplorer.Panel), 0, true, DisposalToken);
                     }
                     catch(Exception err) {

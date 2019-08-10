@@ -48,8 +48,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
         {
             byte[]      data;
 
-            using (Stream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read, 4096))
-            {
+            using (Stream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read, 4096)) {
                 if (stream.Length > 4000000)
                     throw new TranspileException(this, "file to big.");
 

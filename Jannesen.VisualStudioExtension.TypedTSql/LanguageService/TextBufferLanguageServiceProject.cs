@@ -63,7 +63,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 var filePath = FilePath;
                 var project = VSPackage.GetContainingProject(CPS.TypedTSqlUnconfiguredProject.ProjectTypeGuid, filePath);
                 if (project != null) {
-                    if (_serviceProvider.GetService(typeof(Service)) is Service service) { 
+                    if (_serviceProvider.GetService(typeof(Service)) is Service service) {
                         _languageService = service.GetLanguageService(project);
                         _sourceFile      = _languageService.TextBufferConnected(this);
                     }

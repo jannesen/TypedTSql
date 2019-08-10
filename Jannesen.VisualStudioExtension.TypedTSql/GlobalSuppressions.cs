@@ -26,4 +26,3 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA2213:Disposable fields should be disposed",  Scope = "member", Target = "~F:Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Project._errorList")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality",  "IDE0069:Disposable fields should be disposed", Scope = "member", Target = "~F:Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Project._hierarchyListener")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA2213:Disposable fields should be disposed",  Scope = "member", Target = "~F:Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Project._hierarchyListener")]
-

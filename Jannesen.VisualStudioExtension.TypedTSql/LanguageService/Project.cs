@@ -519,8 +519,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                     if (context == null)
                         throw new Exception("Can't get UnconfiguredProject.");
 
-                    using (var access = await unconfiguredProject.ProjectService.Services.ProjectLockService.ReadLockAsync())
-                    {
+                    using (var access = await unconfiguredProject.ProjectService.Services.ProjectLockService.ReadLockAsync()) {
                         var project = await access.GetProjectAsync(await unconfiguredProject.GetSuggestedConfiguredProjectAsync());
 
                         extensions      = project.GetPropertyValue("TypedTSqlExtensions");
@@ -598,7 +597,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 var gsServiceProvider = (VSInterop.IServiceProvider)VSPackage.GetGlobalService(typeof(VSInterop.IServiceProvider));
                 var gsComponentModel  = (VSComponentModelHost.IComponentModel)VSPackage.GetGlobalService(typeof(VSComponentModelHost.SComponentModel));
 
-                using (var vsserviceProvider = new VSShell.ServiceProvider(gsServiceProvider)) { 
+                using (var vsserviceProvider = new VSShell.ServiceProvider(gsServiceProvider)) {
                     var runningDocumentTable = new VSShell.RunningDocumentTable(vsserviceProvider);
                     var adapter              = gsComponentModel.GetService<Microsoft.VisualStudio.Editor.IVsEditorAdaptersFactoryService>();
 

@@ -17,7 +17,7 @@ namespace Jannesen.Language.TypedTSql.Core
 
         public  static      bool        operator == (TokenNameID p1, TokenNameID p2)
         {
-			return p1.Name == p2.Name &&
+            return p1.Name == p2.Name &&
                    p1.Id   == p2.Id;
         }
         public  static      bool        operator != (TokenNameID p1, TokenNameID p2)

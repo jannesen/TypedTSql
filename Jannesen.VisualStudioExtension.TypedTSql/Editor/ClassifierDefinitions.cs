@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
 // Disable CS0618 warning for now.
-#pragma warning disable CS0618 
+#pragma warning disable CS0618
 
 namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 {
@@ -344,7 +344,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
 
             public  static      bool            operator == (ClassificationColor p1, ClassificationColor p2)
             {
-			    return p1.ForegroundColor == p2.ForegroundColor &&
+                return p1.ForegroundColor == p2.ForegroundColor &&
                        p1.BackgroundColor == p2.BackgroundColor;
             }
             public  static      bool            operator != (ClassificationColor p1, ClassificationColor p2)

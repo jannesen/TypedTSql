@@ -122,8 +122,7 @@ namespace Jannesen.Language.TypedTSql.Library
             Database.ResetSettings();
 
             if (!Database.AllCodeDropped) {
-                using (StringWriter stringWriter = new StringWriter())
-                {
+                using (StringWriter stringWriter = new StringWriter()) {
                     foreach (var entity in _entities)
                         entity.EmitDrop(stringWriter);
 
