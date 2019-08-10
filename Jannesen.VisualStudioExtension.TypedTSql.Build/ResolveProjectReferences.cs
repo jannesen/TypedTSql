@@ -22,9 +22,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
 
         public override bool Execute()
         {
-            if (ProjectDirectory == null)       throw new ArgumentException("ProjectDirectory not set.");
-            if (ProjectConfiguration == null)   throw new ArgumentException("ProjectConfiguration not set.");
-            if (ProjectPlatform == null)        throw new ArgumentException("ProjectPlatform not set.");
+            if (ProjectDirectory is null)       throw new ArgumentException("ProjectDirectory not set.");
+            if (ProjectConfiguration is null)   throw new ArgumentException("ProjectConfiguration not set.");
+            if (ProjectPlatform is null)        throw new ArgumentException("ProjectPlatform not set.");
 
             try {
                 if (ProjectReferences != null) {
@@ -81,27 +81,39 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             else {
                 project = new Project(projectFullPath,
                                       new Dictionary<string,string>() {
-                                           ["Configuration"] = ProjectConfiguration,
-                                           ["Platform"]= ProjectPlatform
+                                          { "Configuration", ProjectConfiguration},
+                                          { "Platform",      ProjectPlatform}
                                       }, null);
             }
 
-            var resolvedItem = new TaskItem(projectReference.ItemSpec);
             var propertyValue = new Dictionary<string, string>();
             string value;
 
             foreach(var pp in project.AllEvaluatedProperties)
                 propertyValue[pp.Name] = propertyValue.TryGetValue(pp.Name, out value) ? value+";"+pp.EvaluatedValue : pp.EvaluatedValue;
 
+            var resolvedItem = new TaskItem(projectFullPath);
+            resolvedItem.SetMetadata("OriginalItemSpec", projectReference.ItemSpec);
+
             if (propertyValue.TryGetValue("ProjectGuid", out value))
                 resolvedItem.SetMetadata("Project", value);
+
+            string name = null;
 
             if (propertyValue.TryGetValue("OutputType", out value) && value == "Library") {
                 if (propertyValue.TryGetValue("TargetPath", out value)) {
                     resolvedItem.SetMetadata("ProjectType",    "Assembly");
                     resolvedItem.SetMetadata("OutputAssembly", Statics.NormelizeFullPath(Path.Combine(Path.GetDirectoryName(projectFullPath), value)));
+
+                    propertyValue.TryGetValue("AssemblyName", out name);
                 }
             }
+
+            if (name is null) {
+                name = Path.GetFileNameWithoutExtension(projectFullPath);
+            }
+
+            resolvedItem.SetMetadata("Name", name);
 
             return resolvedItem;
         }

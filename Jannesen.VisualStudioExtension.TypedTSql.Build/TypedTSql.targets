@@ -16,7 +16,9 @@
 	<ItemGroup>
 		<ProjectCapability Include="ProjectConfigurationsDeclaredAsItems" />
 		<ProjectCapability Include="DeclaredSourceItems" />
-		<ProjectCapability Include="TypedTSql" />
+    <ProjectCapability Include="UseFileGlobs" />
+    <ProjectCapability Include="ReferencesFolder;ProjectReferences;ReferenceManagerProjects;ReferenceManagerBrowse" />
+    <ProjectCapability Include="TypedTSql" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -58,7 +60,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectCapability Include="DependenciesTree;ProjectReferences;ReferenceManagerProjects" />
 		<PropertyPageSchema Include="$(MSBuildThisFileDirectory)Rules\ProjectReference.xaml">
 			<Context>Project;BrowseObject</Context>
 		</PropertyPageSchema>
