@@ -16,7 +16,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Commands
         {
             if (commandId == (long)VSConstants.VSStd2KCmdID.OUTLN_COLLAPSE_TO_DEF) {
                 foreach (var node in nodes) {
-                    if (!node.IsFolder && node.Visible && node.FilePath.EndsWith(FileAndContentTypeDefinitions.TypedTSqlExtenstion, StringComparison.InvariantCultureIgnoreCase)) {
+                    if (!node.IsFolder && node.Visible && node.FilePath.EndsWith(FileAndContentTypeDefinitions.TypedTSqlExtenstion, StringComparison.OrdinalIgnoreCase)) {
                         progressiveStatus |= CommandStatus.Enabled | CommandStatus.Supported;
                         return new CommandStatusResult(true, commandText, progressiveStatus);
                     }

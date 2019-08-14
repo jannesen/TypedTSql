@@ -25,7 +25,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             public          bool        isTsql
             {
                 get {
-                    return FilenameLower.EndsWith(".sql", StringComparison.InvariantCultureIgnoreCase);
+                    return FilenameLower.EndsWith(".sql", StringComparison.OrdinalIgnoreCase);
                 }
             }
             public          bool        isTypedTSql
@@ -49,7 +49,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                 if (u1.BuildOrder != u2.BuildOrder)
                     return u1.BuildOrder - u2.BuildOrder;
 
-                return string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.InvariantCulture);
+                return string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.Ordinal);
             }
         }
 
@@ -110,7 +110,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                         }
 
                         foreach(KeyValuePair<int,List<UsingFile>> buildstep in buildsteps) {
-                            buildstep.Value.Sort((u1, u2) => string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.InvariantCulture));
+                            buildstep.Value.Sort((u1, u2) => string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.Ordinal));
 
                             if (rtn)
                                 rtn = _processTSql(database, buildstep.Value);
@@ -245,7 +245,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                     if (usingFile.Changed || !_incbuild) {
                         var fullfilename = Path.Combine(ProjectDirectory, usingFile.Filename);
                         var filename = fullfilename;
-                        if (filename.StartsWith(ProjectDirectory + "\\", StringComparison.InvariantCulture)) {
+                        if (filename.StartsWith(ProjectDirectory + "\\", StringComparison.Ordinal)) {
                             filename = filename.Substring(ProjectDirectory.Length + 1);
                         }
                         Log.LogMessage(MessageImportance.Normal, "Execute: " + filename);

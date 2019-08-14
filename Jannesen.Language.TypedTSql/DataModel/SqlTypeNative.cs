@@ -283,7 +283,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             int     b = s.IndexOf('(');
 
             if (b > 0) {
-                if (!s.EndsWith(")", StringComparison.InvariantCulture))
+                if (!s.EndsWith(")", StringComparison.Ordinal))
                     throw new ArgumentException("Invalid syntax native sql-type.");
 
                 typeName = s.Substring(0, b).Trim();
@@ -328,7 +328,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                 if (parm1 == null || parm2 != null)
                     throw new ArgumentException("Invalid syntax native sql-type.");
 
-                if (string.Compare(parm1, "MAX", StringComparison.InvariantCultureIgnoreCase) == 0)
+                if (string.Compare(parm1, "MAX", StringComparison.OrdinalIgnoreCase) == 0)
                     maxLength = -1;
                 else {
                     try {

@@ -40,7 +40,7 @@ namespace Jannesen.Language.TypedTSql.Token
         {
             if (emitWriter.EmitOptions.DontEmitComment) {
                 if (Beginning.Linepos > 1)
-                    emitWriter.WriteText(Text.EndsWith("\r\n", StringComparison.InvariantCulture) ? "\r\n" : "\n");
+                    emitWriter.WriteText(Text.EndsWith("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n");
             }
             else {
                 emitWriter.WriteToken(this);

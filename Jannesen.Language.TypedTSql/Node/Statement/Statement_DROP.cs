@@ -27,7 +27,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             var     name = n_TempTableName.ValueString;
 
-            if (!name.StartsWith("#", StringComparison.InvariantCulture)) {
+            if (!name.StartsWith("#", StringComparison.Ordinal)) {
                 context.AddError(n_TempTableName, "DROP TABLE is only allow for temp tables.");
                 return;
             }

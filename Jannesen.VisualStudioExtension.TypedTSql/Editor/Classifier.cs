@@ -150,7 +150,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
             case LTTS_Core.TokenID.LineComment:                     return _cfComment;
             case LTTS_Core.TokenID.Name:                            return token.isKeyword ? _cfKeyword : _cfName;
             case LTTS_Core.TokenID.QuotedName:                      return _cfName;
-            case LTTS_Core.TokenID.LocalName:                       return (token.Text.StartsWith("@@", StringComparison.InvariantCulture) ? _cfGlobalVariable : _cfLocalVariable);
+            case LTTS_Core.TokenID.LocalName:                       return (token.Text.StartsWith("@@", StringComparison.Ordinal) ? _cfGlobalVariable : _cfLocalVariable);
             case LTTS_Core.TokenID.String:                          return _cfString;
             case LTTS_Core.TokenID.Number:                          return _cfNumber;
             case LTTS_Core.TokenID.BinaryValue:                     return _cfNumber;

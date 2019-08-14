@@ -25,8 +25,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 LTTS_Core.Token endNode = node.GetLastToken(LTTS_Core.GetTokenMode.RemoveWhiteSpace);
                 _ending = endNode.Ending.Filepos;
 
-                if (endNode.Text.EndsWith("\n", StringComparison.InvariantCulture))
-                    _ending -= endNode.Text.EndsWith("\r\n", StringComparison.InvariantCulture) ? 2 : 1;
+                if (endNode.Text.EndsWith("\n", StringComparison.Ordinal))
+                    _ending -= endNode.Text.EndsWith("\r\n", StringComparison.Ordinal) ? 2 : 1;
             }
         }
 

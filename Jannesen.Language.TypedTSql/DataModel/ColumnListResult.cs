@@ -40,7 +40,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             Column  column = null;
 
             foreach(var c in _columns) {
-                if (string.Compare(c.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0) {
+                if (string.Compare(c.Name, name, StringComparison.OrdinalIgnoreCase) == 0) {
                     if (column == null)
                         column = c;
                     else

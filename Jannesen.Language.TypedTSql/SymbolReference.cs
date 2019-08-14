@@ -97,7 +97,7 @@ namespace Jannesen.Language.TypedTSql
         {
             foreach(var r in this) {
                 if (r.Token.Beginning.Filepos <= position && position < r.Token.Ending.Filepos &&
-                    String.Compare(r.SourceFile.Filename, filename, StringComparison.InvariantCultureIgnoreCase) == 0)
+                    String.Compare(r.SourceFile.Filename, filename, StringComparison.OrdinalIgnoreCase) == 0)
                     return r;
             }
 

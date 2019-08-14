@@ -133,7 +133,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 else {
                     var     name = n_Name.ValueString;
 
-                    if (!name.StartsWith("#", StringComparison.InvariantCulture)) {
+                    if (!name.StartsWith("#", StringComparison.Ordinal)) {
                         context.AddError(n_Name, "Missing '#'.");
                         return;
                     }
@@ -182,13 +182,13 @@ namespace Jannesen.Language.TypedTSql.Node
 
         private                 string                          _getSchema(string name, Core.ParserReader reader)
         {
-            if (name.StartsWith("#", StringComparison.InvariantCulture))
+            if (name.StartsWith("#", StringComparison.Ordinal))
                 return null;
 
             switch(ReferenceType) {
             case EntityReferenceType.StoredProcedure:
-                if (name.StartsWith("sp_", StringComparison.InvariantCulture) ||
-                    name.StartsWith("xp_", StringComparison.InvariantCulture))
+                if (name.StartsWith("sp_", StringComparison.Ordinal) ||
+                    name.StartsWith("xp_", StringComparison.Ordinal))
                     return "sys";
                 break;
             }

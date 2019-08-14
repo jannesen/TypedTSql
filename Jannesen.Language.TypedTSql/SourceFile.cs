@@ -76,7 +76,7 @@ namespace Jannesen.Language.TypedTSql
 
         public      static      bool                                            isTypedTSqlFile(string filename)
         {
-            return filename.EndsWith(".ttsql", StringComparison.InvariantCultureIgnoreCase);
+            return filename.EndsWith(".ttsql", StringComparison.OrdinalIgnoreCase);
         }
 
         internal                void                                            TranspileInit(GlobalCatalog catalog, bool resetSymbols)

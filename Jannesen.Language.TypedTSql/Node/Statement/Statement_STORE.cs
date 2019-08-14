@@ -89,7 +89,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 public                  bool                                denyColumn(string name)
                 {
                     foreach(var c in n_DenyUpdateofColumn) {
-                        if (string.Compare(c.ValueString, name, StringComparison.InvariantCultureIgnoreCase) == 0)
+                        if (string.Compare(c.ValueString, name, StringComparison.OrdinalIgnoreCase) == 0)
                             return true;
                     }
 
@@ -1156,7 +1156,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 private                 ColumnInfo                          _findColumn(string name)
                 {
                     foreach(var c in TD.ColumnsInfo) {
-                        if (String.Compare(c.Column.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0)
+                        if (String.Compare(c.Column.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
                             return c;
                     }
 

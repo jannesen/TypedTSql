@@ -28,18 +28,18 @@ namespace Jannesen.Language.TypedTSql
             var s = datasource;
             int i;
 
-            if ((i = s.IndexOf("@", StringComparison.InvariantCulture)) > 0) {
+            if ((i = s.IndexOf("@", StringComparison.Ordinal)) > 0) {
                 var userPasswd = s.Substring(0, i);
                 s = s.Substring(i + 1);
 
-                if ((i = userPasswd.IndexOf(":", StringComparison.InvariantCulture)) <= 0)
+                if ((i = userPasswd.IndexOf(":", StringComparison.Ordinal)) <= 0)
                     throw new FormatException("Invalid username:passwd in datasource '" + datasource + "'");
 
                 this.UserName = userPasswd.Substring(0, i);
                 this.Passwd   = userPasswd.Substring(i + 1);
             }
 
-            if ((i = s.LastIndexOf("\\", StringComparison.InvariantCulture)) <= 0)
+            if ((i = s.LastIndexOf("\\", StringComparison.Ordinal)) <= 0)
                 throw new FormatException("Invalid datasource '" + datasource + "'");
 
             this.ServerName    = s.Substring(0, i);
@@ -130,7 +130,7 @@ namespace Jannesen.Language.TypedTSql
                 if (_output != null) {
                     _output.Write(statement);
 
-                    if (!statement.EndsWith("\n", StringComparison.InvariantCulture))
+                    if (!statement.EndsWith("\n", StringComparison.Ordinal))
                         _output.WriteLine();
 
                     _output.WriteLine("GO");

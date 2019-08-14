@@ -112,7 +112,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
             ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach(IVsProject project in GetLoadedProjects(projecttypeguid)) {
-                if (string.Compare(GetProjectFileName(project), projectpathname, StringComparison.InvariantCultureIgnoreCase) == 0)
+                if (string.Compare(GetProjectFileName(project), projectpathname, StringComparison.OrdinalIgnoreCase) == 0)
                     return project;
             }
 
