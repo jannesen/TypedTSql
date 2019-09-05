@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -138,17 +139,12 @@ namespace Jannesen.Language.TypedTSql.Node
                         return;
                     }
 
-                    var tempTable =  context.GetDeclarationObjectCode().Entity.TempTableGetRecursive(name, out var ambiguous);
-                    if (tempTable == null) {
-                        if (!context.ReportNeedTranspile)
-                            throw new NeedsTranspileException();
+                    var tempTable = _findTempTable(context, context.GetDeclarationObjectCode().Entity, name, new List<DataModel.EntityObjectCode>());
 
+                    if (tempTable == null) {
                         context.AddError(n_Name, "Unknown temp table '" + name + "'.");
                         return;
                     }
-
-                    if (ambiguous)
-                        context.AddError(n_Name, "Temp table '" + name + "' is ambiguous.");
 
                     context.CaseWarning(n_Name, tempTable.Name);
                     Entity = tempTable;
@@ -260,6 +256,85 @@ namespace Jannesen.Language.TypedTSql.Node
             }
 
             throw new TranspileException(this, "Invalid object type.");
+        }
+        private                 DataModel.TempTable             _findTempTable(Transpile.Context context, DataModel.EntityObjectCode entity, string name, List<DataModel.EntityObjectCode> path)
+        {
+            System.Diagnostics.Debug.WriteLine(entity.EntityName.ToString() + ": find " + name);
+
+            var tempTable = entity.TempTableGet(name);
+            if (tempTable != null) {
+                return tempTable;
+            }
+
+            var calledby = entity.Calledby;
+            if (calledby == null) {
+                return null;
+            }
+
+            path.Add(entity);
+            var pathpos = path.Count;
+            var tables    = new DataModel.TempTable[calledby.Count];
+            var recursive = new bool[calledby.Count];
+            var rtn       = -1;
+
+            for (var i = 0 ; i < calledby.Count ; ++i) {
+                if (!path.Contains(calledby[i])) {
+                    if (path.Count > pathpos) {
+                        path.RemoveRange(pathpos, path.Count - pathpos);
+                    }
+                    var t = _findTempTable(context, calledby[i], name, path);
+                    if (t != null) {
+                        tables[i] = t;
+                        if (rtn == -1) {
+                            rtn = i;
+                        }
+                    }
+                }
+                else {
+                    recursive[i] = true;
+                }
+            }
+
+            for (var i = 0 ; i < calledby.Count ; ++i) {
+                if (!recursive[i] && tables[i] == null) {
+                    if (!context.ReportNeedTranspile && (calledby[i].EntityFlags & DataModel.EntityFlags.NeedsTranspile) != 0) {
+                        throw new NeedsTranspileException();
+                    }
+
+                    context.AddError(n_Name, "Temp table '" + name + "' not defined in '" + calledby[i].EntityName.ToString() + "'.");
+                }
+            }
+
+            if (rtn >= 0) {
+                for (var i = 0 ; i < calledby.Count ; ++i) {
+                    if (i != rtn) { 
+                        var t = tables[i];
+                        if (t != null) {
+                            var columns1 = tables[rtn].Columns;
+                            var columns2 = t.Columns;
+
+                            if (columns1.Count == columns2.Count) {
+                                for (int j = 0 ; j < columns1.Count ; ++j) {
+                                    var col1 = columns1[j];
+                                    var col2 = columns2[j];
+
+                                    if (!(col1.Name          == col2.Name         ||
+                                          col1.Type          == col2.Type         ||
+                                          col1.ValueFlags    == col2.ValueFlags   ||
+                                          col1.CollationName == col2.CollationName)) {
+                                        context.AddError(n_Name, "Temp table column '" + col1.Name + "' defined in '" + calledby[rtn].EntityName.ToString() + "' and '" + calledby[rtn].EntityName.ToString() + "' are not equal.");
+                                    }
+                                }
+                            }
+                            else {
+                                context.AddError(n_Name, "Temp table defined in '" + calledby[rtn].EntityName.ToString() + "' and '" + calledby[rtn].EntityName.ToString() + "' has a different number of columns.");
+                            }
+                        }
+                    }
+                }
+            }
+
+            return rtn >= 0 ? tables[rtn] : null;
         }
     }
 }

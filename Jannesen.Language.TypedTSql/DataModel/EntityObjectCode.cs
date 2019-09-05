@@ -61,35 +61,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
             base.Transpiled();
         }
 
-        public                  EntityObjectCode[]              CalledbyRecursive()
-        {
-            var callers = new HashSet<EntityObjectCode>();
-
-            _calledbyRecursiveWalker(callers);
-
-            return callers.ToArray();
-        }
         public                  TempTable                       TempTableGet(string name)
         {
             return _tempTables != null && _tempTables.TryGetValue(name, out var tempTable) ? tempTable : null;
-        }
-        public                  DataModel.TempTable             TempTableGetRecursive(string name, out bool ambiguous)
-        {
-            ambiguous = false;
-
-            var     rtn = TempTableGet(name);
-
-            foreach(var caller in CalledbyRecursive()) {
-                var t = caller.TempTableGet(name);
-                if (t != null) {
-                    if (rtn == null)
-                        rtn = t;
-                    else
-                        ambiguous = true;
-                }
-            }
-
-            return rtn;
         }
         public                  bool                            TempTableAdd(string name, object declaration, ColumnList columns, IndexList indexes, out DataModel.TempTable tempTable)
         {
@@ -168,18 +142,6 @@ namespace Jannesen.Language.TypedTSql.DataModel
             }
 
             EntityFlags &= ~EntityFlags.PartialLoaded;
-        }
-
-        private                 void                            _calledbyRecursiveWalker(HashSet<EntityObjectCode> callers)
-        {
-            if (_calledby != null) {
-                foreach (var c in _calledby) {
-                    if (!callers.Contains(c)) {
-                        callers.Add(c);
-                        c._calledbyRecursiveWalker(callers);
-                    }
-                }
-            }
         }
     }
 }
