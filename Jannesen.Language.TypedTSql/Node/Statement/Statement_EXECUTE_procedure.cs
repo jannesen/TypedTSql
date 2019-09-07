@@ -22,15 +22,21 @@ namespace Jannesen.Language.TypedTSql.Node
    public class Statement_EXECUTE_procedure: Statement
     {
         public      readonly    Node_EntityNameReference        n_ProcedureReference;
-        public      readonly    Token.TokenLocalName            n_ProcedureReturn;
+        public      readonly    ISetVariable                    n_ProcedureReturn;
         public      readonly    Node_EXEC_Parameter[]           n_Parameters;
 
         public      static      bool                            CanParse(Core.ParserReader reader, IParseContext parseContext)
         {
             if (reader.CurrentToken.isToken(Core.TokenID.EXEC, Core.TokenID.EXECUTE)) {
-                Core.Token[]        peek = reader.Peek(2);
+                Core.Token[]        peek = reader.Peek(3);
 
-                return peek[1].isToken(Core.TokenID.LocalName, Core.TokenID.Name, Core.TokenID.QuotedName);
+                if (peek[1].isToken("VAR") && peek[2].isToken(Core.TokenID.LocalName)) {
+                    return true;
+                }
+
+                if (peek[1].isToken(Core.TokenID.LocalName, Core.TokenID.Name, Core.TokenID.QuotedName)) {
+                    return true;
+                }
             }
 
             return false;
@@ -39,8 +45,9 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             ParseToken(reader, Core.TokenID.EXEC, Core.TokenID.EXECUTE);
 
-            if (reader.CurrentToken.isToken(Core.TokenID.LocalName)) {
-                n_ProcedureReturn = (Token.TokenLocalName)ParseToken(reader, Core.TokenID.LocalName);
+            if (reader.CurrentToken.isToken(Core.TokenID.LocalName) ||
+                (reader.CurrentToken.isToken("VAR") && reader.NextPeek().isToken(Core.TokenID.LocalName))) {
+                n_ProcedureReturn = ParseSetVariable(reader);
                 ParseToken(reader, Core.TokenID.Equal);
             }
 
@@ -105,15 +112,7 @@ namespace Jannesen.Language.TypedTSql.Node
                             throw new TranspileException(this, "Tomany arguments for procedure call.");
 
                         calling_parameter_used[argn] = true;
-
-                        if (n_Parameters[argn].n_Expression != null) {
-                            try {
-                                Validate.Assign(context, n_Parameters[argn], calling_procedure.Parameters[argn], n_Parameters[argn].n_Expression, output:n_Parameters[argn].n_Output);
-                            }
-                            catch(Exception err) {
-                                context.AddError(n_Parameters[argn], err);
-                            }
-                        }
+                        n_Parameters[argn].TranspileParameter(context, calling_procedure.Parameters[argn]);
                     }
 
                     for (; argn < n_Parameters.Length ; ++argn) {
@@ -136,19 +135,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                         var calling_parameter = calling_parameters[calling_parameter_index];
 
-                        n_callParameterName.SetSymbol(calling_parameter);
-
-                        if (calling_parameter.Name != n_callParameterNameText)
-                            context.AddError(n_callParameterName, "Case missmatch, expect '" + calling_parameter.Name + "'.");
-
-                        if (n_callParameter.n_Expression != null) {
-                            try {
-                                Validate.Assign(context, n_callParameter, calling_parameter, n_callParameter.n_Expression, output:n_callParameter.n_Output);
-                            }
-                            catch(Exception err) {
-                                context.AddError(n_Parameters[argn], err);
-                            }
-                        }
+                        n_callParameter.TranspileParameter(context, calling_parameter);
                     }
                 }
 

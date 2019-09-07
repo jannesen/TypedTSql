@@ -16,21 +16,15 @@ namespace Jannesen.Language.TypedTSql.Node
     //      { EXEC | EXECUTE }
     //      ( { @string_variable | [ N ]'tsql_string' } [ + ...n ] )
     //      [ AS { LOGIN | USER } = ' name ' ]
-    [StatementParser(Core.TokenID.EXEC,    prio:2)]
-    [StatementParser(Core.TokenID.EXECUTE, prio:2)]
+    [StatementParser(Core.TokenID.EXEC,    prio:3)]
+    [StatementParser(Core.TokenID.EXECUTE, prio:3)]
     public class Statement_EXECUTE_expression: Statement
     {
         public      readonly    Core.IAstNode[]                     n_ExecuteExpression;
 
         public      static      bool                                CanParse(Core.ParserReader reader, IParseContext parseContext)
         {
-            if (reader.CurrentToken.isToken(Core.TokenID.EXEC, Core.TokenID.EXECUTE)) {
-                Core.Token[]        peek = reader.Peek(2);
-
-                return peek[1].isToken(Core.TokenID.LrBracket);
-            }
-
-            return false;
+            return reader.CurrentToken.isToken(Core.TokenID.EXEC, Core.TokenID.EXECUTE) && reader.NextPeek().isToken(Core.TokenID.LrBracket);
         }
         public                                                      Statement_EXECUTE_expression(Core.ParserReader reader, IParseContext parseContext)
         {

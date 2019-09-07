@@ -7,24 +7,35 @@ namespace Jannesen.Language.TypedTSql.DataModel
 {
     public class EntityObjectCode: EntityObject
     {
-        public                  ParameterList                   Parameters              { get { testTranspiled(); return _parameters;               } }
-        public                  ISqlType                        Returns                 { get { testTranspiled(); return _returns;                  } }
-        public                  IReadOnlyList<EntityObjectCode> Calling                 { get { return _calling;                                    } }
-        public                  IReadOnlyList<EntityObjectCode> Calledby                { get { return _calledby;                                   } }
-        public                  Node.DeclarationObjectCode      DeclarationObjectCode   { get { testTranspiled(); return _declarationObjectCode;    } }
+        public                  ParameterList                           Parameters              { get { testTranspiled(); return _parameters;               } }
+        public                  ISqlType                                Returns                 { get { testTranspiled(); return _returns;                  } }
+        public                  IReadOnlyList<DataModel.IColumnList>    Resultsets
+        {
+            get { 
+                if (!_declarationObjectCode.Transpiled) { 
+                    throw new NeedsTranspileException();
+                }
 
-        private                 ParameterList                   _parameters;
-        private                 ISqlType                        _returns;
-        private                 DataModel.TempTableList         _tempTables;
-        public                  Node.DeclarationObjectCode      _declarationObjectCode;
-        private                 List<EntityObjectCode>          _calling;
-        private                 List<EntityObjectCode>          _calledby;
+                return _resultsets;
+            }
+        }
+        public                  IReadOnlyList<EntityObjectCode>         Calling                 { get { return _calling;                                    } }
+        public                  IReadOnlyList<EntityObjectCode>         Calledby                { get { return _calledby;                                   } }
+        public                  Node.DeclarationObjectCode              DeclarationObjectCode   { get { testTranspiled(); return _declarationObjectCode;    } }
 
-        internal                                                EntityObjectCode(SymbolType type, DataModel.EntityName name, EntityFlags flags): base(type, name, flags)
+        private                 ParameterList                           _parameters;
+        private                 ISqlType                                _returns;
+        private                 List<DataModel.IColumnList>             _resultsets;
+        private                 DataModel.TempTableList                 _tempTables;
+        public                  Node.DeclarationObjectCode              _declarationObjectCode;
+        private                 List<EntityObjectCode>                  _calling;
+        private                 List<EntityObjectCode>                  _calledby;
+
+        internal                                                        EntityObjectCode(SymbolType type, DataModel.EntityName name, EntityFlags flags): base(type, name, flags)
         {
         }
 
-        internal                void                            CallEntity(EntityObjectCode entity)
+        internal                void                                    CallEntity(EntityObjectCode entity)
         {
             if (entity != null) {
                 if (_calling == null)
@@ -39,33 +50,44 @@ namespace Jannesen.Language.TypedTSql.DataModel
             }
         }
 
-        internal    override    void                            TranspileBefore()
+        internal    override    void                                    TranspileBefore()
         {
             base.TranspileBefore();
             _declarationObjectCode = null;
             _calling               = null;
             _calledby              = null;
         }
-        public                  void                            TranspileInit(Node.DeclarationObjectCode declarationObjectCode, object location)
+        public                  void                                    TranspileInit(Node.DeclarationObjectCode declarationObjectCode, object location)
         {
             base.TranspileInit(location);
             _declarationObjectCode = declarationObjectCode;
             _parameters            = null;
             _returns               = null;
+            _resultsets            = null;
             _tempTables            = null;
         }
-        public                  void                            Transpiled(ParameterList parameters = null, ISqlType returns = null)
+        public                  void                                    Transpiled(ParameterList parameters = null, ISqlType returns = null)
         {
             _parameters = parameters;
             _returns    = returns;
             base.Transpiled();
         }
 
-        public                  TempTable                       TempTableGet(string name)
+        public                  TempTable                               TempTableGet(string name)
         {
             return _tempTables != null && _tempTables.TryGetValue(name, out var tempTable) ? tempTable : null;
         }
-        public                  bool                            TempTableAdd(string name, object declaration, ColumnList columns, IndexList indexes, out DataModel.TempTable tempTable)
+        public                  void                                    ResultsetAdd(DataModel.IColumnList columns)
+        {
+            if (columns != null) {
+                if (_resultsets is null) {
+                    _resultsets = new List<DataModel.IColumnList>();
+                }
+
+                _resultsets.Add(columns);
+            }
+        }
+        public                  bool                                    TempTableAdd(string name, object declaration, ColumnList columns, IndexList indexes, out DataModel.TempTable tempTable)
         {
             if (_tempTables == null)
                 _tempTables = new DataModel.TempTableList(4);
@@ -88,7 +110,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             return _tempTables.TryAdd(tempTable);
         }
 
-        public      override    string                          DatabaseReadFromCmd()
+        public      override    string                                  DatabaseReadFromCmd()
         {
             switch(Type) {
             case SymbolType.View:
@@ -110,7 +132,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                                     ",\n N'@objectname nvarchar(1024)', @objectname="+Library.SqlStatic.QuoteString(EntityName.SchemaName);
             }
         }
-        public      override    void                            DatabaseReadFromResult(GlobalCatalog catalog, SqlDataReader datareader)
+        public      override    void                                    DatabaseReadFromResult(GlobalCatalog catalog, SqlDataReader datareader)
         {
             // Reader parameters
             {

@@ -113,11 +113,29 @@ namespace Jannesen.Language.TypedTSql.Transpile
             AddError(node, "Unknown variable '" + name + "'.");
             return null;
         }
-        public                  void                                VariableSet(Token.TokenLocalName name, DataModel.IExprResult expr)
+        public                  DataModel.Variable                  VariableSet(Node.ISetVariable setvar, DataModel.IExprResult expr)
         {
-            VariableSet(name, VariableGet(name), expr);
+            if (setvar.isVarDeclare) {
+                return VarVariableSet(setvar.TokenName, expr.SqlType);
+            }
+            else { 
+                var variable = VariableGet(setvar.TokenName);
+                VariableSet(setvar, variable, expr);
+                return variable;
+            }
         }
-        public                  void                                VariableSet(Token.TokenLocalName name, DataModel.Variable variable, DataModel.IExprResult expr)
+        public                  DataModel.VariableLocal             VarVariableSet(Token.TokenLocalName name, DataModel.ISqlType sqlType)
+        {
+            var variable = new DataModel.VariableLocal(name.Text,
+                                                       sqlType,
+                                                       name,
+                                                       DataModel.VariableFlags.Nullable | DataModel.VariableFlags.VarDeclare);
+            VariableDeclare(name, variable);
+            variable.setAssigned();
+            return variable;
+        }
+
+        public                  void                                VariableSet(Core.IAstNode name, DataModel.Variable variable, DataModel.IExprResult expr)
         {
             if (variable != null) {
                 try {
@@ -136,22 +154,33 @@ namespace Jannesen.Language.TypedTSql.Transpile
                 }
             }
         }
-        public                  void                                VariableSetInt(Token.TokenLocalName name)
+        public                  void                                VariableSetInt(Node.ISetVariable setvar)
         {
-            var variable = VariableGet(name);
+            if (setvar.isVarDeclare) {
+                var token = setvar.TokenName;
+                var variable = new DataModel.VariableLocal(token.Text,
+                                                           DataModel.SqlTypeNative.Int,
+                                                           token,
+                                                           DataModel.VariableFlags.Nullable | DataModel.VariableFlags.VarDeclare);
+                VariableDeclare(token, variable);
+                variable.setAssigned();
+            }
+            else {
+                var variable = VariableGet(setvar.TokenName);
 
-            if (variable != null) {
-                if (!variable.isReadonly)
-                    variable.setAssigned();
-                else
-                    AddError(name, "Not allowed to assign a readonly variable.");
+                if (variable != null) {
+                    if (!variable.isReadonly)
+                        variable.setAssigned();
+                    else
+                        AddError(setvar, "Not allowed to assign a readonly variable.");
 
-                try {
-                    if ((variable.SqlType.TypeFlags & DataModel.SqlTypeFlags.SimpleType) == 0 || variable.SqlType.NativeType != DataModel.SqlTypeNative.Int)
-                        throw new Exception("Variable must by of type INT.");
-                }
-                catch(Exception err) {
-                    AddError(name, err);
+                    try {
+                        if ((variable.SqlType.TypeFlags & DataModel.SqlTypeFlags.SimpleType) == 0 || variable.SqlType.NativeType != DataModel.SqlTypeNative.Int)
+                            throw new Exception("Variable must by of type INT.");
+                    }
+                    catch(Exception err) {
+                        AddError(setvar, err);
+                    }
                 }
             }
         }

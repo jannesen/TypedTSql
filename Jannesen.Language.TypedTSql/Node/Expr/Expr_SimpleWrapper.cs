@@ -35,9 +35,9 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             return n_Expr.ConstValue();
         }
-        public                              DataModel.Variable      GetVariable(Transpile.Context context)
+        public                              Token.TokenLocalName    GetVariableToken()
         {
-            return n_Expr.GetVariable(context);
+            return n_Expr.GetVariableToken();
         }
 
         public      override                void                    TranspileNode(Context context)

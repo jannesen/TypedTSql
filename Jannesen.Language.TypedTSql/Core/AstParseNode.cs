@@ -231,9 +231,17 @@ namespace Jannesen.Language.TypedTSql.Core
         {
             return parseEnum.Parse(this, reader);
         }
-        public                  TokenWithSymbol                     ParseName(Core.ParserReader reader)
+        public                  TokenWithSymbol                     ParseName(ParserReader reader)
         {
             return (TokenWithSymbol)ParseToken(reader, TokenID.Name, TokenID.QuotedName);
+        }
+        public                  Node.ISetVariable                   ParseSetVariable(ParserReader reader)
+        {
+            if (Node.Node_VarVariable.CanParse(reader)) {
+                return AddChild(new Node.Node_VarVariable(reader));
+            }
+
+            return (Node.ISetVariable)ParseToken(reader, Core.TokenID.LocalName);
         }
 
         public                  Token                               ParseInteger(ParserReader reader)

@@ -16,7 +16,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                                          VariableLocal(string name, DataModel.ISqlType sqlType, object declaration, VariableFlags flags)
         {
             Name         = name;
-            SqlType      = sqlType;
+            SqlType      = sqlType ?? new DataModel.SqlTypeAny();
             _declaration = declaration;
             _flags       = flags;
         }

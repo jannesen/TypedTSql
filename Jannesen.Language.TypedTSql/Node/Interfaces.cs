@@ -7,7 +7,7 @@ namespace Jannesen.Language.TypedTSql.Node
         ExprType                    ExpressionType          { get; }
         bool                        NoBracketsNeeded        { get; }
         object                      ConstValue();
-        DataModel.Variable          GetVariable(Transpile.Context context);
+        Token.TokenLocalName        GetVariableToken();
         void                        TranspileNode(Transpile.Context context);
         void                        EmitSimple(Core.EmitWriter emitWriter);
     }
@@ -34,5 +34,11 @@ namespace Jannesen.Language.TypedTSql.Node
     public interface ISqlType
     {
         DataModel.ISqlType          SqlType             { get; }
+    }
+
+    public interface ISetVariable: Core.IAstNode
+    {
+        Token.TokenLocalName        TokenName           { get; }
+        bool                        isVarDeclare        { get; }
     }
 }

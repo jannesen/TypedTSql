@@ -59,14 +59,19 @@ namespace Jannesen.Language.TypedTSql.Node
 
             case Core.TokenID.Name:
             case Core.TokenID.QuotedName:
-                n_Target = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.TableOrView));
+                if (Node_TableVarVariable.CanParse(reader)) {
+                    n_Target = AddChild(new Node_TableVarVariable(reader));
+                }
+                else { 
+                    n_Target = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.TableOrView));
 
-                if (reader.CurrentToken.isToken(Core.TokenID.WITH))
-                    n_TargetWith = AddChild(new Node_TableHints(reader));
+                    if (reader.CurrentToken.isToken(Core.TokenID.WITH))
+                        n_TargetWith = AddChild(new Node_TableHints(reader));
+                }
                 break;
             }
 
-            if (reader.CurrentToken.isToken(Core.TokenID.LrBracket)) {
+            if (reader.CurrentToken.isToken(Core.TokenID.LrBracket) && !(n_Target is Node_TableVarVariable)) {
                 ParseToken(reader, Core.TokenID.LrBracket);
 
                 var columns = new List<Core.TokenWithSymbol>();
@@ -106,12 +111,12 @@ namespace Jannesen.Language.TypedTSql.Node
 
             case Core.TokenID.EXEC:
             case Core.TokenID.EXECUTE:
-                if (Statement_EXECUTE_procedure.CanParse(reader, parseContext)) {
-                    n_Execute = AddChild(new Statement_EXECUTE_procedure(reader, parseContext));
-                }
-                else
                 if (Statement_EXECUTE_expression.CanParse(reader, parseContext)) {
                     n_Execute = AddChild(new Statement_EXECUTE_expression(reader, parseContext));
+                }
+                else
+                if (Statement_EXECUTE_procedure.CanParse(reader, parseContext)) {
+                    n_Execute = AddChild(new Statement_EXECUTE_procedure(reader, parseContext));
                 }
                 else
                     throw new ParseException(reader.CurrentToken, "Expect EXECUTE_procedure or EXECUTE_expression.");
@@ -147,15 +152,20 @@ namespace Jannesen.Language.TypedTSql.Node
                         context.AddError(n_Target, "Not allowed to assign a readonly variable.");
                 }
             }
+            else if (n_Target is Node_TableVarVariable tableVarVariable) {
+                tableVarVariable.TranspileInsert(context, _transpileProcess_SelectResultset(context));
+            }
+            
+            if (!(n_Target is Node_TableVarVariable)) {
+                var targetColumns = _transpileProcess_TargetColumns(context);
 
-            var targetColumns = _transpileProcess_TargetColumns(context);
+                if (targetColumns != null) {
+                    if (n_Values != null)
+                        _transpileProcess_Values(context, targetColumns);
 
-            if (targetColumns != null) {
-                if (n_Values != null)
-                    _transpileProcess_Values(context, targetColumns);
-
-                if (n_Select != null)
-                    _transpileProcess_Select(context, targetColumns);
+                    if (n_Select != null || n_Execute != null)
+                        _transpileProcess_Select(context, targetColumns);
+                }
             }
 
             try {
@@ -208,6 +218,25 @@ namespace Jannesen.Language.TypedTSql.Node
                 return rtn;
             }
         }
+        private                 DataModel.IColumnList               _transpileProcess_SelectResultset(Transpile.Context context)
+        {
+            if (n_Select != null) { 
+                return n_Select.Resultset;
+            }
+
+            if (n_Execute is Statement_EXECUTE_procedure execproc && execproc.n_ProcedureReference.Entity is DataModel.EntityObjectCode entityObject) {
+                var resulsets = entityObject.Resultsets;
+                if (resulsets == null || resulsets.Count == 0) {
+                    throw new ErrorException("Procedure '" + entityObject.EntityName.ToString() + "' don't returns a dataset.");
+                }
+
+                if (resulsets.Count == 1) {
+                    return resulsets[0];
+                }
+            }
+
+            return null;
+        }
         private                 void                                _transpileProcess_Values(Transpile.Context context, DataModel.Column[] targetColumns)
         {
             foreach(var value in n_Values) {
@@ -233,21 +262,25 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         private                 void                                _transpileProcess_Select(Transpile.Context context, DataModel.Column[] targetColumns)
         {
-            if (targetColumns.Length != n_Select.Resultset.Count) {
-                context.AddError(n_Select.n_Selects[0].n_Columns, (targetColumns.Length > n_Select.Resultset.Count ? "Missing columns" : "Tomany columns"));
-                return;
-            }
+            var resultset = _transpileProcess_SelectResultset(context);
 
-            for(int i = 0 ; i < targetColumns.Length ; ++i) {
-                if (targetColumns[i] != null) {
-                    try {
-                        Validate.Assign(context, targetColumns[i], n_Select.Resultset[i]);
-                    }
-                    catch(Exception err) {
-                        if (!(err is TranspileException))
-                            err = new ErrorException("Assignment column#" + (i+1) + " '" + targetColumns[i].Name + "' failed.", err);
+            if (resultset != null) {
+                if (targetColumns.Length != resultset.Count) {
+                    context.AddError(n_Target, (targetColumns.Length < resultset.Count ? "Missing columns" : "Tomany columns"));
+                    return;
+                }
 
-                        context.AddError((n_InsertColumns != null) ? (Core.IAstNode)n_InsertColumns[i] : (Core.IAstNode)this, err);
+                for(int i = 0 ; i < targetColumns.Length ; ++i) {
+                    if (targetColumns[i] != null) {
+                        try {
+                            Validate.Assign(context, targetColumns[i], resultset[i]);
+                        }
+                        catch(Exception err) {
+                            if (!(err is TranspileException))
+                                err = new ErrorException("Assignment column#" + (i+1) + " '" + targetColumns[i].Name + "' failed.", err);
+
+                            context.AddError((n_InsertColumns != null) ? (Core.IAstNode)n_InsertColumns[i] : (Core.IAstNode)this, err);
+                        }
                     }
                 }
             }

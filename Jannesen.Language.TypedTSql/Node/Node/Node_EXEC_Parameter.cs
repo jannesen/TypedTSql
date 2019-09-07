@@ -8,12 +8,14 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly    Core.TokenWithSymbol    n_Name;
         public      readonly    IExprNode               n_Expression;
+        public      readonly    ISetVariable            n_Var;
         public      readonly    bool                    n_Output;
         public      readonly    bool                    n_Default;
 
         public      static      bool                    CanParse(Core.ParserReader reader)
         {
-             return reader.CurrentToken.isToken(Core.TokenID.LocalName, Core.TokenID.DEFAULT) || Expr.CanParse(reader);
+            return (reader.CurrentToken.isToken(Core.TokenID.LocalName, Core.TokenID.DEFAULT) || Expr.CanParse(reader)) ||
+                   (reader.CurrentToken.isToken("VAR") && reader.NextPeek().isToken(Core.TokenID.LocalName));
         }
 
         public                                          Node_EXEC_Parameter(Core.ParserReader reader, bool nameMandatory)
@@ -27,7 +29,12 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Default = true;
             }
             else {
-                n_Expression = ParseSimpleExpression(reader);
+                if (reader.CurrentToken.isToken("VAR")) {
+                    n_Var = ParseSetVariable(reader);
+                }
+                else { 
+                    n_Expression = ParseSimpleExpression(reader);
+                }
 
                 if (ParseOptionalToken(reader, "OUTPUT") != null)
                     n_Output = true;
@@ -37,27 +44,60 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    void                    TranspileNode(Transpile.Context context)
         {
             n_Expression?.TranspileNode(context);
+        }
+        public                  void                    TranspileParameter(Transpile.Context context, DataModel.Variable callingParameter)
+        {
+            try {
+                if (n_Var != null) {
+                    if (!n_Output) {
+                        context.AddError(this, "var without output.");
+                    }
 
-            if (n_Expression != null && n_Expression.isValid()) {
-                try {
+                    if (callingParameter != null) {
+                        context.VarVariableSet(n_Var.TokenName, callingParameter.SqlType);
+                    }
+                    else {
+                        context.AddError(n_Name, "Can't determin type of parameter.");
+                    }
+                }
+                else {
                     if (n_Output) {
-                        var variable = n_Expression.GetVariable(context);
+                        var variable = context.VariableGet(n_Expression.GetVariableToken());
                         if (variable != null) {
-                            if (!variable.isReadonly)
+                            if (!variable.isReadonly) { 
                                 variable.setAssigned();
-                            else
+                            }
+                            else { 
                                 context.AddError(n_Expression, "Not allowed to assign a readonly variable.");
+                            }
                         }
                     }
                 }
-                catch(Exception err) {
-                    context.AddError(n_Expression, err);
+                
+                if (n_Expression != null && callingParameter != null) {
+                    try {
+                        Validate.Assign(context, this, callingParameter, this.n_Expression, output:this.n_Output);
+                    }
+                    catch(Exception err) {
+                        context.AddError(this, err);
+                    }
                 }
 
-            }
+                if (n_Name != null) {
+                    if (callingParameter != null) { 
+                        n_Name.SetSymbol(callingParameter);
 
-            if (n_Name != null) {
-                n_Name.SetSymbol(new DataModel.Parameter(n_Name.Text, n_Expression.SqlType, n_Name, n_Expression.isNullable() ? DataModel.VariableFlags.Nullable : DataModel.VariableFlags.None, null));
+                        if (n_Name.Text != callingParameter.Name) {
+                            context.AddError(n_Name, "Case missmatch, expect '" + callingParameter.Name + "'.");
+                        }
+                    }
+                    else {
+                        TokenWithSymbol.SetNoSymbol(n_Name);
+                    }
+                }
+            }
+            catch(Exception err) {
+                context.AddError(this, err);
             }
         }
     }

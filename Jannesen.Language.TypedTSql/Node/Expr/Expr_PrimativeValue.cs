@@ -139,10 +139,10 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             return new TranspileException(this, "Can't calculate constant value.");
         }
-        public      override    DataModel.Variable                  GetVariable(Transpile.Context context)
+        public      override    Token.TokenLocalName                GetVariableToken()
         {
             if (n_Nodes.Length == 1 && n_Nodes[0] is Token.TokenLocalName localName) {
-                return context.VariableGet(localName, true);
+                return localName;
             }
 
             throw new InvalidOperationException("Expression is not a variable");

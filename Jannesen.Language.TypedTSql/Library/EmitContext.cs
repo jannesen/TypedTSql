@@ -16,16 +16,16 @@ namespace Jannesen.Language.TypedTSql.Library
             public      string[]                            SourceFiles;
         }
 
-        public  readonly            Transpiler                  Transpiler;
-        public  readonly            EmitOptions                 EmitOptions;
-        public  readonly            SqlDatabase                 Database;
-        public                      List<EmitError>             EmitErrors;
+        public  readonly            Transpiler                          Transpiler;
+        public  readonly            EmitOptions                         EmitOptions;
+        public  readonly            SqlDatabase                         Database;
+        public                      List<EmitError>                     EmitErrors;
 
-        private                     bool                        _rebuild;
-        private                     List<EntityDeclaration>     _entities;
-        private                     List<ServiceEntity>         _services;
+        private                     bool                                _rebuild;
+        private                     IReadOnlyList<EntityDeclaration>    _entities;
+        private                     List<ServiceEntity>                 _services;
 
-        public                                                  EmitContext(Transpiler transpiler, EmitOptions emitOptions, SqlDatabase database)
+        public                                                          EmitContext(Transpiler transpiler, EmitOptions emitOptions, SqlDatabase database)
         {
             this.Transpiler  = transpiler;
             this.EmitOptions = emitOptions;
@@ -33,7 +33,7 @@ namespace Jannesen.Language.TypedTSql.Library
             this.EmitErrors  = new List<EmitError>();
         }
 
-        public                      void                        Emit(HashSet<string> changedSourceFiles)
+        public                      void                                Emit(HashSet<string> changedSourceFiles)
         {
             _rebuild  = changedSourceFiles == null;
             _init(changedSourceFiles);
@@ -49,17 +49,17 @@ namespace Jannesen.Language.TypedTSql.Library
                 }
             }
         }
-        public                      void                        AddEmitError(EmitError emitError)
+        public                      void                                AddEmitError(EmitError emitError)
         {
             EmitErrors.Add(emitError);
             EmitOptions?.OnEmitError(emitError);
         }
-        public                      void                        AddEmitMessage(string message)
+        public                      void                                AddEmitMessage(string message)
         {
             EmitOptions?.OnEmitMessage(message);
         }
 
-        private                     void                        _init(HashSet<string> changedSourceFiles)
+        private                     void                                _init(HashSet<string> changedSourceFiles)
         {
             _services = new List<ServiceEntity>();
 
@@ -102,8 +102,8 @@ namespace Jannesen.Language.TypedTSql.Library
                             e.EntityType == DataModel.SymbolType.TypeExternal ||
                             e.EntityType == DataModel.SymbolType.TypeTable)
                         {   // Type changed => emit every this.
-                            entities = Transpiler.EntityDeclarations;
-                            break;
+                            _entities = Transpiler.EntityDeclarations;
+                            return;
                         }
 
                         entities.Add(e);
@@ -115,7 +115,7 @@ namespace Jannesen.Language.TypedTSql.Library
             else
                 _entities = Transpiler.EntityDeclarations;
         }
-        private                     bool                        _emitDropCode()
+        private                     bool                                _emitDropCode()
         {
             bool    rtn = true;
 
@@ -141,7 +141,7 @@ namespace Jannesen.Language.TypedTSql.Library
 
             return rtn;
         }
-        private                     bool                        _emitEntityDeclaration()
+        private                     bool                                _emitEntityDeclaration()
         {
             bool    rtn = true;
 
@@ -152,7 +152,7 @@ namespace Jannesen.Language.TypedTSql.Library
 
             return rtn;
         }
-        private                     bool                        _emitInstallInto()
+        private                     bool                                _emitInstallInto()
         {
             bool    rtn = true;
 
@@ -168,21 +168,21 @@ namespace Jannesen.Language.TypedTSql.Library
 
             return rtn;
         }
-        private                     void                        _emitEntityGrant()
+        private                     void                                _emitEntityGrant()
         {
             Database.Print("# set permissions");
 
             foreach (var entityDeclaration in _entities)
                 entityDeclaration.EmitGrant(this);
         }
-        private                     void                        _emitServiceFiles()
+        private                     void                                _emitServiceFiles()
         {
             foreach(var service in _services) {
                 service.Service.EmitServiceFiles(this, service.Methods, _rebuild);
             }
         }
 
-        private                     bool                        _serviceNeedsEmit(Node.DeclarationEntity declaration, HashSet<string> changedSourceFiles)
+        private                     bool                                _serviceNeedsEmit(Node.DeclarationEntity declaration, HashSet<string> changedSourceFiles)
         {
             if (changedSourceFiles == null)
                 return true;

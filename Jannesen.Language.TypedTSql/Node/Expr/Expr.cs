@@ -64,7 +64,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             return new TranspileException(this, "Can't calculate constant value.");
         }
-        public      virtual     DataModel.Variable      GetVariable(Transpile.Context context)
+        public      virtual     Token.TokenLocalName    GetVariableToken()
         {
             throw new InvalidOperationException("Not a variable expression");
         }

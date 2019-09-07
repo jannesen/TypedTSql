@@ -8,7 +8,7 @@ namespace Jannesen.Language.TypedTSql.Node
     // Statement_BEGIN_END ::=
     //  BEGIN { sql_statement } [...n] END
     [StatementParser(Core.TokenID.BEGIN)]
-    public class Statement_BEGIN_END: Statement
+    public class Statement_BEGIN_END: Statement_BEGINEND_TRYCATCH
     {
         public      readonly    StatementBlock                      n_Statements;
 

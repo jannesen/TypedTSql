@@ -100,6 +100,13 @@ namespace Jannesen.Language.TypedTSql.Core
                     WriteText(t);
             }
         }
+        public                  void                    WriteIndent(int indent)
+        {
+            if (Linepos > 1) {
+                WriteNewLine(-1);
+            }
+            WriteSpace(indent - 1);
+        }
     }
 
     public class EmitWriterSourceMap: EmitWriter

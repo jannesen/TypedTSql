@@ -20,7 +20,7 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly    Node_CursorName                     n_Cursor;
         public      readonly    IExprNode                           n_Position;
-        public      readonly    Token.TokenLocalName[]              n_VariableNames;
+        public      readonly    ISetVariable[]                      n_VariableNames;
 
         public                                                      Statement_FETCH(Core.ParserReader reader, IParseContext parseContext)
         {
@@ -43,14 +43,14 @@ namespace Jannesen.Language.TypedTSql.Node
 
             ParseToken(reader, Core.TokenID.INTO);
 
-            var variableNames = new List<Token.TokenLocalName>();
+            var setvars = new List<ISetVariable>();
 
             do {
-                variableNames.Add((Token.TokenLocalName)ParseToken(reader, Core.TokenID.LocalName));
+                setvars.Add(ParseSetVariable(reader));
             }
             while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
 
-            n_VariableNames = variableNames.ToArray();
+            n_VariableNames = setvars.ToArray();
 
             ParseStatementEnd(reader);
         }

@@ -21,7 +21,7 @@ namespace Jannesen.Language.TypedTSql.Node
     public class Statement_EXEC_SQL: Statement
     {
         private     readonly    Core.Token                      _n_exec_sql;
-        public      readonly    Token.TokenLocalName            n_ProcedureReturn;
+        public      readonly    ISetVariable                    n_ProcedureReturn;
         public      readonly    IExprNode                       n_Statement;
         public      readonly    Node_EXEC_Parameter[]           n_Parameters;
 
@@ -34,7 +34,7 @@ namespace Jannesen.Language.TypedTSql.Node
             _n_exec_sql = ParseToken(reader, "EXEC_SQL");
 
             if (reader.CurrentToken.isToken(Core.TokenID.LocalName) && reader.NextPeek().isToken(Core.TokenID.Equal)) {
-                n_ProcedureReturn = (Token.TokenLocalName)ParseToken(reader, Core.TokenID.LocalName);
+                n_ProcedureReturn = ParseSetVariable(reader);
                 ParseToken(reader, Core.TokenID.Equal);
             }
 
@@ -60,6 +60,10 @@ namespace Jannesen.Language.TypedTSql.Node
 
             if (n_ProcedureReturn != null) {
                 context.VariableSetInt(n_ProcedureReturn);
+            }
+
+            foreach(var p in n_Parameters) {
+                p.TranspileParameter(context, null);
             }
         }
 
@@ -96,7 +100,6 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 prms.Append(param.n_Name.Text);
                 prms.Append(" ");
-
                 prms.Append(param.n_Expression.SqlType.NativeType.ToSql());
 
                 if (param.n_Output)

@@ -36,6 +36,10 @@ namespace Jannesen.Language.TypedTSql.Node
             }
 
             n_Select.TranspileNode(contextStatement);
+
+            if (context.DeclarationEntity is Declaration_PROCEDURE proc) {
+                proc.Entity.ResultsetAdd(n_Select.Resultset);
+            }
         }
     }
 }

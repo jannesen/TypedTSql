@@ -12,7 +12,7 @@ namespace Jannesen.Language.TypedTSql.Node
     //           [ { sql_statement | statement_block } ]
     //      END CATCH
     [StatementParser(Core.TokenID.BEGIN, prio:2)]
-    public class Statement_TRY_CATCH: Statement
+    public class Statement_TRY_CATCH: Statement_BEGINEND_TRYCATCH
     {
         public      readonly    StatementBlock                      n_TryStatements;
         public      readonly    StatementBlock                      n_CatchStatements;

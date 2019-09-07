@@ -20,12 +20,12 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             public class OUTPUT: Core.AstParseNode
             {
-                public      readonly    Token.TokenLocalName                n_VariableName;
+                public      readonly    ISetVariable                        n_VariableName;
                 public      readonly    IExprNode                           n_Column;
 
                 public                                                      OUTPUT(Core.ParserReader reader)
                 {
-                    n_VariableName = (Token.TokenLocalName)ParseToken(reader, Core.TokenID.LocalName);
+                    n_VariableName = ParseSetVariable(reader);
                     ParseToken(reader, Core.TokenID.Equal);
                     n_Column = ParseExpression(reader);
                 }
@@ -1003,8 +1003,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                     if (outputs != null) {
                         foreach(var output in outputs) {
-                            var variable = context.VariableGet(output.n_VariableName);
-                            context.VariableSet(output.n_VariableName, variable, output.n_Column);
+                            var variable = context.VariableSet(output.n_VariableName, output.n_Column);                        
 
                             if (output.n_Column is Expr_PrimativeValue primativeValue && primativeValue.Referenced is DataModel.Column column) {
                                 var c = _findColumn(column);

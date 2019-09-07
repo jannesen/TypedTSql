@@ -35,9 +35,8 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Table.TranspileNode(context);
 
             if (n_Table.Columns != null) {
-                var sqlTableType = new DataModel.SqlTypeTable(t_Variable, n_Table.Columns, n_Table.Indexes);
                 t_Variable = new DataModel.VariableLocal(n_Name.Text,
-                                                         sqlTableType,
+                                                         new DataModel.SqlTypeTable(n_Table.Columns, n_Table.Indexes),
                                                          n_Name,
                                                          DataModel.VariableFlags.None);
                 context.VariableDeclare(n_Name, t_Variable);

@@ -14,7 +14,8 @@ namespace Jannesen.Language.TypedTSql.DataModel
         SaveCast            = 0x0020,
         Returns             = 0x0100,
         Used                = 0x0200,
-        Assigned            = 0x0400
+        Assigned            = 0x0400,
+        VarDeclare          = 0x8000
     }
 
     public abstract class Variable: ISymbol
@@ -36,6 +37,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                  bool                    isReadonly          { get { return (Flags & VariableFlags.Readonly       ) != 0;    } }
         public                  bool                    isUsed              { get { return (Flags & VariableFlags.Used           ) != 0;    } }
         public                  bool                    isAssigned          { get { return (Flags & VariableFlags.Assigned       ) != 0;    } }
+        public                  bool                    isVarDeclare        { get { return (Flags & VariableFlags.VarDeclare     ) != 0;    } }
 
         public  abstract        void                    setUsed();
         public  abstract        void                    setAssigned();

@@ -17,5 +17,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style",         "IDE1006:Naming Styles") ]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA1801:Review unused parameters.")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA2237:Mark ISerializable types with serializable")]
-
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0017:Simplify object initialization", Justification = "<Pending>", Scope = "member", Target = "~M:Jannesen.Language.TypedTSql.WebService.Emit.ProxyEmitor.ProcessMethod.Process(Jannesen.Language.TypedTSql.WebService.Node.WEBMETHOD)~Jannesen.Language.TypedTSql.WebService.Emit.ProxyEmitor.DeclareProxy")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style",         "IDE0017:Simplify object initialization")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style",         "IDE0060:Remove unused parameter")]

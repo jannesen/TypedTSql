@@ -282,15 +282,17 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                                                                 return new LTTS.GlobalCatalog(database);
                                                             }) : null;
 
-            transpiler = new LTTS.Transpiler();
-            transpiler.LoadExtensions(Extensions);
-            transpiler.Parse(filenames.ToArray());
-            _onEmitMessage("Parsing: " + (DateTime.UtcNow - start).TotalSeconds.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) + " sec.");
-
-            if (catalog != null) {
-                catalog.Wait();
-                _typedtsqlcatalog = catalog.Result;
+            try {
+                transpiler = new LTTS.Transpiler();
+                transpiler.LoadExtensions(Extensions);
+                transpiler.Parse(filenames.ToArray());
+                _onEmitMessage("Parsing: " + (DateTime.UtcNow - start).TotalSeconds.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) + " sec.");
             }
+            finally {
+                catalog.Wait();
+            }
+
+            _typedtsqlcatalog = catalog.Result;
 
             if (transpiler.ErrorCount == 0) {
                 start = DateTime.UtcNow;

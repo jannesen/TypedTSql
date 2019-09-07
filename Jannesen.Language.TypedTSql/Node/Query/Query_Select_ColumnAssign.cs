@@ -5,17 +5,19 @@ namespace Jannesen.Language.TypedTSql.Node
 {
     public class Query_Select_ColumnAssign: Query_Select_Column
     {
-        public      readonly        Token.TokenLocalName    n_VariableName;
+        public      readonly        ISetVariable            n_VariableName;
         public      readonly        IExprNode               n_Expression;
 
         public      static          bool                    CanParse(Core.ParserReader reader)
         {
-            return reader.CurrentToken.isToken(Core.TokenID.LocalName) && reader.NextPeek().isToken(Core.TokenID.Equal);
+            var readahead = reader.Peek(3);
+            var off = readahead[0].isToken("VAR") ? 1 : 0;
+            return readahead[off + 0].isToken(Core.TokenID.LocalName) && readahead[off + 1].isToken(Core.TokenID.Equal);
         }
 
         public                                              Query_Select_ColumnAssign(Core.ParserReader reader)
         {
-            n_VariableName = (Token.TokenLocalName)ParseToken(reader, Core.TokenID.LocalName);
+            n_VariableName = ParseSetVariable(reader);
             ParseToken(reader, Core.TokenID.Equal);
             n_Expression = ParseExpression(reader);
         }

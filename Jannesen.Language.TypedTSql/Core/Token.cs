@@ -368,7 +368,7 @@ namespace Jannesen.Language.TypedTSql.Core
 
     public abstract class TokenWithSymbol: Token
     {
-        class NoSymbolClass: DataModel.ISymbol
+        public class NoSymbolClass: DataModel.ISymbol
         {
             public          DataModel.SymbolType        Type                    { get { return DataModel.SymbolType.NoSymbol;   } }
             public          string                      Name                    { get { return "";                              } }
@@ -377,13 +377,19 @@ namespace Jannesen.Language.TypedTSql.Core
             public          DataModel.ISymbol           SymbolNameReference     { get { return null;                            } }
         }
 
-        private  readonly static     NoSymbolClass          _keywordSymbol = new NoSymbolClass();
-        private  readonly static     NoSymbolClass          _noSymbol      = new NoSymbolClass();
+        private  readonly static    NoSymbolClass            _keywordSymbol = new NoSymbolClass();
+        private  readonly static    NoSymbolClass           _noSymbol      = new NoSymbolClass();
 
         public      override        bool                    isKeyword
         {
             get {
                 return Symbol == _keywordSymbol;
+            }
+        }
+        public                      bool                    hasSymbol
+        {
+            get {
+                return Symbol != null && Symbol != _noSymbol && Symbol != _keywordSymbol;
             }
         }
 

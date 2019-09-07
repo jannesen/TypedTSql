@@ -377,6 +377,8 @@
     <Compile Include="Logic\TypeHelpers.cs" />
     <Compile Include="Logic\Validate.cs" />
     <Compile Include="Logic\Xml.cs" />
+    <Compile Include="Node\Node\Node_TableVarVariable.cs" />
+    <Compile Include="Node\Node\Node_VarVariable.cs" />
     <Compile Include="Node\Node_AS.cs" />
     <Compile Include="Node\Declarations\Declaration.cs" />
     <Compile Include="Node\Declarations\DeclarationEntity.cs" />
@@ -462,6 +464,7 @@
     <Compile Include="Node\Query\TableSource_WithDeclarationColumn.cs" />
     <Compile Include="Node\Statement\Statement.cs" />
     <Compile Include="Node\Statement\StatementBlock.cs" />
+    <Compile Include="Node\Statement\Statement_BEGIN_END_code.cs" />
     <Compile Include="Node\Statement\Statement_BEGIN_END.cs" />
     <Compile Include="Node\Statement\Statement_BEGIN_TRANSACTION.cs" />
     <Compile Include="Node\Statement\Statement_BREAK.cs" />
@@ -489,6 +492,7 @@
     <Compile Include="Node\Statement\Statement_RETURN.cs" />
     <Compile Include="Node\Statement\Statement_ROLLBACK.cs" />
     <Compile Include="Node\Statement\Statement_SELECT.cs" />
+    <Compile Include="Node\Statement\Statement_VAR.cs" />
     <Compile Include="Node\Statement\Statement_SET_assign.cs" />
     <Compile Include="Node\Statement\Statement_SET_option.cs" />
     <Compile Include="Node\Statement\Statement_THROW.cs" />

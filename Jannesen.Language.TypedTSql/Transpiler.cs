@@ -48,9 +48,10 @@ namespace Jannesen.Language.TypedTSql
         public              NodeParser<Node.Declaration>            DeclarationParsers      { get; private set; }
         public              NodeParser<Node.Statement>              StatementParsers        { get; private set; }
         public              Node.DeclarationServiceList             ServiceDeclarations     { get; private set; }
-        public              List<EntityDeclaration>                 EntityDeclarations      { get; private set; }
+        public              IReadOnlyList<EntityDeclaration>        EntityDeclarations      { get { return _entityDeclarations; } }
 
         private             HashSet<Assembly>                       _extensions;
+        private             List<EntityDeclaration>                 _entityDeclarations;
         private             int                                     _transpileCount;
         private             List<EmitError>                         _emitErrors;
 
@@ -254,7 +255,7 @@ namespace Jannesen.Language.TypedTSql
                 }
             }
 
-            EntityDeclarations = entityDeclarationSort.Process();
+            _entityDeclarations = entityDeclarationSort.Process();
         }
         private             int                                     _transpileEntity(GlobalCatalog globalCatalog)
         {
