@@ -6,7 +6,6 @@ namespace Jannesen.Language.TypedTSql.Transpile
     {
         public      override    Context                             Parent                  { get { throw new InvalidOperationException("Context.Parent not available in init.");               } }
         public      override    ContextRoot                         RootContext             { get { throw new InvalidOperationException("Context.RootContext not available in init.");          } }
-        public      override    ContextCodeBlock                    CodeContext             { get { throw new InvalidOperationException("Context.CodeContext not available in init.");          } }
         public      override    ContextBlock                        BlockContext            { get { throw new InvalidOperationException("Context.BlockContext not available in init.");         } }
         public      override    Transpiler                          Transpiler              { get { throw new InvalidOperationException("Context.Transpiler not available in init.");           } }
         public      override    SourceFile                          SourceFile              { get { return _sourceFile;             } }

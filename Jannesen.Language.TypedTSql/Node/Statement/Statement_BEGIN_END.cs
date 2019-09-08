@@ -12,15 +12,11 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly    StatementBlock                      n_Statements;
 
-        public                                                      Statement_BEGIN_END(Core.ParserReader reader, IParseContext parseContext): this(reader, parseContext, false)
-        {
-        }
-
-        protected                                                   Statement_BEGIN_END(Core.ParserReader reader, IParseContext parseContext, bool codeblock)
+        public                                                      Statement_BEGIN_END(Core.ParserReader reader, IParseContext parseContext)
         {
             ParseToken(reader, Core.TokenID.BEGIN);
 
-            n_Statements = AddChild(new StatementBlock(codeblock));
+            n_Statements = AddChild(new StatementBlock());
 
             if (!n_Statements.Parse(reader, parseContext, (r) => (r.CurrentToken.isToken(Core.TokenID.END)) )) {
                 reader.AddError(new Exception("Missing END."));

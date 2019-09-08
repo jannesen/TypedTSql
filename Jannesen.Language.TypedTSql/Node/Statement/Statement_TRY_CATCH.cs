@@ -25,7 +25,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             ParseToken(reader, Core.TokenID.BEGIN);
             ParseToken(reader, Core.TokenID.TRY);
-            n_TryStatements = AddChild(new StatementBlock(false));
+            n_TryStatements = AddChild(new StatementBlock());
 
             if (!n_TryStatements.Parse(reader, parseContext, (r) => (r.CurrentToken.isToken(Core.TokenID.END) && reader.NextPeek().isToken(Core.TokenID.TRY)) )) {
                 reader.AddError(new Exception("Missing END TRY."));
@@ -37,7 +37,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             ParseToken(reader, Core.TokenID.BEGIN);
             ParseToken(reader, Core.TokenID.CATCH);
-            n_CatchStatements = AddChild(new StatementBlock(false));
+            n_CatchStatements = AddChild(new StatementBlock());
 
             if (!n_CatchStatements.Parse(reader, parseContext, (r) => (r.CurrentToken.isToken(Core.TokenID.END) && reader.NextPeek().isToken(Core.TokenID.CATCH)) )) {
                 reader.AddError(new Exception("Missing END CATCH."));

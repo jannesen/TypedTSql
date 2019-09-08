@@ -7,7 +7,6 @@ namespace Jannesen.Language.TypedTSql.Transpile
     {
         public      abstract    Context                             Parent                  { get; }
         public      abstract    ContextRoot                         RootContext             { get; }
-        public      abstract    ContextCodeBlock                    CodeContext           { get; }
         public      abstract    ContextBlock                        BlockContext            { get; }
         public      abstract    Transpiler                          Transpiler              { get; }
         public      abstract    SourceFile                          SourceFile              { get; }
@@ -21,7 +20,6 @@ namespace Jannesen.Language.TypedTSql.Transpile
         public      virtual     DataModel.QueryOptions              QueryOptions            { get { return DataModel.QueryOptions.NONE;                                                             } }
         public      virtual     DataModel.ISqlType                  ScopeIndentityType      { get { return null;                                                                                    }
                                                                                               set { throw new InvalidOperationException("ScopeIndentityType not available.");                       } }
-
 
         public                  Node.DeclarationObjectCode          GetDeclarationObjectCode()
         {
@@ -52,10 +50,17 @@ namespace Jannesen.Language.TypedTSql.Transpile
         {
             name.SetSymbol(variable);
 
-            ContextBlock    blockContext = scope == Node.VarDeclareScope.BlockScope ? BlockContext : CodeContext;
+            var    blockContext = BlockContext ?? throw new InvalidOperationException("VariableDeclare without BlockContext.");
 
-            if (blockContext == null)
-                throw new InvalidOperationException("VariableDeclare without BlockContext.");
+            if (scope == Node.VarDeclareScope.CodeScope) {
+                for (;;) {
+                    var p = blockContext.Parent?.BlockContext;
+                    if (p is null) {
+                        break;
+                    }
+                    blockContext = p;
+                }
+            }
 
             if (_variableTryGetParent(blockContext, name.Text.ToLowerInvariant(), out var dummy)) {
                 AddError(name, "Variable " + name.Text + " already declared in parent block.");

@@ -8,7 +8,7 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly    bool                                StandardSettings;
 
-        public                                                      Statement_BEGIN_END_code(Core.ParserReader reader, IParseContext parseContext, bool standardSettings): base(reader, parseContext, true)
+        public                                                      Statement_BEGIN_END_code(Core.ParserReader reader, IParseContext parseContext, bool standardSettings): base(reader, parseContext)
         {
             this.StandardSettings = standardSettings;
         }
