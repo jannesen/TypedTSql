@@ -7,6 +7,7 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public delegate bool EndTest(Core.ParserReader reader);
 
+        public                  bool                            n_CodeBlock;
         public                  IReadOnlyCollection<Statement>  Statements
         {
             get {
@@ -17,8 +18,9 @@ namespace Jannesen.Language.TypedTSql.Node
         private                 List<Statement>                 _statements;
         public                  DataModel.VariableList          _variableList;
 
-        public                                                  StatementBlock()
+        public                                                  StatementBlock(bool codeBlock)
         {
+            n_CodeBlock = codeBlock;
         }
         public                  bool                            Parse(Core.ParserReader reader, IParseContext parseContext, EndTest endTest)
         {
@@ -54,7 +56,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    void                            TranspileNode(Transpile.Context context)
         {
             _variableList = null;
-            var contextStatementBlock = new Transpile.ContextBlock(context);
+            var contextStatementBlock = n_CodeBlock ? new Transpile.ContextCodeBlock(context) : new Transpile.ContextBlock(context);
 
             foreach(var statement in _statements)
                 statement.TranspileStatement(contextStatementBlock);

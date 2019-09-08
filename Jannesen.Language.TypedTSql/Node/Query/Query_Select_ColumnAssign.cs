@@ -11,13 +11,13 @@ namespace Jannesen.Language.TypedTSql.Node
         public      static          bool                    CanParse(Core.ParserReader reader)
         {
             var readahead = reader.Peek(3);
-            var off = readahead[0].isToken("VAR") ? 1 : 0;
+            var off = readahead[0].isToken("VAR", "LET") ? 1 : 0;
             return readahead[off + 0].isToken(Core.TokenID.LocalName) && readahead[off + 1].isToken(Core.TokenID.Equal);
         }
 
         public                                              Query_Select_ColumnAssign(Core.ParserReader reader)
         {
-            n_VariableName = ParseSetVariable(reader);
+            n_VariableName = ParseVarVariable(reader);
             ParseToken(reader, Core.TokenID.Equal);
             n_Expression = ParseExpression(reader);
         }

@@ -25,7 +25,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 public                                                      OUTPUT(Core.ParserReader reader)
                 {
-                    n_VariableName = ParseSetVariable(reader);
+                    n_VariableName = ParseVarVariable(reader);
                     ParseToken(reader, Core.TokenID.Equal);
                     n_Column = ParseExpression(reader);
                 }

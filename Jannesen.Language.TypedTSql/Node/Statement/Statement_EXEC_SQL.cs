@@ -34,7 +34,7 @@ namespace Jannesen.Language.TypedTSql.Node
             _n_exec_sql = ParseToken(reader, "EXEC_SQL");
 
             if (reader.CurrentToken.isToken(Core.TokenID.LocalName) && reader.NextPeek().isToken(Core.TokenID.Equal)) {
-                n_ProcedureReturn = ParseSetVariable(reader);
+                n_ProcedureReturn = ParseVarVariable(reader);
                 ParseToken(reader, Core.TokenID.Equal);
             }
 

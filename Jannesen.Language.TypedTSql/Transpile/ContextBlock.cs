@@ -29,4 +29,13 @@ namespace Jannesen.Language.TypedTSql.Transpile
             }
         }
     }
+
+    public class ContextCodeBlock: ContextBlock
+    {
+        public      override    ContextCodeBlock                    CodeContext                 { get { return this; } }
+
+        internal                                                    ContextCodeBlock(Context parent): base(parent)
+        {
+        }
+    }
 }

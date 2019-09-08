@@ -235,7 +235,7 @@ namespace Jannesen.Language.TypedTSql.Core
         {
             return (TokenWithSymbol)ParseToken(reader, TokenID.Name, TokenID.QuotedName);
         }
-        public                  Node.ISetVariable                   ParseSetVariable(ParserReader reader)
+        public                  Node.ISetVariable                   ParseVarVariable(ParserReader reader)
         {
             if (Node.Node_VarVariable.CanParse(reader)) {
                 return AddChild(new Node.Node_VarVariable(reader));

@@ -7,6 +7,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
     {
         public      abstract    Context                             Parent                  { get; }
         public      abstract    ContextRoot                         RootContext             { get; }
+        public      abstract    ContextCodeBlock                    CodeContext           { get; }
         public      abstract    ContextBlock                        BlockContext            { get; }
         public      abstract    Transpiler                          Transpiler              { get; }
         public      abstract    SourceFile                          SourceFile              { get; }
@@ -47,11 +48,11 @@ namespace Jannesen.Language.TypedTSql.Transpile
             throw new InvalidOperationException("QueryOptions not available.");
         }
 
-        public                  bool                                VariableDeclare(Core.TokenWithSymbol name, DataModel.VariableLocal variable)
+        public                  bool                                VariableDeclare(Core.TokenWithSymbol name, Node.VarDeclareScope scope, DataModel.VariableLocal variable)
         {
             name.SetSymbol(variable);
 
-            ContextBlock    blockContext = BlockContext;
+            ContextBlock    blockContext = scope == Node.VarDeclareScope.BlockScope ? BlockContext : CodeContext;
 
             if (blockContext == null)
                 throw new InvalidOperationException("VariableDeclare without BlockContext.");
@@ -115,8 +116,8 @@ namespace Jannesen.Language.TypedTSql.Transpile
         }
         public                  DataModel.Variable                  VariableSet(Node.ISetVariable setvar, DataModel.IExprResult expr)
         {
-            if (setvar.isVarDeclare) {
-                return VarVariableSet(setvar.TokenName, expr.SqlType);
+            if (setvar.isVarDeclare != Node.VarDeclareScope.None) {
+                return VarVariableSet(setvar.TokenName, setvar.isVarDeclare, expr.SqlType);
             }
             else { 
                 var variable = VariableGet(setvar.TokenName);
@@ -124,13 +125,13 @@ namespace Jannesen.Language.TypedTSql.Transpile
                 return variable;
             }
         }
-        public                  DataModel.VariableLocal             VarVariableSet(Token.TokenLocalName name, DataModel.ISqlType sqlType)
+        public                  DataModel.VariableLocal             VarVariableSet(Token.TokenLocalName name, Node.VarDeclareScope scope, DataModel.ISqlType sqlType)
         {
             var variable = new DataModel.VariableLocal(name.Text,
                                                        sqlType,
                                                        name,
                                                        DataModel.VariableFlags.Nullable | DataModel.VariableFlags.VarDeclare);
-            VariableDeclare(name, variable);
+            VariableDeclare(name, scope, variable);
             variable.setAssigned();
             return variable;
         }
@@ -156,13 +157,13 @@ namespace Jannesen.Language.TypedTSql.Transpile
         }
         public                  void                                VariableSetInt(Node.ISetVariable setvar)
         {
-            if (setvar.isVarDeclare) {
+            if (setvar.isVarDeclare != Node.VarDeclareScope.None) {
                 var token = setvar.TokenName;
                 var variable = new DataModel.VariableLocal(token.Text,
                                                            DataModel.SqlTypeNative.Int,
                                                            token,
                                                            DataModel.VariableFlags.Nullable | DataModel.VariableFlags.VarDeclare);
-                VariableDeclare(token, variable);
+                VariableDeclare(token, setvar.isVarDeclare, variable);
                 variable.setAssigned();
             }
             else {

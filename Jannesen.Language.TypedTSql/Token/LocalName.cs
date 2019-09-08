@@ -39,10 +39,10 @@ namespace Jannesen.Language.TypedTSql.Token
                 return this;
             }
         }
-        public                      bool                    isVarDeclare
+        public                      Node.VarDeclareScope    isVarDeclare
         {
             get {
-                return false;
+                return Node.VarDeclareScope.None;
             }
         }
     }

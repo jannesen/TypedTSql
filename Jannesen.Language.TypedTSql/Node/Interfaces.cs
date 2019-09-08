@@ -36,9 +36,15 @@ namespace Jannesen.Language.TypedTSql.Node
         DataModel.ISqlType          SqlType             { get; }
     }
 
+    public enum VarDeclareScope
+    {
+        None            = 0,
+        CodeScope,
+        BlockScope
+    }
     public interface ISetVariable: Core.IAstNode
     {
         Token.TokenLocalName        TokenName           { get; }
-        bool                        isVarDeclare        { get; }
+        VarDeclareScope             isVarDeclare        { get; }
     }
 }

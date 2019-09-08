@@ -39,7 +39,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                          new DataModel.SqlTypeTable(n_Table.Columns, n_Table.Indexes),
                                                          n_Name,
                                                          DataModel.VariableFlags.None);
-                context.VariableDeclare(n_Name, t_Variable);
+                context.VariableDeclare(n_Name, VarDeclareScope.BlockScope, t_Variable);
             }
         }
     }

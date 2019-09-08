@@ -46,7 +46,7 @@ namespace Jannesen.Language.TypedTSql.Node
             var setvars = new List<ISetVariable>();
 
             do {
-                setvars.Add(ParseSetVariable(reader));
+                setvars.Add(ParseVarVariable(reader));
             }
             while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
 

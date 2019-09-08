@@ -6,6 +6,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
     {
         public      override    Context                             Parent                  { get { return null;                    } }
         public      override    ContextRoot                         RootContext             { get { return this;                    } }
+        public      override    ContextCodeBlock                    CodeContext             { get { return null;                    } }
         public      override    ContextBlock                        BlockContext            { get { return null;                    } }
         public      override    Transpiler                          Transpiler              { get { return _transpiler;             } }
         public      override    SourceFile                          SourceFile              { get { return _sourceFile;             } }

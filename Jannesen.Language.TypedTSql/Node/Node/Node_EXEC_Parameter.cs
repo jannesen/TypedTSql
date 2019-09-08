@@ -15,7 +15,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public      static      bool                    CanParse(Core.ParserReader reader)
         {
             return (reader.CurrentToken.isToken(Core.TokenID.LocalName, Core.TokenID.DEFAULT) || Expr.CanParse(reader)) ||
-                   (reader.CurrentToken.isToken("VAR") && reader.NextPeek().isToken(Core.TokenID.LocalName));
+                   (reader.CurrentToken.isToken("VAR", "LET") && reader.NextPeek().isToken(Core.TokenID.LocalName));
         }
 
         public                                          Node_EXEC_Parameter(Core.ParserReader reader, bool nameMandatory)
@@ -29,8 +29,8 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Default = true;
             }
             else {
-                if (reader.CurrentToken.isToken("VAR")) {
-                    n_Var = ParseSetVariable(reader);
+                if (reader.CurrentToken.isToken("VAR", "LET")) {
+                    n_Var = ParseVarVariable(reader);
                 }
                 else { 
                     n_Expression = ParseSimpleExpression(reader);
@@ -54,7 +54,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     }
 
                     if (callingParameter != null) {
-                        context.VarVariableSet(n_Var.TokenName, callingParameter.SqlType);
+                        context.VarVariableSet(n_Var.TokenName, n_Var.isVarDeclare, callingParameter.SqlType);
                     }
                     else {
                         context.AddError(n_Name, "Can't determin type of parameter.");

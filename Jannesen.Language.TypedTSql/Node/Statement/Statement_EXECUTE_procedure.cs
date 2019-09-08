@@ -30,7 +30,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (reader.CurrentToken.isToken(Core.TokenID.EXEC, Core.TokenID.EXECUTE)) {
                 Core.Token[]        peek = reader.Peek(3);
 
-                if (peek[1].isToken("VAR") && peek[2].isToken(Core.TokenID.LocalName)) {
+                if (peek[1].isToken("VAR", "LET") && peek[2].isToken(Core.TokenID.LocalName)) {
                     return true;
                 }
 
@@ -46,8 +46,8 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseToken(reader, Core.TokenID.EXEC, Core.TokenID.EXECUTE);
 
             if (reader.CurrentToken.isToken(Core.TokenID.LocalName) ||
-                (reader.CurrentToken.isToken("VAR") && reader.NextPeek().isToken(Core.TokenID.LocalName))) {
-                n_ProcedureReturn = ParseSetVariable(reader);
+                (reader.CurrentToken.isToken("VAR", "LET") && reader.NextPeek().isToken(Core.TokenID.LocalName))) {
+                n_ProcedureReturn = ParseVarVariable(reader);
                 ParseToken(reader, Core.TokenID.Equal);
             }
 

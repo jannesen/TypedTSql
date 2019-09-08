@@ -22,7 +22,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 columns = new DataModel.ColumnListErrorStub();
             }
 
-            Variable = context.VarVariableSet(n_Name, new DataModel.SqlTypeTable(columns, null));
+            Variable = context.VarVariableSet(n_Name, n_Scope, new DataModel.SqlTypeTable(columns, null));
         }
 
         public                  DataModel.ISymbol               getDataSource()

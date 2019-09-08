@@ -40,7 +40,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                            n_Type.SqlType,
                                                            n_Name,
                                                            DataModel.VariableFlags.Nullable);
-                    context.VariableDeclare(n_Name, Variable);
+                    context.VariableDeclare(n_Name, VarDeclareScope.BlockScope, Variable);
                 }
 
                 if (n_Expression != null) {
