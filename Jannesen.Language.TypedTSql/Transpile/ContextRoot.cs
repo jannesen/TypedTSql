@@ -17,6 +17,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
                                                                                               set { _scopeIndentityType = value; } }
 
         public                  int                                 BlockNr;
+        public                  int                                 ForNr;
         public                  int                                 StoreTargetNr;
 
         private                 Transpiler                          _transpiler;
@@ -39,6 +40,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
             _reportNeedTranspile = reportNeedTranspile;
             _declarationEntity   = declarationEntity;
             BlockNr              = 0;
+            ForNr                = 0;
             StoreTargetNr        = 0;
         }
 

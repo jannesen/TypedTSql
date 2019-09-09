@@ -378,6 +378,7 @@
     <Compile Include="Logic\Validate.cs" />
     <Compile Include="Logic\Xml.cs" />
     <Compile Include="Node\Node\Node_TableVarVariable.cs" />
+    <Compile Include="Node\Node\Node_IntoVariables.cs" />
     <Compile Include="Node\Node\Node_VarVariable.cs" />
     <Compile Include="Node\Node_AS.cs" />
     <Compile Include="Node\Declarations\Declaration.cs" />
@@ -467,13 +468,13 @@
     <Compile Include="Node\Statement\Statement_BEGIN_END_code.cs" />
     <Compile Include="Node\Statement\Statement_BEGIN_END.cs" />
     <Compile Include="Node\Statement\Statement_BEGIN_TRANSACTION.cs" />
-    <Compile Include="Node\Statement\Statement_BREAK.cs" />
+    <Compile Include="Node\Statement\Statement_BREAK_CONTINUE.cs" />
     <Compile Include="Node\Statement\Statement_CLOSE.cs" />
     <Compile Include="Node\Statement\Statement_COMMIT.cs" />
-    <Compile Include="Node\Statement\Statement_CONTINUE.cs" />
     <Compile Include="Node\Statement\Statement_CREATE_TABLE.cs" />
     <Compile Include="Node\Statement\Statement_DEALLOCATE.cs" />
     <Compile Include="Node\Statement\Statement_DECLARE.cs" />
+    <Compile Include="Node\Statement\Statement_FOR_SELECT.cs" />
     <Compile Include="Node\Statement\Statement_DECLARE_CURSOR.cs" />
     <Compile Include="Node\Statement\Statement_DECLARE_TABLE.cs" />
     <Compile Include="Node\Statement\Statement_DELETE.cs" />

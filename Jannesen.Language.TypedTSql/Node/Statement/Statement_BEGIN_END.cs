@@ -30,5 +30,9 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             n_Statements.TranspileNode(context);
         }
+        public                  void                                EmitWithoutBeginEnd(Core.EmitWriter emitWriter, int indent)
+        {
+            n_Statements.Emit(emitWriter, indent);
+        }
     }
 }

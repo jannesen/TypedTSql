@@ -20,7 +20,7 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly    Node_CursorName                     n_Cursor;
         public      readonly    IExprNode                           n_Position;
-        public      readonly    ISetVariable[]                      n_VariableNames;
+        public      readonly    Node_IntoVariables                  n_IntoVariables;
 
         public                                                      Statement_FETCH(Core.ParserReader reader, IParseContext parseContext)
         {
@@ -42,15 +42,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Cursor = AddChild(new Node_CursorName(reader));
 
             ParseToken(reader, Core.TokenID.INTO);
-
-            var setvars = new List<ISetVariable>();
-
-            do {
-                setvars.Add(ParseVarVariable(reader));
-            }
-            while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
-
-            n_VariableNames = setvars.ToArray();
+            n_IntoVariables = AddChild(new Node_IntoVariables(reader));
 
             ParseStatementEnd(reader);
         }
@@ -61,17 +53,17 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Position?.TranspileNode(context);
 
             if (n_Cursor.Cursor != null) {
-                if (n_VariableNames.Length < n_Cursor.Cursor.Columns.Length) {
+                if (n_IntoVariables.n_VariableNames.Length < n_Cursor.Cursor.Columns.Length) {
                     context.AddError(this, "Missing variable, expect " + n_Cursor.Cursor.Columns.Length + ".");
                     return;
                 }
-                if (n_VariableNames.Length > n_Cursor.Cursor.Columns.Length) {
+                if (n_IntoVariables.n_VariableNames.Length > n_Cursor.Cursor.Columns.Length) {
                     context.AddError(this, "To many variable, expect " + n_Cursor.Cursor.Columns.Length + ".");
                     return;
                 }
 
-                for (int i = 0 ; i < n_VariableNames.Length ; ++i)
-                    context.VariableSet(n_VariableNames[i], n_Cursor.Cursor.Columns[i]);
+                for (int i = 0 ; i < n_IntoVariables.n_VariableNames.Length ; ++i)
+                    context.VariableSet(n_IntoVariables.n_VariableNames[i], n_Cursor.Cursor.Columns[i]);
             }
         }
     }

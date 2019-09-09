@@ -32,5 +32,51 @@ namespace Jannesen.Language.TypedTSql.Node
                 c.Emit(emitWriter);
             }
         }
+
+        public      static      void                                EmitVarVariable(EmitWriter emitWriter, DataModel.VariableList variableList, int indent)
+        {
+            if (variableList != null) { 
+                foreach(var v in variableList) {
+                    if (v.isVarDeclare) {
+                        emitWriter.WriteIndent(indent);
+                        emitWriter.WriteText("DECLARE ");
+                        emitWriter.WriteText(v.SqlName ?? v.Name);
+                        emitWriter.WriteText(" ");
+
+                        var sqlType = v.SqlType;
+
+                        if (sqlType is DataModel.SqlTypeTable typeTable) {
+                            int pos = emitWriter.Linepos;
+                            emitWriter.WriteText("TABLE");
+                            emitWriter.WriteNewLine(pos);
+                            emitWriter.WriteText("(");
+
+                            var fnext = false;
+                            foreach (var c in typeTable.Columns) {
+                                if (fnext) {
+                                    emitWriter.WriteText(",");
+                                }
+                                emitWriter.WriteNewLine(pos + 4);
+                                emitWriter.WriteText(Library.SqlStatic.QuoteName(c.Name));
+                                emitWriter.WriteText(" ");
+                                emitWriter.WriteText(c.SqlType.ToSql());
+
+                                emitWriter.WriteText(c.isNullable ? " NULL" : " NOT NULL");
+                                fnext = true;
+                            }
+
+                            emitWriter.WriteNewLine(pos);
+                            emitWriter.WriteText(")");
+                        }
+                        else {
+                            emitWriter.WriteText(v.SqlType.ToSql());
+                        }
+
+                        emitWriter.WriteText(";");
+                        emitWriter.WriteNewLine(-1);
+                    }
+                }
+            }
+        }
     }
 }

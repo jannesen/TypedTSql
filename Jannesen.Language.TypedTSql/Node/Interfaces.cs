@@ -47,4 +47,9 @@ namespace Jannesen.Language.TypedTSql.Node
         Token.TokenLocalName        TokenName           { get; }
         VarDeclareScope             isVarDeclare        { get; }
     }
+    public interface ILoopStatement
+    {
+        void        UseGotoLabel(Core.Token token);
+        string      GetGotoLabel(Core.Token token);
+    }
 }

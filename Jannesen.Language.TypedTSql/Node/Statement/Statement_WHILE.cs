@@ -10,7 +10,7 @@ namespace Jannesen.Language.TypedTSql.Node
     //      WHILE Boolean_expression
     //           { sql_statement | statement_block | BREAK | CONTINUE }
     [StatementParser(Core.TokenID.WHILE)]
-    public class Statement_WHILE: Statement
+    public class Statement_WHILE: Statement, ILoopStatement
     {
         public      readonly    IExprNode                           n_Test;
         public      readonly    Statement                           n_WhileStatement;
@@ -39,6 +39,14 @@ namespace Jannesen.Language.TypedTSql.Node
             catch(Exception err) {
                 context.AddError(n_WhileStatement, err);
             }
+        }
+
+        public                  void                                UseGotoLabel(Core.Token token)
+        {
+        }
+        public                  string                              GetGotoLabel(Core.Token token)
+        {
+            return null;
         }
     }
 }
