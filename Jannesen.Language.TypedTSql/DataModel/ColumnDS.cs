@@ -67,8 +67,6 @@ namespace Jannesen.Language.TypedTSql.DataModel
                         this._parent.Type == SymbolType.TableSystem  ||
                         this._parent.Type == SymbolType.TableInternal)
                         return;
-
-                    System.Diagnostics.Debugger.Break();
                 }
             }
             this._parent = parent;

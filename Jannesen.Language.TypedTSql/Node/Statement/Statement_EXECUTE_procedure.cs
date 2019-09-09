@@ -64,9 +64,6 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Parameters = parameters.ToArray();
             }
 
-            if (n_ProcedureReference.n_Name.ValueString == "tas2/service/notify:stopalL")
-                System.Diagnostics.Debugger.Break();
-
             ParseStatementEnd(reader);
         }
 

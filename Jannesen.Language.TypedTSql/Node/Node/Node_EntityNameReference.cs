@@ -259,8 +259,6 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         private                 DataModel.TempTable             _findTempTable(Transpile.Context context, DataModel.EntityObjectCode entity, string name, List<DataModel.EntityObjectCode> path)
         {
-            System.Diagnostics.Debug.WriteLine(entity.EntityName.ToString() + ": find " + name);
-
             var tempTable = entity.TempTableGet(name);
             if (tempTable != null) {
                 return tempTable;
