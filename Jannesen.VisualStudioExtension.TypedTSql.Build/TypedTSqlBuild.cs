@@ -49,7 +49,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                 if (u1.BuildOrder != u2.BuildOrder)
                     return u1.BuildOrder - u2.BuildOrder;
 
-                return string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.Ordinal);
+                return string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.InvariantCulture);
             }
         }
 
@@ -110,7 +110,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                         }
 
                         foreach(KeyValuePair<int,List<UsingFile>> buildstep in buildsteps) {
-                            buildstep.Value.Sort((u1, u2) => string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.Ordinal));
+                            buildstep.Value.Sort((u1, u2) => string.Compare(u1.FilenameLower, u2.FilenameLower, StringComparison.InvariantCulture));
 
                             if (rtn)
                                 rtn = _processTSql(database, buildstep.Value);

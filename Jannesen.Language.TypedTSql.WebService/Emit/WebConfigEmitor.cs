@@ -140,7 +140,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         public void                    Emit(EmitContext emitContext)
         {
-            _methods.Sort((m1, m2) => string.Compare(m1.Path, m2.Path, StringComparison.Ordinal));
+            _methods.Sort((m1, m2) => string.Compare(m1.Path, m2.Path, StringComparison.InvariantCulture));
 
             string      filename = BaseDirectory + "\\webservice.config";
 

@@ -129,7 +129,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         {
             if (s1 != null) {
                 if (s2 != null)
-                    return string.Compare(s1, s2, true, System.Globalization.CultureInfo.InvariantCulture);
+                    return string.Compare(s1, s2, StringComparison.InvariantCultureIgnoreCase);
 
                 return 1;
             }
