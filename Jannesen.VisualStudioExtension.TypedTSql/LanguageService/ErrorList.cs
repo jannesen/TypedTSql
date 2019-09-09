@@ -77,7 +77,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             foreach(var e in _activeError.Keys) {
                 if (e != null &&
-                    e.SourceFile.Filename == fullpath &&
+                    string.Compare(e.SourceFile.Filename, fullpath, StringComparison.OrdinalIgnoreCase) == 0 &&
                     e.Beginning.Filepos <= filePosition &&
                     e.Ending.Filepos    >  filePosition)
                     return e;
