@@ -45,7 +45,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                 if (this.Name          == col2.Name        &&
                     this.Declaration   == col2.Declaration &&
                     this.ValueFlags    == col2.ValueFlags  &&
-                    this.SqlType       == col2.SqlType     &&
+                    this.SqlType.Equals(col2.SqlType)      &&
                     this.CollationName == col2.CollationName)
                 return true;
             }
