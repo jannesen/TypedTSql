@@ -52,7 +52,7 @@ namespace Jannesen.Language.TypedTSql
             }
         }
 
-        public                  Core.Token                                      GetTokenAt(int position)
+        public                  Core.Token                                      GetTokenAt(int startposition, int endposition)
         {
             int     b = 0;
             int     e = _tokens.Length - 1;
@@ -60,15 +60,22 @@ namespace Jannesen.Language.TypedTSql
             while (e >= 0 && b < _tokens.Length) {
                 int i = b + (e-b) / 2;
 
-                if (position < _tokens[i].Beginning.Filepos) {
+                if (startposition < _tokens[i].Beginning.Filepos) {
                     e = i - 1;
                 }
                 else
-                if (position >= _tokens[i].Ending.Filepos) {
+                if (startposition >= _tokens[i].Ending.Filepos) {
                     b = i + 1;
                 }
-                else
-                    return _tokens[i];
+                else {
+                    var token = _tokens[i];
+
+                    if (token.Beginning.Filepos <= startposition && endposition <= token.Ending.Filepos) {
+                        return token;
+                    }
+
+                    break;
+                }
             }
 
             throw new KeyNotFoundException("Can't locate token at position.");

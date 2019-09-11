@@ -71,15 +71,15 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                     _activeError.Remove(k);
             }
         }
-        public                  LTTS.TypedTSqlMessage                           GetMMessageAt(string fullpath, int filePosition)
+        public                  LTTS.TypedTSqlMessage                           GetMMessageAt(string fullpath, int startPosition, int endPosition)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach(var e in _activeError.Keys) {
                 if (e != null &&
                     string.Compare(e.SourceFile.Filename, fullpath, StringComparison.OrdinalIgnoreCase) == 0 &&
-                    e.Beginning.Filepos <= filePosition &&
-                    e.Ending.Filepos    >  filePosition)
+                    e.Beginning.Filepos <= startPosition &&
+                    e.Ending.Filepos    >  endPosition)
                     return e;
             }
 

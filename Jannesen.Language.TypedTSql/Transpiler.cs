@@ -176,7 +176,11 @@ namespace Jannesen.Language.TypedTSql
 
         public              Core.Token                              GetTokenAt(string filename, int position)
         {
-            return Files[filename].GetTokenAt(position);
+            return GetTokenAt(filename, position, position);
+        }
+        public              Core.Token                              GetTokenAt(string filename, int startposition, int endposition)
+        {
+            return Files[filename].GetTokenAt(startposition, endposition);
         }
         public              DataModel.DocumentSpan                  GetDocumentSpan(object declaration)
         {

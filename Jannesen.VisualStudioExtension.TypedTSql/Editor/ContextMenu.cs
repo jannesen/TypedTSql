@@ -87,11 +87,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         private async   Task                    Exec_GotoDefn()
         {
             try {
-                var position = _textView.Caret.Position.BufferPosition.Position;
-                var tblsp    = _getTexBufferLanguageServiceProject();
+                var startPosition = _textView.Selection.Start.Position;
+                var endPosition   = _textView.Selection.End.Position;
+                var tblsp         = _getTexBufferLanguageServiceProject();
 
                 await tblsp.LanguageService.WhenReady((p) => {
-                        VSPackage.NavigateTo(_serviceProvider, tblsp.LanguageService.VSProject, p.GetDeclarationAt(tblsp.FilePath, position));
+                        if (startPosition == _textView.Selection.Start.Position && endPosition == _textView.Selection.End.Position) {
+                            VSPackage.NavigateTo(_serviceProvider, tblsp.LanguageService.VSProject, p.GetDeclarationAt(tblsp.FilePath, startPosition, endPosition));
+                        }
                     });
 
             }
@@ -102,11 +105,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         private async   Task                    Exec_FindReferences()
         {
             try {
-                var position = _textView.Caret.Position.BufferPosition.Position;
-                var tblsp    = _getTexBufferLanguageServiceProject();
+                var startPosition = _textView.Selection.Start.Position;
+                var endPosition   = _textView.Selection.End.Position;
+                var tblsp         = _getTexBufferLanguageServiceProject();
 
                 await tblsp.LanguageService.WhenReady((p) => {
-                        LanguageService.Library.SimpleLibrary.SearchReferences(_serviceProvider, tblsp.LanguageService.VSProject, p.FindReferencesAt(tblsp.FilePath, position));
+                        if (startPosition == _textView.Selection.Start.Position && endPosition == _textView.Selection.End.Position) {
+                            LanguageService.Library.SimpleLibrary.SearchReferences(_serviceProvider, tblsp.LanguageService.VSProject, p.FindReferencesAt(tblsp.FilePath, startPosition, endPosition));
+                        }
                     });
             }
             catch(Exception err) {
@@ -116,24 +122,27 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         private async   Task                    Exec_ShowQuickFixes()
         {
             try {
-                var position = _textView.Caret.Position.BufferPosition.Position;
-                var tblsp    = _getTexBufferLanguageServiceProject();
+                var startPosition = _textView.Selection.Start.Position;
+                var endPosition   = _textView.Selection.End.Position;
+                var tblsp         = _getTexBufferLanguageServiceProject();
 
                 await tblsp.LanguageService.WhenReady((p) => {
-                        var quickFix = p.GetMessageAt(tblsp.FilePath, position).QuickFix;
-                        if (quickFix == null)
-                            throw new Exception("No quickfix available.");
+                        if (startPosition == _textView.Selection.Start.Position && endPosition == _textView.Selection.End.Position) {
+                            var quickFix = p.GetMessageAt(tblsp.FilePath, startPosition, endPosition).QuickFix;
+                            if (quickFix == null)
+                                throw new Exception("No quickfix available.");
 
-                        var textView = VSPackage.OpenDocumentView(_serviceProvider, tblsp.LanguageService.VSProject, quickFix.Location.Filename);
-                        textView.SetCaretPos (quickFix.Location.Beginning.Lineno-1, quickFix.Location.Beginning.Linepos-1);
-                        textView.SetSelection(quickFix.Location.Beginning.Lineno-1, quickFix.Location.Beginning.Linepos-1, quickFix.Location.Ending.Lineno-1 , quickFix.Location.Ending.Linepos-1);
-                        textView.GetSelectedText(out string selectedText);
+                            var textView = VSPackage.OpenDocumentView(_serviceProvider, tblsp.LanguageService.VSProject, quickFix.Location.Filename);
+                            textView.SetCaretPos (quickFix.Location.Beginning.Lineno-1, quickFix.Location.Beginning.Linepos-1);
+                            textView.SetSelection(quickFix.Location.Beginning.Lineno-1, quickFix.Location.Beginning.Linepos-1, quickFix.Location.Ending.Lineno-1 , quickFix.Location.Ending.Linepos-1);
+                            textView.GetSelectedText(out string selectedText);
 
-                        if (selectedText != quickFix.FindString)
-                            throw new Exception("Quickfix not possible: '" + selectedText + "' != '" + quickFix.FindString + "'.");
+                            if (selectedText != quickFix.FindString)
+                                throw new Exception("Quickfix not possible: '" + selectedText + "' != '" + quickFix.FindString + "'.");
 
-                        if (textView.ReplaceTextOnLine(quickFix.Location.Beginning.Lineno-1, quickFix.Location.Beginning.Linepos-1, quickFix.FindString.Length, quickFix.ReplaceString, quickFix.ReplaceString.Length) != 0)
-                            throw new Exception("Replace failed.");
+                            if (textView.ReplaceTextOnLine(quickFix.Location.Beginning.Lineno-1, quickFix.Location.Beginning.Linepos-1, quickFix.FindString.Length, quickFix.ReplaceString, quickFix.ReplaceString.Length) != 0)
+                                throw new Exception("Replace failed.");
+                        }
                     });
                 await tblsp.LanguageService.WhenReady(null);
             }
@@ -144,15 +153,16 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
         private async   Task                    Exec_Rename()
         {
             try {
-                var position   = _textView.Caret.Position.BufferPosition.Position;
-                var tblsp      = _getTexBufferLanguageServiceProject();
+                var startPosition = _textView.Selection.Start.Position;
+                var endPosition   = _textView.Selection.End.Position;
+                var tblsp         = _getTexBufferLanguageServiceProject();
                 await tblsp.LanguageService.WhenReady((project) => {
                                                             var filePath = tblsp.FilePath;
                                                             (new Rename.Renamer(_serviceProvider,
                                                                                 project,
                                                                                 filePath,
-                                                                                position,
-                                                                                project.FindReferencesAt(filePath, position))).Run();
+                                                                                startPosition,
+                                                                                project.FindReferencesAt(filePath, startPosition, endPosition))).Run();
                                                       });
             }
             catch(Exception err) {
