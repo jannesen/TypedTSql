@@ -18,7 +18,7 @@ namespace Jannesen.Language.TypedTSql.Node
         private                 DataModel.VariableList              _variableList;
         private                 bool                                _breakused;
                          
-        public      static      bool                            CanParse(Core.ParserReader reader, IParseContext parseContext)
+        public      static      bool                                CanParse(Core.ParserReader reader, IParseContext parseContext)
         {
             return (reader.CurrentToken.isToken(Core.TokenID.FOR) && reader.NextPeek().isToken(Core.TokenID.STATIC, Core.TokenID.SELECT));
         }
@@ -109,6 +109,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             emitWriter.WriteNewLine(indent + 4, "DEALLOCATE ", namecursor);
             emitWriter.WriteNewLine(indent, "END");
+            emitWriter.WriteNewLine(-1);
         }
 
         public                  void                                UseGotoLabel(Core.Token token)
