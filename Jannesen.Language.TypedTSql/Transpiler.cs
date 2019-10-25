@@ -84,8 +84,10 @@ namespace Jannesen.Language.TypedTSql
         }
         public              void                                    LoadExtensions(string names)
         {
-            foreach(var name in names.Split(';'))
-                LoadExtension(Assembly.Load(name.Trim()));
+            if (names != null) { 
+                foreach(var name in names.Split(';'))
+                    LoadExtension(Assembly.Load(name.Trim()));
+            }
         }
         public              SourceFile                              AddFile(string filename)
         {
