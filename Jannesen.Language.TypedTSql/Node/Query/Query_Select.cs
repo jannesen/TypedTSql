@@ -71,7 +71,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 if (n_For != null) {
                     if (Resultset != null)
-                        Resultset = new DataModel.ColumnListResult(new DataModel.Column[] { new DataModel.ColumnDS("", DataModel.SqlTypeNative.Xml) } );
+                        Resultset = new DataModel.ColumnListResult(new DataModel.Column[] { new DataModel.ColumnDS("", n_For.ResultType) } );
                     else
                         context.AddError(n_For, "FOR not allowed.");
                 }
