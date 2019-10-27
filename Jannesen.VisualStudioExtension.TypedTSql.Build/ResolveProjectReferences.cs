@@ -14,8 +14,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
     {
         public              ITaskItem[]                 ProjectReferences               { get; set; }
         public              string                      ProjectDirectory                { get; set; }
-        public              string                      ProjectConfiguration            { get; set; }
-        public              string                      ProjectPlatform                 { get; set; }
         public              bool                        Build                           { get; set; }
         [Output]
         public              ITaskItem[]                 ResolvedProjectReferences       { get; set; }
@@ -23,8 +21,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
         public override bool Execute()
         {
             if (ProjectDirectory is null)       throw new ArgumentException("ProjectDirectory not set.");
-            if (ProjectConfiguration is null)   throw new ArgumentException("ProjectConfiguration not set.");
-            if (ProjectPlatform is null)        throw new ArgumentException("ProjectPlatform not set.");
 
             try {
                 if (ProjectReferences != null) {
@@ -63,57 +59,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             if (!File.Exists(projectFullPath))
                 throw new Exception("Project '" + projectFullPath + "' don't exists.");
 
-            Project project = null;
-
-            var loadedProjects = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(projectFullPath);
-            if (loadedProjects.Count > 0) {
-                foreach (var loaded in loadedProjects) {
-                    loaded.GlobalProperties.TryGetValue("Configuration", out var configuration);
-                    loaded.GlobalProperties.TryGetValue("Platform",      out var platform);
-
-                    if (configuration == ProjectConfiguration && platform == ProjectPlatform)
-                        project = loaded;
-                }
-
-                if (project == null)
-                    throw new Exception("Can't locate project '" + projectFullPath + "' with active Configuration.");
-            }
-            else {
-                project = new Project(projectFullPath,
-                                      new Dictionary<string,string>() {
-                                          { "Configuration", ProjectConfiguration},
-                                          { "Platform",      ProjectPlatform}
-                                      }, null);
-            }
-
-            var propertyValue = new Dictionary<string, string>();
-            string value;
-
-            foreach(var pp in project.AllEvaluatedProperties)
-                propertyValue[pp.Name] = propertyValue.TryGetValue(pp.Name, out value) ? value+";"+pp.EvaluatedValue : pp.EvaluatedValue;
-
             var resolvedItem = new TaskItem(projectFullPath);
             resolvedItem.SetMetadata("OriginalItemSpec", projectReference.ItemSpec);
-
-            if (propertyValue.TryGetValue("ProjectGuid", out value))
-                resolvedItem.SetMetadata("Project", value);
-
-            string name = null;
-
-            if (propertyValue.TryGetValue("OutputType", out value) && value == "Library") {
-                if (propertyValue.TryGetValue("TargetPath", out value)) {
-                    resolvedItem.SetMetadata("ProjectType",    "Assembly");
-                    resolvedItem.SetMetadata("OutputAssembly", Statics.NormelizeFullPath(Path.Combine(Path.GetDirectoryName(projectFullPath), value)));
-
-                    propertyValue.TryGetValue("AssemblyName", out name);
-                }
-            }
-
-            if (name is null) {
-                name = Path.GetFileNameWithoutExtension(projectFullPath);
-            }
-
-            resolvedItem.SetMetadata("Name", name);
+            resolvedItem.SetMetadata("Name", Path.GetFileNameWithoutExtension(projectFullPath));
 
             return resolvedItem;
         }

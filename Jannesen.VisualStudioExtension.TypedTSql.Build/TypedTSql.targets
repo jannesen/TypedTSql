@@ -114,8 +114,6 @@
 	<Target Name="ResolveProjectReferences" Returns="@(_ResolvedProjectReferences)">
 		<ResolveProjectReferences ProjectReferences="@(ProjectReference)"
 								  ProjectDirectory="$(MSBuildProjectDirectory)"
-								  ProjectConfiguration="$(Configuration)"
-								  ProjectPlatform="$(Platform)"
 								  Build="false">
 			<Output TaskParameter="ResolvedProjectReferences" ItemName="_ResolvedProjectReferences"/>
 		</ResolveProjectReferences>
