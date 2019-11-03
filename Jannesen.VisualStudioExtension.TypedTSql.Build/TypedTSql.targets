@@ -119,10 +119,10 @@
 		</ResolveProjectReferences>
 	</Target>
 
-	<Target Name="Cleanup" DependsOnTargets="TypedTSqlCleanup"/>
+	<Target Name="Clean"   DependsOnTargets="TypedTSqlCleanup"/>
 	<Target Name="Build"   DependsOnTargets="TypedTSqlBuild"/>
 	<Target Name="Rebuild" DependsOnTargets="TypedTSqlSetRebuild">
-		<CallTarget Targets="Cleanup" />
+		<CallTarget Targets="Clean" />
 		<CallTarget Targets="Build" />
 	</Target>
 </Project>
