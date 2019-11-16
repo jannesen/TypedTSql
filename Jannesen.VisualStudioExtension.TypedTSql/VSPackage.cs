@@ -36,7 +36,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         }
 
         public      const       string                                  PackageGuid     = "FCFDB553-8F52-420F-9195-E183E9E501DE";
-        public      const       string                                  Version         = "1.09.02.001";        //@VERSIONINFO
+        public      const       string                                  Version         = "1.09.03.000";        //@VERSIONINFO
         private static readonly Dictionary<Guid, ColorTheme>            _colorThemes    = new Dictionary<Guid, ColorTheme>()
                                                                                             {
                                                                                                 { new Guid("de3dbbcd-f642-433c-8353-8f1df4370aba"), ColorTheme.Light },
