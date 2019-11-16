@@ -71,6 +71,9 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ResolveProjectReferences.cs" />
     <Compile Include="TypedTSqlBuild.cs" />
+    <None Include="Common.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="TypedTSql.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Import Project="$(MSBuildProjectFullPath).user" Condition="Exists('$(MSBuildProjectFullPath).user')"/>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="Common.targets" />
+    <Import Project="$(MSBuildProjectFullPath).user" Condition="Exists('$(MSBuildProjectFullPath).user')"/>
 
-	<ItemGroup Label="ProjectConfigurations">
+    <ItemGroup Label="ProjectConfigurations">
 		<ProjectConfiguration Include="Debug|AnyCPU">
 			<Configuration>Debug</Configuration>
 			<Platform>AnyCPU</Platform>
@@ -16,9 +17,9 @@
 	<ItemGroup>
 		<ProjectCapability Include="ProjectConfigurationsDeclaredAsItems" />
 		<ProjectCapability Include="DeclaredSourceItems" />
-    <ProjectCapability Include="UseFileGlobs" />
-    <ProjectCapability Include="ReferencesFolder;ProjectReferences;ReferenceManagerProjects;ReferenceManagerBrowse" />
-    <ProjectCapability Include="TypedTSql" />
+        <ProjectCapability Include="UseFileGlobs" />
+        <ProjectCapability Include="ReferencesFolder;ProjectReferences;ReferenceManagerProjects;ReferenceManagerBrowse" />
+        <ProjectCapability Include="TypedTSql" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -77,15 +78,22 @@
 	<UsingTask TaskName="TypedTSqlBuild"           AssemblyFile="$(MSBuildThisFileDirectory)Jannesen.VisualStudioExtension.TypedTSql.Build.dll" />
 	<UsingTask TaskName="ResolveProjectReferences" AssemblyFile="$(MSBuildThisFileDirectory)Jannesen.VisualStudioExtension.TypedTSql.Build.dll" />
 
-	<Target Name="TypedTSqlSetRebuild">
+<!--
+    ============================================================
+-->
+    <PropertyGroup>
+        <TypedTSqlRebuild>false</TypedTSqlRebuild>
+    </PropertyGroup>
+    <Target Name="TypedTSqlSetRebuild">
 		<PropertyGroup>
 			<TypedTSqlRebuild>true</TypedTSqlRebuild>
 		</PropertyGroup>
 	</Target>
 
 	<Target Name="TypedTSqlCleanup" >
-		<Delete Files="$(TypedTSqlBuildStatusFile)" />
-	</Target>
+		<Delete Files="$(TypedTSqlBuildStatusFile)" TreatErrorsAsWarnings="true" />
+        <Delete Files="$(TypedTSqlRebuildScript)"  TreatErrorsAsWarnings="true"/>
+    </Target>
 
 	<Target Name="TypedTSqlBuild" Condition="'@(SqlFile)' != ''">
 		<ItemGroup>
@@ -110,8 +118,7 @@
 		/>
 	</Target>
 
-	<Target Name="ResolveProjectReferencesDesignTime" DependsOnTargets="ResolveProjectReferences" Returns="@(_ResolvedProjectReferences)" />
-	<Target Name="ResolveProjectReferences" Returns="@(_ResolvedProjectReferences)">
+	<Target Name="ResolveProjectReferencesDesignTime" Returns="@(_ResolvedProjectReferences)">
 		<ResolveProjectReferences ProjectReferences="@(ProjectReference)"
 								  ProjectDirectory="$(MSBuildProjectDirectory)"
 								  Build="false">
@@ -119,9 +126,9 @@
 		</ResolveProjectReferences>
 	</Target>
 
-	<Target Name="Clean"   DependsOnTargets="TypedTSqlCleanup"/>
-	<Target Name="Build"   DependsOnTargets="TypedTSqlBuild"/>
-	<Target Name="Rebuild" DependsOnTargets="TypedTSqlSetRebuild">
+	<Target Name="Clean"   DependsOnTargets="$(CommonClean);TypedTSqlCleanup"/>
+	<Target Name="Build"   DependsOnTargets="$(CommonBuild);TypedTSqlBuild"/>
+	<Target Name="Rebuild" DependsOnTargets="$(CommonRebuild);TypedTSqlSetRebuild">
 		<CallTarget Targets="Clean" />
 		<CallTarget Targets="Build" />
 	</Target>
