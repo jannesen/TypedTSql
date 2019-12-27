@@ -18,6 +18,9 @@ namespace Jannesen.Language.TypedTSql.Node
                 if (selectContext == Query_SelectContext.ExpressionResponseObject || selectContext == Query_SelectContext.ExpressionResponseValue)
                     columns.Add(AddChild(new Query_Select_ColumnResponse(reader, selectContext)));
                 else
+                if (selectContext == Query_SelectContext.StatementInsertTargetNamed)
+                    columns.Add(AddChild(new Query_Select_ColumnTargetNamed(reader)));
+                else
                 if (selectContext == Query_SelectContext.StatementSelect && Query_Select_ColumnAssign.CanParse(reader))
                     columns.Add(AddChild(new Query_Select_ColumnAssign(reader)));
                 else

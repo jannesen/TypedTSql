@@ -443,6 +443,7 @@
     <Compile Include="Node\Query\Query_Select.cs" />
     <Compile Include="Node\Query\Query_Select_Column.cs" />
     <Compile Include="Node\Query\Query_Select_ColumnAssign.cs" />
+    <Compile Include="Node\Query\Query_Select_ColumnTargetNamed.cs" />
     <Compile Include="Node\Query\Query_Select_ColumnExpression.cs" />
     <Compile Include="Node\Query\Query_Select_ColumnList.cs" />
     <Compile Include="Node\Query\Query_Select_ColumnResponse.cs" />

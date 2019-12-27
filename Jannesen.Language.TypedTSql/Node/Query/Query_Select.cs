@@ -8,6 +8,7 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         StatementSelect         = 1,
         StatementInsert,
+        StatementInsertTargetNamed,
         StatementDeclareCursor,
         StatementView,
         FunctionInlineTable,
