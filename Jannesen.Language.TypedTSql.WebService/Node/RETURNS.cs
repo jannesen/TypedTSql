@@ -143,7 +143,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 return "void";
 
             if (sqlType is LTTSQL.DataModel.EntityTypeExternal entityExternal)
-                return "clr(" + entityExternal.Assembly.EntityName.Name + ":" + entityExternal.ClassName + ")";
+                return "clr(" + (entityExternal.Assembly?.EntityName.Name ?? "UNKNOWN") + ":" + entityExternal.ClassName + ")";
 
             throw new NotSupportedException("Unsupported sqltype " + sqlType.GetType().Name + ".");
         }
