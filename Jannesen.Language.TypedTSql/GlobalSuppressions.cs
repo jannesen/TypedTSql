@@ -30,5 +30,6 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style",         "IDE0059:Unnecessary assignment of a value")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style",         "IDE0060:Remove unused parameter")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style",         "IDE1006:Naming Styles") ]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA1714:Flags enums should have plural names")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA1801:Review unused parameters.")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA2237:Mark ISerializable types with serializable")]

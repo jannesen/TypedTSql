@@ -20,9 +20,16 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style",         "IDE0059:Unnecessary assignment of a value")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style",         "IDE0060:Remove unused parameter")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style",         "IDE1006:Naming Styles")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA1714:Flags enums should have plural names")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA1801:Review unused parameters.")]
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality",  "IDE0069:Disposable fields should be disposed", Scope = "member", Target = "~F:Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Project._errorList")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA2213:Disposable fields should be disposed",  Scope = "member", Target = "~F:Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Project._errorList")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality",  "IDE0069:Disposable fields should be disposed", Scope = "member", Target = "~F:Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Project._hierarchyListener")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "CA2213:Disposable fields should be disposed",  Scope = "member", Target = "~F:Jannesen.VisualStudioExtension.TypedTSql.LanguageService.Project._hierarchyListener")]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "VSTHRD100:")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "VSTHRD110:")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "VSTHRD200:")]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage",         "VSTHRD001:Avoid legacy thread switching APIs", Scope = "member", Target = "~M:Jannesen.VisualStudioExtension.TypedTSql.VSPackage.InsertTextInActiveDocument(System.String,System.Boolean)~System.Boolean")]
