@@ -763,7 +763,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                 case DataModel.SystemType.SmallDateTime:            return ConversionType.Explicit;
                 case DataModel.SystemType.DateTime:                 return ConversionType.Explicit;
                 case DataModel.SystemType.DateTime2:                return ConversionType.Explicit;
-                case DataModel.SystemType.DateTimeOffset:           return ConversionType.Implicit;
+                case DataModel.SystemType.DateTimeOffset:           return ConversionType.Explicit;
                 case DataModel.SystemType.SqlVariant:               return ConversionType.Implicit;
                 default:                                            return ConversionType.NotAllowed;
                 }
@@ -1068,11 +1068,20 @@ namespace Jannesen.Language.TypedTSql.Logic
                 }
 
             case DataModel.SystemType.Date:
+                switch(nativeType2.SystemType) {
+                case DataModel.SystemType.Date:             return CompareType.Save;
+                case DataModel.SystemType.SmallDateTime:    return CompareType.TSql;
+                case DataModel.SystemType.DateTime:         return CompareType.TSql;
+                case DataModel.SystemType.DateTime2:        return CompareType.TSql;
+                case DataModel.SystemType.DateTimeOffset:   return CompareType.TSql;
+                default:                                    return CompareType.NotAllowed;
+                }
+
             case DataModel.SystemType.SmallDateTime:
             case DataModel.SystemType.DateTime:
             case DataModel.SystemType.DateTime2:
                 switch(nativeType2.SystemType) {
-                case DataModel.SystemType.Date:             return CompareType.Save;
+                case DataModel.SystemType.Date:             return CompareType.TSql;
                 case DataModel.SystemType.SmallDateTime:    return CompareType.Save;
                 case DataModel.SystemType.DateTime:         return CompareType.Save;
                 case DataModel.SystemType.DateTime2:        return CompareType.Save;
