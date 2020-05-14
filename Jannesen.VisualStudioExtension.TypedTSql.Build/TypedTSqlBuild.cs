@@ -236,7 +236,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             }
         }
 
-        private                 bool                                _processTSql(LTTS.SqlDatabase database, List<UsingFile> usingFiles)
+        private                 bool                                 _processTSql(LTTS.SqlDatabase database, List<UsingFile> usingFiles)
         {
             int errcnt = 0;
 

@@ -26,7 +26,7 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseToken(reader, Core.TokenID.Equal, Core.TokenID.PlusAssign, Core.TokenID.MinusAssign, Core.TokenID.MultAssign, Core.TokenID.DivAssign, Core.TokenID.ModAssign, Core.TokenID.AndAssign, Core.TokenID.XorAssign, Core.TokenID.OrAssign);
             n_Expression = ParseExpression(reader);
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)

@@ -78,7 +78,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                                      ParameterList(int capacity): base(capacity)
         {
         }
-        public                                      ParameterList(IList<Parameter> list): base(list)
+        public                                      ParameterList(IReadOnlyList<Parameter> list): base(list)
         {
         }
 

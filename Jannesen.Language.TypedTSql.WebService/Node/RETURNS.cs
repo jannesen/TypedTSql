@@ -18,7 +18,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         {
             return reader.CurrentToken.isToken(LTTSQL.Core.TokenID.RETURNS);
         }
-        public                                                      RETURNS(LTTSQL.Core.ParserReader reader)
+        public                                                      RETURNS(LTTSQL.Core.ParserReader reader, LTTSQL.Node.IParseContext parseContext)
         {
             ParseToken(reader, Core.TokenID.RETURNS);
             n_Expression = ParseExpression(reader, LTTSQL.Node.ParseExprContext.ServiceReturns);
@@ -26,7 +26,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             if (reader.CurrentToken.isToken(Core.TokenID.OPTION))
                 n_QueryOptions = AddChild(new LTTSQL.Node.Node_QueryOptions(reader));
 
-            ParseStatementEnd(reader, false);
+            ParseStatementEnd(reader, parseContext, false);
         }
 
         public      override    void                                TranspileNode(LTTSQL.Transpile.Context context)

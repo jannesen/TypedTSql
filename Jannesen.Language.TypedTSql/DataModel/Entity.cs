@@ -74,7 +74,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                                          EntityList(int capacity): base(capacity)
         {
         }
-        public                                          EntityList(IList<T> list): base(list)
+        public                                          EntityList(IReadOnlyList<T> list): base(list)
         {
         }
 

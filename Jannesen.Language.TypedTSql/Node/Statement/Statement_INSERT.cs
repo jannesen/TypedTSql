@@ -201,7 +201,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 break;
             }
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)
@@ -228,8 +228,12 @@ namespace Jannesen.Language.TypedTSql.Node
             if (n_Target is Node_TableVariable tableVariable) {
                 var variable = tableVariable.Variable;
                 if (variable != null) {
-                    if (!variable.isReadonly)
+                    if (!variable.isReadonly) {
+                        if (n_TargetColumns == null) {
+                            Logic.Validate.IntoUnnamed(n_Target, variable, _transpileProcess_SelectResultset(context));
+                        }
                         variable.setAssigned();
+                    }
                     else
                         context.AddError(n_Target, "Not allowed to assign a readonly variable.");
                 }

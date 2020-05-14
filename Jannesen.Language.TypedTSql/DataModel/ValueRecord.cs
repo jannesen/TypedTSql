@@ -27,7 +27,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                                      ValueRecordList(int capacity): base(capacity)
         {
         }
-        public                                      ValueRecordList(IList<ValueRecord> list): base(list)
+        public                                      ValueRecordList(IReadOnlyList<ValueRecord> list): base(list)
         {
         }
 

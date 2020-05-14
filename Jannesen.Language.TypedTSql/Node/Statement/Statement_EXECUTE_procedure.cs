@@ -64,7 +64,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Parameters = parameters.ToArray();
             }
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                            TranspileNode(Transpile.Context context)
@@ -73,7 +73,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Parameters?.TranspileNodes(context);
 
             if (n_ProcedureReturn != null) {
-                context.VariableSetInt(n_ProcedureReturn);
+                context.VariableSetType(n_ProcedureReturn, DataModel.SqlTypeNative.Int);
             }
 
             if (n_ProcedureReference.Entity != null) {

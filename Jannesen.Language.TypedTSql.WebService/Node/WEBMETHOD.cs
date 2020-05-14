@@ -422,6 +422,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             Transpiled = true;
         }
 
+                                LTTSQL.Node.Statement                   LTTSQL.Node.IParseContext.StatementParent          => null;
                                 bool                                    LTTSQL.Node.IParseContext.StatementCanParse(LTTSQL.Core.ParserReader reader)
         {
             return RETURNS.CanParse(reader) ||
@@ -430,7 +431,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                                 LTTSQL.Node.Statement                   LTTSQL.Node.IParseContext.StatementParse(LTTSQL.Core.ParserReader reader)
         {
             if (RETURNS.CanParse(reader)) {
-                var returns = new RETURNS(reader);
+                var returns = new RETURNS(reader, this);
 
                 if (n_returns == null)
                     n_returns = new List<RETURNS>();

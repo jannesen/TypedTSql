@@ -11,6 +11,7 @@ namespace Jannesen.Language.TypedTSql.Node
         StatementInsertTargetNamed,
         StatementDeclareCursor,
         StatementView,
+        StatementReceive,
         FunctionInlineTable,
         TableSourceSubquery,
         ExpressionSubquery,
@@ -27,7 +28,6 @@ namespace Jannesen.Language.TypedTSql.Node
         public      readonly    Query_Select_FOR            n_For;
 
         public                  DataModel.IColumnList       Resultset               { get; private set; }
-        public                  bool                        VariableAssigment       { get; private set; }
 
         public                                              Query_Select(Core.ParserReader reader, Query_SelectContext selectContext)
         {
@@ -63,7 +63,6 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    void                        TranspileNode(Transpile.Context context)
         {
             Resultset         = null;
-            VariableAssigment = false;
 
             try {
                 Resultset = (n_Selects.Length == 1) ? _transpileNode_Single(context) : _transpileNode_Union(context);
@@ -79,7 +78,6 @@ namespace Jannesen.Language.TypedTSql.Node
             }
             catch(Exception err) {
                 Resultset         = null;
-                VariableAssigment = false;
                 context.AddError(this, err);
             }
         }
@@ -89,10 +87,9 @@ namespace Jannesen.Language.TypedTSql.Node
             var select        = n_Selects[0];
             var contextRowSet = new Transpile.ContextRowSets(context, true);
 
-
             select.TranspileNode(contextRowSet);
 
-            var resultset = _transpileNode_Single_ResultSet(contextRowSet);
+            var resultset = n_Selects[0].n_Columns?.GetResultSet(contextRowSet);
             if (resultset != null) {
                 n_OrderBy?.TranspileNode(new Transpile.ContextRowSets(contextRowSet, resultset));
 
@@ -131,31 +128,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             return resultset;
         }
-        private                 DataModel.ColumnListResult  _transpileNode_Single_ResultSet(Transpile.Context context)
-        {
-            var     columns = n_Selects[0].n_Columns?.n_Columns;
-            if (columns == null)
-                return null;
 
-            List<DataModel.Column>      columnList = null;
-
-            foreach(var column in columns) {
-                if (column is Query_Select_ColumnAssign) {
-                    VariableAssigment = true;
-                }
-                else {
-                    if (columnList == null)
-                        columnList = new List<DataModel.Column>();
-
-                    column.AddColumnToList(context, columnList);
-                }
-
-                if (VariableAssigment && columnList != null)
-                    throw new TranspileException(column, "Variable assignment and resultset not possible.");
-            }
-
-            return (columnList != null) ? new DataModel.ColumnListResult(columnList.ToArray()) : null;
-        }
         private                 DataModel.IColumnList       _transpileNode_Union(Transpile.Context context)
         {
             foreach (var select in n_Selects)

@@ -261,6 +261,7 @@
     <Compile Include="BuildIn\System\CURRENT_REQUEST_ID.cs" />
     <Compile Include="BuildIn\System\CURRENT_TRANSACTION_ID.cs" />
     <Compile Include="BuildIn\System\CURSOR_STATUS.cs" />
+    <Compile Include="BuildIn\System\GET_TRANSMISSION_STATUS .cs" />
     <Compile Include="BuildIn\System\DATALENGTH.cs" />
     <Compile Include="BuildIn\System\DECOMPRESS.cs" />
     <Compile Include="BuildIn\System\ERROR_LINE.cs" />
@@ -466,6 +467,11 @@
     <Compile Include="Node\Query\TableSource_WithDeclarationColumn.cs" />
     <Compile Include="Node\Statement\Statement.cs" />
     <Compile Include="Node\Statement\StatementBlock.cs" />
+    <Compile Include="Node\Statement\Statement_BEGIN_DIALOG.cs" />
+    <Compile Include="Node\Statement\Statement_GET_CONVERSATION_GROUP.cs" />
+    <Compile Include="Node\Statement\Statement_RECEIVE.cs" />
+    <Compile Include="Node\Statement\Statement_SEND.cs" />
+    <Compile Include="Node\Statement\Statement_MOVE_CONVERSATION.cs" />
     <Compile Include="Node\Statement\Statement_BEGIN_END_code.cs" />
     <Compile Include="Node\Statement\Statement_BEGIN_END.cs" />
     <Compile Include="Node\Statement\Statement_BEGIN_TRANSACTION.cs" />
@@ -475,6 +481,7 @@
     <Compile Include="Node\Statement\Statement_CREATE_TABLE.cs" />
     <Compile Include="Node\Statement\Statement_DEALLOCATE.cs" />
     <Compile Include="Node\Statement\Statement_DECLARE.cs" />
+    <Compile Include="Node\Statement\Statement_BEGIN_CONVERSATION_TIMER.cs" />
     <Compile Include="Node\Statement\Statement_FOR_SELECT.cs" />
     <Compile Include="Node\Statement\Statement_DECLARE_CURSOR.cs" />
     <Compile Include="Node\Statement\Statement_DECLARE_TABLE.cs" />
@@ -485,6 +492,7 @@
     <Compile Include="Node\Statement\Statement_EXECUTE_procedure.cs" />
     <Compile Include="Node\Statement\Statement_EXEC_SQL.cs" />
     <Compile Include="Node\Statement\Statement_FETCH.cs" />
+    <Compile Include="Node\Statement\Statement_END_CONVERSATION.cs" />
     <Compile Include="Node\Statement\Statement_GOTO.cs" />
     <Compile Include="Node\Statement\Statement_IF.cs" />
     <Compile Include="Node\Statement\Statement_INSERT.cs" />

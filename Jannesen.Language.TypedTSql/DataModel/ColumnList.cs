@@ -35,7 +35,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                                          ColumnList(int capacity): base(capacity)
         {
         }
-        public                                          ColumnList(IList<Column> list): base(list)
+        public                                          ColumnList(IReadOnlyList<Column> list): base(list)
         {
         }
 

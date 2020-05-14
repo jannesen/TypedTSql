@@ -377,7 +377,7 @@ namespace Jannesen.Language.TypedTSql.Core
             public          DataModel.ISymbol           SymbolNameReference     { get { return null;                            } }
         }
 
-        private  readonly static    NoSymbolClass            _keywordSymbol = new NoSymbolClass();
+        private  readonly static    NoSymbolClass           _keywordSymbol = new NoSymbolClass();
         private  readonly static    NoSymbolClass           _noSymbol      = new NoSymbolClass();
 
         public      override        bool                    isKeyword
@@ -406,7 +406,7 @@ namespace Jannesen.Language.TypedTSql.Core
         }
         public      static          Token                   SetNoSymbol(Token token)
         {
-            (token as TokenWithSymbol)?.SetSymbol(_keywordSymbol);
+            (token as TokenWithSymbol)?.SetSymbol(_noSymbol);
             return token;
         }
         public      static          TokenWithSymbol         SetNoSymbol(TokenWithSymbol token)

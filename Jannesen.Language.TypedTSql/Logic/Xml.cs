@@ -21,7 +21,21 @@ namespace Jannesen.Language.TypedTSql.Logic
                 _transpileXQuery(context, node, arguments[0]);
                 var stype = Validate.ConstString(arguments[1]);
 
-                return stype != null ? (DataModel.ISqlType)DataModel.SqlTypeNative.ParseNativeType(stype) : (DataModel.ISqlType)new DataModel.SqlTypeAny();
+                if (stype != null) {
+                    if (stype.IndexOf('.') >= 0) {
+                        var type = context.Catalog.GetType(DataModel.EntityName.Parse(stype));
+                        if (type == null) {
+                            throw new TranspileException(arguments[1], "Unknown type '" + stype + "'.");
+                        }
+
+                        return type;
+                    }
+                    else { 
+                        return DataModel.SqlTypeNative.ParseNativeType(stype);
+                    }
+                }
+
+                return new DataModel.SqlTypeAny();
 
             case "exists":
                 Validate.NumberOfArguments(arguments, 1);

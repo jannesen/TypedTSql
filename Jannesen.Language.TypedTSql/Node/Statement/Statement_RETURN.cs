@@ -19,7 +19,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (Expr.CanParse(reader))
                 n_Expression = ParseExpression(reader);
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)

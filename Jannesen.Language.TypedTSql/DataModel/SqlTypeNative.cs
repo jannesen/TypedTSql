@@ -31,10 +31,13 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public  static readonly SqlTypeNative       VarChar_16          = new SqlTypeNative(SystemType.VarChar, maxLength:16);
         public  static readonly SqlTypeNative       VarChar_48          = new SqlTypeNative(SystemType.VarChar, maxLength:48);
         public  static readonly SqlTypeNative       VarChar_MAX         = new SqlTypeNative(SystemType.VarChar, maxLength:-1);
+        public  static readonly SqlTypeNative       NChar_2             = new SqlTypeNative(SystemType.NChar, maxLength:2);
         public  static readonly SqlTypeNative       NVarChar_32         = new SqlTypeNative(SystemType.NVarChar, maxLength:32);
         public  static readonly SqlTypeNative       NVarChar_40         = new SqlTypeNative(SystemType.NVarChar, maxLength:40);
         public  static readonly SqlTypeNative       NVarChar_128        = new SqlTypeNative(SystemType.NVarChar, maxLength:128);
+        public  static readonly SqlTypeNative       NVarChar_256        = new SqlTypeNative(SystemType.NVarChar, maxLength:256);
         public  static readonly SqlTypeNative       NVarChar_258        = new SqlTypeNative(SystemType.NVarChar, maxLength:258);
+        public  static readonly SqlTypeNative       NVarChar_512        = new SqlTypeNative(SystemType.NVarChar, maxLength:512);
         public  static readonly SqlTypeNative       NVarChar_4000       = new SqlTypeNative(SystemType.NVarChar, maxLength:4000);
         public  static readonly SqlTypeNative       NVarChar_MAX        = new SqlTypeNative(SystemType.NVarChar, maxLength:-1);
         public  static readonly SqlTypeNative       SysName             = new SqlTypeNative(SystemType.NVarChar, maxLength:256);

@@ -16,7 +16,7 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseToken(reader, Core.TokenID.GOTO);
             n_Label = (Core.TokenWithSymbol)ParseToken(reader, Core.TokenID.Name);
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)

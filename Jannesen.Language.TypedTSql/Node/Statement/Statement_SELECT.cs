@@ -23,7 +23,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_QueryOptions = AddChild(new Node_QueryOptions(reader));
             }
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)

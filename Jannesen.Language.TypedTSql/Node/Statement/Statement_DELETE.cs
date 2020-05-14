@@ -21,7 +21,7 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseTarget(reader);
             ParseFromWhereOption(reader);
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)

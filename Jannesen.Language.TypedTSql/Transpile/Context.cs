@@ -160,12 +160,12 @@ namespace Jannesen.Language.TypedTSql.Transpile
                 }
             }
         }
-        public                  void                                VariableSetInt(Node.ISetVariable setvar)
+        public                  void                                VariableSetType(Node.ISetVariable setvar, DataModel.SqlTypeNative type)
         {
             if (setvar.isVarDeclare != Node.VarDeclareScope.None) {
                 var token = setvar.TokenName;
                 var variable = new DataModel.VariableLocal(token.Text,
-                                                           DataModel.SqlTypeNative.Int,
+                                                           type,
                                                            token,
                                                            DataModel.VariableFlags.Nullable | DataModel.VariableFlags.VarDeclare);
                 VariableDeclare(token, setvar.isVarDeclare, variable);
@@ -181,8 +181,8 @@ namespace Jannesen.Language.TypedTSql.Transpile
                         AddError(setvar, "Not allowed to assign a readonly variable.");
 
                     try {
-                        if ((variable.SqlType.TypeFlags & DataModel.SqlTypeFlags.SimpleType) == 0 || variable.SqlType.NativeType != DataModel.SqlTypeNative.Int)
-                            throw new Exception("Variable must by of type INT.");
+                        if ((variable.SqlType.TypeFlags & DataModel.SqlTypeFlags.SimpleType) == 0 || variable.SqlType.NativeType != type)
+                            throw new Exception("Variable must by of type " + type + ".");
                     }
                     catch(Exception err) {
                         AddError(setvar, err);

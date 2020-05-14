@@ -34,7 +34,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 break;
             }
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         private                 Core.IAstNode                       _parseArgument(Core.ParserReader reader, params Core.TokenID[] ids)

@@ -48,7 +48,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
             }
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)
@@ -57,16 +57,17 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Severity.TranspileNode(context);
             n_State.TranspileNode(context);
 
-            switch(n_Message.SqlType.NativeType.SystemType) {
-            case DataModel.SystemType.Int:
-            case DataModel.SystemType.Char:
-            case DataModel.SystemType.VarChar:
-                break;
+            Logic.Validate.ValueType(n_Message, (t) => {
+                switch(t) {
+                case DataModel.SystemType.Int:
+                case DataModel.SystemType.Char:
+                case DataModel.SystemType.VarChar:
+                    return null;
 
-            default:
-                context.AddError(n_Message, "Expect int or string.");
-                break;
-            }
+                default:
+                    return "Expect int or string.";
+                }
+            });
 
             context.ValidateInteger(n_Severity, 0,  25);
             context.ValidateInteger(n_State, -1, 255);

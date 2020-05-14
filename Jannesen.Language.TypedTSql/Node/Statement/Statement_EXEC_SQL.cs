@@ -48,7 +48,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             n_Parameters = parameters.ToArray();
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                            TranspileNode(Transpile.Context context)
@@ -59,7 +59,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 context.AddError(this, "EXEC_SQL has no parameters");
 
             if (n_ProcedureReturn != null) {
-                context.VariableSetInt(n_ProcedureReturn);
+                context.VariableSetType(n_ProcedureReturn, DataModel.SqlTypeNative.Int);
             }
 
             foreach(var p in n_Parameters) {

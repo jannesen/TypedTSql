@@ -27,7 +27,7 @@ namespace Jannesen.Language.TypedTSql.Node
             for (;;) {
                 reader.ReadBlanklines(this);
 
-                if (endTest(reader))
+                if (endTest(reader) && !parseContext.StatementCanParse(reader))
                     return true;
 
                 if (reader.CurrentToken.ID == Core.TokenID.EOF || reader.Transpiler.DeclarationParsers.CanParse(reader, null))

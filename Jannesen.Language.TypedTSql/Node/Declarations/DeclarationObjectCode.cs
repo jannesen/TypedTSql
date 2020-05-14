@@ -98,6 +98,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Statement.TranspileNode(query ? new Transpile.ContextStatementQuery(context) : context);
         }
 
+                                Statement                           IParseContext.StatementParent          => null;
                                 bool                                IParseContext.StatementCanParse(Core.ParserReader reader)
         {
             return reader.Transpiler.StatementParsers.CanParse(reader, this);

@@ -14,8 +14,9 @@ namespace Jannesen.Language.TypedTSql.Node
 
     public interface IParseContext
     {
+        Statement                   StatementParent                      { get; }
         bool                        StatementCanParse(Core.ParserReader reader);
-        Node.Statement              StatementParse(Core.ParserReader reader);
+        Statement                   StatementParse(Core.ParserReader reader);
     }
 
     public interface ITableSource: Core.IAstNode

@@ -68,7 +68,7 @@ namespace Jannesen.Language.TypedTSql.Node
             while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
 
             n_VariableTypeValues = vtvlist.ToArray();
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                            TranspileNode(Transpile.Context context)

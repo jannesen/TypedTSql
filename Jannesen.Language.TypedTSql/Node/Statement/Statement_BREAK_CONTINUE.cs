@@ -17,7 +17,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public                                                      Statement_BREAK_CONTINUE(Core.ParserReader reader, IParseContext parseContext)
         {
             n_Cmd = ParseToken(reader, Core.TokenID.BREAK, Core.TokenID.CONTINUE);
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)

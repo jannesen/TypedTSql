@@ -271,12 +271,14 @@ namespace Jannesen.Language.TypedTSql.Core
 
             return AddChild(expr);
         }
-        public                  void                                ParseStatementEnd(Core.ParserReader reader, bool autoaddsemi = true)
+        public                  void                                ParseStatementEnd(Core.ParserReader reader, Node.IParseContext parseContext, bool autoaddsemi = true)
         {
-            if (reader.CurrentToken.isToken(TokenID.Semicolon))
-                ParseToken(reader);
-            else
-                AddBeforeWhitespace(autoaddsemi ? Semicolon : null);
+            if (parseContext.StatementParent == null) { 
+                if (reader.CurrentToken.isToken(TokenID.Semicolon))
+                    ParseToken(reader);
+                else
+                    AddBeforeWhitespace(autoaddsemi ? Semicolon : null);
+            }
         }
 
         public                  Token                               ParseToken(Core.ParserReader reader)

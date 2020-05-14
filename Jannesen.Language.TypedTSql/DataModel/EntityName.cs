@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
@@ -56,6 +58,60 @@ namespace Jannesen.Language.TypedTSql.DataModel
             return (Database == null && Schema == schema) ? Library.SqlStatic.QuoteName(Name) : _fullname;
         }
 
+        public      static      EntityName          Parse(string fullname)
+        {
+            var   parts = new List<string>();
+            var   s     = new StringBuilder();
+            var   quote = false;
+
+            for (int p = 0 ; p < fullname.Length ; ++p) {
+                char c = fullname[p];
+
+                switch(c) {
+                case '[':
+                    if (quote) {
+                        if (p >= fullname.Length - 1)
+                            throw new ArgumentException("Invalid sql fullname '" + fullname + "'.");
+
+                        c = fullname[++p];
+                        goto add;
+                    }
+
+                    quote = true;
+                    break;
+
+                case ']':
+                    if (!quote)
+                        goto add;
+
+                    quote = false;
+                    break;
+
+                case '.':
+                    if (quote)
+                        goto add;
+
+                    parts.Add(s.ToString());
+                    s.Clear();
+                    break;
+
+                default:
+add:                s.Append(c);
+                    break;
+                }
+            }
+
+            if (quote)
+                throw new FormatException("Invalid fullname '" + fullname + "'.");
+
+            parts.Add(s.ToString());
+
+            switch(parts.Count) {
+            case 2:     return new EntityName(parts[0], parts[1]);
+            case 3:     return new EntityName(parts[0], parts[1], parts[2]);
+            default:    throw new FormatException("Invalid fullname '" + fullname + "'."); 
+            }
+        }
         public      static      int                 Compare(EntityName n1, EntityName n2)
         {
             int     i;

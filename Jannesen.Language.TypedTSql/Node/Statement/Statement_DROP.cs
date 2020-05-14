@@ -20,7 +20,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             n_TempTableName = ParseName(reader);
 
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)

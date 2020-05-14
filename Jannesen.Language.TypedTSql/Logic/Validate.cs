@@ -49,6 +49,10 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      void                        ValueInt(Node.IExprNode expr)
         {
+            if (expr == null) {
+                return;
+            }
+
             Value(expr);
 
             var sqlType = expr.SqlType;
@@ -66,6 +70,10 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      object                      ValueInt(Node.IExprNode expr, int minValue, int maxValue)
         {
+            if (expr == null) {
+                return null;
+            }
+
             Value(expr);
 
             var sqlType = expr.SqlType;
@@ -91,8 +99,48 @@ namespace Jannesen.Language.TypedTSql.Logic
 
             throw new TranspileException(expr, "Not a integer value.");
         }
+        public      static      void                        ValueUniqueIdentifier(Node.IExprNode expr)
+        {
+            if (expr == null) {
+                return;
+            }
+
+            Value(expr);
+
+            var sqlType = expr.SqlType;
+            if (sqlType == null || sqlType is DataModel.SqlTypeAny) {
+                return;
+            }
+
+            if (sqlType.NativeType.SystemType != DataModel.SystemType.UniqueIdentifier) { 
+                throw new TranspileException(expr, "Expect UniqueIdentifier.");
+            }
+        }
+        public      static      void                        ValueType(Node.IExprNode expr, Func<DataModel.SystemType, string> validator)
+        {
+            if (expr == null) {
+                return;
+            }
+
+            Value(expr);
+
+            var sqlType = expr.SqlType;
+            if (sqlType == null || sqlType is DataModel.SqlTypeAny) {
+                return;
+            }
+
+            var err = validator(sqlType.NativeType.SystemType);
+
+            if (err != null) {
+                throw new TranspileException(expr, err);
+            }
+        }
         public      static      object                      ConstInt(Node.IExprNode expr, int minValue, int maxValue)
         {
+            if (expr == null) {
+                return null;
+            }
+
             Value(expr);
 
             var sqlType = expr.SqlType;
@@ -121,6 +169,10 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      string                      ConstString(Node.IExprNode expr)
         {
+            if (expr == null) {
+                return null;
+            }
+
             Value(expr);
 
             var sqlType = expr.SqlType;
@@ -147,6 +199,10 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      void                        ValueNumber(Node.IExprNode expr)
         {
+            if (expr == null) {
+                return;
+            }
+
             Value(expr);
 
             var sqlType = expr.SqlType;
@@ -171,6 +227,10 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      void                        ValueString(Node.IExprNode expr)
         {
+            if (expr == null) {
+                return;
+            }
+
             Value(expr);
 
             var sqlType = expr.SqlType;
@@ -189,6 +249,10 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      void                        ValueStringOrText(Node.IExprNode expr)
         {
+            if (expr == null) {
+                return;
+            }
+
             Value(expr);
 
             var sqlType = expr.SqlType;
@@ -209,6 +273,10 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      DataModel.ISqlType          ValueDateTime(Node.IExprNode expr, DatePartMode mode)
         {
+            if (expr == null) {
+                return null;
+            }
+
             var sqlType    = expr.SqlType;
 
             Value(expr);
@@ -250,6 +318,10 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      void                        ValueBinary(Node.IExprNode expr)
         {
+            if (expr == null) {
+                return ;
+            }
+
             var valueFlags = expr.ValueFlags;
             var sqlType    = expr.SqlType;
 
@@ -478,6 +550,25 @@ namespace Jannesen.Language.TypedTSql.Logic
             }
 
             return false;
+        }
+        public      static      void                        IntoUnnamed(Core.IAstNode node, DataModel.Variable variable, DataModel.IColumnList columns)
+        {
+            var sqlType = variable.SqlType;
+            if (sqlType == null || sqlType is DataModel.SqlTypeAny || columns is null) {
+                return;
+            }
+            else if ((sqlType.TypeFlags & DataModel.SqlTypeFlags.Table) != 0) {
+                if (sqlType.Columns.Count != columns.Count) {
+                    throw new TranspileException(node, "Invalid number of columns.");
+                }
+
+                for (int i = 0 ; i < columns.Count ; ++i) {
+                    Assign(sqlType.Columns[i].SqlType, columns[i].SqlType);
+                }
+            }
+            else {
+                throw new TranspileException(node, "Variable must by a table variable.");
+            }
         }
 
         public      static      void                        FunctionArguments(Transpile.Context context, Core.AstParseNode functionNode, DataModel.EntityObjectCode function, Node.IExprNode[] arguments)

@@ -25,7 +25,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Name = (Core.TokenWithSymbol)ParseToken(reader, Core.TokenID.LocalName);
             ParseToken(reader, Core.TokenID.TABLE);
             n_Table = AddChild(new Table(reader, TableType.Type));
-            ParseStatementEnd(reader);
+            ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                            TranspileNode(Transpile.Context context)

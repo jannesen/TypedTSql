@@ -13,7 +13,8 @@ namespace Jannesen.Language.TypedTSql.Node
         StoredProcedure,
         FunctionTable,
         FromReference,
-        UserDataType
+        UserDataType,
+        Queue
     }
 
     public class Node_EntityNameReference: Core.AstParseNode, ITableSource, IReferencedEntity
@@ -75,6 +76,7 @@ namespace Jannesen.Language.TypedTSql.Node
             case EntityReferenceType.TableOrView:
             case EntityReferenceType.StoredProcedure:
             case EntityReferenceType.FunctionTable:
+            case EntityReferenceType.Queue:
                 return n_EntityName;
 
              default:
@@ -168,6 +170,10 @@ namespace Jannesen.Language.TypedTSql.Node
 
             case EntityReferenceType.FromReference:
                 break;
+
+            case EntityReferenceType.Queue:
+                Core.TokenWithSymbol.SetNoSymbol(n_Name);
+                return;
 
             default:
                 throw new NotImplementedException("Can't transpile Node_EntityNameReference:" + ReferenceType);

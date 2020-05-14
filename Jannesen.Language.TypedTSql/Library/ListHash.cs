@@ -34,7 +34,7 @@ namespace Jannesen.Language.TypedTSql.Library
         {
             _resize(capacity, true);
         }
-        public                                                      ListHash(IList<TItem> list)
+        public                                                      ListHash(IReadOnlyList<TItem> list)
         {
             _resize(list.Count, true);
 
@@ -525,7 +525,7 @@ while (n < 64000)
         public                                                      ListHashName(int capacity): base(capacity)
         {
         }
-        public                                                      ListHashName(IList<TItem> list): base(list)
+        public                                                      ListHashName(IReadOnlyList<TItem> list): base(list)
         {
         }
 
