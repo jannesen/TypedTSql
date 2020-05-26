@@ -45,7 +45,9 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                                 xmlWriter.WriteAttributeString(optionValue.n_Name, optionValue.n_Value);
                         }
 
-                        xmlWriter.WriteAttributeString("database",  configEmitor.Database);
+                        if (configEmitor.Database != null) { 
+                            xmlWriter.WriteAttributeString("database",  configEmitor.Database);
+                        }
 
                         foreach(Node.WEBMETHOD.ServiceParameter arg in _webMethod.n_Parameters.n_Parameters) {
                             var options = arg.n_Options;
@@ -108,7 +110,9 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                     xmlWriter.WriteAttributeString("verb",      "GET");
                     xmlWriter.WriteAttributeString("type",      "sql-json2");
                     xmlWriter.WriteAttributeString("procedure", _procedureName);
-                    xmlWriter.WriteAttributeString("database",  configEmitor.Database);
+                    if (configEmitor.Database != null) { 
+                        xmlWriter.WriteAttributeString("database",  configEmitor.Database);
+                    }
                     xmlWriter.WriteStartElement("response");
                         xmlWriter.WriteAttributeString("type",        "array:nvarchar(256)");
                     xmlWriter.WriteEndElement();
