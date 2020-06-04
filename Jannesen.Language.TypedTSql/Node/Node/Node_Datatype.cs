@@ -130,7 +130,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         private                 DataModel.SqlTypeNative     _parseNativeType(Transpile.Context context, DataModel.SystemType systemTypeId)
         {
-            if (n_Parm1 is Token.Number) context.ValidateInteger(n_Parm1, 1, 8000);
+            if (n_Parm1 is Token.Number) context.ValidateInteger(n_Parm1, 0, 8000);
             if (n_Parm2 is Token.Number) context.ValidateInteger(n_Parm2, 0,   38);
 
             if (n_Parm1 == null && DefaultLength) {
