@@ -218,6 +218,11 @@ namespace Jannesen.Language.TypedTSql.Node
             n_TargetWith?.TranspileNode(contextStatement);
 
             if (n_TargetColumns is TargetNamedBy) {
+                if (n_Target is Node_TableVarVariable) {
+                    context.AddError(n_TargetColumns, "column names with var variable not allowed.");
+                    return;
+                }
+
                 contextStatement.SetTarget(new DataModel.RowSet("", n_Target.getColumnList(context), source: n_Target.getDataSource()));
             }
 
