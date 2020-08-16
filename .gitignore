@@ -1,6 +1,6 @@
-.vs
+**/.vs
+**/bin
+**/obj
+**/*.csproj.user
 packages
-*/bin
-*/obj
-*/*.csproj.user
 *.vsix
