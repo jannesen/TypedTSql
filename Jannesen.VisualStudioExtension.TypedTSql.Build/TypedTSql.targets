@@ -132,4 +132,16 @@
 		<CallTarget Targets="Clean" />
 		<CallTarget Targets="Build" />
 	</Target>
+
+    <Target Name="Restore">
+    </Target>
+
+    <Target Name="_IsProjectRestoreSupported"
+		    Returns="@(_ValidProjectsForRestore)">
+
+        <ItemGroup>
+            <_ValidProjectsForRestore Include="$(MSBuildProjectFullPath)" />
+        </ItemGroup>
+    </Target>
+
 </Project>
