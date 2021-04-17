@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
 	<Metadata>
-		<Identity Id="Jannesen.VisualStudioExtension.TypedTSql" Version="1.09.07.000" Language="en-US" Publisher="Jannesen B.V."/> <!-- @VERSIONINFO -->
+		<Identity Id="Jannesen.VisualStudioExtension.TypedTSql" Version="1.09.07.001" Language="en-US" Publisher="Jannesen B.V."/> <!-- @VERSIONINFO -->
 		<DisplayName>Typed Transact SQL Visual Studio Extensions</DisplayName>
 		<Description xml:space="preserve">Typed Transact SQL extensions for Visual Studio 2019</Description>
 		<Icon>TypedTSql.ico</Icon>
 	</Metadata>
 	<Installation AllUsers="true" >
-    <InstallationTarget Id="Microsoft.VisualStudio.Community"  Version="[16.0,17.0)" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro"        Version="[16.0,17.0)" />
-    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[16.0,17.0)" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Community"  Version="[16.5,17.0)" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro"        Version="[16.5,17.0)" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[16.5,17.0)" />
   </Installation>
 	<Dependencies>
 		<Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.7]" />
