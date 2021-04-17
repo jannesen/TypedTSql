@@ -315,7 +315,7 @@ namespace Jannesen.Language.TypedTSql.Core
 
             for(int i = 0 ; i < ids.Length ; ++i) {
                 if (i > 0)
-                    rtn.Append(",");
+                    rtn.Append(',');
 
                 rtn.Append(ids[i].ToString());
             }
@@ -328,7 +328,7 @@ namespace Jannesen.Language.TypedTSql.Core
 
             for(int i = 0 ; i < nameIDs.Length ; ++i) {
                 if (i > 0)
-                    rtn.Append(",");
+                    rtn.Append(',');
 
                 rtn.Append(nameIDs[i].Name);
             }
@@ -341,7 +341,7 @@ namespace Jannesen.Language.TypedTSql.Core
 
             for(int i = 0 ; i < names.Length ; ++i) {
                 if (i > 0)
-                    rtn.Append(",");
+                    rtn.Append(',');
 
                 rtn.Append(names[i]);
             }
@@ -356,7 +356,7 @@ namespace Jannesen.Language.TypedTSql.Core
                 object t = namesandids[i];
 
                 if (i > 0)
-                    rtn.Append(",");
+                    rtn.Append(',');
 
                 if (t is string)        rtn.Append((string)t);
                 if (t is TokenID)   rtn.Append(((TokenID)t).ToString());
