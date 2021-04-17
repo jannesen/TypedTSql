@@ -125,6 +125,10 @@ namespace Jannesen.Language.TypedTSql.Node
                 expressions[n_When.Length] = n_Else;
 
             _result = TypeHelpers.OperationUnion(expressions);
+
+            if (n_Else == null) {
+                _result.ValueFlags |= DataModel.ValueFlags.Nullable;
+            }
         }
     }
 }
