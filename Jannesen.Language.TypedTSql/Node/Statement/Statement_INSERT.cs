@@ -338,9 +338,20 @@ namespace Jannesen.Language.TypedTSql.Node
                         throw new Exception(targetColumns.Length > value.n_Expressions.Length ? "Missing columns" : "Tomany columns");
 
                     for(int i = 0 ; i < targetColumns.Length ; ++i) {
-                        if (targetColumns[i] != null) {
+                        var targetColumn = targetColumns[i];
+
+                        if (targetColumn != null) {
+                            if ((targetColumn.ValueFlags & (DataModel.ValueFlags.NULL      |
+                                                            DataModel.ValueFlags.Const     |
+                                                            DataModel.ValueFlags.Variable  |
+                                                            DataModel.ValueFlags.Computed  |
+                                                            DataModel.ValueFlags.Identity)) != 0) {
+                                context.AddError(this, "Can't insert data into column [" + targetColumn.Name + "].");
+                                continue;
+                            }
+
                             try {
-                                Validate.Assign(context, targetColumns[i], value.n_Expressions[i]);
+                                Validate.Assign(context, targetColumn, value.n_Expressions[i]);
                             }
                             catch(Exception err) {
                                 context.AddError(value.n_Expressions[i], err);

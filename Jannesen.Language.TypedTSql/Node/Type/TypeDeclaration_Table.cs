@@ -53,81 +53,81 @@ namespace Jannesen.Language.TypedTSql.Node
                     emitWriter.WriteText(n_Table.n_Columns.Length.ToString(System.Globalization.CultureInfo.InvariantCulture));
                     emitWriter.WriteText("\r\n");
 
-                int column_id = 1;
+                    int column_id = 1;
 
-                foreach(var tableColumn in n_Table.n_Columns) {
-                    emitWriter.WriteText("    OR NOT EXISTS (SELECT * FROM sys.all_columns WHERE [object_id]=@table_object_id AND [column_id]=");
-                        emitWriter.WriteText(column_id.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    foreach(var tableColumn in n_Table.n_Columns) {
+                        emitWriter.WriteText("    OR NOT EXISTS (SELECT * FROM sys.all_columns WHERE [object_id]=@table_object_id AND [column_id]=");
+                            emitWriter.WriteText(column_id.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
-                        emitWriter.WriteText(" AND [name]=");
-                        emitWriter.WriteText(Library.SqlStatic.QuoteString(tableColumn.n_Name.ValueString));
+                            emitWriter.WriteText(" AND [name]=");
+                            emitWriter.WriteText(Library.SqlStatic.QuoteString(tableColumn.n_Name.ValueString));
 
-                    if (tableColumn is Table_ColumnData) {
-                        var dataColumn    = tableColumn.Column;
-                        var columnSqlType = dataColumn.SqlType;
+                        if (tableColumn is Table_ColumnData) {
+                            var dataColumn    = tableColumn.Column;
+                            var columnSqlType = dataColumn.SqlType;
 
-                        if (columnSqlType is DataModel.SqlTypeNative nativeType) {
-                            emitWriter.WriteText(" AND [system_type_id]=");
-                            emitWriter.WriteText(nativeType.SystemTypeId.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                            if (columnSqlType is DataModel.SqlTypeNative nativeType) {
+                                emitWriter.WriteText(" AND [system_type_id]=");
+                                emitWriter.WriteText(nativeType.SystemTypeId.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
-                            switch(nativeType.SystemType) {
-                            case DataModel.SystemType.Binary:
-                            case DataModel.SystemType.VarBinary:
-                            case DataModel.SystemType.Char:
-                            case DataModel.SystemType.NChar:
-                            case DataModel.SystemType.VarChar:
-                            case DataModel.SystemType.NVarChar:
-                                emitWriter.WriteText(" AND [max_length]=");
-                                emitWriter.WriteText(nativeType.MaxLength.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                                break;
+                                switch(nativeType.SystemType) {
+                                case DataModel.SystemType.Binary:
+                                case DataModel.SystemType.VarBinary:
+                                case DataModel.SystemType.Char:
+                                case DataModel.SystemType.NChar:
+                                case DataModel.SystemType.VarChar:
+                                case DataModel.SystemType.NVarChar:
+                                    emitWriter.WriteText(" AND [max_length]=");
+                                    emitWriter.WriteText(nativeType.MaxLength.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                                    break;
 
-                            case DataModel.SystemType.Float:
-                                emitWriter.WriteText(" AND [precision]=");
-                                emitWriter.WriteText(nativeType.Precision.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                                break;
+                                case DataModel.SystemType.Float:
+                                    emitWriter.WriteText(" AND [precision]=");
+                                    emitWriter.WriteText(nativeType.Precision.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                                    break;
 
-                            case DataModel.SystemType.Decimal:
-                            case DataModel.SystemType.Numeric:
-                                emitWriter.WriteText(" AND [precision]=");
-                                emitWriter.WriteText(nativeType.Precision.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                                emitWriter.WriteText(" AND [scale]=");
-                                emitWriter.WriteText(nativeType.Scale.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                                break;
+                                case DataModel.SystemType.Decimal:
+                                case DataModel.SystemType.Numeric:
+                                    emitWriter.WriteText(" AND [precision]=");
+                                    emitWriter.WriteText(nativeType.Precision.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                                    emitWriter.WriteText(" AND [scale]=");
+                                    emitWriter.WriteText(nativeType.Scale.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                                    break;
+                                }
+                            }
+
+                            if (columnSqlType.Entity != null) {
+                                emitWriter.WriteText(" AND [user_type_id]=(SELECT [user_type_id] FROM sys.types WHERE [schema_id]=SCHEMA_ID(");
+                                emitWriter.WriteText(Library.SqlStatic.QuoteString(columnSqlType.Entity.EntityName.Schema));
+                                emitWriter.WriteText(") AND [name]=");
+                                emitWriter.WriteText(Library.SqlStatic.QuoteString(columnSqlType.Entity.EntityName.Name));
+                                emitWriter.WriteText(")");
+                            }
+
+                            var columnFlags = tableColumn.Column.ValueFlags;
+                            emitWriter.WriteText(" AND [is_nullable]=");
+                            emitWriter.WriteText((columnFlags & DataModel.ValueFlags.Nullable) != 0 ? "1" : "0");
+                            emitWriter.WriteText(" AND [is_rowguidcol]=");
+                            emitWriter.WriteText((columnFlags & DataModel.ValueFlags.Rowguidcol) != 0 ? "1" : "0");
+                            emitWriter.WriteText(" AND [is_identity]=");
+                            emitWriter.WriteText((columnFlags & DataModel.ValueFlags.Identity) != 0 ? "1" : "0");
+
+                            if (columnSqlType.NativeType.SystemType == DataModel.SystemType.Char ||
+                                columnSqlType.NativeType.SystemType == DataModel.SystemType.NChar ||
+                                columnSqlType.NativeType.SystemType == DataModel.SystemType.VarChar ||
+                                columnSqlType.NativeType.SystemType == DataModel.SystemType.NVarChar)
+                            {
+                                emitWriter.WriteText(" AND [collation_name]=");
+                                if (tableColumn.Column.CollationName != null)
+                                    emitWriter.WriteText(Library.SqlStatic.QuoteString(tableColumn.Column.CollationName));
+                                else
+                                    emitWriter.WriteText("CONVERT(sysname,DATABASEPROPERTYEX(DB_NAME(),'Collation'))");
                             }
                         }
 
-                        if (columnSqlType.Entity != null) {
-                            emitWriter.WriteText(" AND [user_type_id]=(SELECT [user_type_id] FROM sys.types WHERE [schema_id]=SCHEMA_ID(");
-                            emitWriter.WriteText(Library.SqlStatic.QuoteString(columnSqlType.Entity.EntityName.Schema));
-                            emitWriter.WriteText(") AND [name]=");
-                            emitWriter.WriteText(Library.SqlStatic.QuoteString(columnSqlType.Entity.EntityName.Name));
-                            emitWriter.WriteText(")");
+                        if (tableColumn is Table_ColumnComputed) {
+                            emitWriter.WriteText(" AND [is_computed]=1");
                         }
-
-                        var columnFlags = tableColumn.Column.ValueFlags;
-                        emitWriter.WriteText(" AND [is_nullable]=");
-                        emitWriter.WriteText((columnFlags & DataModel.ValueFlags.Nullable) != 0 ? "1" : "0");
-                        emitWriter.WriteText(" AND [is_rowguidcol]=");
-                        emitWriter.WriteText((columnFlags & DataModel.ValueFlags.Rowguidcol) != 0 ? "1" : "0");
-                        emitWriter.WriteText(" AND [is_identity]=");
-                        emitWriter.WriteText((columnFlags & DataModel.ValueFlags.Identity) != 0 ? "1" : "0");
-
-                        if (columnSqlType.NativeType.SystemType == DataModel.SystemType.Char ||
-                            columnSqlType.NativeType.SystemType == DataModel.SystemType.NChar ||
-                            columnSqlType.NativeType.SystemType == DataModel.SystemType.VarChar ||
-                            columnSqlType.NativeType.SystemType == DataModel.SystemType.NVarChar)
-                        {
-                            emitWriter.WriteText(" AND [collation_name]=");
-                            if (tableColumn.Column.CollationName != null)
-                                emitWriter.WriteText(Library.SqlStatic.QuoteString(tableColumn.Column.CollationName));
-                            else
-                                emitWriter.WriteText("CONVERT(sysname,DATABASEPROPERTYEX(DB_NAME(),'Collation'))");
-                        }
-                    }
-
-                    if (tableColumn is Table_ColumnComputed) {
-                        emitWriter.WriteText(" AND [is_computed]=1");
-                    }
 
                         emitWriter.WriteText(")\r\n");
 

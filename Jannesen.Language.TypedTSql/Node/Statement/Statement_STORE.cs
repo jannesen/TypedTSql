@@ -110,7 +110,6 @@ namespace Jannesen.Language.TypedTSql.Node
                 public  bool                    hasDelete;
                 public  bool                    hasOutput;
                 public  string                  DefaultCollate;
-
             }
             class ColumnInfo
             {
@@ -119,6 +118,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 public  IExprNode               WhereLinkExpr;
                 public  bool                    Nullable;
                 public  bool                    Identity;
+                public  bool                    Computed;
                 public  bool                    Source;
                 public  bool                    SourceNullable;
                 public  bool                    SourceCheckNullInsert;
@@ -344,7 +344,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                     next = false;
                     foreach (var c in _TD.ColumnsInfo) {
-                        if (c.Inserted || (c.WhereLinkExpr != null && !c.Identity) || c.RecVersion) {
+                        if (c.Inserted || (c.WhereLinkExpr != null && !c.Identity && !c.Computed) || c.RecVersion) {
                             if (next)
                                 emitWriter.WriteText(", ");
 
@@ -855,7 +855,8 @@ namespace Jannesen.Language.TypedTSql.Node
                                                 Column     = column,
                                                 Nullable   = column.isNullable,
                                                 Identity   = column.isIdentity,
-                                                RecVersion = (column.SqlType.TypeFlags & DataModel.SqlTypeFlags.RecVersion) != 0});
+                                                Computed   = column.isComputed,
+                                                RecVersion = (column.SqlType.TypeFlags & DataModel.SqlTypeFlags.RecVersion) != 0});;
                     }
 
                     var primarykey = _findKey();
@@ -878,6 +879,11 @@ namespace Jannesen.Language.TypedTSql.Node
 
                         var columninfo = _findColumn(sourceColumn.Name);
                         if (columninfo != null) {
+                            if (columninfo.Computed) {
+                                context.AddError((IAstNode)columnNameToken ?? source, "Not allowed to assign value to computed column " + SqlStatic.QuoteName(sourceColumn.Name) + ".");
+                                rtn = false;
+                            }
+
                             if (!Logic.Validate.Assign(columninfo.Column.SqlType, sourceColumn.SqlType)) {
                                 context.AddError((IAstNode)columnNameToken ?? source, "Not allowed to assign column " + SqlStatic.QuoteName(sourceColumn.Name) + " type " + sourceColumn.SqlType.ToString() + " to " + columninfo.Column.SqlType.ToString() + ".");
                                 rtn = false;
@@ -1056,7 +1062,7 @@ namespace Jannesen.Language.TypedTSql.Node
                             }
                         }
                         else {
-                            if (allowInsert && !columninfo.Nullable && columninfo.WhereLinkExpr == null && !columninfo.Identity && !columninfo.Column.hasDefault) {
+                            if (allowInsert && !columninfo.Computed && !columninfo.Nullable && columninfo.WhereLinkExpr == null && !columninfo.Identity && !columninfo.Column.hasDefault) {
                                 context.AddError(Target, "Column " + Library.SqlStatic.QuoteName(columninfo.Column.Name) + " is not defined and can't be null.");
                                 return false;
                             }
