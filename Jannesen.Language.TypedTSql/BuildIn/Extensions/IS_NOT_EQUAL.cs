@@ -42,7 +42,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
         }
         private                 void                        _customEmit(Core.EmitWriter emitWriter)
         {
-            var trimWriter = new Core.EmitWriterTrim(emitWriter, true);
+            var trimWriter = new Core.EmitWriterTrimFull(emitWriter);
 
             emitWriter.WriteText("(");
                 n_Expr1.Emit(trimWriter);   trimWriter.WriteText("<>");     n_Expr2.Emit(trimWriter);

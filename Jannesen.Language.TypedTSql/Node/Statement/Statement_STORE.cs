@@ -215,7 +215,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 foreach(var columninfo in _TD.ColumnsInfo) {
                     if (columninfo.WhereLinkExpr != null) {
                         var emitString = new Core.EmitWriterString(emitContext);
-                        columninfo.WhereLinkExpr.Emit(new Core.EmitWriterTrim(emitString, true));
+                        columninfo.WhereLinkExpr.Emit(new Core.EmitWriterTrimFull(emitString));
                         columninfo.EmitWhereExpr = (columninfo.WhereLinkExpr.NoBracketsNeeded) ? emitString.String : "(" + emitString.String + ")";
                     }
                 }
@@ -366,7 +366,7 @@ namespace Jannesen.Language.TypedTSql.Node
                             else if (c.Inserted)
                                 emitWriter.WriteText(_TD.SingleRecord ? _TD.NamePrefix + "N" + c.SafeName : SqlStatic.QuoteName("N" + c.SafeName));
                             else
-                                c.WhereLinkExpr.Emit(new Core.EmitWriterTrim(emitWriter, true));
+                                c.WhereLinkExpr.Emit(new Core.EmitWriterTrimFull(emitWriter));
 
                             next = true;
                         }
@@ -629,7 +629,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 emitWriter.WriteNewLine(indent, "  FROM ");
                 emitWriter.WriteText(_TD.TargetFullname, " WITH(HOLDLOCK,UPDLOCK)");
                 emitWriter.WriteNewLine(indent, " WHERE ");
-                n_Where.Emit(new Core.EmitWriterTrim(emitWriter, false));
+                n_Where.Emit(new Core.EmitWriterTrimBeginEnd(emitWriter));
             }
             private                 void                                _emitCompare_source(EmitWriter emitWriter, int indent)
             {
@@ -637,13 +637,13 @@ namespace Jannesen.Language.TypedTSql.Node
                     emitWriter.WriteNewLine(indent    , "(");
                     emitWriter.WriteNewLine(indent + 4, "SELECT *, [$record]=1");
                     emitWriter.WriteNewLine(indent + 6, "FROM ");
-                    n_Source.Emit(new Core.EmitWriterTrim(emitWriter, false));
+                    n_Source.Emit(new Core.EmitWriterTrimBeginEnd(emitWriter));
                     emitWriter.WriteText(" [$dummy]");
                     emitWriter.WriteNewLine(indent, ")");
                 }
                 else {
                     emitWriter.WriteNewLine(indent);
-                    n_Source.Emit(new Core.EmitWriterTrim(emitWriter, false));
+                    n_Source.Emit(new Core.EmitWriterTrimBeginEnd(emitWriter));
                 }
             }
             private                 void                                _emitCompare_on(EmitWriter emitWriter)

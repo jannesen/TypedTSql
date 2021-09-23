@@ -255,106 +255,144 @@ namespace Jannesen.Language.TypedTSql.Core
         }
     }
 
-    public class EmitWriterTrim: EmitWriter
+    public class EmitWriterTrimBeginEnd: EmitWriter
     {
         public      override    int                     Linepos
         {
             get {
-                if (_full)
-                    return 1;
-
-                if (_prevToken != null) {
-                    _emitWriter.WriteToken(_prevToken);
-                    _prevToken = null;
-                }
-
+                _flushPrevToken();
                 return _emitWriter.Linepos;
             }
         }
 
         private                 EmitWriter              _emitWriter;
-        private                 bool                    _full;
         private                 Token                   _prevToken;
         private                 bool                    _init;
-        private                 bool                    _prevWhiteSpace;
 
-        public                                          EmitWriterTrim(EmitWriter emitWriter, bool full): base(emitWriter.EmitContext)
+        public                                          EmitWriterTrimBeginEnd(EmitWriter emitWriter): base(emitWriter.EmitContext)
         {
             _emitWriter = emitWriter;
-            _full       = full;
             _init       = true;
         }
 
         public      override    void                    WriteText(string text)
         {
-            if (_full)
-                text = text.Replace("\r", "").Replace('\n', ' ').Replace("  ", " ");
-
+            _flushPrevToken();
             _emitWriter.WriteText(text);
-            _prevToken      = null;
-            _prevWhiteSpace = false;
-            _init           = false;
+            _init = false;
         }
         public      override    void                    WriteSpace(int length)
         {
-            if (length > 0) {
-                if (!_full)
-                    _emitWriter.WriteSpace(length);
+            _flushPrevToken();
+            _emitWriter.WriteSpace(length);
+            _init = false;
+        }
+        public      override    void                    WriteNewLine(int indent)
+        {
+            _flushPrevToken();
+            _emitWriter.WriteNewLine(indent);
+            _init = false;
+        }
+        public      override    void                    WriteText(string text, Library.FilePosition beginning, Library.FilePosition ending)
+        {
+            _flushPrevToken();
+            _emitWriter.WriteText(text, beginning, ending);
+            _init = false;
+        }
+        public      override    void                    WriteToken(Token token)
+        {
+            _flushPrevToken();
 
-                _prevToken      = null;
-                _prevWhiteSpace = _full;
-                _init           = false;
+            if (!token.isWhitespaceOrComment) {
+                _emitWriter.WriteToken(token);
+                _init = false;
+            }
+            else {
+                if (!_init) {
+                    _prevToken = token;
+                }
+            }
+        }
+        private                 void                    _flushPrevToken()
+        {
+            if (_prevToken != null) {
+                _emitWriter.WriteToken(_prevToken);
+                _prevToken = null;
+            }
+        }
+    }
+
+    public class EmitWriterTrimFull: EmitWriter
+    {
+        public      override    int                     Linepos
+        {
+            get {
+                return 1;
+            }
+        }
+
+        private                 EmitWriter              _emitWriter;
+        private                 bool                    _init;
+        private                 bool                    _prevWhiteSpace;
+        private                 Token                   _prevToken;
+
+        public                                          EmitWriterTrimFull(EmitWriter emitWriter): base(emitWriter.EmitContext)
+        {
+            _emitWriter = emitWriter;
+            _init       = true;
+        }
+
+        public      override    void                    WriteText(string text)
+        {
+            _writeSpace();
+            _emitWriter.WriteText(text.Replace("\r", "").Replace('\n', ' ').Replace("  ", " "));
+            _prevToken = null;
+            _init = false;
+        }
+        public      override    void                    WriteSpace(int length)
+        {
+            if (length > 0 && !_init) {
+                _prevWhiteSpace = true;
+                _prevToken = null;
             }
         }
         public      override    void                    WriteNewLine(int indent)
         {
-            if (!_full)
-                _emitWriter.WriteNewLine(indent);
-
-            _prevToken      = null;
-            _prevWhiteSpace = _full;
-            _init           = false;
+            if (!_init) {
+                _prevWhiteSpace = true;
+                _prevToken = null;
+            }
         }
         public      override    void                    WriteText(string text, Library.FilePosition beginning, Library.FilePosition ending)
         {
+            _writeSpace();
             _emitWriter.WriteText(text, beginning, ending);
-            _prevToken      = null;
-            _prevWhiteSpace = false;
-            _init           = false;
+            _prevToken = null;
+            _init = false;
         }
         public      override    void                    WriteToken(Token token)
         {
-            if (_full) {
-                if (!token.isWhitespaceOrComment) {
-                    if (_prevWhiteSpace && _prevToken != null &&
-                        (token.ID      < TokenID._operators || token.ID      >= TokenID._beginkeywords) &&
-                        (_prevToken.ID < TokenID._operators || _prevToken.ID >= TokenID._beginkeywords))
-                        WriteText(" ");
-
-                    _emitWriter.WriteToken(token);
-                    _prevToken = token;
-                    _prevWhiteSpace = false;
+            if (!token.isWhitespaceOrComment) {
+                if (_prevWhiteSpace) {
+                    if (_prevToken == null ||
+                         ((token.ID     < TokenID._operators || token.ID      >= TokenID._beginkeywords) &&
+                         (_prevToken.ID < TokenID._operators || _prevToken.ID >= TokenID._beginkeywords))) {
+                        _emitWriter.WriteSpace(1);
+                    }
                 }
-                else
-                    _prevWhiteSpace = true;
+
+                _emitWriter.WriteToken(token);
+                _prevToken = token;
+                _prevWhiteSpace = false;
+                _init = false;
             }
-            else {
-                if (!_init) {
-                    if (_prevToken != null) {
-                        _emitWriter.WriteToken(_prevToken);
-                        _prevToken = null;
-                    }
-                }
-
-                if (!token.isWhitespaceOrComment) {
-                    _emitWriter.WriteToken(token);
-                    _init = false;
-                }
-                else {
-                    if (!_init) {
-                        _prevToken = token;
-                    }
-                }
+        }
+        private                 void                    _writeSpace()
+        {
+            if (_prevWhiteSpace) {
+                _emitWriter.WriteSpace(1);
+                _prevWhiteSpace = false;
+                _prevToken = null;
             }
         }
     }
