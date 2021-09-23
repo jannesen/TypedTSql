@@ -118,12 +118,24 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build.Library
         protected               void                                DeleteFile(string filename)
         {
             if (filename != null) {
-                try {
-                    File.Delete(FullFileName(filename));
-                }
-                catch(Exception err) {
-                    if (!(err is FileNotFoundException || err is DirectoryNotFoundException))
-                        throw new BuildException("Error deleting file '" + filename + "'.", err);
+                int retry = 0;
+
+                for (;;) { 
+                    try {
+                        File.Delete(FullFileName(filename));
+                        return;
+                    }
+                    catch(Exception err) {
+                        if (err is FileNotFoundException || err is DirectoryNotFoundException) {
+                            return;
+                        }
+
+                        if (++retry > 5) { 
+                            throw new BuildException("Error deleting file '" + filename + "'.", err);
+                        }
+                    }
+
+                    System.Threading.Thread.Sleep(200);
                 }
             }
         }
