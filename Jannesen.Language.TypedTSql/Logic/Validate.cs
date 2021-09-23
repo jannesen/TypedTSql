@@ -450,10 +450,10 @@ namespace Jannesen.Language.TypedTSql.Logic
             case DataModel.SystemType.DateTime:
             case DataModel.SystemType.DateTime2:
             case DataModel.SystemType.DateTimeOffset:
-                return ((  1 <= style && style <=  14) ||
+                return ((  0 <= style && style <=  14) ||
+                        ( 20 <= style && style <=  24) ||
                         (100 <= style && style <= 114) ||
-                        style ==  20 || style == 120 || style ==  21 || style == 121 ||
-                        style == 126 || style == 127 || style == 130 || style == 131);
+                        style == 120 || style == 121 || style == 126 || style == 127 || style == 130 || style == 131);
 
             default:
                 return false;
