@@ -102,8 +102,10 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
 
                     using (LTTS.SqlDatabase database = new LTTS.SqlDatabase(DatabaseName)) {
                         if (!_incbuild) {
-                            if (!string.IsNullOrEmpty(RebuildScript))
+                            if (!string.IsNullOrEmpty(RebuildScript)) {
+                                CreatePath(RebuildScript);
                                 database.Output(FullFileName(RebuildScript));
+                            }
 
                             if (InitRebuildScript)
                                 database.InitRebuild();
@@ -236,7 +238,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             }
         }
 
-        private                 bool                                 _processTSql(LTTS.SqlDatabase database, List<UsingFile> usingFiles)
+        private                 bool                                _processTSql(LTTS.SqlDatabase database, List<UsingFile> usingFiles)
         {
             int errcnt = 0;
 
