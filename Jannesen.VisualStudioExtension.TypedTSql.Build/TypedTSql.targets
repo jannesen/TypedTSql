@@ -72,7 +72,8 @@
 	<PropertyGroup>
 		<BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">$(MSBuildProjectDirectory)\obj</BaseIntermediateOutputPath>
 		<TypedTSqlBuildStatusFile>$(BaseIntermediateOutputPath)\typedtsqlbuild.status</TypedTSqlBuildStatusFile>
-		<JLRebuildSet></JLRebuildSet>
+        <TypedTSqlRebuildScriptAbsolute Condition="'$(TypedTSqlRebuildScript)'!='' ">$([MSBuild]::NormalizePath($(MSBuildProjectDirectory), $(TypedTSqlRebuildScript)))</TypedTSqlRebuildScriptAbsolute>
+        <JLRebuildSet></JLRebuildSet>
 	</PropertyGroup>
 
 	<UsingTask TaskName="TypedTSqlBuild"           AssemblyFile="$(MSBuildThisFileDirectory)Jannesen.VisualStudioExtension.TypedTSql.Build.dll" />
@@ -91,14 +92,14 @@
 	</Target>
 
 	<Target Name="TypedTSqlCleanup" >
-		<Delete Files="$(TypedTSqlBuildStatusFile)" TreatErrorsAsWarnings="true" />
-        <Delete Files="$(TypedTSqlRebuildScript)"  TreatErrorsAsWarnings="true"/>
+		<Delete Files="$(TypedTSqlBuildStatusFile)"        TreatErrorsAsWarnings="true" />
+        <Delete Files="$(TypedTSqlRebuildScriptAbsolute)"  TreatErrorsAsWarnings="true"/>
     </Target>
 
 	<Target Name="TypedTSqlBuild" Condition="'@(SqlFile)' != ''">
 		<ItemGroup>
-			<SqlDatabaseName				Include="$(SqlDatabaseName)"			/>
-			<TypedTSqlRebuildScript			Include="$(TypedTSqlRebuildScript)"   Condition="'$(TypedTSqlRebuild)' == 'true'" />
+			<SqlDatabaseName				Include="$(SqlDatabaseName)"				/>
+			<TypedTSqlRebuildScript			Include="$(TypedTSqlRebuildScriptAbsolute)"   Condition="'$(TypedTSqlRebuild)' == 'true'" />
 			<TypedTSqlExtensions			Include="$(TypedTSqlExtensions)"			/>
 			<TypedTSqlInitRebuild			Include="$(TypedTSqlInitRebuild)"			/>
 			<TypedTSqlDontEmitComment		Include="$(TypedTSqlDontEmitComment)"		/>
