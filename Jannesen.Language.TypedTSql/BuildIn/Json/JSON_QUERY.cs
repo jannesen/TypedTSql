@@ -18,6 +18,14 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             Validate.ValueString(arguments[0]);
             Validate.ConstString(arguments[1]);
 
+            if (arguments[0].SqlType is DataModel.SqlTypeJson jsonType && arguments[1].isConstant()) {
+                var jsonSchema = new JsonPathParser().Parse(jsonType.JsonSchema, Validate.ConstString(arguments[1]));
+
+                if (jsonSchema is DataModel.JsonSchemaArray value) {
+                    return new DataModel.SqlTypeJson(DataModel.SqlTypeNative.NVarChar_MAX, value.JsonSchema);
+                }
+            }
+
             return DataModel.SqlTypeNative.NVarChar_MAX;
         }
     }

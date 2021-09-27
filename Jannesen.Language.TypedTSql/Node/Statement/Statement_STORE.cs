@@ -188,7 +188,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 var targetTable = (DataModel.ITable)n_Target.Entity;
                 if (targetTable != null) {
-                    var contextRowSet    = new Transpile.ContextRowSets(context, true);
+                    var contextRowSet    = new Transpile.ContextRowSets(context);
                     contextRowSet.RowSets.Add(new DataModel.RowSet("", targetTable.Columns, source: n_Target.getDataSource()));
 
                     n_Where.TranspileNode(contextRowSet);

@@ -364,7 +364,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     return r;
 
                 for (context = context.Parent ; context != null ; context = context.Parent) {
-                    if (context.RowSetPublic && context.RowSets != null) {
+                    if (context.RowSets != null) {
                         r = context.RowSets.FindRowSet(name);
                         if (r != null)
                             return r;
@@ -381,7 +381,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     return c;
 
                 for (context = context.Parent ; context != null ; context = context.Parent) {
-                    if (context.RowSetPublic && context.RowSets != null) {
+                    if (context.RowSets != null) {
                         c = context.RowSets.FindColumn(name, out ambiguous);
                         if (c != null)
                             return c;

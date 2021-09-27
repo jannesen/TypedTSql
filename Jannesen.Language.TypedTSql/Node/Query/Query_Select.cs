@@ -54,7 +54,7 @@ namespace Jannesen.Language.TypedTSql.Node
             }
 
             if (selectContext == Query_SelectContext.StatementSelect || selectContext == Query_SelectContext.ExpressionSubquery) {
-                if (reader.CurrentToken.isToken(Core.TokenID.FOR)) {
+                if (Query_Select_FOR.CanParse(reader)) {
                     n_For = AddChild(new Query_Select_FOR(reader));
                 }
             }
@@ -85,7 +85,7 @@ namespace Jannesen.Language.TypedTSql.Node
         private                 DataModel.IColumnList       _transpileNode_Single(Transpile.Context context)
         {
             var select        = n_Selects[0];
-            var contextRowSet = new Transpile.ContextRowSets(context, true);
+            var contextRowSet = new Transpile.ContextRowSets(context);
 
             select.TranspileNode(contextRowSet);
 
@@ -132,7 +132,7 @@ namespace Jannesen.Language.TypedTSql.Node
         private                 DataModel.IColumnList       _transpileNode_Union(Transpile.Context context)
         {
             foreach (var select in n_Selects)
-                select.TranspileNode(new Transpile.ContextRowSets(context, true));
+                select.TranspileNode(new Transpile.ContextRowSets(context));
 
             foreach(var select in n_Selects) {
                 if (select.n_Columns == null)

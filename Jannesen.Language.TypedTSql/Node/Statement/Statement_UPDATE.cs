@@ -106,7 +106,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             TranspileOptions(contextStatement);
 
-            var contextRowSet    = new Transpile.ContextRowSets(contextStatement, true);
+            var contextRowSet    = new Transpile.ContextRowSets(contextStatement);
 
             TranspileFromWhereExpression(contextStatement, contextRowSet);
 

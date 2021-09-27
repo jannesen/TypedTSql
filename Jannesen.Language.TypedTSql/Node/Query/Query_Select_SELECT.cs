@@ -67,7 +67,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override        void                    TranspileNode(Transpile.Context context)
         {
-            var c = new Transpile.ContextRowSets(context, false);
+            var c = new Transpile.ContextRowSets(context);
             n_From?.TranspileNode(c);
             n_Top?.TranspileNode(c);
             context.RowSets.AddRange(c.RowSets);

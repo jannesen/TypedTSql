@@ -52,11 +52,15 @@ namespace Jannesen.Language.TypedTSql.Library
         public                      void                                AddEmitError(EmitError emitError)
         {
             EmitErrors.Add(emitError);
-            EmitOptions?.OnEmitError(emitError);
+            if (EmitOptions != null && EmitOptions.OnEmitError != null) {
+                EmitOptions.OnEmitError(emitError);
+            }
         }
         public                      void                                AddEmitMessage(string message)
         {
-            EmitOptions?.OnEmitMessage(message);
+            if (EmitOptions != null && EmitOptions.OnEmitMessage != null) {
+                EmitOptions?.OnEmitMessage(message);
+            }
         }
 
         private                     void                                _init(HashSet<string> changedSourceFiles)

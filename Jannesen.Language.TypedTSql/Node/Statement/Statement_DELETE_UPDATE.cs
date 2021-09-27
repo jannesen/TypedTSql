@@ -63,7 +63,7 @@ namespace Jannesen.Language.TypedTSql.Node
         protected               void                                TranspileFromWhereExpression(Transpile.ContextStatementQuery contextStatement, Transpile.ContextRowSets contextRowSet)
         {
             if (n_From != null) {
-                var contextFrom = new Transpile.ContextRowSets(contextStatement, false);
+                var contextFrom = new Transpile.ContextRowSets(contextStatement);
                 n_From?.TranspileNode(contextFrom);
                 n_Target.TranspileNode(contextFrom);
 

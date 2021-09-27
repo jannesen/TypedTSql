@@ -16,7 +16,6 @@ namespace Jannesen.Language.TypedTSql.Transpile
         public      abstract    Node.DeclarationEntity              DeclarationEntity       { get; }
         public      virtual     DataModel.RowSet                    Target                  { get { throw new InvalidOperationException("Target not available.");                                   } }
         public      virtual     DataModel.RowSetList                RowSets                 { get { return null;                                                                                    } }
-        public      virtual     bool                                RowSetPublic            { get { return false;                                                                                   } }
         public      virtual     DataModel.QueryOptions              QueryOptions            { get { return DataModel.QueryOptions.NONE;                                                             } }
         public      virtual     DataModel.ISqlType                  ScopeIndentityType      { get { return null;                                                                                    }
                                                                                               set { throw new InvalidOperationException("ScopeIndentityType not available.");                       } }

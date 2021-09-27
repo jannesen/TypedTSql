@@ -28,7 +28,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
             ParseToken(reader, Core.TokenID.RrBracket);
 
             //!!TODO Support WITH EDGE
-            n_With = AddChild(new TableSource_WithDeclaration(reader));
+            n_With = AddChild(new TableSource_WithDeclaration(reader, TableSourceWithType.Xml));
 
             ParseTableAlias(reader);
         }

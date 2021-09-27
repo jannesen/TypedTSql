@@ -4,13 +4,19 @@ using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.Node
 {
+    public enum TableSourceWithType
+    {
+        Xml  = 1,
+        Json = 2
+    }
+
     //  Data_SchemaDeclaration ::=
     //      WITH ( { Data_SchemaDeclarationColumn } [, ...n] )
     public class TableSource_WithDeclaration: Core.AstParseNode, IWithDeclaration
     {
         public      readonly    TableSource_WithDeclarationColumn[]         n_Columns;
 
-        public                                                              TableSource_WithDeclaration(Core.ParserReader reader)
+        public                                                              TableSource_WithDeclaration(Core.ParserReader reader, TableSourceWithType type)
         {
             ParseToken(reader, Core.TokenID.WITH);
             ParseToken(reader, Core.TokenID.LrBracket);
@@ -18,7 +24,7 @@ namespace Jannesen.Language.TypedTSql.Node
             var columns = new List<TableSource_WithDeclarationColumn>();
 
             do {
-                columns.Add(AddChild(new TableSource_WithDeclarationColumn(reader)));
+                columns.Add(AddChild(new TableSource_WithDeclarationColumn(reader, type)));
             }
             while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
 

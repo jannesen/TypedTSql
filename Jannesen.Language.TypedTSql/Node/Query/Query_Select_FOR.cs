@@ -58,6 +58,11 @@ namespace Jannesen.Language.TypedTSql.Node
             }
         }
 
+        public      static      bool        CanParse(Core.ParserReader reader)
+        {
+            return reader.CurrentToken.isToken(Core.TokenID.FOR) && reader.NextPeek().isToken("XML", "JSON");            
+        }
+
         public                              Query_Select_FOR(Core.ParserReader reader)
         {
             ParseToken(reader, Core.TokenID.FOR);

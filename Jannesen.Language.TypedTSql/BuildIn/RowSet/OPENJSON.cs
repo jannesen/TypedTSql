@@ -269,7 +269,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
             ParseToken(reader, Core.TokenID.RrBracket);
 
             if (reader.CurrentToken.isToken(Core.TokenID.WITH)) {
-                n_With = AddChild(new TableSource_WithDeclaration(reader));
+                n_With = AddChild(new TableSource_WithDeclaration(reader, TableSourceWithType.Json));
             }
             else
                 AddBeforeWhitespace(n_With = new WithScheme());
