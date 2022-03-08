@@ -3,34 +3,65 @@
                     xmlns:vsp="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
                     xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging">
 <!-- Button styles -->
-    <Style x:Key="ButtonStyle" TargetType="Button">
+    <Style x:Key="BarButtonStyle" TargetType="Button">
         <Setter Property="HorizontalAlignment" Value="center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Margin" Value="2,3,18,3" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Background" Value="{DynamicResource {x:Static vsp:EnvironmentColors.CommandBarGradientBrushKey }}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource {x:Static vsp:CommonControlsColors.ButtonHoverBrushKey }}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Resources>
             <Style TargetType="imaging:CrispImage">
-                <Setter Property="Width" Value="18" />
-                <Setter Property="Height" Value="18" />
+                <Setter Property="Width" Value="16" />
+                <Setter Property="Height" Value="16" />
             </Style>
         </Style.Resources>
     </Style>
-    <Style x:Key="ToggleButton" TargetType="ToggleButton">
+    <Style x:Key="BarToggleButton" TargetType="ToggleButton">
         <Setter Property="HorizontalAlignment" Value="center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Margin" Value="2,3,2,3" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Background" Value="{DynamicResource {x:Static vsp:EnvironmentColors.CommandBarGradientBrushKey }}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsp:CommonControlsColors.CheckBoxBorderBrushKey }}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource {x:Static vsp:CommonControlsColors.ButtonHoverBrushKey }}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Resources>
             <Style TargetType="imaging:CrispImage">
-                <Setter Property="Width" Value="18" />
-                <Setter Property="Height" Value="18" />
+                <Setter Property="Width" Value="16" />
+                <Setter Property="Height" Value="16" />
             </Style>
         </Style.Resources>
     </Style>
 
-<!-- Treeview styles -->
+    <!-- Treeview styles -->
     <Style x:Key="TreeViewItemFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -142,14 +173,14 @@
 
 <!-- ContextMenu styles -->
     <Style TargetType="{x:Type ContextMenu}">
-        <Setter Property="Background" Value="{DynamicResource {x:Static vsp:EnvironmentColors.CommandBarMenuBackgroundGradientBeginBrushKey}}" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static vsp:EnvironmentColors.CommandBarMenuBackgroundGradientBrushKey}}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static vsp:EnvironmentColors.CommandBarMenuGlyphBrushKey}}" />
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
                     <Border Name="Border"
-                            Background="{DynamicResource {x:Static vsp:EnvironmentColors.CommandBarMenuBackgroundGradientBeginBrushKey}}"
+                            Background="{DynamicResource {x:Static vsp:EnvironmentColors.CommandBarMenuBackgroundGradientBrushKey}}"
                             BorderBrush="{DynamicResource {x:Static vsp:EnvironmentColors.CommandBarMenuBorderBrushKey}}"
                             BorderThickness="1" >
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
