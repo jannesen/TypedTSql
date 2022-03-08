@@ -45,7 +45,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             }
         }
 
-        private                 int                         _constLength(DataModel.SqlTypeNative nt_expression, DataModel.SqlTypeNative nt_replace, IExprNode[] arguments)
+        private     static      int                         _constLength(DataModel.SqlTypeNative nt_expression, DataModel.SqlTypeNative nt_replace, IExprNode[] arguments)
         {
             if (nt_expression.MaxLength < 0)
                 return -1;

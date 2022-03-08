@@ -32,7 +32,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
 
             var newText = FileItem.Renamer.NewName;
 
-            pane.OutputString(FileItem.Filename + "(" + Token.Beginning.Lineno + "," + Token.Beginning.Linepos + "): replace '" + selectedText + "' with '" + newText + "'.\n");
+            pane.OutputStringThreadSafe(FileItem.Filename + "(" + Token.Beginning.Lineno + "," + Token.Beginning.Linepos + "): replace '" + selectedText + "' with '" + newText + "'.\n");
 
             if (textView.ReplaceTextOnLine(Token.Beginning.Lineno-1, Token.Beginning.Linepos-1, selectedText.Length, newText, newText.Length) != 0)
                 throw new Exception("Replace failed.");

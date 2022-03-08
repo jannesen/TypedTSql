@@ -37,7 +37,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 
                         rtn.Append("exec ");
                         rtn.Append(LTTS_Library.SqlStatic.QuoteName(EntityName.Name));
-                        rtn.Append(" ");
+                        rtn.Append(' ');
 
                         bool    next = false;
                         string  prefix = ",\n" + new string(' ', rtn.Length);

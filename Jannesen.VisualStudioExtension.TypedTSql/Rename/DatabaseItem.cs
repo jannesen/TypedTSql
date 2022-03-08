@@ -45,7 +45,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         {
             try {
                 string cmd = _cmd();
-                pane.OutputString(cmd + "\n");
+                pane.OutputStringThreadSafe(cmd + "\n");
                 Renamer.LanguageServiceProject.ExecDatabase(_setProperty());
                 Renamer.LanguageServiceProject.ExecDatabase(cmd);
             }

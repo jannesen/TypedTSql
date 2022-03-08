@@ -120,8 +120,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         }
         public      static      IVsProject                              GetContainingProject(string projecttypeguid, string fileName)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!String.IsNullOrEmpty(fileName)) {
-                ThreadHelper.ThrowIfNotOnUIThread();
                 foreach(IVsProject project in GetLoadedProjects(projecttypeguid)) {
                     VSDOCUMENTPRIORITY[]    prio = new VSDOCUMENTPRIORITY[1];
 

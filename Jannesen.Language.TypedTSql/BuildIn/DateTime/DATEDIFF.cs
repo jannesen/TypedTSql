@@ -52,7 +52,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             }
         }
 
-        private                     bool                        _datediffPossible(DataModel.ISqlType sqlType1, DataModel.ISqlType sqlType2)
+        private     static      bool                        _datediffPossible(DataModel.ISqlType sqlType1, DataModel.ISqlType sqlType2)
         {
             if (sqlType1 is DataModel.SqlTypeAny || sqlType2 is DataModel.SqlTypeAny)
                 return true;

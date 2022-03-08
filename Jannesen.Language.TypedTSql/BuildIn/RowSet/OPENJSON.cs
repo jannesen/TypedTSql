@@ -62,14 +62,14 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
                     }
                 }
 
-                private     Core.EmitWriter         _emitWriter;
-                private     OPENJSON                _openjson;
-                private     WithScheme              _withschema;
-                private     Core.AstNodeList        _openjson_children;
-                private     int                     _openjson_pos;
-                private     List<Column>            _columns;
+                private                 Core.EmitWriter         _emitWriter;
+                private     readonly    OPENJSON                _openjson;
+                private     readonly    WithScheme              _withschema;
+                private     readonly    Core.AstNodeList        _openjson_children;
+                private                 int                     _openjson_pos;
+                private     readonly    List<Column>            _columns;
 
-                public                              Emitor(OPENJSON openjson, WithScheme withschema, DataModel.JsonSchema jsonSchema, DataModel.IColumnList columnList)
+                public                                          Emitor(OPENJSON openjson, WithScheme withschema, DataModel.JsonSchema jsonSchema, DataModel.IColumnList columnList)
                 {
                     _openjson          = openjson;
                     _withschema        = withschema;
@@ -90,7 +90,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
                         _columns.Add(new Column(){ Name="$value", Type=valueSchema.SqlType, Path="$" });
                     }
                 }
-                public      void                    Emit(Core.EmitWriter emitWriter)
+                public                  void                    Emit(Core.EmitWriter emitWriter)
                 {
                     _emitWriter = emitWriter;
 
@@ -110,7 +110,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
                         _openjson_children[_openjson_pos++].Emit(_emitWriter);
                 }
 
-                private     bool                    _needsCast()
+                private                 bool                    _needsCast()
                 {
                     foreach(var c in _columns) {
                         if (c.needsCast)
@@ -119,7 +119,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
 
                     return false;
                 }
-                private     void                    _emitSELECT(int indent)
+                private                 void                    _emitSELECT(int indent)
                 {
                     _emitWriter.WriteText("(SELECT ");
 
@@ -145,7 +145,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
                     if (_openjson.n_Alias == null)
                         _emitWriter.WriteText(" _@_");
                 }
-                private     void                    _emitOPENJSON_WITH(int indent)
+                private                 void                    _emitOPENJSON_WITH(int indent)
                 {
                     while (!Object.ReferenceEquals(_openjson_children[_openjson_pos], _withschema))
                         _openjson_children[_openjson_pos++].Emit(_emitWriter);

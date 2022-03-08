@@ -10,6 +10,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         private     readonly        ITextBuffer                         _textBuffer;
         private                     Project                             _languageService;
         private                     Project.SourceFile                  _sourceFile;
+        private     readonly        object                              _lockObject;
 
         public                      ITextBuffer                         TextBuffer
         {
@@ -26,7 +27,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         public                      Project                             LanguageService
         {
             get {
-                lock(this) {
+                lock(_lockObject) {
                     _updateLink();
 
                     if (_languageService == null) {
@@ -42,6 +43,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         {
             _serviceProvider = serviceProvider;
             _textBuffer      = textBuffer;
+            _lockObject      = new object();
         }
 
         public      static          TextBufferLanguageServiceProject    GetLanguageServiceProject(IServiceProvider serviceProvider, ITextBuffer textBuffer)
@@ -51,7 +53,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
         internal                    FileResult                          GetFileResult()
         {
-            lock(this) {
+            lock(_lockObject) {
                 _updateLink();
                 return _sourceFile != null && _sourceFile.TextBuffer == _textBuffer ? _sourceFile.Result : null;
             }

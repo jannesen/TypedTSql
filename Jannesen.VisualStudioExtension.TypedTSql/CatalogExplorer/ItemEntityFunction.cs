@@ -29,7 +29,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                         StringBuilder   rtn = new StringBuilder();
 
                         rtn.Append(LTTS_Library.SqlStatic.QuoteName(entity.EntityName.Name));
-                        rtn.Append("(");
+                        rtn.Append('(');
 
                         bool    next = false;
 
@@ -45,7 +45,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                             }
                         }
 
-                        rtn.Append(")");
+                        rtn.Append(')');
 
                         VSPackage.InsertTextInActiveDocument(rtn.ToString(), activeDocument:true);
                     });

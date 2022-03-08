@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
 using LTTS = Jannesen.Language.TypedTSql;
@@ -137,6 +138,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
 
         public                  void                                Run()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (_showDialog()) {
                 if (_previewChanges) {
                     ServiceProvider.GetService<IVsPreviewChangesService>(typeof(SVsPreviewChangesService))
@@ -164,7 +167,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
 
                 pane.Clear();
                 pane.Activate();
-                pane.OutputString(_title() + "\n");
+                pane.OutputStringThreadSafe(_title() + "\n");
 
                 foreach (var f in _rootItems) {
                     f.ApplyChanges(pane);
@@ -361,6 +364,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
         }
         private                 IVsOutputWindowPane                 _outputPane()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var outWin = ServiceProvider.GetService<IVsOutputWindow>(typeof(IVsOutputWindow));
             var guid   = new Guid("B7BB9216-8534-4B91-8804-366B0DDCA09C");
 

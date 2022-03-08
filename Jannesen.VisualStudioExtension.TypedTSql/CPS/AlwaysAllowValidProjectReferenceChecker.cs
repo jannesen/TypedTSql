@@ -10,20 +10,19 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CPS.Reference
     [Export(typeof(IValidProjectReferenceChecker))]
     [AppliesTo(TypedTSqlUnconfiguredProject.UniqueCapability)]
     [Order(/*Order.Default*/10)]
-    internal class AlwaysAllowValidProjectReferenceChecker : IValidProjectReferenceChecker
+    internal class AlwaysAllowValidProjectReferenceChecker: IValidProjectReferenceChecker
     {
         [ImportingConstructor]
-        public AlwaysAllowValidProjectReferenceChecker()
+        public                                          AlwaysAllowValidProjectReferenceChecker()
         {
         }
 
-        public Task<SupportedCheckResult> CanAddProjectReferenceAsync(object referencedProject)
+        public      Task<SupportedCheckResult>           CanAddProjectReferenceAsync(object referencedProject)
         {
             Requires.NotNull(referencedProject, nameof(referencedProject));
             return Task.FromResult(SupportedCheckResult.Supported);
         }
-
-        public Task<CanAddProjectReferencesResult> CanAddProjectReferencesAsync(IImmutableSet<object> referencedProjects)
+        public      Task<CanAddProjectReferencesResult>  CanAddProjectReferencesAsync(IImmutableSet<object> referencedProjects)
         {
             Requires.NotNullEmptyOrNullElements(referencedProjects, nameof(referencedProjects));
 
@@ -35,8 +34,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CPS.Reference
 
             return Task.FromResult(new CanAddProjectReferencesResult(results, null));
         }
-
-        public Task<SupportedCheckResult> CanBeReferencedAsync(object referencingProject)
+        public      Task<SupportedCheckResult>           CanBeReferencedAsync(object referencingProject)
         {
             Requires.NotNull(referencingProject, nameof(referencingProject));
             return Task.FromResult(SupportedCheckResult.Supported);

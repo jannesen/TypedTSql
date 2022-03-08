@@ -96,7 +96,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             }
         }
 
-        class HierarchyListener : IVsHierarchyEvents, IDisposable
+        class HierarchyListener: IVsHierarchyEvents, IDisposable
         {
             private             Project             _project;
             private             IVsHierarchy        _hierarchy;
@@ -199,8 +199,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             System.Diagnostics.Debug.WriteLine(Name + ": Create LanguageService");
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_hierarchyListener")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_errorList")]
         public                  void                                Dispose()
         {
             System.Diagnostics.Debug.WriteLine(Name + ": Dispose");
@@ -506,8 +504,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             WorkFlags   setWork = WorkFlags.None;
 
             try {
-                string              extensions;
-                string              databaseName;
+                string              extensions   = null;
+                string              databaseName = null;
                 List<string>        projectFiles = new List<string>();
 
                 // Get fullpath of typed t-sql project items
@@ -519,21 +517,20 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                     if (context == null)
                         throw new Exception("Can't get UnconfiguredProject.");
 
-                    using (var access = await unconfiguredProject.ProjectService.Services.ProjectLockService.ReadLockAsync()) {
-                        var project = await access.GetProjectAsync(await unconfiguredProject.GetSuggestedConfiguredProjectAsync());
+                    await unconfiguredProject.ProjectService.Services.ProjectLockService.ReadLockAsync(async (access) => {
+                            var project = await access.GetProjectAsync(await unconfiguredProject.GetSuggestedConfiguredProjectAsync());
 
-                        extensions      = project.GetPropertyValue("TypedTSqlExtensions");
-                        databaseName    = project.GetPropertyValue("SqlDatabaseName");
+                            extensions      = project.GetPropertyValue("TypedTSqlExtensions");
+                            databaseName    = project.GetPropertyValue("SqlDatabaseName");
 
-                        foreach (var item in project.GetItems("SqlFile")) {
-                            string fullpath = item.GetMetadataValue("FullPath");
-                            if (LTTS.SourceFile.isTypedTSqlFile(fullpath)) {
-                                projectFiles.Add(fullpath);
+                            foreach (var item in project.GetItems("SqlFile")) {
+                                string fullpath = item.GetMetadataValue("FullPath");
+                                if (LTTS.SourceFile.isTypedTSqlFile(fullpath)) {
+                                    projectFiles.Add(fullpath);
+                                }
                             }
-                        }
-                    }
+                        });
                 }
-
 
                 lock(_lockObject) {
                     if (_databaseName != databaseName) {
