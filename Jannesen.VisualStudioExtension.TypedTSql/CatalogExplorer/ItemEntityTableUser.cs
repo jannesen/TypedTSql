@@ -31,7 +31,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         private     async       void                    _onRename(object s,RoutedEventArgs e)
         {
             try {
-                await ItemProject.WhenReady((project) => {
+                await ItemProject.WhenReadyAndLocked((project) => {
                                                     var entityName  = ItemEntity.EntityName;
                                                     var entityTable = project.GlobalCatalog.GetObject(entityName);
                                                     if (!(entityTable is LTTS_DataModel.EntityObjectTable))

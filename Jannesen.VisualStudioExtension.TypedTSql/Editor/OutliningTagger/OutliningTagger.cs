@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Utilities;
-using System.ComponentModel.Composition;
 
-namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
+namespace Jannesen.VisualStudioExtension.TypedTSql.Editor.OutliningTagger
 {
     internal class OutliningTagger: ExtensionBase, ITagger<IOutliningRegionTag>
     {
@@ -35,20 +32,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
             }
 
             yield break;
-        }
-    }
-
-    [Export(typeof(ITaggerProvider)), ContentType(FileAndContentTypeDefinitions.TypedTSqlContentTypeName), TagType(typeof(IOutliningRegionTag))]
-    internal class OutliningTaggerProvider : ITaggerProvider
-    {
-#pragma warning disable 0649
-        [Import]
-        private                     SVsServiceProvider                          ServiceProvider;
-#pragma warning restore 0649
-
-        public                      ITagger<T>                                  CreateTagger<T>(ITextBuffer buffer) where T : ITag
-        {
-            return buffer.Properties.GetOrCreateSingletonProperty(typeof(OutliningTagger), () => new OutliningTagger(ServiceProvider, buffer) as ITagger<T>);
         }
     }
 }

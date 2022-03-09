@@ -6,20 +6,17 @@ using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
 using Microsoft.VisualStudio.Shell;
 
-namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
+namespace Jannesen.VisualStudioExtension.TypedTSql.Editor.TextViewOptions
 {
     [Export(typeof(IVsTextViewCreationListener))]
     [ContentType(FileAndContentTypeDefinitions.TypedTSqlContentTypeName)]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     class TextViewCreationListener : IVsTextViewCreationListener
     {
-#pragma warning disable 0649
         [Import]
-        private             IVsEditorAdaptersFactoryService         adaptersFactory;
-
+        private             IVsEditorAdaptersFactoryService         adaptersFactory = null;
         [Import]
-        private             SVsServiceProvider                      ServiceProvider;
-#pragma warning restore 0649
+        private             SVsServiceProvider                      ServiceProvider = null;
 
         public              void                                    VsTextViewCreated(IVsTextView textViewAdapter)
         {

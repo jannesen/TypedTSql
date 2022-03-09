@@ -54,7 +54,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         private     async       void                            _onFindAllReferences(object s,RoutedEventArgs e)
         {
             try {
-                await ItemProject.WhenReady((project) => {
+                await ItemProject.WhenReadyAndLocked((project) => {
                         LanguageService.Library.SimpleLibrary.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(_getColumn(project)));
                     });
             }
@@ -65,7 +65,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         private     async       void                            _onRenamer(object s,RoutedEventArgs e)
         {
             try {
-                await ItemProject.WhenReady((project) => {
+                await ItemProject.WhenReadyAndLocked((project) => {
                                                 (new Rename.Renamer(ServiceProvider,
                                                                     project,
                                                                     _getColumn(project))).Run();

@@ -23,7 +23,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         protected   async       void                    _onInsertFunctionCall(object s,RoutedEventArgs e)
         {
             try {
-                await ItemProject.WhenReady((project) => {
+                await ItemProject.WhenReadyAndLocked((project) => {
                         var entity = project.GlobalCatalog.GetEntity(EntityType, EntityName, true);
 
                         StringBuilder   rtn = new StringBuilder();

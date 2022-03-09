@@ -14,10 +14,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Commands
     [AppliesTo(CPS.TypedTSqlUnconfiguredProject.UniqueCapability)]
     internal class CommandHandler97: ICommandGroupHandler
     {
-#pragma warning disable 0649
         [Import]
-        private                     SVsServiceProvider                          ServiceProvider;
-#pragma warning restore 0649
+        private                 SVsServiceProvider      ServiceProvider = null;
 
         public                  CommandStatusResult     GetCommandStatus(IImmutableSet<IProjectTree> nodes, long commandId, bool focused, string commandText, CommandStatus progressiveStatus)
         {

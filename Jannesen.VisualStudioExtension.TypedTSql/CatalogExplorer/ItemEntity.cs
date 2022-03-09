@@ -199,7 +199,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                 _objectDataLoaded = true;
 
                 try {
-                    await ItemProject.WhenReady((project) => {
+                    await ItemProject.WhenReadyAndLocked((project) => {
                             var entity = project.GlobalCatalog.GetEntity(EntityType, EntityName, true);
                             var data = new EntityData(entity);
 
@@ -238,7 +238,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         public      async       void                        InsertParameters(string separator = ", ")
         {
             try {
-                await ItemProject.WhenReady((project) => {
+                await ItemProject.WhenReadyAndLocked((project) => {
                         var entity = project.GlobalCatalog.GetEntity(EntityType, EntityName, true);
 
                         if (entity is LTTS_DataModel.EntityObjectCode entityCode) {
@@ -265,7 +265,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         public      async       void                        InsertColumns(string separator = ", ")
         {
             try {
-                await ItemProject.WhenReady((project) => {
+                await ItemProject.WhenReadyAndLocked((project) => {
                         var entity = project.GlobalCatalog.GetEntity(EntityType, EntityName, true);
                         var columns = _getColumns(entity);
                         if (columns != null) {
@@ -378,7 +378,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         protected   async       void                        _onGotoDeclaration(object s,RoutedEventArgs e)
         {
             try {
-                await ItemProject.WhenReady((project) => {
+                await ItemProject.WhenReadyAndLocked((project) => {
                         var entity = project.GlobalCatalog.GetEntity(EntityType, EntityName);
                         if (entity.Declaration != null)
                             VSPackage.NavigateTo(ServiceProvider, null, project.GetDocumentSpan(entity.Declaration));
@@ -391,7 +391,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         protected   async       void                        _onFindAllReferences(object s,RoutedEventArgs e)
         {
             try {
-                await ItemProject.WhenReady((project) => {
+                await ItemProject.WhenReadyAndLocked((project) => {
                         LanguageService.Library.SimpleLibrary.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(project.GlobalCatalog.GetEntity(EntityType, EntityName)));
                     });
             }

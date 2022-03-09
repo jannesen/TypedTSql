@@ -121,6 +121,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classification\ClassificationFactory.cs" />
+    <Compile Include="Classification\ClassificationFormats.cs" />
+    <Compile Include="Classification\ClassificationTypes.cs" />
+    <Compile Include="Classification\ColorManager.cs" />
     <Compile Include="CPS\AlwaysAllowValidProjectReferenceChecker.cs" />
     <Compile Include="CPS\ProjectProperties.cs" />
     <Compile Include="CPS\TypedTSqlConfiguredProject.cs" />
@@ -161,6 +165,11 @@
     <Compile Include="Commands\CommandHandler97.cs" />
     <Compile Include="Commands\CustomMenuCommand.cs" />
     <Content Include="Commands\CustomMenuIcons.png" />
+    <Compile Include="Editor\Classifier\ClassifierProvider.cs" />
+    <Compile Include="Editor\ErrorTagger\ErrorTaggerProvider.cs" />
+    <Compile Include="Editor\OutliningTagger\OutliningTaggerProvider.cs" />
+    <Compile Include="Editor\QuickInfo\QuickInfoControllerProvider.cs" />
+    <Compile Include="Editor\QuickInfo\QuickInfoSourceProvider.cs" />
     <Compile Include="Rename\DatabaseItem.cs" />
     <Compile Include="Rename\FileItem.cs" />
     <Compile Include="Rename\FileLocationItem.cs" />
@@ -173,15 +182,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Compile Include="Editor\Classifier.cs" />
-    <Compile Include="Editor\ClassifierDefinitions.cs" />
+    <Compile Include="Editor\Classifier\Classifier.cs" />
     <Compile Include="Editor\ContextMenu.cs" />
-    <Compile Include="Editor\ErrorTagger.cs" />
+    <Compile Include="Editor\ErrorTagger\ErrorTagger.cs" />
     <Compile Include="Editor\ExtensionBase.cs" />
-    <Compile Include="Editor\OutliningTagger.cs" />
-    <Compile Include="Editor\QuickInfoController.cs" />
-    <Compile Include="Editor\QuickInfoSource.cs" />
-    <Compile Include="Editor\TextViewCreationListener.cs" />
+    <Compile Include="Editor\OutliningTagger\OutliningTagger.cs" />
+    <Compile Include="Editor\QuickInfo\QuickInfoController.cs" />
+    <Compile Include="Editor\QuickInfo\QuickInfoSource.cs" />
+    <Compile Include="Editor\TextViewOptions\TextViewCreationListener.cs" />
     <Compile Include="LanguageService\ErrorList.cs" />
     <Compile Include="LanguageService\FileResult.cs" />
     <Compile Include="LanguageService\OutliningRegion.cs" />

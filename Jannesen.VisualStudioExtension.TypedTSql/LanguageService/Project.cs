@@ -77,13 +77,13 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 if (TextSnapshot != null) {
                     Result = new FileResult(TextSnapshot, TypedTSqlSourceFile);
 
-                    if (TextBuffer.Properties.TryGetProperty<Editor.Classifier>(typeof(Editor.Classifier), out var classifier))
+                    if (TextBuffer.Properties.TryGetProperty<Editor.Classifier.Classifier>(typeof(Editor.Classifier.Classifier), out var classifier))
                         classifier.OnTranspileDone(TextSnapshot);
 
-                    if (TextBuffer.Properties.TryGetProperty<Editor.ErrorTagger>(typeof(Editor.ErrorTagger), out var errorTagger))
+                    if (TextBuffer.Properties.TryGetProperty<Editor.ErrorTagger.ErrorTagger>(typeof(Editor.ErrorTagger.ErrorTagger), out var errorTagger))
                         errorTagger.OnTranspileDone(TextSnapshot);
 
-                    if (TextBuffer.Properties.TryGetProperty<Editor.OutliningTagger>(typeof(Editor.OutliningTagger), out var outliningTagger))
+                    if (TextBuffer.Properties.TryGetProperty<Editor.OutliningTagger.OutliningTagger>(typeof(Editor.OutliningTagger.OutliningTagger), out var outliningTagger))
                         outliningTagger.OnTranspileDone(TextSnapshot);
                 }
                 else

@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Utilities;
 using Microsoft.VisualStudio.Text.Adornments;
-using System.ComponentModel.Composition;
 using LTTS = Jannesen.Language.TypedTSql;
 
-namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
+namespace Jannesen.VisualStudioExtension.TypedTSql.Editor.ErrorTagger
 {
     internal class ErrorTagger: ExtensionBase, ITagger<ErrorTag>
     {
@@ -49,20 +45,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor
             case LTTS.TypedTSqlMessageClassification.TranspileWarning:  return PredefinedErrorTypeNames.Warning;
             default:                                                    return PredefinedErrorTypeNames.OtherError;
             }
-        }
-    }
-
-    [Export(typeof(IViewTaggerProvider)), ContentType(FileAndContentTypeDefinitions.TypedTSqlContentTypeName), TagType(typeof(ErrorTag))]
-    internal class ErrorTaggerProvider: IViewTaggerProvider
-    {
-#pragma warning disable 0649
-        [Import]
-        private                     SVsServiceProvider                          ServiceProvider;
-#pragma warning restore 0649
-
-        public                      ITagger<T>                                  CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
-        {
-            return buffer.Properties.GetOrCreateSingletonProperty(typeof(ErrorTagger), () => new ErrorTagger(ServiceProvider, buffer) as ITagger<T>);
         }
     }
 }

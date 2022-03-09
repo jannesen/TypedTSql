@@ -27,7 +27,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
             InitTreeViewItem(Microsoft.VisualStudio.Imaging.KnownMonikers.Database);
         }
 
-        internal                Task                            WhenReady(LanguageService.ReadyCallback callback)
+        internal                Task                            WhenReadyAndLocked(LanguageService.ReadyCallback callback)
         {
             if (!(ServiceProvider.GetService(typeof(LanguageService.Service)) is LanguageService.Service service)) {
                 throw new InvalidOperationException("LanguageService.Service not registrated.");
@@ -40,7 +40,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         {
             try {
                 await VSShell.ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                await WhenReady((project) => {
+                await WhenReadyAndLocked((project) => {
                         var     catalog      = project.GlobalCatalog;
                         var     definedItems = new HashSet<object>();
 
