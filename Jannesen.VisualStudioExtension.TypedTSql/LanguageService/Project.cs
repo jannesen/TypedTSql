@@ -262,11 +262,11 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             else
                 --_globalChangeCount;
         }
-        public  async           Task                                WhenReady(ReadyCallback callback)
+        public  async           Task                                WhenReadyAndLocked(ReadyCallback callback, CancellationToken cancellationToken)
         {
             DateTime end = DateTime.UtcNow.AddMilliseconds(5000);
 
-            for (;;) {
+            while (!cancellationToken.IsCancellationRequested) {
                 Task task;
 
                 lock(_lockObject) {
@@ -282,14 +282,16 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                         if (!(_workFlags == WorkFlags.None && _transpiler != null && _globalCatalog != null))
                             throw new TimeoutException("Language service not available.");
 
-                        callback?.Invoke(this);
+                        if (!cancellationToken.IsCancellationRequested) { 
+                            callback?.Invoke(this);
+                        }
+
                         return;
                     }
 
                     _cancelWait.Cancel();
                     task = _workTask;
                 }
-
 
                 if (task != null && !task.IsCompleted)
                     await task;

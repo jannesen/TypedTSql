@@ -18,7 +18,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build.Library
                 rtn = Run();
             }
             catch(Exception err) {
-                Exception   firstException = err;;
+                Exception   firstException = err;
 
                 string msg = this.GetType().Name + " failed.";
 

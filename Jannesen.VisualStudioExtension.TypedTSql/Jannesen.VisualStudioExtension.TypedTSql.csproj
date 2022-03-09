@@ -167,9 +167,14 @@
     <Content Include="Commands\CustomMenuIcons.png" />
     <Compile Include="Editor\Classifier\ClassifierProvider.cs" />
     <Compile Include="Editor\ErrorTagger\ErrorTaggerProvider.cs" />
+    <Compile Include="Editor\FindReferences\FindReferencesCommandHandler.cs" />
+    <Compile Include="Editor\GotoDefinition\GotoDefinitionCommandHandler.cs" />
     <Compile Include="Editor\OutliningTagger\OutliningTaggerProvider.cs" />
+    <Compile Include="Editor\QuickFixes\ShowQuickFixesCommandArgsCommandHandler.cs" />
+    <Compile Include="Editor\QuickFixes\ShowQuickFixesForPositionCommandArgsCommandHandler.cs" />
     <Compile Include="Editor\QuickInfo\QuickInfoControllerProvider.cs" />
     <Compile Include="Editor\QuickInfo\QuickInfoSourceProvider.cs" />
+    <Compile Include="Editor\Rename\RenameCommandHandler.cs" />
     <Compile Include="Rename\DatabaseItem.cs" />
     <Compile Include="Rename\FileItem.cs" />
     <Compile Include="Rename\FileLocationItem.cs" />
@@ -183,7 +188,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Compile Include="Editor\Classifier\Classifier.cs" />
-    <Compile Include="Editor\ContextMenu.cs" />
     <Compile Include="Editor\ErrorTagger\ErrorTagger.cs" />
     <Compile Include="Editor\ExtensionBase.cs" />
     <Compile Include="Editor\OutliningTagger\OutliningTagger.cs" />

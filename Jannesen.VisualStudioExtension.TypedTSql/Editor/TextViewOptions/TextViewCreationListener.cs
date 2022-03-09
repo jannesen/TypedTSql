@@ -15,14 +15,10 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor.TextViewOptions
     {
         [Import]
         private             IVsEditorAdaptersFactoryService         adaptersFactory = null;
-        [Import]
-        private             SVsServiceProvider                      ServiceProvider = null;
 
         public              void                                    VsTextViewCreated(IVsTextView textViewAdapter)
         {
             IWpfTextView textView = adaptersFactory.GetWpfTextView(textViewAdapter);
-
-            new ContextMenu(ServiceProvider, textView).AddCommandFilter(textViewAdapter);
 
             textView.Options.SetOptionValue<int>(DefaultOptions.IndentSizeOptionId, 4);
             textView.Options.SetOptionValue<int>(DefaultOptions.TabSizeOptionId, 4);

@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using VSShell              = Microsoft.VisualStudio.Shell;
 using VSInterop            = Microsoft.VisualStudio.Shell.Interop;
-using LTTS = Jannesen.Language.TypedTSql;
-using Jannesen.VisualStudioExtension.TypedTSql.Library;
 
 namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
 {
@@ -33,7 +28,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                 throw new InvalidOperationException("LanguageService.Service not registrated.");
             }
 
-            return service.GetLanguageService(VSProject).WhenReady(callback);
+            return service.GetLanguageService(VSProject).WhenReadyAndLocked(callback, CancellationToken.None);
         }
 
         public      async       Task                            Refresh()
