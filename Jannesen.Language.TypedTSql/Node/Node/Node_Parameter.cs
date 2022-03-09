@@ -1,5 +1,6 @@
 ﻿using System;
 using Jannesen.Language.TypedTSql.Core;
+using Jannesen.Language.TypedTSql.DataModel;
 using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -87,7 +88,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                      n_Name,
                                                      n_Flags,
                                                      n_Default?.getConstValue(n_Type.SqlType));
-                n_Name.SetSymbol(Parameter);
+                n_Name.SetSymbolUsage(Parameter, DataModel.SymbolUsageFlags.Declaration);
 
                 Validate.ConstByType(n_Type.SqlType, n_Default);
             }

@@ -23,8 +23,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public                  SymbolType              Type                    { get { return SymbolType.Cursor;    } }
         public                  string                  Name                    { get; private set; }
+        public                  string                  FullName             { get { return Name;                 } }
         public                  object                  Declaration             { get; private set; }
-        public                  ISymbol                 Parent                  { get { return null;                 } }
+        public                  ISymbol                 ParentSymbol            { get { return null;                 } }
         public                  ISymbol                 SymbolNameReference     { get { return null;                 } }
         public                  CursorFlags             CursorFlags             { get; private set; }
         public                  CursorColumn[]          Columns                 { get; private set; }

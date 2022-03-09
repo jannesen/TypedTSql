@@ -22,10 +22,11 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public  abstract        SymbolType              Type                { get; }
         public                  string                  Name                { get; protected set; }
+        public                  string                  FullName         { get { return Name; } }
         public  virtual         string                  SqlName             { get { return null; } }
         public                  ISqlType                SqlType             { get; protected set; }
         public  abstract        object                  Declaration         { get; }
-        public                  DataModel.ISymbol       Parent              { get { return null; } }
+        public                  DataModel.ISymbol       ParentSymbol        { get { return null; } }
         public                  DataModel.ISymbol       SymbolNameReference { get { return null; } }
         public  abstract        VariableFlags           Flags               { get; }
 

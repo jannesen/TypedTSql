@@ -31,7 +31,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 context.AddError(n_Name, "Temp table already defined.");
                 return;
             }
-            n_Name.SetSymbol(tempTable);
+            n_Name.SetSymbolUsage(tempTable, DataModel.SymbolUsageFlags.Declaration);
         }
     }
 }

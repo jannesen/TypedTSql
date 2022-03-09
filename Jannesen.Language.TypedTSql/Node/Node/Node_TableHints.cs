@@ -78,7 +78,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 if (entity is DataModel.ITable entityTable) {
                     foreach(var index in n_Indexes) {
                         if (entityTable.Indexes != null && entityTable.Indexes.TryGetValue(index.ValueString, out var tableIndex))
-                            index.SetSymbol(tableIndex);
+                            index.SetSymbolUsage(tableIndex, DataModel.SymbolUsageFlags.Reference);
                         else
                             context.AddError(index, "Unknown index in "+ entity.Name + ".");
                     }

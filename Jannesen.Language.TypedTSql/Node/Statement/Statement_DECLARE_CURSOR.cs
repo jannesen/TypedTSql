@@ -84,7 +84,7 @@ namespace Jannesen.Language.TypedTSql.Node
                         if (ambigous)
                             context.AddError(updateColumn, "Column [" + updateColumn.ValueString + "] is ambiguous.");
 
-                        updateColumn.SetSymbol(column);
+                        updateColumn.SetSymbolUsage(column, DataModel.SymbolUsageFlags.Reference);
                         context.CaseWarning(updateColumn, column.Name);
                     }
                     else
@@ -99,7 +99,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                 ? context.Catalog.GetGlobalCursorList()
                                 : context.RootContext.GetCursorList()
                          ).Define(n_Name.ValueString, n_Name, n_CursorFlags, n_Select.Resultset);
-            n_Name.SetSymbol(cursor);
+            n_Name.SetSymbolUsage(cursor, DataModel.SymbolUsageFlags.Declaration);
         }
 
         private     static      Core.TokenNameID[]                  _options1 = new Core.TokenNameID[]

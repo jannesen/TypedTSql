@@ -103,9 +103,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            ((IVsHierarchy)project).GetCanonicalName(VSConstants.VSITEMID_ROOT, out string cname);
+            ((IVsProject3)project).GetMkDocument((uint)VSConstants.VSITEMID.Root, out var projectFileName);
 
-            return cname;
+            return projectFileName;
         }
         public      static      IVsProject                              GetIVsProject(string projecttypeguid, string projectpathname)
         {
@@ -116,7 +116,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
                     return project;
             }
 
-            throw new Exception("Can't find project '" + projectpathname + "'.");
+            return null;
         }
         public      static      IVsProject                              GetContainingProject(string projecttypeguid, string fileName)
         {

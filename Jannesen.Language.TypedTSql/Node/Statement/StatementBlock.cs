@@ -69,7 +69,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (this.Children != null) {
                 foreach(var node in this.Children) {
                     if (f && !(node is Node.Statement_DECLARE || node is Node.Statement_SET_option)) {
-                        Node_VarVariable.EmitVarVariable(emitWriter, _variableList, indent);
+                        Node_AssignVariable.EmitVarVariable(emitWriter, _variableList, indent);
                         f = false;
                     }
 

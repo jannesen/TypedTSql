@@ -197,6 +197,21 @@ namespace Jannesen.Language.TypedTSql
 
             throw new ArgumentException(declaration.GetType().FullName + " is not a valid declaration");
         }
+        public              List<SymbolReferenceList>               GetReferences(DataModel.SymbolData symbolData)
+        {
+            var rtn = new List<SymbolReferenceList>();
+
+            if (symbolData is DataModel.SymbolUsage symbolUsage) {
+                rtn.Add(GetReferences(symbolUsage.Symbol));
+            }
+
+            if (symbolData is DataModel.SymbolSourceTarget symbolSourceTarget) {
+                rtn.Add(GetReferences(symbolSourceTarget.Source.Symbol));
+                rtn.Add(GetReferences(symbolSourceTarget.Target.Symbol));
+            }
+
+            return rtn;
+        }
         public              SymbolReferenceList                     GetReferences(DataModel.ISymbol symbol)
         {
             var symbolReferenceList = new SymbolReferenceList(symbol);
@@ -297,7 +312,7 @@ namespace Jannesen.Language.TypedTSql
             foreach(var sourcefile in Files) {
                 foreach(var token in sourcefile.Tokens) {
                     if (token is Core.TokenWithSymbol tokenWithSymbol) {
-                        if (tokenWithSymbol.Symbol == null) {
+                        if (tokenWithSymbol.SymbolData == null) {
                             if (token is Token.TokenLocalName ||
 //                                token is Token.Name           ||
                                 token is Token.QuotedName)

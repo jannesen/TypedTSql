@@ -32,7 +32,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 
                 if ((t_Column = columnList.FindColumn(n_ComlumnName.ValueString, out bool ambiguous)) != null && !ambiguous) {
                     context.CaseWarning(n_ComlumnName, t_Column.Name);
-                    n_ComlumnName.SetSymbol(t_Column);
+                    n_ComlumnName.SetSymbolUsage(t_Column, DataModel.SymbolUsageFlags.Reference);
                 }
                 else
                     context.AddError(n_ComlumnName, "Unknown column [" + n_ComlumnName.ValueString + "].");

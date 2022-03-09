@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using LTTSQL = Jannesen.Language.TypedTSql;
 using Jannesen.Language.TypedTSql.Library;
-using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.WebService.Node
 {
@@ -66,7 +63,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                         JsonProperty = null;
                         n_JsonSchemaElement.TranspileNode(context);
                         JsonProperty = new LTTSQL.DataModel.JsonSchemaObject.Property(n_Name.ValueString, n_Name, n_JsonSchemaElement.JsonSchema);
-                        n_Name.SetSymbol(JsonProperty);
+                        n_Name.SetSymbolUsage(JsonProperty, DataModel.SymbolUsageFlags.Declaration);
                     }
                 }
 

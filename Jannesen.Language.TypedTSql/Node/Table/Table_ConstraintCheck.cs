@@ -20,8 +20,8 @@ namespace Jannesen.Language.TypedTSql.Node
     //              [ ON UPDATE { NO ACTION | CASCADE | SET NULL | SET DEFAULT } ]
     //              [ NOT FOR REPLICATION ]
     //          | CHECK [ NOT FOR REPLICATION ] ( logical_expression )
-    public class Table_ConstraintCheck: Table_Constraint
-    {
+    public class Table_ConstraintCheck: Table_Constraint //!!TODO Implement Table_ConstraintCheck
+    { 
         public      readonly    IExprNode                   n_Expression;
 
         public      static      bool                        CanParse(Core.ParserReader reader, TableType type)

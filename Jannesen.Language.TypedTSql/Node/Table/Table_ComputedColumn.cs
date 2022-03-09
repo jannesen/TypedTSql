@@ -48,7 +48,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                 sqlType:     n_Expression.SqlType,
                                                 flags:       DataModel.ValueFlags.Nullable,
                                                 declaration: n_Name);
-                n_Name.SetSymbol(Column);
+                n_Name.SetSymbolUsage(Column, DataModel.SymbolUsageFlags.Declaration);
 
                 Validate.Value(n_Expression);
             }

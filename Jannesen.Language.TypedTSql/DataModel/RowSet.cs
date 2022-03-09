@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    public class RowSet: ISymbol, ISqlType
+    public class RowSet: ISymbol
     {
         public                  SymbolType                  Type                    { get { return DataModel.SymbolType.RowsetAlias;   } }
         public                  string                      Name                    { get; private set; }
+        public                  string                      FullName             { get { return SqlStatic.QuoteNameIfNeeded(Name); } }
         public                  IColumnList                 Columns                 { get; private set; }
         public                  object                      Declaration             { get; private set; }
-        public                  ISymbol                     Parent                  { get { return null; } }
+        public                  ISymbol                     ParentSymbol            { get { return null; } }
         public                  ISymbol                     SymbolNameReference     { get { return null; } }
         public                  ISymbol                     Source                  { get; private set; }
 
@@ -22,19 +24,6 @@ namespace Jannesen.Language.TypedTSql.DataModel
             Columns     = columns;
             Declaration = declaration;
             Source      = source;
-        }
-
-        public                  SqlTypeFlags                TypeFlags       { get { return SqlTypeFlags.RowSet;   } }
-        public                  SqlTypeNative               NativeType      { get { throw new InvalidOperationException(this.GetType().Name + ": has no nativetype.");      } }
-        public                  InterfaceList               Interfaces      { get { throw new InvalidOperationException(this.GetType().Name + ": has no interfaces.");      } }
-        public                  object                      DefaultValue    { get { return null; } }
-        public                  ValueRecordList             Values          { get { throw new InvalidOperationException(this.GetType().Name + ": has no values.");          } }
-        public                  IndexList                   Indexes         { get { throw new InvalidOperationException(this.GetType().Name + ": has no indexes.");         } }
-        public      virtual     JsonSchema                  JsonSchema      { get { throw new InvalidOperationException(this.GetType().Name + ": has no json-schema.");     } }
-        public                  Entity                      Entity          { get { return null;                                                                            } }
-        public                  string                      ToSql()
-        {
-            throw new InvalidOperationException("Can't get sql-type of " + this.GetType().Name + ".");
         }
     }
 

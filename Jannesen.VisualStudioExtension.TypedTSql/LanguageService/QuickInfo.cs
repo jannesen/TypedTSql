@@ -4,9 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text;
-using LTTS_Library         = Jannesen.Language.TypedTSql.Library;
-using LTTS_Core            = Jannesen.Language.TypedTSql.Core;
-using LTTS_DataModel       = Jannesen.Language.TypedTSql.DataModel;
+using LTTS                  = Jannesen.Language.TypedTSql;
 using Jannesen.VisualStudioExtension.TypedTSql.Library;
 
 namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
@@ -19,7 +17,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         public              Brush               _colorType;
         public              Brush               _colorName;
 
-        public                                  QuickInfo(ITrackingSpan span, LTTS_DataModel.ISymbol symbol)
+        public                                  QuickInfo(ITrackingSpan span, LTTS.DataModel.SymbolData symbolData)
         {
             switch(VSPackage.GetCurrentTheme()) {
             case VSPackage.ColorTheme.Dark:
@@ -37,63 +35,86 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             }
 
             Span = span;
-            Info = _processSymbol(symbol);
+            Info = _processSymbolDate(symbolData, true);
         }
 
-        private             UIElement           _processSymbol(LTTS_DataModel.ISymbol symbol)
+        private             UIElement           _processSymbolDate(LTTS.DataModel.SymbolData symbolData, bool details)
+        {
+            if (symbolData is LTTS.DataModel.SymbolUsage symbolUsage) { 
+                return _processSymbol(symbolUsage.Symbol, details);
+            }
+            if (symbolData is LTTS.DataModel.SymbolSourceTarget symbolSourceTarget) { 
+                var info = new StackPanel() { Orientation=Orientation.Horizontal };
+                info.Children.Add(_processSymbol(symbolSourceTarget.Target.Symbol, details));
+                info.Children.Add(_textType(" = "));
+                info.Children.Add(_processSymbol(symbolSourceTarget.Source.Symbol, details));
+                return info;
+            }
+            if (symbolData is LTTS.DataModel.SymbolWildcard symbolWildcard) { 
+                var info = new StackPanel() { Orientation=Orientation.Vertical };
+
+                foreach (var item in symbolWildcard.SymbolData) {
+                    info.Children.Add(_processSymbolDate(item, false));
+                }
+                return info;
+            }
+            return null;
+        }
+
+        private             UIElement           _processSymbol(LTTS.DataModel.ISymbol symbol, bool details)
         {
             try {
                 switch(symbol.Type) {
-                //case LTTS_DataModel.SymbolType.Assembly:
-                case LTTS_DataModel.SymbolType.TypeUser:                                return _processTypeUser((LTTS_DataModel.EntityTypeUser)symbol);
-                //case LTTS_DataModel.SymbolType.TypeAssembly:
-                //case LTTS_DataModel.SymbolType.TypeTable:
-                //case LTTS_DataModel.SymbolType.Default:
-                //case LTTS_DataModel.SymbolType.Rule:
-                //case LTTS_DataModel.SymbolType.TableInternal:
-                //case LTTS_DataModel.SymbolType.TableSystem:
-                //case LTTS_DataModel.SymbolType.TableUser:
-                //case LTTS_DataModel.SymbolType.Constraint_ForeignKey:
-                //case LTTS_DataModel.SymbolType.Constraint_PrimaryKey:
-                //case LTTS_DataModel.SymbolType.Constraint_Check:
-                //case LTTS_DataModel.SymbolType.Constraint_Unique:
-                //case LTTS_DataModel.SymbolType.View:
-                //case LTTS_DataModel.SymbolType.Function:
-                //case LTTS_DataModel.SymbolType.FunctionScalar:
-                //case LTTS_DataModel.SymbolType.FunctionScalar_clr:
-                //case LTTS_DataModel.SymbolType.FunctionInlineTable:
-                //case LTTS_DataModel.SymbolType.FunctionMultistatementTable:
-                //case LTTS_DataModel.SymbolType.FunctionMultistatementTable_clr:
-                //case LTTS_DataModel.SymbolType.FunctionAggregateFunction_clr:
-                //case LTTS_DataModel.SymbolType.StoredProcedure:
-                //case LTTS_DataModel.SymbolType.StoredProcedure_clr:
-                //case LTTS_DataModel.SymbolType.StoredProcedure_extended:
-                //case LTTS_DataModel.SymbolType.Trigger:
-                //case LTTS_DataModel.SymbolType.Trigger_clr:
-                //case LTTS_DataModel.SymbolType.PlanGuide:
-                //case LTTS_DataModel.SymbolType.ReplicationFilterProcedure:
-                //case LTTS_DataModel.SymbolType.SequenceObject:
-                //case LTTS_DataModel.SymbolType.ServiceQueue:
-                //case LTTS_DataModel.SymbolType.Synonym:
-                //case LTTS_DataModel.SymbolType.WebService:
-                case LTTS_DataModel.SymbolType.ExternalStaticProperty:                  return _processExternalInterface("external-static-property", (LTTS_DataModel.Interface)symbol);
-                case LTTS_DataModel.SymbolType.ExternalStaticMethod:                    return _processExternalInterface("external-static-method",   (LTTS_DataModel.Interface)symbol);
-                case LTTS_DataModel.SymbolType.ExternalProperty:                        return _processExternalInterface("external-property",        (LTTS_DataModel.Interface)symbol);
-                case LTTS_DataModel.SymbolType.ExternalMethod:                          return _processExternalInterface("external-method",          (LTTS_DataModel.Interface)symbol);
-                case LTTS_DataModel.SymbolType.UDTValue:                                return _processUDTValue((LTTS_DataModel.ValueRecord)symbol);
-                case LTTS_DataModel.SymbolType.Parameter:                               return _processVariable("parameter", (LTTS_DataModel.Variable)symbol);
-                case LTTS_DataModel.SymbolType.Column:                                  return _processColumn((LTTS_DataModel.Column)symbol);
-                case LTTS_DataModel.SymbolType.Index:                                   return _processIndex((LTTS_DataModel.Index)symbol);
-                case LTTS_DataModel.SymbolType.GlobalVariable:                          return _processVariable("global-variable", (LTTS_DataModel.Variable)symbol);
-                case LTTS_DataModel.SymbolType.LocalVariable:                           return _processVariable("variable", (LTTS_DataModel.Variable)symbol);
+                //case LTTS.DataModel.SymbolType.Assembly:
+                case LTTS.DataModel.SymbolType.TypeUser:                                return _processTypeUser((LTTS.DataModel.EntityTypeUser)symbol);
+                //case LTTS.DataModel.SymbolType.TypeAssembly:
+                //case LTTS.DataModel.SymbolType.TypeTable:
+                //case LTTS.DataModel.SymbolType.Default:
+                //case LTTS.DataModel.SymbolType.Rule:
+                //case LTTS.DataModel.SymbolType.TableInternal:
+                //case LTTS.DataModel.SymbolType.TableSystem:
+                //case LTTS.DataModel.SymbolType.TableUser:
+                //case LTTS.DataModel.SymbolType.Constraint_ForeignKey:
+                //case LTTS.DataModel.SymbolType.Constraint_PrimaryKey:
+                //case LTTS.DataModel.SymbolType.Constraint_Check:
+                //case LTTS.DataModel.SymbolType.Constraint_Unique:
+                //case LTTS.DataModel.SymbolType.View:
+                //case LTTS.DataModel.SymbolType.Function:
+                //case LTTS.DataModel.SymbolType.FunctionScalar:
+                //case LTTS.DataModel.SymbolType.FunctionScalar_clr:
+                //case LTTS.DataModel.SymbolType.FunctionInlineTable:
+                //case LTTS.DataModel.SymbolType.FunctionMultistatementTable:
+                //case LTTS.DataModel.SymbolType.FunctionMultistatementTable_clr:
+                //case LTTS.DataModel.SymbolType.FunctionAggregateFunction_clr:
+                //case LTTS.DataModel.SymbolType.StoredProcedure:
+                //case LTTS.DataModel.SymbolType.StoredProcedure_clr:
+                //case LTTS.DataModel.SymbolType.StoredProcedure_extended:
+                //case LTTS.DataModel.SymbolType.Trigger:
+                //case LTTS.DataModel.SymbolType.Trigger_clr:
+                //case LTTS.DataModel.SymbolType.PlanGuide:
+                //case LTTS.DataModel.SymbolType.ReplicationFilterProcedure:
+                //case LTTS.DataModel.SymbolType.SequenceObject:
+                //case LTTS.DataModel.SymbolType.ServiceQueue:
+                //case LTTS.DataModel.SymbolType.Synonym:
+                //case LTTS.DataModel.SymbolType.WebService:
+                case LTTS.DataModel.SymbolType.ExternalStaticProperty:                  return _processExternalInterface("external-static-property", (LTTS.DataModel.Interface)symbol, details);
+                case LTTS.DataModel.SymbolType.ExternalStaticMethod:                    return _processExternalInterface("external-static-method",   (LTTS.DataModel.Interface)symbol, details);
+                case LTTS.DataModel.SymbolType.ExternalProperty:                        return _processExternalInterface("external-property",        (LTTS.DataModel.Interface)symbol, details);
+                case LTTS.DataModel.SymbolType.ExternalMethod:                          return _processExternalInterface("external-method",          (LTTS.DataModel.Interface)symbol, details);
+                case LTTS.DataModel.SymbolType.UDTValue:                                return _processUDTValue((LTTS.DataModel.ValueRecord)symbol, details);
+                case LTTS.DataModel.SymbolType.Parameter:                               return _processVariable("parameter", (LTTS.DataModel.Variable)symbol, details);
+                case LTTS.DataModel.SymbolType.Column:                                  return _processColumn((LTTS.DataModel.Column)symbol, details);
+                case LTTS.DataModel.SymbolType.Index:                                   return _processIndex((LTTS.DataModel.Index)symbol, details);
+                case LTTS.DataModel.SymbolType.GlobalVariable:                          return _processVariable("global-variable", (LTTS.DataModel.Variable)symbol, details);
+                case LTTS.DataModel.SymbolType.LocalVariable:                           return _processVariable("variable", (LTTS.DataModel.Variable)symbol, details);
 
-                //case LTTS_DataModel.SymbolType.BuildinFunction:
-                case LTTS_DataModel.SymbolType.RowsetAlias:                             return _processRowAlias((LTTS_DataModel.RowSet)symbol);
+                //case LTTS.DataModel.SymbolType.BuildinFunction:
+                case LTTS.DataModel.SymbolType.RowsetAlias:                             return _processRowAlias((LTTS.DataModel.RowSet)symbol);
                 default:
                     {
                         var stackPanel = new StackPanel() { Orientation=Orientation.Horizontal };
                             stackPanel.Children.Add(_textType(Helpers.SymbolTypeToString(symbol.Type)));
-                            stackPanel.Children.Add(_textName(symbol.Name));
+                            stackPanel.Children.Add(_textName(symbol.FullName));
                         return stackPanel;
                     }
                 }
@@ -106,7 +127,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             }
         }
 
-        private             UIElement           _processTypeUser(LTTS_DataModel.EntityTypeUser typeUser)
+        private             UIElement           _processTypeUser(LTTS.DataModel.EntityTypeUser typeUser)
         {
             var rtn = new StackPanel() { Orientation=Orientation.Vertical };
 
@@ -115,117 +136,125 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             return rtn;
         }
-        private             UIElement           _processExternalInterface(string type, LTTS_DataModel.Interface intf)
+        private             UIElement           _processExternalInterface(string type, LTTS.DataModel.Interface intf, bool details)
         {
             var rtn = new StackPanel() { Orientation=Orientation.Vertical };
 
-                rtn.Children.Add(_stackPanelTypeName(type, LTTS_Library.SqlStatic.QuoteName(intf.Name)));
+                rtn.Children.Add(_stackPanelTypeName(type, LTTS.Library.SqlStatic.QuoteName(intf.Name)));
 
-                if (intf.Parent != null)
-                    rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(intf.Parent)));
+                if (details) {
+                    if (intf.ParentSymbol != null)
+                        rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(intf.ParentSymbol, false)));
 
-                if (intf.Returns != null)
-                    rtn.Children.Add(_stackPanelCategory("returns", _processType(intf.Returns)));
-
+                    if (intf.Returns != null)
+                        rtn.Children.Add(_stackPanelCategory("returns", _processType(intf.Returns)));
+                }
             return rtn;
         }
-        private             UIElement           _processUDTValue(LTTS_DataModel.ValueRecord valueRecord)
+        private             UIElement           _processUDTValue(LTTS.DataModel.ValueRecord valueRecord, bool details)
         {
             var rtn = new StackPanel() { Orientation=Orientation.Vertical };
 
-                rtn.Children.Add(_stackPanelTypeName("udt-value", LTTS_Library.SqlStatic.QuoteName(valueRecord.Name)));
+                rtn.Children.Add(_stackPanelTypeName("udt-value", LTTS.Library.SqlStatic.QuoteName(valueRecord.Name)));
                 rtn.Children.Add(_stackPanelTypeName("value", Helpers.ObjectValueToString(valueRecord.Value)));
 
-                if (valueRecord.Parent != null)
-                    rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(valueRecord.Parent)));
+                if (details) {
+                    if (valueRecord.ParentSymbol != null)
+                        rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(valueRecord.ParentSymbol, false)));
+                }
 
             return rtn;
         }
-        private             UIElement           _processColumn(LTTS_DataModel.Column column)
+        private             UIElement           _processColumn(LTTS.DataModel.Column column, bool details)
         {
             var rtn = new StackPanel() { Orientation=Orientation.Vertical };
 
-                rtn.Children.Add(_stackPanelTypeName("column", LTTS_Library.SqlStatic.QuoteName(column.Name)));
+                rtn.Children.Add(_stackPanelTypeName("column", LTTS.Library.SqlStatic.QuoteName(column.Name)));
 
-                if (column.Parent != null)
-                    rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(column.Parent)));
+                if (details) {
+                    if (column.SqlType != null)
+                        rtn.Children.Add(_stackPanelCategory("type", _processType(column.SqlType)));
 
-                if (column.SqlType != null)
-                    rtn.Children.Add(_stackPanelCategory("type", _processType(column.SqlType)));
-
+                    if (column.ParentSymbol != null)
+                        rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(column.ParentSymbol, false)));
+                }
             return rtn;
         }
-        private             UIElement           _processVariable(string type, LTTS_DataModel.Variable variable)
+        private             UIElement           _processVariable(string type, LTTS.DataModel.Variable variable, bool details)
         {
             var rtn = new StackPanel() { Orientation=Orientation.Vertical };
             rtn.Children.Add(_stackPanelTypeName(type, variable.Name));
 
-            if (variable.SqlType != null)
-                rtn.Children.Add(_stackPanelCategory("type", _processType(variable.SqlType)));
+            if (details) {
+                if (variable.SqlType != null)
+                    rtn.Children.Add(_stackPanelCategory("type", _processType(variable.SqlType)));
+            }
 
             return rtn;
         }
-        private             UIElement           _processRowAlias(LTTS_DataModel.RowSet rowset)
+        private             UIElement           _processRowAlias(LTTS.DataModel.RowSet rowset)
         {
             var rtn = new StackPanel() { Orientation=Orientation.Vertical };
 
                 rtn.Children.Add(_stackPanelTypeName("alias",  rowset.Name));
 
                 if (rowset.Source != null)
-                    rtn.Children.Add(_stackPanelCategory("source", _processSymbol(rowset.Source)));
+                    rtn.Children.Add(_stackPanelCategory("source", _processSymbol(rowset.Source, true)));
 
             return rtn;
         }
-        private             UIElement           _processIndex(LTTS_DataModel.Index index)
+        private             UIElement           _processIndex(LTTS.DataModel.Index index, bool details)
         {
             var rtn = new StackPanel() { Orientation=Orientation.Vertical };
 
-                rtn.Children.Add(_stackPanelTypeName("index", LTTS_Library.SqlStatic.QuoteName(index.Name)));
+                rtn.Children.Add(_stackPanelTypeName("index", LTTS.Library.SqlStatic.QuoteName(index.Name)));
 
-                if (index.Columns != null) {
-                    var indexes = new StringBuilder();
+                if (details) {
+                    if (index.Columns != null) {
+                        var indexes = new StringBuilder();
 
-                    for (int i = 0 ; i < index.Columns.Length ; ++i) {
-                        if (i > 0)
-                            indexes.Append(", ");
+                        for (int i = 0 ; i < index.Columns.Length ; ++i) {
+                            if (i > 0)
+                                indexes.Append(", ");
 
-                        indexes.Append(LTTS_Library.SqlStatic.QuoteName(index.Columns[i].Column.Name));
+                            indexes.Append(LTTS.Library.SqlStatic.QuoteName(index.Columns[i].Column.Name));
+                        }
+
+                        rtn.Children.Add(_stackPanelTypeName("columns", indexes.ToString()));
                     }
 
-                    rtn.Children.Add(_stackPanelTypeName("columns", indexes.ToString()));
+                    if (index.Filter != null)
+                        rtn.Children.Add(_stackPanelTypeName("where", index.Filter));
                 }
-
-                if (index.Filter != null)
-                    rtn.Children.Add(_stackPanelTypeName("where", index.Filter));
 
             return rtn;
         }
-        private             UIElement           _processType(LTTS_DataModel.ISqlType sqlType)
+        private             UIElement           _processType(LTTS.DataModel.ISqlType sqlType)
         {
             var rtn = new StackPanel() { Orientation=Orientation.Vertical };
 
                 if (sqlType.Entity != null)
-                    rtn.Children.Add(_processSymbol(sqlType.Entity));
+                    rtn.Children.Add(_processSymbol(sqlType.Entity, true));
                 else
-                if ((sqlType.TypeFlags & LTTS_DataModel.SqlTypeFlags.SimpleType) != 0)
+                if ((sqlType.TypeFlags & LTTS.DataModel.SqlTypeFlags.SimpleType) != 0)
                     rtn.Children.Add(_stackPanelTypeName("native-type", sqlType.NativeType.ToString()));
                 else
-                if (sqlType is LTTS_DataModel.EntityTypeExternal)
+                if (sqlType is LTTS.DataModel.EntityTypeExternal)
                     rtn.Children.Add(_textName("type-external"));
                 else
-                if (sqlType is LTTS_DataModel.EntityTypeTable)
+                if (sqlType is LTTS.DataModel.EntityTypeTable)
                     rtn.Children.Add(_textName("type-table"));
                 else
-                if (sqlType is LTTS_DataModel.SqlTypeTable)
+                if (sqlType is LTTS.DataModel.SqlTypeTable)
                     rtn.Children.Add(_textName("table"));
                 else
-                if (sqlType is LTTS_DataModel.SqlTypeCursorRef)
+                if (sqlType is LTTS.DataModel.SqlTypeCursorRef)
                     rtn.Children.Add(_textName("cursor-ref"));
                 else
-                if (sqlType is LTTS_DataModel.SqlTypeAny)
+                if (sqlType is LTTS.DataModel.SqlTypeAny)
                     rtn.Children.Add(_textName("ANY"));
                 else
-                if (sqlType is LTTS_DataModel.SqlTypeVoid)
+                if (sqlType is LTTS.DataModel.SqlTypeVoid)
                     rtn.Children.Add(_textName("VOID"));
 
             return rtn;

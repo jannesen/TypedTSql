@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
@@ -22,8 +23,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public                  SymbolType              Type                    { get { return SymbolType.DatabasePrincipal; } }
         public                  string                  Name                    { get; private set; }
+        public                  string                  FullName             { get { return SqlStatic.QuoteName(Name); } }
         public                  object                  Declaration             { get { return null; } }
-        public                  DataModel.ISymbol       Parent                  { get { return null; } }
+        public                  DataModel.ISymbol       ParentSymbol            { get { return null; } }
         public                  DataModel.ISymbol       SymbolNameReference     { get { return null; } }
         public                  PrincipalType           PrincipalType           { get; private set; }
 

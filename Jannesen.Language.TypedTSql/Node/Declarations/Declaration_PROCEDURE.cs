@@ -69,7 +69,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 TranspileOptions(context);
 
                 Entity.Transpiled(parameters: n_Parameters?.t_Parameters);
-                n_Name.n_Name.SetSymbol(Entity);
+                n_Name.n_Name.SetSymbolUsage(Entity, DataModel.SymbolUsageFlags.Declaration);
                 _declarationTranspiled = true;
             }
 

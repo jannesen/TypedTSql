@@ -4,10 +4,10 @@ namespace Jannesen.Language.TypedTSql.Transpile
 {
     public class ContextStatementQuery: ContextParent
     {
-        public      override    DataModel.RowSet                    Target                  { get { return _target;         } }
+        public      override    Node.IDataTarget                    Target                  { get { return _target;         } }
         public      override    DataModel.QueryOptions              QueryOptions            { get { return _queryOptions;   } }
 
-        private                 DataModel.RowSet                    _target;
+        private                 Node.IDataTarget                    _target;
         private                 DataModel.QueryOptions              _queryOptions;
 
         public                                                      ContextStatementQuery(Context parent): base(parent)
@@ -19,8 +19,12 @@ namespace Jannesen.Language.TypedTSql.Transpile
         {
             _queryOptions = options;
         }
-        public                  void                                SetTarget(DataModel.RowSet target)
+        public      override    void                                SetTarget(Node.IDataTarget target)
         {
+            if (_target != null) {
+                throw new Exception("Target already defined.");
+            }
+
             _target = target;
         }
     }

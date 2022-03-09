@@ -18,7 +18,7 @@ namespace Jannesen.Language.TypedTSql.Core
                 return null;
             }
         }
-        public                      IAstNode                Parent
+        public                      IAstNode                ParentNode
         {
             get {
                 return _parent;
@@ -277,7 +277,7 @@ namespace Jannesen.Language.TypedTSql.Core
         {
             emitWriter.WriteToken(this);
         }
-        public                      void                    SetParent(IAstNode parent)
+        public                      void                    SetParentNode(IAstNode parent)
         {
             _parent = parent;
         }
@@ -363,65 +363,6 @@ namespace Jannesen.Language.TypedTSql.Core
             }
 
             return rtn.ToString();
-        }
-    }
-
-    public abstract class TokenWithSymbol: Token
-    {
-        public class NoSymbolClass: DataModel.ISymbol
-        {
-            public          DataModel.SymbolType        Type                    { get { return DataModel.SymbolType.NoSymbol;   } }
-            public          string                      Name                    { get { return "";                              } }
-            public          object                      Declaration             { get { return null;                            } }
-            public          DataModel.ISymbol           Parent                  { get { return null;                            } }
-            public          DataModel.ISymbol           SymbolNameReference     { get { return null;                            } }
-        }
-
-        private  readonly static    NoSymbolClass           _keywordSymbol = new NoSymbolClass();
-        private  readonly static    NoSymbolClass           _noSymbol      = new NoSymbolClass();
-
-        public      override        bool                    isKeyword
-        {
-            get {
-                return Symbol == _keywordSymbol;
-            }
-        }
-        public                      bool                    hasSymbol
-        {
-            get {
-                return Symbol != null && Symbol != _noSymbol && Symbol != _keywordSymbol;
-            }
-        }
-
-        public                      DataModel.ISymbol       Symbol      { get; private set; }
-
-        internal                                            TokenWithSymbol(Library.FilePosition beginning, Library.FilePosition ending, string text): base(beginning, ending, text)
-        {
-        }
-
-        public      static          Token                   SetKeyword(Token token)
-        {
-            (token as TokenWithSymbol)?.SetSymbol(_keywordSymbol);
-            return token;
-        }
-        public      static          Token                   SetNoSymbol(Token token)
-        {
-            (token as TokenWithSymbol)?.SetSymbol(_noSymbol);
-            return token;
-        }
-        public      static          TokenWithSymbol         SetNoSymbol(TokenWithSymbol token)
-        {
-            token.SetSymbol(_noSymbol);
-            return token;
-        }
-        public                      void                    SetSymbol(DataModel.ISymbol symbol)
-        {
-            Symbol = symbol;
-        }
-        public                      void                    ClearSymbol()
-        {
-            if (this.Symbol != null && !(this.Symbol == _keywordSymbol || this.Symbol == _noSymbol ||this.Symbol is Internal.BuildinFunctionDeclaration  || this.Symbol is Core.AstParseNode))
-                this.Symbol = null;
         }
     }
 }

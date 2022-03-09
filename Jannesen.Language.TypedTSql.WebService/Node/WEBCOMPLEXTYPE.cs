@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using LTTSQL = Jannesen.Language.TypedTSql;
 using Jannesen.Language.TypedTSql.Library;
-using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.WebService.Node
 {
@@ -45,14 +41,17 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     _sqlType = ((LTTSQL.Node.ISqlType)n_ReceivesType).SqlType;
                 }
                 else {
-                    _sqlType = new LTTSQL.DataModel.SqlTypeJson(LTTSQL.DataModel.SqlTypeNative.NVarChar_MAX, _convertReponseToJsonSchema(((WEBCOMPLEXTYPE)Parent).ResponseNode.SqlType));
+                    _sqlType = new LTTSQL.DataModel.SqlTypeJson(LTTSQL.DataModel.SqlTypeNative.NVarChar_MAX, _convertReponseToJsonSchema(((WEBCOMPLEXTYPE)ParentNode).ResponseNode.SqlType));
                 }
             }
-
             public      override    void                                    Emit(LTTSQL.Core.EmitWriter emitWriter)
             {
             }
         }
+
+        public      readonly    Declaration                             n_Declaration;
+        public      readonly    LTTSQL.Node.Node_AS                     n_As;
+        public      readonly    Receives                                n_Receives;
 
         public      override    LTTSQL.DataModel.SymbolType             EntityType                  { get { return LTTSQL.DataModel.SymbolType.ServiceComplexType;       } }
         public      override    LTTSQL.DataModel.EntityName             EntityName                  { get { return n_Declaration.n_EntityName;                           } }
@@ -73,9 +72,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             }
         }
 
-        public      readonly    Declaration                             n_Declaration;
-        public      readonly    LTTSQL.Node.Node_AS                     n_As;
-        public      readonly    Receives                                n_Receives;
 
         public                                                          WEBCOMPLEXTYPE(Core.ParserReader reader, LTTSQL.Node.IParseContext parseContext): base(reader)
         {
@@ -120,7 +116,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             }
 
             Entity.Transpiled(parameters: n_Parameters.t_Parameters, returns: ResponseNode.SqlType);
-            n_Declaration.n_ServiceTypeName.n_Name.SetSymbol(Entity);
+            n_Declaration.n_ServiceTypeName.n_Name.SetSymbolUsage(Entity, DataModel.SymbolUsageFlags.Declaration);
         }
         public      override    void                                    Emit(LTTSQL.Core.EmitWriter emitWriter)
         {

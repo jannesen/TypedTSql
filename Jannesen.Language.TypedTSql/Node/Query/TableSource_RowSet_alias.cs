@@ -50,7 +50,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 _t_RowSet = new DataModel.RowSet(n_Alias.ValueString, ColumnList,
                                                  declaration:n_Alias,
                                                  source:t_Source);
-                n_Alias.SetSymbol(_t_RowSet);
+                n_Alias.SetSymbolUsage(_t_RowSet, DataModel.SymbolUsageFlags.Declaration);
             }
             else {
                 _t_RowSet = new DataModel.RowSet("", ColumnList,
@@ -72,7 +72,7 @@ namespace Jannesen.Language.TypedTSql.Node
         internal                                                    TableSource_RowSetBuildIn(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader, bool allowAlias): base(allowAlias)
         {
             Name = (Core.TokenWithSymbol)ParseToken(reader);
-            Name.SetSymbol(declaration);
+            Name.SetSymbolUsage(declaration, DataModel.SymbolUsageFlags.Reference);
         }
     }
 }

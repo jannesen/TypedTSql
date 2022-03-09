@@ -8,7 +8,7 @@ namespace Jannesen.Language.TypedTSql.Node
     public class Expr_Operator_NOT: ExprBoolean
     {
         public      readonly    Core.Token                      n_Operator;
-        public      readonly    IExprNode                           n_Expr;
+        public      readonly    IExprNode                       n_Expr;
 
         public      static new  bool                            CanParse(Core.ParserReader reader)
         {

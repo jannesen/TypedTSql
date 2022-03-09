@@ -25,7 +25,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             ParseToken(reader, "INSTALL");
             ParseToken(reader, Core.TokenID.INTO);
-            n_Table = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.Table));
+            n_Table = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.Table, DataModel.SymbolUsageFlags.Select));
 
             if (ParseOptionalToken(reader, Core.TokenID.OPTION) != null) {
                 ParseToken(reader, Core.TokenID.LrBracket);
@@ -81,7 +81,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                     columns[columnIndex] = true;
 
                                     var column = table.Columns[columnIndex];
-                                    f.n_Name.SetSymbol(column);
+                                    f.n_Name.SetSymbolUsage(column, DataModel.SymbolUsageFlags.Write);
                                     context.CaseWarning(f.n_Name, column.Name);
 
                                     Validate.ConstByType(column.SqlType, f.n_Value);

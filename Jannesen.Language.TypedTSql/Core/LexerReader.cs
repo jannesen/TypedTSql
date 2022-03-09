@@ -262,7 +262,7 @@ namespace Jannesen.Language.TypedTSql.Core
                 ++_curpos;
 
             if (_charAt(_curpos) == '.') {
-                ++_curpos;;
+                ++_curpos;
 
                 while (_isDigit(_charAt(_curpos)))
                     ++_curpos;

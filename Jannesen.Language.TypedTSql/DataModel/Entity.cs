@@ -21,8 +21,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                  EntityName              EntityName              { get ; private set; }
         public                  EntityFlags             EntityFlags             { get ; protected set; }
         public                  object                  Declaration             { get ; protected set; }
-        public                  string                  Name                    { get { return EntityName.Name; } }
-        public                  DataModel.ISymbol       Parent                  { get { return null; } }
+        public                  string                  Name                    { get { return EntityName.Name;     } }
+        public                  string                  FullName             { get { return EntityName.Fullname; } }
+        public                  DataModel.ISymbol       ParentSymbol            { get { return null; } }
         public                  DataModel.ISymbol       SymbolNameReference     { get { return null; } }
 
         internal                                        Entity(SymbolType type, DataModel.EntityName entityName, EntityFlags flags)

@@ -319,12 +319,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         {
             lock(_lockObject) {
                 _available();
-                var symbol = _getSymbolAt(fullpath, startposition, endposition);
-
-                if (symbol.Declaration == null)
-                    throw new Exception("Symbol has no declaration.");
-
-                return _transpiler.GetDocumentSpan(symbol.Declaration);
+                return _transpiler.GetDocumentSpan(_getSymbolDataAt(fullpath, startposition, endposition).GetDeclaration() ?? throw new Exception("Symbol has no declaration."));
             }
         }
         public                  LTTS_DataModel.DocumentSpan         GetDocumentSpan(object declaration)
@@ -344,11 +339,23 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             return _errorList.GetMMessageAt(fullpath, startPosition, endPosition);
         }
+        public                  List<LTTS.SymbolReferenceList>      FindReferencesListAt(string fullpath, int start, int end)
+        {
+            lock(_lockObject) {
+                _available();
+                return _transpiler.GetReferences(_getSymbolDataAt(fullpath, start, end));
+            }
+        }
         public                  LTTS.SymbolReferenceList            FindReferencesAt(string fullpath, int start, int end)
         {
             lock(_lockObject) {
                 _available();
-                return _transpiler.GetReferences(_getSymbolAt(fullpath, start, end));
+
+                if (!(_getSymbolDataAt(fullpath, start, end) is LTTS_DataModel.SymbolUsage symbolUsage)) {
+                    throw new Exception("Location has multple symbols.");
+                }
+
+                return _transpiler.GetReferences(symbolUsage.Symbol);
             }
         }
         public                  LTTS.SymbolReferenceList            FindReferences(LTTS.DataModel.ISymbol symbol)
@@ -365,11 +372,12 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 var sourceFile = _sourceFiles[fullpath.ToUpperInvariant()];
 
                 var token  = _transpiler.GetTokenAt(fullpath, point.TranslateTo(sourceFile.TextSnapshot, PointTrackingMode.Negative).Position);
-                var symbol = (token as LTTS_Core.TokenWithSymbol)?.Symbol;
-                if (symbol == null || symbol.Type == LTTS_DataModel.SymbolType.NoSymbol)
-                    return null;
 
-                return new QuickInfo(sourceFile.TextSnapshot.CreateTrackingSpan(new Span(token.Beginning.Filepos, token.Ending.Filepos - token.Beginning.Filepos), SpanTrackingMode.EdgeExclusive), symbol);
+                if (token is LTTS_Core.TokenWithSymbol tokenWithSymbol && tokenWithSymbol.hasSymbol) {
+                    return new QuickInfo(sourceFile.TextSnapshot.CreateTrackingSpan(new Span(token.Beginning.Filepos, token.Ending.Filepos - token.Beginning.Filepos), SpanTrackingMode.EdgeExclusive), tokenWithSymbol.SymbolData);
+                }
+
+                return null;
             }
         }
 
@@ -791,15 +799,12 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             throw new Exception("Language service busy.");
         }
-        private                 LTTS_DataModel.ISymbol              _getSymbolAt(string filename, int startposition, int endposition)
+        private                 LTTS_DataModel.SymbolData           _getSymbolDataAt(string filename, int startposition, int endposition)
         {
             if (!(_transpiler.GetTokenAt(filename, startposition, endposition) is LTTS_Core.TokenWithSymbol token))
                 throw new Exception("Invalid token selected.");
 
-            if (!token.hasSymbol)
-                throw new Exception("Token has no symbol.");
-
-            return token.Symbol;
+            return token.SymbolData ?? throw new Exception("Missing symboldata.");
         }
     }
 }

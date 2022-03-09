@@ -6,8 +6,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public                  SymbolType              Type                { get { return SymbolType.Label; } }
         public                  string                  Name                { get { return _name;            } }
+        public                  string                  FullName         { get { return _name;            } }
         public                  object                  Declaration         { get { return _declaration;     } }
-        public                  DataModel.ISymbol       Parent              { get { return null;             } }
+        public                  DataModel.ISymbol       ParentSymbol        { get { return null;             } }
         public                  DataModel.ISymbol       SymbolNameReference { get { return null;             } }
 
         private                 string                  _name;

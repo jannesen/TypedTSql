@@ -14,7 +14,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
         public      abstract    GlobalCatalog                       Catalog                 { get; }
         public      abstract    bool                                ReportNeedTranspile     { get; }
         public      abstract    Node.DeclarationEntity              DeclarationEntity       { get; }
-        public      virtual     DataModel.RowSet                    Target                  { get { throw new InvalidOperationException("Target not available.");                                   } }
+        public      virtual     Node.IDataTarget                    Target                  { get { return null;                                                                                    } }
         public      virtual     DataModel.RowSetList                RowSets                 { get { return null;                                                                                    } }
         public      virtual     DataModel.QueryOptions              QueryOptions            { get { return DataModel.QueryOptions.NONE;                                                             } }
         public      virtual     DataModel.ISqlType                  ScopeIndentityType      { get { return null;                                                                                    }
@@ -47,8 +47,6 @@ namespace Jannesen.Language.TypedTSql.Transpile
 
         public                  bool                                VariableDeclare(Core.TokenWithSymbol name, Node.VarDeclareScope scope, DataModel.VariableLocal variable)
         {
-            name.SetSymbol(variable);
-
             var    blockContext = BlockContext ?? throw new InvalidOperationException("VariableDeclare without BlockContext.");
 
             if (scope == Node.VarDeclareScope.CodeScope) {
@@ -85,10 +83,9 @@ namespace Jannesen.Language.TypedTSql.Transpile
             var variable = VariableGet(name, name.Text, allowGlobal);
 
             if (variable != null) {
-                name.SetSymbol(variable);
-
-                if (!(variable is DataModel.VariableGlobal))
+                if (!(variable is DataModel.VariableGlobal)) {
                     CaseWarning(name, variable.Name);
+                }
             }
 
             return variable;
@@ -118,17 +115,6 @@ namespace Jannesen.Language.TypedTSql.Transpile
             AddError(node, "Unknown variable '" + name + "'.");
             return null;
         }
-        public                  DataModel.Variable                  VariableSet(Node.ISetVariable setvar, DataModel.IExprResult expr)
-        {
-            if (setvar.isVarDeclare != Node.VarDeclareScope.None) {
-                return VarVariableSet(setvar.TokenName, setvar.isVarDeclare, expr.SqlType);
-            }
-            else { 
-                var variable = VariableGet(setvar.TokenName);
-                VariableSet(setvar, variable, expr);
-                return variable;
-            }
-        }
         public                  DataModel.VariableLocal             VarVariableSet(Token.TokenLocalName name, Node.VarDeclareScope scope, DataModel.ISqlType sqlType)
         {
             var variable = new DataModel.VariableLocal(name.Text,
@@ -139,7 +125,6 @@ namespace Jannesen.Language.TypedTSql.Transpile
             variable.setAssigned();
             return variable;
         }
-
         public                  void                                VariableSet(Core.IAstNode name, DataModel.Variable variable, DataModel.IExprResult expr)
         {
             if (variable != null) {
@@ -159,40 +144,26 @@ namespace Jannesen.Language.TypedTSql.Transpile
                 }
             }
         }
-        public                  void                                VariableSetType(Node.ISetVariable setvar, DataModel.SqlTypeNative type)
+
+        public      virtual     DataModel.RowSet                    FindRowSet(string name)
         {
-            if (setvar.isVarDeclare != Node.VarDeclareScope.None) {
-                var token = setvar.TokenName;
-                var variable = new DataModel.VariableLocal(token.Text,
-                                                           type,
-                                                           token,
-                                                           DataModel.VariableFlags.Nullable | DataModel.VariableFlags.VarDeclare);
-                VariableDeclare(token, setvar.isVarDeclare, variable);
-                variable.setAssigned();
-            }
-            else {
-                var variable = VariableGet(setvar.TokenName);
-
-                if (variable != null) {
-                    if (!variable.isReadonly)
-                        variable.setAssigned();
-                    else
-                        AddError(setvar, "Not allowed to assign a readonly variable.");
-
-                    try {
-                        if ((variable.SqlType.TypeFlags & DataModel.SqlTypeFlags.SimpleType) == 0 || variable.SqlType.NativeType != type)
-                            throw new Exception("Variable must by of type " + type + ".");
-                    }
-                    catch(Exception err) {
-                        AddError(setvar, err);
-                    }
-                }
-            }
+            return null;
+        }
+        public      virtual     DataModel.Column                    FindColumn(string name, out bool ambiguous)
+        {
+            ambiguous = false;
+            return null;
         }
 
         public      abstract    void                                AddError(Core.IAstNode node, Exception err);
         public      abstract    void                                AddError(Core.IAstNode node, string error, QuickFix quickFix=null);
         public      abstract    void                                AddWarning(Core.IAstNode node, string warning, QuickFix quickFix=null);
+
+        public      virtual     void                                SetTarget(Node.IDataTarget target)
+        {
+            throw new InvalidOperationException("SetTarget not available.");
+        }
+
 
         public                  void                                CaseWarning(Core.Token token, string value)
         {

@@ -114,6 +114,12 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
             if (srcitem == null)
                 throw new InvalidOperationException("Can't find source in referencelist.");
 
+            var symbol = srcitem.Token.SymbolData?.GetDatamodelSymbol() ?? throw new Exception("No simple symbol at location.");
+
+            if (symbol.SymbolNameReference != null) {
+                throw new Exception("Name is linked to other symbol.");
+            }
+
             ServiceProvider         = serviceProvider;
             LanguageServiceProject  = languageServiceProject;
             _srcfilename            = srcfilename;
@@ -127,7 +133,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
             _validator = _getValidator();
             _rootItems = _constructFileItems(referenceList);
 
-            var databaseItem = _constructDatabaseItem(srcitem.Token.Symbol);
+            var databaseItem = _constructDatabaseItem(symbol);
             if (databaseItem != null) {
                 var rootItems = new IRootItem[_rootItems.Length + 1];
                 Array.Copy(_rootItems, 0, rootItems, 1, _rootItems.Length);
@@ -306,7 +312,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
                 if (!fileItems.TryGetValue(filename, out var fileItem))
                     fileItems.Add(filename, fileItem = new FileItem(this, filename));
 
-                fileItem.AddChild(new FileLocationItem(fileItem, item.Token, item.Line));
+                fileItem.AddChild(new FileLocationItem(fileItem, item.Token, LTTS.SymbolReference.GetLine(item.GetLineTokens())));
             }
 
             return fileItems.Values.ToArray();
@@ -323,7 +329,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
 
             case LTTS.DataModel.SymbolType.Column: {
                     if (symbol is LTTS.DataModel.ColumnDS column &&
-                        column.Parent is LTTS.DataModel.EntityObjectTable entityTable &&
+                        column.ParentSymbol is LTTS.DataModel.EntityObjectTable entityTable &&
                         entityTable.Type == LTTS.DataModel.SymbolType.TableUser &&
                         entityTable.EntityName.Database == null &&
                         entityTable.EntityName.Schema   != "sys")
@@ -335,7 +341,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Rename
 
             case LTTS.DataModel.SymbolType.Index: {
                     if (symbol is LTTS.DataModel.Index index &&
-                        index.Parent is LTTS.DataModel.EntityObjectTable entityTable &&
+                        index.ParentSymbol is LTTS.DataModel.EntityObjectTable entityTable &&
                         entityTable.Type == LTTS.DataModel.SymbolType.TableUser &&
                         entityTable.EntityName.Database == null &&
                         entityTable.EntityName.Schema   != "sys")

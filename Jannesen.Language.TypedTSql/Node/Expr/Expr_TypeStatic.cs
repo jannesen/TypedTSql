@@ -31,7 +31,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                                                  Expr_TypeStatic(Core.ParserReader reader)
         {
-            n_EntityName = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.UserDataType));
+            n_EntityName = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.UserDataType, DataModel.SymbolUsageFlags.Reference));
             ParseToken(reader, Core.TokenID.DoubleColon);
             n_StaticName = ParseName(reader);
 
@@ -49,7 +49,6 @@ namespace Jannesen.Language.TypedTSql.Node
 
             return new TranspileException(this, "Can't calculate constant value.");
         }
-
         public      override    void                            TranspileNode(Transpile.Context context)
         {
             _expressionType = ExprType.NeedsTranspile;
@@ -113,7 +112,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 return;
             }
 
-            n_StaticName.SetSymbol(valueRecord);
+            n_StaticName.SetSymbolUsage(valueRecord, DataModel.SymbolUsageFlags.Reference);
             context.CaseWarning(n_StaticName, valueRecord.Name);
             _valueFlags = (valueRecord.Value == null ? DataModel.ValueFlags.NULL|DataModel.ValueFlags.Nullable : DataModel.ValueFlags.Const);
             _sqlType    = ((DataModel.EntityType)(n_EntityName.Entity));

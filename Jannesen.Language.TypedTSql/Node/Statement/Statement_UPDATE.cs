@@ -40,10 +40,11 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Expression?.TranspileNode(context);
 
                 if (context.Target != null) {
-                    Column = context.Target.Columns.FindColumn(n_Column.ValueString, out bool ambiguous);
+                    bool ambiguous = false;
+                    Column = context.Target.Columns?.FindColumn(n_Column.ValueString, out ambiguous);
 
                     if (Column != null) {
-                        n_Column.SetSymbol(Column);
+                        n_Column.SetSymbolUsage(Column, DataModel.SymbolUsageFlags.Write);
                         Column.SetUsed();
 
                         if (ambiguous)
@@ -68,7 +69,7 @@ namespace Jannesen.Language.TypedTSql.Node
                         }
                     }
                     else
-                        context.AddError(n_Column, "Unknown column '" + n_Column.ValueString + "' in '" + context.Target.Source.Name + "'.");
+                        context.AddError(n_Column, "Unknown column '" + n_Column.ValueString + "' in '" + (context.Target.Table?.Name ?? "[unknown]") + "'.");
                 }
                 context.ScopeIndentityType = null;
             }
@@ -80,7 +81,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             ParseToken(reader, Core.TokenID.UPDATE);
 
-            ParseTarget(reader);
+            ParseTarget(reader, DataModel.SymbolUsageFlags.Update);
 
             ParseToken(reader, Core.TokenID.SET);
 
@@ -108,7 +109,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             var contextRowSet    = new Transpile.ContextRowSets(contextStatement);
 
-            TranspileFromWhereExpression(contextStatement, contextRowSet);
+            TranspileFromWhereExpression(contextStatement, contextRowSet, DataModel.SymbolUsageFlags.Update);
 
             n_Set.TranspileNodes(contextRowSet);
         }

@@ -7,9 +7,11 @@ namespace Jannesen.Language.TypedTSql.Node
     public class Query_Select_ColumnResponse: Query_Select_Column
     {
         public      readonly        Query_SelectContext     n_SelectContext;
-        public      readonly        Core.TokenWithSymbol    n_FieldName;
+        public      readonly        TokenWithSymbol         n_FieldName;
         public      readonly        IExprNode               n_Expression;
         public      readonly        Node_AS                 n_As;
+
+        public                      DataModel.Column        ResultColumn        { get; private set; }
 
         public                                              Query_Select_ColumnResponse(Core.ParserReader reader, Query_SelectContext selectContext)
         {
@@ -36,6 +38,8 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override        void                    TranspileNode(Transpile.Context context)
         {
+            ResultColumn = null;
+
             switch(n_SelectContext) {
             case Query_SelectContext.ExpressionResponseObject:
                 if (n_FieldName == null)
@@ -50,20 +54,22 @@ namespace Jannesen.Language.TypedTSql.Node
 
             n_Expression.TranspileNode(context);
             n_As?.TranspileNode(context);
-        }
 
-        public      override        void                    AddColumnToList(Transpile.Context context, List<DataModel.Column> columns)
-        {
             if (n_FieldName != null) {
-                var column = new DataModel.ColumnExpr(n_FieldName,
-                                                      n_Expression,
-                                                      declaration: n_FieldName);
-                n_FieldName.SetSymbol(column);
-
-                columns.Add(column);
+                ResultColumn = new DataModel.ColumnExpr(n_FieldName,
+                                                        n_Expression,
+                                                        declaration: n_FieldName);
+                n_FieldName.SetSymbolUsage(ResultColumn, DataModel.SymbolUsageFlags.Write);
             }
             else {
-                columns.Add(new DataModel.ColumnExpr(n_Expression));
+                ResultColumn = new DataModel.ColumnExpr(n_Expression);
+            }
+
+        }
+        public      override        void                    AddColumnToList(Transpile.Context context, List<DataModel.Column> columns)
+        {
+            if (ResultColumn != null) { 
+                columns.Add(ResultColumn);
             }
         }
 

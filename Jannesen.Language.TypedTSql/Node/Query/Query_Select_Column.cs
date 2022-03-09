@@ -10,6 +10,8 @@ namespace Jannesen.Language.TypedTSql.Node
     //                   | expression AS column_alias
     public abstract class Query_Select_Column: Core.AstParseNode
     {
-        public      abstract        void                AddColumnToList(Transpile.Context context, List<DataModel.Column> columns);
+        public      virtual         bool                    isVariableAssign            => false;
+
+        public      abstract        void                    AddColumnToList(Transpile.Context context, List<DataModel.Column> columns);
     }
 }

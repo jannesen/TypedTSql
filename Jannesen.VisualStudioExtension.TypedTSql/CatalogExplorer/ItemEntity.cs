@@ -391,8 +391,10 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         protected   async       void                        _onFindAllReferences(object s,RoutedEventArgs e)
         {
             try {
+                var findAllReferecesWindows = new FindAllReferences.FindAllReferenceWindow(ServiceProvider);
+
                 await ItemProject.WhenReadyAndLocked((project) => {
-                        LanguageService.Library.SimpleLibrary.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(project.GlobalCatalog.GetEntity(EntityType, EntityName)));
+                        findAllReferecesWindows.AddEntries(ItemProject.VSProject, project.FindReferences(project.GlobalCatalog.GetEntity(EntityType, EntityName)));
                     });
             }
             catch(Exception err) {

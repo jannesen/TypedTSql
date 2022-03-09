@@ -13,11 +13,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
         ErrorStub       = 0x0010
     }
 
-    public interface IColumnList: IEnumerable<Column>
+    public interface IColumnList: IReadOnlyList<Column>
     {
         ColumnListFlags                                 Flags           { get; }
-        int                                             Count           { get; }
-        Column                                          this[int idx]   { get; }
 
         Column                                          FindColumn(string name, out bool ambiguous);
         ColumnList                                      GetUniqueNamedList();

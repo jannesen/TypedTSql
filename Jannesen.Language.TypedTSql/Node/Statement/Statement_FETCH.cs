@@ -39,7 +39,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 ParseOptionalToken(reader, Core.TokenID.FROM);
             }
 
-            n_Cursor = AddChild(new Node_CursorName(reader));
+            n_Cursor = AddChild(new Node_CursorName(reader, DataModel.SymbolUsageFlags.Read));
 
             ParseToken(reader, Core.TokenID.INTO);
             n_IntoVariables = AddChild(new Node_IntoVariables(reader));
@@ -63,7 +63,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 }
 
                 for (int i = 0 ; i < n_IntoVariables.n_VariableNames.Length ; ++i)
-                    context.VariableSet(n_IntoVariables.n_VariableNames[i], n_Cursor.Cursor.Columns[i]);
+                    n_IntoVariables.n_VariableNames[i].TranspileAssign(context, n_Cursor.Cursor.Columns[i]);
             }
         }
     }

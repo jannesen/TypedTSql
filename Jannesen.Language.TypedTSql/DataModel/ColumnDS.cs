@@ -8,7 +8,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public      override    string                  Name                    { get { return _name;                } }
         public      override    object                  Declaration             { get { return _declaration;         } }
-        public      override    ISymbol                 Parent                  { get { return _parent;              } }
+        public      override    ISymbol                 ParentSymbol            { get { return _parent;              } }
         public      override    ISqlType                SqlType                 { get { return _sqlType;             } }
         public      override    string                  CollationName           { get { return _collationName;       } }
         public      override    ValueFlags              ValueFlags              { get { return _flags;               } }
@@ -32,6 +32,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                 sqlType = new SqlTypeAny();
             }
 
+            _parent              = null;
             _name                = name;
             _sqlType             = sqlType;
             _declaration         = declaration;

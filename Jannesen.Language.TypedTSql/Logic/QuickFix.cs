@@ -45,10 +45,13 @@ namespace Jannesen.Language.TypedTSql.Logic
             }
 
             if (sqlType.NativeType == expr.SqlType.NativeType) {
-                if ((sqlType.TypeFlags & DataModel.SqlTypeFlags.UserType) != 0 &&
-                    expr is Node.Expr_PrimativeValue primativeValue &&
-                    primativeValue.Referenced is DataModel.Variable variable)
-                    QuickFix_VariableType(context, primativeValue.n_Nodes[0], variable, sqlType);
+                if ((sqlType.TypeFlags & DataModel.SqlTypeFlags.UserType) != 0) {
+                    var variable = expr.ReferencedVariable;
+
+                    if (variable != null && expr is Node.Expr_ColumnUserFunction primativeValue) {
+                        QuickFix_VariableType(context, primativeValue.n_Nodes[0], variable, sqlType);
+                    }
+                }
             }
         }
         public  static  void                    QuickFix_VariableType(Transpile.Context context, Core.IAstNode errorNode, DataModel.Variable variable, DataModel.ISqlType expectedType)

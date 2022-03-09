@@ -41,7 +41,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (!context.Transpiler.ServiceDeclarations.TryGetValue(n_ServiceEntitiyName, out var service))
                 throw new TranspileException(n_ServiceName, "Unknown service " + n_ServiceEntitiyName + ".");
 
-            n_ServiceName.SetSymbol(service);
+            n_ServiceName.SetSymbolUsage(service, DataModel.SymbolUsageFlags.Reference);
             DeclarationService = service;
         }
     }

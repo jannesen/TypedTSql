@@ -46,7 +46,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         private                 ILoopStatement                      _findLoop()
         {
-            for (var p = Parent ; p != null ; p = p.Parent) {
+            for (var p = ParentNode ; p != null ; p = p.ParentNode) {
                 if (p is ILoopStatement s) {
                     return s;
                 }

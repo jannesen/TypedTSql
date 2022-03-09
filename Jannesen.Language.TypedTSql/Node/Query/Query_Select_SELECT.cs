@@ -13,7 +13,7 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly    IExprNode                   n_Top;
         public      readonly    Query_Select_ColumnList     n_Columns;
-        public      readonly    Core.TokenWithSymbol        n_Into;
+        public      readonly    Node_Into                   n_Into;
         public      readonly    TableSource                 n_From;
         public      readonly    IExprNode                   n_Where;
         public      readonly    Query_Select_GroupBy        n_GroupBy;
@@ -44,7 +44,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             if (selectContext == Query_SelectContext.StatementSelect) {
                 if (ParseOptionalToken(reader, Core.TokenID.INTO) != null) {
-                    n_Into = ParseName(reader);
+                    n_Into = AddChild(new Node_Into(reader));
                 }
             }
 
@@ -56,21 +56,26 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Where = ParseExpression(reader);
             }
 
-            if (reader.CurrentToken.isToken(Core.TokenID.GROUP)) {
-                n_GroupBy = AddChild(new Query_Select_GroupBy(reader));
-            }
+            if (selectContext != Query_SelectContext.StatementStore &&
+                selectContext != Query_SelectContext.StatementReceive) {
+                if (reader.CurrentToken.isToken(Core.TokenID.GROUP)) {
+                    n_GroupBy = AddChild(new Query_Select_GroupBy(reader));
+                }
 
-            if (ParseOptionalToken(reader, Core.TokenID.HAVING) != null) {
-                n_Having = ParseExpression(reader);
+                if (ParseOptionalToken(reader, Core.TokenID.HAVING) != null) {
+                    n_Having = ParseExpression(reader);
+                }
             }
         }
 
-        public      override        void                    TranspileNode(Transpile.Context context)
+        public      override    void                        TranspileNode(Transpile.Context context)
         {
-            var c = new Transpile.ContextRowSets(context);
-            n_From?.TranspileNode(c);
-            n_Top?.TranspileNode(c);
-            context.RowSets.AddRange(c.RowSets);
+            if (n_Into != null) {
+                n_Into.TranspileNode(context);
+                context.SetTarget(n_Into);
+            }
+            n_Top?.TranspileNode(context);
+            n_From?.TranspileNode(context);
             n_Columns?.TranspileNode(context);
             n_Where?.TranspileNode(context);
             n_GroupBy?.TranspileNode(context);

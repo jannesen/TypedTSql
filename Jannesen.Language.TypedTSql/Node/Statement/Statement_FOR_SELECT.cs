@@ -53,17 +53,19 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Select.TranspileNode(contextStatement);
 
             var selectColumn = n_Select.Resultset;
-            if (n_IntoVariables.n_VariableNames.Length < selectColumn.Count) {
-                contextBlock.AddError(this, "Missing variable, expect " + selectColumn.Count + ".");
-                return;
-            }
-            else if (n_IntoVariables.n_VariableNames.Length > selectColumn.Count) {
-                contextBlock.AddError(this, "To many variable, expect " + selectColumn.Count + ".");
-                return;
+            if (selectColumn != null) {
+                if (n_IntoVariables.n_VariableNames.Length < selectColumn.Count) {
+                    contextBlock.AddError(this, "Missing variable, expect " + selectColumn.Count + ".");
+                    return;
+                }
+                else if (n_IntoVariables.n_VariableNames.Length > selectColumn.Count) {
+                    contextBlock.AddError(this, "To many variable, expect " + selectColumn.Count + ".");
+                    return;
+                }
             }
 
             for (int i = 0 ; i < n_IntoVariables.n_VariableNames.Length ; ++i)
-                contextBlock.VariableSet(n_IntoVariables.n_VariableNames[i], selectColumn[i]);
+                n_IntoVariables.n_VariableNames[i].TranspileAssign(contextBlock, selectColumn[i]);
 
             n_Statement.TranspileNode(contextStatement);
 
@@ -83,7 +85,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             int indent = emitWriter.Linepos;
             emitWriter.WriteText("BEGIN");
-            Node_VarVariable.EmitVarVariable(emitWriter, _variableList, indent + 4);
+            Node_AssignVariable.EmitVarVariable(emitWriter, _variableList, indent + 4);
             emitWriter.WriteNewLine(indent + 4, "DECLARE ", namecursor, " CURSOR LOCAL", (m_Static ? " STATIC FORWARD_ONLY READ_ONLY" : " FAST_FORWARD"), "  FOR");
             emitWriter.WriteNewLine(indent + 8);  n_Select.Emit(emitWriter); n_QueryOptions?.Emit(emitWriter);
             emitWriter.WriteNewLine(indent + 4, "OPEN ", namecursor);

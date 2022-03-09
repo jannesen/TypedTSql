@@ -74,7 +74,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public      override    void                            TranspileNode(Transpile.Context context)
         {
-            n_Name.SetSymbol(EntityAssembly);
+            n_Name.SetSymbolUsage(EntityAssembly, DataModel.SymbolUsageFlags.Declaration);
             EntityAssembly.Transpiled();
             n_Image.TranspileNode(context);
 

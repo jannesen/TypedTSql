@@ -78,7 +78,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     return null;
                 }
 
-                n_Name.SetSymbol(entity);
+                n_Name.SetSymbolUsage(entity, DataModel.SymbolUsageFlags.Reference);
                 context.CaseWarning(n_Schema, entity.EntityName.Schema);
                 context.CaseWarning(n_Name,   entity.EntityName.Name);
 
@@ -92,7 +92,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 if (systemTypeId != DataModel.SystemType.Unknown) {
                     var sqlType = _parseNativeType(context, systemTypeId);
-                    n_Name.SetSymbol(sqlType);
+                    n_Name.SetSymbolUsage(sqlType, DataModel.SymbolUsageFlags.Reference);
                     return sqlType;
                 }
                 else if (nameLower == "cursor")
@@ -121,7 +121,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     return null;
                 }
 
-                n_Name.SetSymbol(entity);
+                n_Name.SetSymbolUsage(entity, DataModel.SymbolUsageFlags.Reference);
                 context.CaseWarning(n_Name, entity.EntityName.Name);
 
                 return entity;

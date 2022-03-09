@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
@@ -18,10 +19,11 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                  SymbolType          Type                    { get { return SymbolType.Index; } }
         public                  IndexFlags          Flags                   { get; private set; }
         public                  string              Name                    { get; private set; }
+        public                  string              FullName             { get { return (ParentSymbol.FullName ?? "???") + "." + SqlStatic.QuoteName(Name); } }
         public                  IndexColumn[]       Columns                 { get; private set; }
         public                  string              Filter                  { get; private set; }
         public                  object              Declaration             { get; private set; }
-        public                  ISymbol             Parent                  { get; private set; }
+        public                  ISymbol             ParentSymbol            { get; private set; }
         public                  DataModel.ISymbol   SymbolNameReference     { get { return null; } }
 
         public                                      Index(IndexFlags flags, string name, IndexColumn[] columns, string filter = null, object declaration = null)
@@ -44,7 +46,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         internal                void                SetParent(DataModel.ISymbol parent)
         {
-            this.Parent = parent;
+            this.ParentSymbol = parent;
         }
 
         public      override    int                 GetHashCode()

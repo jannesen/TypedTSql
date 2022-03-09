@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Jannesen.Language.TypedTSql.Core;
 using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -16,22 +17,16 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             ParseToken(reader, Core.TokenID.THROW);
 
-            switch(reader.CurrentToken.validateToken(Core.TokenID.Number, Core.TokenID.LocalName, Core.TokenID.String)) {
-            case Core.TokenID.Number:
-            case Core.TokenID.LocalName:
+            if (reader.CurrentToken.isToken(Core.TokenID.Number) || reader.NextPeek().isToken(Core.TokenID.Comma)) { 
                 n_ErrorNumber = _parseArgument(reader, Core.TokenID.Number, Core.TokenID.LocalName);
                 ParseToken(reader, Core.TokenID.Comma);
                 n_Message = _parseArgument(reader, Core.TokenID.String, Core.TokenID.LocalName);
                 ParseToken(reader, Core.TokenID.Comma);
                 n_State = _parseArgument(reader, Core.TokenID.Number, Core.TokenID.LocalName);
-                break;
-
-            case Core.TokenID.String:
+            }
+            else {
                 AddLeading(reader);
-                AddChild(new Node.Node_CustomNode("50000,"));
-                n_Message = _parseArgument(reader, Core.TokenID.String);
-                AddBeforeWhitespace(new Node.Node_CustomNode(",0"));
-                break;
+                n_Message = _parseArgument(reader, Core.TokenID.String, Core.TokenID.LocalName);
             }
 
             ParseStatementEnd(reader, parseContext);
@@ -42,7 +37,7 @@ namespace Jannesen.Language.TypedTSql.Node
             reader.CurrentToken.validateToken(ids);
 
             if (reader.CurrentToken.isToken(Core.TokenID.LocalName))
-                return AddChild(new Expr_PrimativeValue(reader, localVariable:true));
+                return AddChild(new Expr_Variable(reader));
 
             return ParseToken(reader);
         }
@@ -67,6 +62,24 @@ namespace Jannesen.Language.TypedTSql.Node
                 else
                 if (n_State is Core.AstParseNode)
                     ((Core.AstParseNode)n_State).TranspileNode(context);
+            }
+        }
+        public      override    void                                Emit(EmitWriter emitWriter)
+        {
+            if (n_ErrorNumber == null) {
+                foreach(var child in Children) {
+                    if (object.ReferenceEquals(child, n_Message)) {
+                        emitWriter.WriteText("50000,");
+                        child.Emit(emitWriter);
+                        emitWriter.WriteText(",0");
+                    }
+                    else {
+                        child.Emit(emitWriter);
+                    }
+                }
+            }
+            else {
+                base.Emit(emitWriter);
             }
         }
     }

@@ -6,11 +6,13 @@ namespace Jannesen.Language.TypedTSql.Node
 {
     public class Expr_SimpleWrapper: Core.AstParseNode, Node.IExprNode
     {
-        public      DataModel.ValueFlags    ValueFlags              { get { return n_Expr.ValueFlags;       } }
-        public      DataModel.ISqlType      SqlType                 { get { return n_Expr.SqlType;          } }
-        public      string                  CollationName           { get { return n_Expr.CollationName;    } }
-        public      ExprType                ExpressionType          { get { return _exprType;               } }
-        public      bool                    NoBracketsNeeded        { get { return true;                    } }
+        public      DataModel.ValueFlags    ValueFlags              { get { return n_Expr.ValueFlags;           } }
+        public      DataModel.ISqlType      SqlType                 { get { return n_Expr.SqlType;              } }
+        public      string                  CollationName           { get { return n_Expr.CollationName;        } }
+        public      ExprType                ExpressionType          { get { return _exprType;                   } }
+        public      DataModel.Variable      ReferencedVariable      { get { return n_Expr.ReferencedVariable;   } }
+        public      DataModel.Column        ReferencedColumn        { get { return n_Expr.ReferencedColumn;     } }
+        public      bool                    NoBracketsNeeded        { get { return true;                        } }
 
         public      readonly                bool                    n_ConstValue;
         public      readonly                IExprNode               n_Expr;

@@ -20,13 +20,15 @@ namespace Jannesen.Language.TypedTSql.Node
 
     public abstract class Expr: Core.AstParseNode, IExprNode
     {
-        public      delegate    bool                TestCallback(Core.TokenID id);
-        public      delegate    IExprNode           ParseCallback(Core.ParserReader reader);
+        public      delegate    bool                    TestCallback(Core.TokenID id);
+        public      delegate    IExprNode               ParseCallback(Core.ParserReader reader);
 
         public      abstract    DataModel.ValueFlags    ValueFlags          { get; }
         public      abstract    DataModel.ISqlType      SqlType             { get; }
         public      virtual     string                  CollationName       { get { return null;                } }
         public      virtual     ExprType                ExpressionType      { get { return ExprType.Complex;    } }
+        public      virtual     DataModel.Variable      ReferencedVariable  { get { return null;                } }
+        public      virtual     DataModel.Column        ReferencedColumn    { get { return null;                } }
         public      virtual     bool                    NoBracketsNeeded    { get { return false;               } }
 
         public      static      bool                    CanParse(Core.ParserReader reader)
@@ -68,6 +70,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             throw new InvalidOperationException("Not a variable expression");
         }
+
         private     static      IExprNode               _precedence1_And(Core.ParserReader reader)
         {
             return Expr_Operator_AndOr.Parse(reader, _precedence2_NOT, (r) => r == Core.TokenID.AND);
@@ -134,7 +137,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             // Variable
             case Core.TokenID.LocalName:
-                return new Expr_PrimativeValue(reader);
+                return new Expr_Variable(reader);
 
             case Core.TokenID.LrBracket:
                 if (Expr_Subquery.CanParse(reader))
@@ -165,12 +168,12 @@ namespace Jannesen.Language.TypedTSql.Node
                     if (BuildIn.Catalog.ScalarFunctions.TryGetValue(reader.CurrentToken.Text, out Internal.BuildinFunctionDeclaration bfd))
                         return (Expr)bfd.Parse(reader);
 
-                    return new Expr_PrimativeValue(reader);
+                    return new Expr_ColumnUserFunction(reader);
                 }
 
                 if (Expr_TypeStatic.CanParse(reader)) return new Expr_TypeStatic(reader);
 
-                return new Expr_PrimativeValue(reader);
+                return new Expr_ColumnUserFunction(reader);
 
             default:
                 {
@@ -207,7 +210,7 @@ namespace Jannesen.Language.TypedTSql.Node
         protected                                       ExprBooleanBuildIn(DataModel.ISymbol symbol, Core.ParserReader reader)
         {
             Name = (Core.TokenWithSymbol)ParseToken(reader);
-            Name.SetSymbol(symbol);
+            Name.SetSymbolUsage(symbol, DataModel.SymbolUsageFlags.Reference);
         }
     }
 
@@ -220,7 +223,7 @@ namespace Jannesen.Language.TypedTSql.Node
         protected                                       ExprCalculationBuildIn(DataModel.ISymbol symbol, Core.ParserReader reader)
         {
             Name = (Core.TokenWithSymbol)ParseToken(reader);
-            Name.SetSymbol(symbol);
+            Name.SetSymbolUsage(symbol, DataModel.SymbolUsageFlags.Reference);
         }
     }
 }

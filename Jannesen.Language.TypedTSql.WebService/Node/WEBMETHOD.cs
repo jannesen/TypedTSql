@@ -177,7 +177,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 return rtn.ToString();
             }
         }
-        public class ServiceParameter:  LTTSQL.Node.Node_Parameter
+        public class ServiceParameter: LTTSQL.Node.Node_Parameter
         {
             public      readonly    LTTSQL.Core.AstParseNode            n_Type;
             public      readonly    ParameterSource                     n_Source;
@@ -237,7 +237,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
                     var    sqlType      = SqlType;
                     var    flags        = DataModel.VariableFlags.Nullable;
-                    object defaultvalue = null;;
+                    object defaultvalue = null;
 
                     if (n_Options != null) {
                         if (n_Options.n_Required && !n_Options.n_Key)
@@ -257,7 +257,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                                                                 n_Name,
                                                                 flags,
                                                                 defaultvalue);
-                    n_Name.SetSymbol(_parameter);
+                    n_Name.SetSymbolUsage(_parameter, DataModel.SymbolUsageFlags.Declaration);
                 }
                 catch(Exception err) {
                     context.AddError(this, err);
@@ -395,7 +395,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 TranspileOptions(context);
 
                 Entity.Transpiled(parameters: n_Parameters?.t_Parameters);
-                n_Declaration.n_ServiceMethodName.n_Name.SetSymbol(Entity);
+                n_Declaration.n_ServiceMethodName.n_Name.SetSymbolUsage(Entity, DataModel.SymbolUsageFlags.Declaration);
                 _declarationTranspiled = true;
             }
 

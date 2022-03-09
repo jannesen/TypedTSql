@@ -46,7 +46,6 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             return _constValue;
         }
-
         public      override    void                    TranspileNode(Context context)
         {
             _valueFlags = DataModel.ValueFlags.Error;

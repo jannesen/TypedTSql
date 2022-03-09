@@ -13,8 +13,9 @@ namespace Jannesen.Language.TypedTSql.Node
 
                                 DataModel.SymbolType                DataModel.ISymbol.Type                          { get { return DataModel.SymbolType.Service; } }
                                 string                              DataModel.ISymbol.Name                          { get { return EntityName.Name;              } }
+                                string                              DataModel.ISymbol.FullName                   { get { return SqlStatic.QuoteName(EntityName.Name); } }
                                 object                              DataModel.ISymbol.Declaration                   { get { return _declaration; } }
-                                DataModel.ISymbol                   DataModel.ISymbol.Parent                        { get { return null; } }
+                                DataModel.ISymbol                   DataModel.ISymbol.ParentSymbol                  { get { return null; } }
                                 DataModel.ISymbol                   DataModel.ISymbol.SymbolNameReference           { get { return null; } }
 
         public      readonly    Node_EntityNameDefine               n_Name;
@@ -26,7 +27,7 @@ namespace Jannesen.Language.TypedTSql.Node
             AddLeading(reader);
             Core.TokenWithSymbol.SetKeyword(ParseToken(reader));
             n_Name = AddChild(new Node_EntityNameDefine(reader));
-            n_Name.n_Name.SetSymbol(this);
+            n_Name.n_Name.SetSymbolUsage(this, DataModel.SymbolUsageFlags.Declaration);
             _declaration = new DataModel.DocumentSpan(reader.SourceFile.Filename, this);
         }
 

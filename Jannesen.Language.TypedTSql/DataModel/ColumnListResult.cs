@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Jannesen.Language.TypedTSql.DataModel
@@ -69,7 +70,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             return columnList;
         }
 
-        public                      System.Collections.IEnumerator      GetEnumerator()
+                                    IEnumerator                         IEnumerable.GetEnumerator()
         {
             return _columns.GetEnumerator();
         }

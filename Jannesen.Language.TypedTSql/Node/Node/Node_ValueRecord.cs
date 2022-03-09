@@ -40,7 +40,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Value.TranspileNode(context);
 
             ValueRecord = _createValueRecord(context);
-            n_Name.SetSymbol(ValueRecord);
+            n_Name.SetSymbolUsage(ValueRecord, DataModel.SymbolUsageFlags.Declaration);
         }
 
         public                  void                            TranspileFields(DataModel.ValueRecordFieldList fields)

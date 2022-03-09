@@ -17,19 +17,27 @@ namespace Jannesen.Language.TypedTSql.Node
         Queue
     }
 
-    public class Node_EntityNameReference: Core.AstParseNode, ITableSource, IReferencedEntity
+    public class Node_EntityNameReference: Core.AstParseNode, IDataTarget, IReferencedEntity
     {
         public                  EntityReferenceType             ReferenceType       { get; private set; }
+        public                  DataModel.SymbolUsageFlags      Usage               { get; private set; }
         public      readonly    Core.TokenWithSymbol            n_Schema;
         public      readonly    Core.TokenWithSymbol            n_Name;
         public                  DataModel.EntityName            n_EntityName        { get; private set; }
-        public                  DataModel.ISymbol               Entity              { get; private set; }
+        public                  DataModel.ISymbol               Entity              { get { return _entity;   } }
+        public                  DataModel.IColumnList           Columns             { get { return _columns;  } }
 
+                                bool                            IDataTarget.isVarDeclare    { get { return false;     } }
+                                DataModel.ISymbol               IDataTarget.Table           { get { return _entity;   } }
+                                
+        private                 DataModel.ISymbol               _entity;
+        private                 DataModel.IColumnList           _columns;
         private                 string                          _addSchema;
 
-        public                                                  Node_EntityNameReference(Core.ParserReader reader, EntityReferenceType type)
+        public                                                  Node_EntityNameReference(Core.ParserReader reader, EntityReferenceType type, DataModel.SymbolUsageFlags usage)
         {
             this.ReferenceType = type;
+            this.Usage         = usage;
 
             string  database = null;
             string  schema   = null;
@@ -67,6 +75,140 @@ namespace Jannesen.Language.TypedTSql.Node
                     n_EntityName = new DataModel.EntityName(schema, n_EntityName.Name);
             }
         }
+        public                  void                            SetUsage(DataModel.SymbolUsageFlags usage)
+        {
+            Usage = usage;
+            n_Name.SymbolData?.UpdateSymbolUsage(_entity, usage);
+        }
+
+        public      override    void                            TranspileNode(Transpile.Context context)
+        {
+            _entity = null;
+            _columns = null;
+
+            Validate.Schema(context, n_Schema);
+
+            switch (ReferenceType) {
+            case EntityReferenceType.Table:
+            case EntityReferenceType.TableOrView:
+            case EntityReferenceType.FunctionTable: { 
+                    if (n_EntityName.Schema != null) {
+                        var entity = context.Catalog.GetObject(n_EntityName);
+                        if (entity == null) {
+                            context.AddError(this, "Unknown object '" + n_EntityName + "'.");
+                            return;
+                        }
+
+                        _validateReference(entity.Type, ReferenceType);
+
+                        if (n_Schema != null)
+                            context.CaseWarning(n_Schema, entity.EntityName.Schema);
+
+                        context.CaseWarning(n_Name,   entity.EntityName.Name);
+                        _entity = entity;
+                    }
+                    else {
+                        var     name = n_Name.ValueString;
+
+                        if (!name.StartsWith("#", StringComparison.Ordinal)) {
+                            context.AddError(n_Name, "Missing '#'.");
+                            return;
+                        }
+
+                        var tempTable = _findTempTable(context, context.GetDeclarationObjectCode().Entity, name, new List<DataModel.EntityObjectCode>());
+
+                        if (tempTable == null) {
+                            context.AddError(n_Name, "Unknown temp table '" + name + "'.");
+                            return;
+                        }
+
+                        context.CaseWarning(n_Name, tempTable.Name);
+                        _entity = tempTable;
+                    }
+
+                    if (_entity is DataModel.ITable table) {
+                        _columns = table.Columns;
+                    }
+                    else if (_entity is DataModel.EntityObjectCode entityCode) {
+                        var returns = entityCode.Returns;
+
+                        if (returns != null && (returns.TypeFlags & DataModel.SqlTypeFlags.Table) != 0) {
+                            _columns = returns.Columns;
+                        }
+                    }
+
+                    if (_columns == null) {
+                        context.AddError(this, n_EntityName.Fullname + " is not a table,view or table-function.");
+                    }
+                }
+                break;
+
+            case EntityReferenceType.StoredProcedure: { 
+                    var entity = context.Catalog.GetObject(n_EntityName);
+                    if (entity == null) {
+                        context.AddError(this, "Unknown object '" + n_EntityName + "'.");
+                        return;
+                    }
+
+                    _validateReference(entity.Type, ReferenceType);
+
+                    if (n_Schema != null)
+                        context.CaseWarning(n_Schema, entity.EntityName.Schema);
+
+                    context.CaseWarning(n_Name,   entity.EntityName.Name);
+                    _entity = entity;
+                }
+                break;
+
+            case EntityReferenceType.UserDataType: {
+                    var entity = context.Catalog.GetType(n_EntityName);
+                    if (entity == null) {
+                        context.AddError(this, "Unknown user-type '" + n_EntityName + "'.");
+                        return;
+                    }
+
+                    if (n_Schema != null)
+                        context.CaseWarning(n_Schema, entity.EntityName.Schema);
+
+                    context.CaseWarning(n_Name,   entity.EntityName.Name);
+                    _entity = entity;
+                }
+                break;
+
+            case EntityReferenceType.Queue:
+                Core.TokenWithSymbol.SetNoSymbol(n_Name);
+                return;
+
+            default:
+                throw new InvalidOperationException("Can't transpile Node_EntityNameReference:" + ReferenceType);
+            }
+
+            if (_entity != null) {
+                n_Name.SetSymbolUsage(_entity, Usage);
+            }
+        }
+        public                  void                            TranspileAliasTarget(Transpile.Context context, TableSource from, DataModel.SymbolUsageFlags usage)
+        {
+            var source = from.FindByName(n_Name.ValueString);
+            if (source != null) {
+                _entity  = source.t_Source;
+                _columns = source.ColumnList;
+                n_Name.SetSymbolUsage(source.t_RowSet, DataModel.SymbolUsageFlags.Reference);
+
+                if (!source.SetUsage(DataModel.SymbolUsageFlags.Select | usage)) {
+                    context.AddError(this, "alias can't not be used as target.");
+                }
+            }
+            else {
+                context.AddError(this, "Unknown rowset alias.");
+            }
+        }
+        
+                                DataModel.Column                IDataTarget.GetColumnForAssign(string name, DataModel.ISqlType sqlType, string collationName, DataModel.ValueFlags flags, object declaration, DataModel.ISymbol nameReference, out bool declared)
+        {
+            declared = false;
+            return _columns?.FindColumn(name, out var _);
+        }
 
         public                  DataModel.EntityName            getReferencedEntity(DeclarationObjectCode declarationObjectCode)
         {
@@ -82,104 +224,6 @@ namespace Jannesen.Language.TypedTSql.Node
              default:
                 return null;
             }
-        }
-        public                  DataModel.ISymbol               getDataSource()
-        {
-            return Entity;
-        }
-        public                  DataModel.IColumnList           getColumnList(Transpile.Context context)
-        {
-            if (Entity != null) {
-                if (Entity is DataModel.ITable entityTable) {
-                    return entityTable.Columns;
-                }
-                else
-                if (Entity is DataModel.EntityObjectCode entityCode) {
-                    if (entityCode.Returns != null && (entityCode.Returns.TypeFlags & DataModel.SqlTypeFlags.Table) != 0)
-                        return entityCode.Returns.Columns;
-                    else
-                        context.AddError(this, " is not a table,view or table-function.");
-                }
-                else
-                    context.AddError(this, " is not a database object.");
-            }
-
-            return new DataModel.ColumnListErrorStub();
-        }
-        public      override    void                            TranspileNode(Transpile.Context context)
-        {
-            Entity = null;
-
-            Validate.Schema(context, n_Schema);
-
-            switch (ReferenceType) {
-            case EntityReferenceType.Table:
-            case EntityReferenceType.TableOrView:
-            case EntityReferenceType.StoredProcedure:
-            case EntityReferenceType.FunctionTable:
-                if (n_EntityName.Schema != null) {
-                    var entity = context.Catalog.GetObject(n_EntityName);
-                    if (entity == null) {
-                        context.AddError(this, "Unknown object '" + n_EntityName + "'.");
-                        return;
-                    }
-
-                    _validateReference(entity.Type, ReferenceType);
-                    n_Name.SetSymbol(entity);
-
-                    if (n_Schema != null)
-                        context.CaseWarning(n_Schema, entity.EntityName.Schema);
-
-                    context.CaseWarning(n_Name,   entity.EntityName.Name);
-                    Entity = entity;
-                }
-                else {
-                    var     name = n_Name.ValueString;
-
-                    if (!name.StartsWith("#", StringComparison.Ordinal)) {
-                        context.AddError(n_Name, "Missing '#'.");
-                        return;
-                    }
-
-                    var tempTable = _findTempTable(context, context.GetDeclarationObjectCode().Entity, name, new List<DataModel.EntityObjectCode>());
-
-                    if (tempTable == null) {
-                        context.AddError(n_Name, "Unknown temp table '" + name + "'.");
-                        return;
-                    }
-
-                    context.CaseWarning(n_Name, tempTable.Name);
-                    Entity = tempTable;
-                }
-                break;
-
-            case EntityReferenceType.UserDataType: {
-                    var entity = context.Catalog.GetType(n_EntityName);
-                    if (entity == null) {
-                        context.AddError(this, "Unknown user-type '" + n_EntityName + "'.");
-                        return;
-                    }
-
-                    if (n_Schema != null)
-                        context.CaseWarning(n_Schema, entity.EntityName.Schema);
-
-                    context.CaseWarning(n_Name,   entity.EntityName.Name);
-                    Entity = entity;
-                }
-                break;
-
-            case EntityReferenceType.FromReference:
-                break;
-
-            case EntityReferenceType.Queue:
-                Core.TokenWithSymbol.SetNoSymbol(n_Name);
-                return;
-
-            default:
-                throw new NotImplementedException("Can't transpile Node_EntityNameReference:" + ReferenceType);
-            }
-
-            n_Name.SetSymbol(Entity);
         }
 
         private                 string                          _getSchema(string name, Core.ParserReader reader)

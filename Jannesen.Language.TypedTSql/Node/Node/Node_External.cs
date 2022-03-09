@@ -31,7 +31,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 return;
             }
 
-            n_AssemblyName.SetSymbol(t_Assembly);
+            n_AssemblyName.SetSymbolUsage(t_Assembly, DataModel.SymbolUsageFlags.Reference);
             context.CaseWarning(n_AssemblyName, t_Assembly.EntityName.Name);
         }
     }

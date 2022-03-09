@@ -4,8 +4,9 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Commanding;
 using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.FindAllReferences;
+using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
-using LTTS = Jannesen.VisualStudioExtension.TypedTSql;
 
 namespace Jannesen.VisualStudioExtension.TypedTSql.Editor.FindReferences
 {
@@ -32,17 +33,17 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Editor.FindReferences
         private    async    Task                        _executeCommandAsync(FindReferencesCommandArgs args, CommandExecutionContext context)
         {
             try {
+                var findAllReferencesWindow = new FindAllReferences.FindAllReferenceWindow(ServiceProvider);
+
                 var startPosition = args.TextView.Selection.Start.Position;
                 var endPosition   = args.TextView.Selection.End.Position;
                 var tblsp         = LanguageService.TextBufferLanguageServiceProject.GetLanguageServiceProject(ServiceProvider, args.TextView.TextBuffer);
+
                 await tblsp.LanguageService.WhenReadyAndLocked((project) => {
-                                                            var filePath = tblsp.FilePath;
-                                                            (new LTTS.Rename.Renamer(ServiceProvider,
-                                                                                     project,
-                                                                                     filePath,
-                                                                                     startPosition,
-                                                                                     project.FindReferencesAt(filePath, startPosition, endPosition))).Run();
-                                                      }, context.OperationContext.UserCancellationToken);
+                          if (startPosition == args.TextView.Selection.Start.Position && endPosition == args.TextView.Selection.End.Position) {
+                              findAllReferencesWindow.AddEntries(tblsp.LanguageService.VSProject, project.FindReferencesListAt(tblsp.FilePath, startPosition, endPosition));
+                          }
+                      }, context.OperationContext.UserCancellationToken);
             }
             catch(Exception err) {
                 VSPackage.DisplayError(err);

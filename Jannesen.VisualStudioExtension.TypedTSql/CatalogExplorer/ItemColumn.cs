@@ -54,8 +54,10 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
         private     async       void                            _onFindAllReferences(object s,RoutedEventArgs e)
         {
             try {
+                var findAllReferencesWindow = new FindAllReferences.FindAllReferenceWindow(ServiceProvider);
+
                 await ItemProject.WhenReadyAndLocked((project) => {
-                        LanguageService.Library.SimpleLibrary.SearchReferences(ServiceProvider, ItemProject.VSProject, project.FindReferences(_getColumn(project)));
+                        findAllReferencesWindow.AddEntries(ItemProject.VSProject, project.FindReferences(_getColumn(project)));
                     });
             }
             catch(Exception err) {

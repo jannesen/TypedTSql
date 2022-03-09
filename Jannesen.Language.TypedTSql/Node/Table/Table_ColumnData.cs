@@ -89,7 +89,7 @@ namespace Jannesen.Language.TypedTSql.Node
             }
         }
 
-        public      override    void            TranspileNode(Transpile.Context context)
+        public      override    void                    TranspileNode(Transpile.Context context)
         {
             n_Datatype.TranspileNode(context);
             context.ValidateInteger(n_Identity_Seed, 0, int.MaxValue);
@@ -104,11 +104,11 @@ namespace Jannesen.Language.TypedTSql.Node
                                                 flags:         n_ColumnFlags,
                                                 declaration:   n_Name,
                                                 collationName: n_Collation?.ValueString);
-                n_Name.SetSymbol(Column);
+                n_Name.SetSymbolUsage(Column, DataModel.SymbolUsageFlags.Declaration);
             }
         }
 
-        public      override    void            Emit(EmitWriter emitWriter)
+        public      override    void                    Emit(EmitWriter emitWriter)
         {
             foreach(var node in Children) {
                 if (node == n_Datatype && TableType == TableType.Temp) {

@@ -1150,7 +1150,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                 case DataModel.SystemType.Bit:              return _operation_UNION(operation, nativeType1);
                 case DataModel.SystemType.TinyInt:          return _operation_UNION(operation, nativeType2);
                 case DataModel.SystemType.SmallInt:         return _operation_UNION(operation, nativeType2);
-                case DataModel.SystemType.Int:              return _operation_UNION(operation, nativeType2);;
+                case DataModel.SystemType.Int:              return _operation_UNION(operation, nativeType2);
                 case DataModel.SystemType.BigInt:           return _operation_UNION(operation, nativeType2);
                 default:                                    return null;
                 }

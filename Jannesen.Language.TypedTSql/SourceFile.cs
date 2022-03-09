@@ -103,8 +103,8 @@ namespace Jannesen.Language.TypedTSql
         {
             foreach(var token in _tokens) {
                 if (token is Core.TokenWithSymbol) {
-                    if (((Core.TokenWithSymbol)token).Symbol == symbol)
-                        symbolReferenceList.Add(new SymbolReference(this, (Core.TokenWithSymbol)token));
+                    if (((Core.TokenWithSymbol)token).HasSymbol(symbol))
+                        symbolReferenceList.Add(new SymbolReference(symbolReferenceList, this, (Core.TokenWithSymbol)token));
                 }
             }
         }

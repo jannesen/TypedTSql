@@ -7,13 +7,13 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
     // https://docs.microsoft.com/en-us/sql/t-sql/functions/string-split-transact-sql
     public class STRING_SPLIT: TableSource_RowSetBuildIn
     {
-        public      readonly    Node.IExprNode              n_String;
-        public      readonly    Node.IExprNode              n_Seprator;
-        public      override    DataModel.IColumnList       ColumnList      { get { return _t_ColumnList ; } }
+        public      readonly    Node.IExprNode                      n_String;
+        public      readonly    Node.IExprNode                      n_Seprator;
+        public      override    DataModel.IColumnList               ColumnList      { get { return _t_ColumnList ; } }
 
-        private                 DataModel.IColumnList       _t_ColumnList;
+        private                 DataModel.IColumnList               _t_ColumnList;
 
-        internal                                            STRING_SPLIT(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader, bool allowAlias): base(declaration, reader, allowAlias)
+        internal                                                    STRING_SPLIT(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader, bool allowAlias): base(declaration, reader, allowAlias)
         {
             ParseToken(reader, Core.TokenID.LrBracket);
             n_String = ParseExpression(reader);

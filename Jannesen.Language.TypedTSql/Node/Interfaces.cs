@@ -5,6 +5,8 @@ namespace Jannesen.Language.TypedTSql.Node
     public interface IExprNode: DataModel.IExprResult, Core.IAstNode
     {
         ExprType                    ExpressionType          { get; }
+        DataModel.Variable          ReferencedVariable      { get; }
+        DataModel.Column            ReferencedColumn        { get; }
         bool                        NoBracketsNeeded        { get; }
         object                      ConstValue();
         Token.TokenLocalName        GetVariableToken();
@@ -19,11 +21,13 @@ namespace Jannesen.Language.TypedTSql.Node
         Statement                   StatementParse(Core.ParserReader reader);
     }
 
-    public interface ITableSource: Core.IAstNode
+    public interface IDataTarget: Core.IAstNode
     {
-        DataModel.ISymbol           getDataSource();
-        DataModel.IColumnList       getColumnList(Transpile.Context context);
+        bool                        isVarDeclare    { get; }
+        DataModel.ISymbol           Table           { get; }
+        DataModel.IColumnList       Columns         { get; }
         void                        TranspileNode(Transpile.Context context);
+        DataModel.Column            GetColumnForAssign(string name, DataModel.ISqlType sqlType, string collationName, DataModel.ValueFlags flags, object declaration, DataModel.ISymbol nameReference, out bool declared);
     }
 
     public interface IWithDeclaration: Core.IAstNode
@@ -42,11 +46,6 @@ namespace Jannesen.Language.TypedTSql.Node
         None            = 0,
         CodeScope,
         BlockScope
-    }
-    public interface ISetVariable: Core.IAstNode
-    {
-        Token.TokenLocalName        TokenName           { get; }
-        VarDeclareScope             isVarDeclare        { get; }
     }
     public interface ILoopStatement
     {

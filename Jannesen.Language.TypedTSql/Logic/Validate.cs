@@ -22,7 +22,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                     context.AddError(node, "Unknown schema '" + name + "'.");
                     return;
                 }
-                node.SetSymbol(schema);
+                node.SetSymbolUsage(schema, DataModel.SymbolUsageFlags.Reference);
             }
         }
         public      static      void                        BooleanExpression(Node.IExprNode expr)
@@ -484,6 +484,10 @@ namespace Jannesen.Language.TypedTSql.Logic
         {
             var targetType = target.SqlType;
 
+            if (target.isComputed) {
+                throw new Exception("Cannot assign a value to a computed column.");
+            }
+
             if (_assign(targetType, expr, false))
                 return ;
 
@@ -551,6 +555,7 @@ namespace Jannesen.Language.TypedTSql.Logic
 
             return false;
         }
+
         public      static      void                        IntoUnnamed(Core.IAstNode node, DataModel.Variable variable, DataModel.IColumnList columns)
         {
             var sqlType = variable.SqlType;
@@ -606,7 +611,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                                 throw new ErrorException("Invalid property access, property is static.");
                         }
 
-                        name.SetSymbol(intf);
+                        name.SetSymbolUsage(intf, DataModel.SymbolUsageFlags.Read);
                         return intf.Returns;
                     }
                 }
@@ -634,7 +639,7 @@ namespace Jannesen.Language.TypedTSql.Logic
 
                         var err = _methodArguments(intf.Parameters, arguments);
                         if (err == null) {
-                            name.SetSymbol(intf);
+                            name.SetSymbolUsage(intf, DataModel.SymbolUsageFlags.Reference);
                             return intf.Returns;
                         }
 

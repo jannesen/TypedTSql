@@ -26,7 +26,10 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             return reader.CurrentToken.isToken(Core.TokenID.EXEC, Core.TokenID.EXECUTE) && reader.NextPeek().isToken(Core.TokenID.LrBracket);
         }
-        public                                                      Statement_EXECUTE_expression(Core.ParserReader reader, IParseContext parseContext)
+        public                                                      Statement_EXECUTE_expression(Core.ParserReader reader, IParseContext parseContext): this(reader, parseContext, true)
+        {
+        }
+        public                                                      Statement_EXECUTE_expression(Core.ParserReader reader, IParseContext parseContext, bool statement=false)
         {
             ParseToken(reader, Core.TokenID.EXEC, Core.TokenID.EXECUTE);
             ParseToken(reader, Core.TokenID.LrBracket);
@@ -36,7 +39,7 @@ namespace Jannesen.Language.TypedTSql.Node
             do {
                 switch(reader.CurrentToken.validateToken(Core.TokenID.LocalName, Core.TokenID.String)) {
                 case Core.TokenID.LocalName:
-                    executeExpression.Add(AddChild(new Expr_PrimativeValue(reader, true)));
+                    executeExpression.Add(AddChild(new Expr_Variable(reader)));
                     break;
 
                 case Core.TokenID.String:
@@ -56,14 +59,16 @@ namespace Jannesen.Language.TypedTSql.Node
                 ParseToken(reader, Core.TokenID.String);
             }
 
-            ParseStatementEnd(reader, parseContext);
+            if (statement) { 
+                ParseStatementEnd(reader, parseContext);
+            }
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)
         {
             foreach(var e in n_ExecuteExpression) {
-                if (e is Expr_PrimativeValue primativeValue)
-                    primativeValue.TranspileNode(context);
+                if (e is IExprNode exprNode)
+                    exprNode.TranspileNode(context);
             }
         }
     }

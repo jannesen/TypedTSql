@@ -17,7 +17,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                                                  TableSource_RowSet_local(Core.ParserReader reader, bool allowAlias): base(allowAlias)
         {
-            n_Variable = AddChild(new Node_TableVariable(reader));
+            n_Variable = AddChild(new Node_TableVariable(reader, DataModel.SymbolUsageFlags.Select));
 
             ParseTableAlias(reader);
         }
@@ -29,9 +29,14 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Variable.TranspileNode(context);
             n_Variable.Variable?.setUsed();
 
-            _t_ColumnList = n_Variable.getColumnList(context);
+            _t_ColumnList = n_Variable.Columns ?? new DataModel.ColumnListErrorStub();
 
             TranspileRowSet(context);
+        }
+        public      override    bool                            SetUsage(DataModel.SymbolUsageFlags usage)
+        {
+            n_Variable.SetUsage(usage);
+            return true;
         }
     }
 }

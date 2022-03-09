@@ -22,9 +22,7 @@ namespace Jannesen.Language.TypedTSql.Token
         {
             get {
                 XmlDocument xmlDoc = new XmlDocument() { PreserveWhitespace = false, XmlResolver = null };
-#pragma warning disable CA3075 // Insecure DTD processing in XML
                 xmlDoc.LoadXml("<root>" + ValueString + "</root>");
-#pragma warning restore CA3075 // Insecure DTD processing in XML
                 return xmlDoc.DocumentElement;
             }
         }

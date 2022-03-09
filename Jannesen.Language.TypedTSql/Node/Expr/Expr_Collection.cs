@@ -6,7 +6,7 @@ namespace Jannesen.Language.TypedTSql.Node
 {
     public class Expr_Collection: Core.AstParseNode
     {
-        private                 IExprNode[]         _zeroArch = Array.Empty<IExprNode>();
+        private    static       IExprNode[]         _zeroArch = Array.Empty<IExprNode>();
 
         public      readonly    IExprNode[]         n_Expressions;
 
@@ -33,7 +33,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override    void                TranspileNode(Transpile.Context context)
         {
-            n_Expressions?.TranspileNodes(context);
+            n_Expressions.TranspileNodes(context);
         }
     }
 }

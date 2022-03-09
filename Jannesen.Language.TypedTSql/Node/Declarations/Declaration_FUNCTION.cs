@@ -143,7 +143,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                                       _returnType,
                                                                        n_ReturnVariable,
                                                                        DataModel.VariableFlags.Returns);
-                        n_ReturnVariable.SetSymbol(_returnVariable);
+                        n_ReturnVariable.SetSymbolUsage(_returnVariable, DataModel.SymbolUsageFlags.Declaration);
 
                         if (n_Parameters != null && n_Parameters.t_Parameters.Contains(_returnVariable.Name))
                             context.AddError(n_ReturnVariable, "Variable already defined.");
@@ -154,7 +154,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 if (_returnType != null) {
                     Entity.Transpiled(parameters: n_Parameters?.t_Parameters,
                                       returns:    _returnType);
-                    n_Name.n_Name.SetSymbol(Entity);
+                    n_Name.n_Name.SetSymbolUsage(Entity, DataModel.SymbolUsageFlags.Declaration);
                 }
 
                 _declarationTranspiled = true;

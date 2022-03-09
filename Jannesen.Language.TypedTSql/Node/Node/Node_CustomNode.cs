@@ -13,7 +13,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 return null;
             }
         }
-        public                  Core.IAstNode       Parent
+        public                  Core.IAstNode       ParentNode
         {
             get {
                 return _parent;
@@ -45,7 +45,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             streamWriter.WriteText(NewCode);
         }
-        public                  void                SetParent(Core.IAstNode parent)
+        public                  void                SetParentNode(Core.IAstNode parent)
         {
             _parent = parent;
         }

@@ -2,17 +2,20 @@
 
 namespace Jannesen.Language.TypedTSql.Node
 {
+     //!!TODO cursor variable
     public class Node_CursorName: Core.AstParseNode
     {
         public      readonly    bool                        n_Global;
         public      readonly    Core.TokenWithSymbol        n_Name;
+        public      readonly    DataModel.SymbolUsageFlags  Usage;
 
         public                  DataModel.Cursor            Cursor;
 
-        public                                              Node_CursorName(Core.ParserReader reader)
+        public                                              Node_CursorName(Core.ParserReader reader, DataModel.SymbolUsageFlags usage)
         {
             n_Global = ParseOptionalToken(reader, "GLOBAL") != null;
             n_Name   = ParseName(reader);
+            Usage    = usage; 
         }
 
         public      override    void                        TranspileNode(Transpile.Context context)
@@ -24,7 +27,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 return;
             }
 
-            n_Name.SetSymbol(Cursor);
+            n_Name.SetSymbolUsage(Cursor, Usage);
         }
     }
 }

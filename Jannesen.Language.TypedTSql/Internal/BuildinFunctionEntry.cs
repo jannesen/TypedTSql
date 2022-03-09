@@ -9,8 +9,9 @@ namespace Jannesen.Language.TypedTSql.Internal
     {
         public                  DataModel.SymbolType            Type                    { get { return DataModel.SymbolType.BuildinFunction; } }
         public                  string                          Name                    { get; private set; }
+        public                  string                          FullName             { get { return Name; } }
         public                  object                          Declaration             { get { return null; } }
-        public                  DataModel.ISymbol               Parent                  { get { return null; } }
+        public                  DataModel.ISymbol               ParentSymbol            { get { return null; } }
         public                  DataModel.ISymbol               SymbolNameReference     { get { return null; } }
 
 

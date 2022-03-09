@@ -18,14 +18,31 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public class STORE_TARGET: Core.AstParseNode
         {
+            public class SOURCE: Core.AstParseNode
+            {
+                public                      Query_Select_SELECT                 n_Source;
+
+                public                                                          SOURCE(Core.ParserReader reader)
+                {
+                    ParseToken(reader, Core.TokenID.LrBracket);
+                    AddChild(n_Source = new Query_Select_SELECT(reader, Query_SelectContext.StatementStore));
+                    ParseToken(reader, Core.TokenID.RrBracket);
+
+                }
+
+                public      override        void                                TranspileNode(Transpile.Context context)
+                {
+                    n_Source.TranspileNode(new Transpile.ContextRowSets(context));
+                }
+            }
             public class OUTPUT: Core.AstParseNode
             {
-                public      readonly    ISetVariable                        n_VariableName;
+                public      readonly    Node_AssignVariable                 n_Variable;
                 public      readonly    IExprNode                           n_Column;
 
                 public                                                      OUTPUT(Core.ParserReader reader)
                 {
-                    n_VariableName = ParseVarVariable(reader);
+                    n_Variable = ParseVarVariable(reader);
                     ParseToken(reader, Core.TokenID.Equal);
                     n_Column = ParseExpression(reader);
                 }
@@ -77,7 +94,7 @@ namespace Jannesen.Language.TypedTSql.Node
                             var column = context.RowSets[0].Columns.FindColumn(denycolumn.ValueString, out var ambigous);
 
                             if (column != null) {
-                                denycolumn.SetSymbol(column);
+                                denycolumn.SetSymbolUsage(column, DataModel.SymbolUsageFlags.Reference);
                                 context.CaseWarning(denycolumn, column.Name);
                             }
                             else
@@ -144,8 +161,7 @@ namespace Jannesen.Language.TypedTSql.Node
             }
 
             public      readonly    Node_EntityNameReference            n_Target;
-            public      readonly    Core.TokenWithSymbol                n_TargetName;
-            public      readonly    TableSource_RowSet_alias            n_Source;
+            public      readonly    SOURCE                              n_Source;
             public      readonly    IExprNode                           n_Where;
             public      readonly    OUTPUT[]                            n_Outputs;
             public      readonly    WITH                                n_With;
@@ -155,13 +171,10 @@ namespace Jannesen.Language.TypedTSql.Node
             public                                                      STORE_TARGET(Core.ParserReader reader)
             {
                 ParseToken(reader, "TARGET");
-                AddChild(n_Target = new Node_EntityNameReference(reader, EntityReferenceType.Table));
-
-                if (reader.CurrentToken.isToken(Core.TokenID.Name, Core.TokenID.QuotedName))
-                    n_TargetName = ParseName(reader);
+                AddChild(n_Target = new Node_EntityNameReference(reader, EntityReferenceType.Table, DataModel.SymbolUsageFlags.Select));
 
                 ParseToken(reader, "SOURCE");
-                AddChild(n_Source = TableSource_RowSet_alias.Parse(reader, false));
+                AddChild(n_Source = new SOURCE(reader));
 
                 ParseToken(reader, "WHERE");
                 AddChild(n_Where = ParseExpression(reader));
@@ -177,19 +190,22 @@ namespace Jannesen.Language.TypedTSql.Node
                     n_Outputs = output.ToArray();
                 }
 
-                if (reader.CurrentToken.isToken(TokenID.WITH))
+                if (reader.CurrentToken.isToken(TokenID.WITH)) {
                     n_With = AddChild(new WITH(reader));
+                }
             }
 
             public      override    void                                TranspileNode(Transpile.Context context)
             {
-                n_Source.TranspileNode(context);
                 n_Target.TranspileNode(context);
+                var targetContext = new Transpile.ContextStatementQuery(context);
+                targetContext.SetTarget(n_Target);
+                n_Source.TranspileNode(targetContext);
 
                 var targetTable = (DataModel.ITable)n_Target.Entity;
                 if (targetTable != null) {
                     var contextRowSet    = new Transpile.ContextRowSets(context);
-                    contextRowSet.RowSets.Add(new DataModel.RowSet("", targetTable.Columns, source: n_Target.getDataSource()));
+                    contextRowSet.RowSets.Add(new DataModel.RowSet("", targetTable.Columns, source: n_Target.Entity));
 
                     n_Where.TranspileNode(contextRowSet);
                     n_Outputs?.TranspileNodes(contextRowSet);
@@ -208,8 +224,15 @@ namespace Jannesen.Language.TypedTSql.Node
                         context.AddError(this, err);
                     }
                 }
-            }
 
+                var usage = DataModel.SymbolUsageFlags.Select | DataModel.SymbolUsageFlags.Insert | DataModel.SymbolUsageFlags.Update | DataModel.SymbolUsageFlags.Delete;
+                if (n_With != null) {
+                    if (n_With.n_DenyInsert) usage &=~DataModel.SymbolUsageFlags.Insert;
+                    if (n_With.n_DenyUpdate) usage &=~DataModel.SymbolUsageFlags.Update;
+                    if (n_With.n_DenyDelete) usage &=~DataModel.SymbolUsageFlags.Delete;
+                }
+                n_Target.SetUsage(usage);
+            }
             public                  void                                EmitPre(EmitContext emitContext)
             {
                 foreach(var columninfo in _TD.ColumnsInfo) {
@@ -856,7 +879,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                 Nullable   = column.isNullable,
                                                 Identity   = column.isIdentity,
                                                 Computed   = column.isComputed,
-                                                RecVersion = (column.SqlType.TypeFlags & DataModel.SqlTypeFlags.RecVersion) != 0});;
+                                                RecVersion = (column.SqlType.TypeFlags & DataModel.SqlTypeFlags.RecVersion) != 0});
                     }
 
                     var primarykey = _findKey();
@@ -871,44 +894,21 @@ namespace Jannesen.Language.TypedTSql.Node
 
                     return true;
                 }
-                private                 bool                                _source(TableSource_RowSet_alias source)
+                private                 bool                                _source(SOURCE source)
                 {
                     bool    rtn = true;
-                    foreach(var sourceColumn in source.t_RowSet.Columns) {
-                        Core.TokenWithSymbol    columnNameToken = (sourceColumn is DataModel.ColumnExpr columnExpr) ? columnExpr.NameToken : null;
+                    foreach(Query_Select_ColumnExpression sourceColumn in source.n_Source.n_Columns.n_Columns) {
+                        var columninfo = _findColumn(sourceColumn.ResultColumn);
+                        columninfo.Source = true;
 
-                        var columninfo = _findColumn(sourceColumn.Name);
-                        if (columninfo != null) {
-                            if (columninfo.Computed) {
-                                context.AddError((IAstNode)columnNameToken ?? source, "Not allowed to assign value to computed column " + SqlStatic.QuoteName(sourceColumn.Name) + ".");
-                                rtn = false;
-                            }
+                        if ((sourceColumn.n_Expression.ValueFlags & DataModel.ValueFlags.Nullable) != 0) {
+                            columninfo.SourceNullable = true;
 
-                            if (!Logic.Validate.Assign(columninfo.Column.SqlType, sourceColumn.SqlType)) {
-                                context.AddError((IAstNode)columnNameToken ?? source, "Not allowed to assign column " + SqlStatic.QuoteName(sourceColumn.Name) + " type " + sourceColumn.SqlType.ToString() + " to " + columninfo.Column.SqlType.ToString() + ".");
-                                rtn = false;
-                            }
-
-                            columnNameToken.SetSymbol(columninfo.Column);
-
-                            if (columninfo.Column.Name != sourceColumn.Name)
-                                context.AddWarning((IAstNode)columnNameToken ?? source, "Case mismatch column " + Library.SqlStatic.QuoteName(sourceColumn.Name) + ", expect " + Library.SqlStatic.QuoteName(columninfo.Column.Name) + ".");
-
-                            columninfo.Source = true;
-
-                            if (sourceColumn.isNullable) {
-                                columninfo.SourceNullable = true;
-
-                                if (columninfo.Identity || columninfo.RecVersion)
-                                    columninfo.SourceCheckNullUpdate = true;
-                                else
-                                if (!(columninfo.Column.isNullable))
-                                    columninfo.SourceCheckNullInsert = true;
-                            }
-                        }
-                        else {
-                            context.AddError((IAstNode)columnNameToken ?? source, "Unknown column " + Library.SqlStatic.QuoteName(sourceColumn.Name) + " in target.");
-                            rtn = false;
+                            if (columninfo.Identity || columninfo.RecVersion)
+                                columninfo.SourceCheckNullUpdate = true;
+                            else
+                            if (!(columninfo.Column.isNullable))
+                                columninfo.SourceCheckNullInsert = true;
                         }
                     }
 
@@ -970,7 +970,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                             if (x1 is DataModel.Column column && x2 is IExprNode expr2) {
                                 if (column.isNullable)
-                                    context.AddWarning(expr, "Column " + SqlStatic.QuoteName(column.Name) + " is nullable, using a '=' compare can have unexpected result. please use is_equal.");;
+                                    context.AddWarning(expr, "Column " + SqlStatic.QuoteName(column.Name) + " is nullable, using a '=' compare can have unexpected result. please use is_equal.");
 
                                 return new WhereLinkColumn[] { new WhereLinkColumn() { Column=column, Expr=expr2 } };
                             }
@@ -998,8 +998,10 @@ namespace Jannesen.Language.TypedTSql.Node
                 }
                 private                 object                              _where_Link_ValueExpr(IExprNode expr)
                 {
-                    if (expr is Expr_PrimativeValue primativeValue && primativeValue.Referenced is DataModel.Column column && column.Parent == targetTable)
+                    var column = expr.ReferencedColumn;
+                    if (column != null && column.ParentSymbol == targetTable) {
                         return column;
+                    }
 
                     return expr;
                 }
@@ -1009,11 +1011,12 @@ namespace Jannesen.Language.TypedTSql.Node
 
                     if (outputs != null) {
                         foreach(var output in outputs) {
-                            var variable = context.VariableSet(output.n_VariableName, output.n_Column);                        
+                            output.n_Variable.TranspileAssign(context, output.n_Column);
+                            var column = output.n_Column.ReferencedColumn;
 
-                            if (output.n_Column is Expr_PrimativeValue primativeValue && primativeValue.Referenced is DataModel.Column column) {
+                            if (column != null) {
                                 var c = _findColumn(column);
-                                c.Output = variable;
+                                c.Output = output.n_Variable.Variable;
 
                                 if (!(c.Inserted || c.Updated || c.Identity)) {
                                     context.AddError(output.n_Column, "Output column " + SqlStatic.QuoteName(c.Column.Name) + " is not changed by STORE.");
@@ -1157,15 +1160,6 @@ namespace Jannesen.Language.TypedTSql.Node
                     }
 
                     throw new InvalidOperationException("Can't find column in target column list.");
-                }
-                private                 ColumnInfo                          _findColumn(string name)
-                {
-                    foreach(var c in TD.ColumnsInfo) {
-                        if (String.Compare(c.Column.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
-                            return c;
-                    }
-
-                    return null;
                 }
                 private                 DataModel.Index                     _findKey()
                 {

@@ -45,7 +45,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Returns?.TranspileNode(context);
 
             Interface = new DataModel.Interface(n_Type, n_Name.ValueString, n_Name, n_Parameters?.t_Parameters, n_Returns?.SqlType);
-            n_Name.SetSymbol(Interface);
+            n_Name.SetSymbolUsage(Interface, DataModel.SymbolUsageFlags.Declaration);
         }
         public      override    void                        Emit(EmitWriter emitWriter)
         {

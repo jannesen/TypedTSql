@@ -120,7 +120,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_DefaultValue?.TranspileNode(new Transpile.ContextInit(sourceFile));
 
             _nativeType = DataModel.SqlTypeNative.ParseNativeType(n_TypeName.ValueString, n_Parm1?.Text, n_Parm2?.Text);
-            n_TypeName.SetSymbol(_nativeType);
+            n_TypeName.SetSymbolUsage(_nativeType, DataModel.SymbolUsageFlags.Reference);
 
             var defaultValue = n_DefaultValue?.getConstValue(_nativeType);
 

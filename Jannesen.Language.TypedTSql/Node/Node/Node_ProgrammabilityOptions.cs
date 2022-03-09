@@ -25,10 +25,12 @@ namespace Jannesen.Language.TypedTSql.Node
             EXECUTE_AS_PRINCIPEL            = 0x0800
         }
 
-        public      readonly        Option                  m_Options;
-        public      readonly        Token.String            m_Principel;
+        public      readonly        Option                          m_Options;
+        public      readonly        Token.String                    m_Principel;
 
-        public                                              Node_ProgrammabilityOptions(Core.ParserReader reader, DataModel.SymbolType type)
+        public                      DataModel.DatabasePrincipal     Principal       {  get; private set; }
+
+        public                                                      Node_ProgrammabilityOptions(Core.ParserReader reader, DataModel.SymbolType type)
         {
             ParseToken(reader, Core.TokenID.WITH);
 
@@ -50,8 +52,10 @@ namespace Jannesen.Language.TypedTSql.Node
             while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
         }
 
-        public      override        void                    TranspileNode(Transpile.Context context)
+        public      override        void                            TranspileNode(Transpile.Context context)
         {
+            Principal = null;
+
             if (m_Principel != null) {
                 var principal = context.Catalog.GetPrincipal(m_Principel.ValueString);
                 if (principal == null) {
@@ -59,12 +63,13 @@ namespace Jannesen.Language.TypedTSql.Node
                     return;
                 }
 
-                m_Principel.SetSymbol(principal);
+                Principal = principal;
+                m_Principel.SetSymbolUsage(principal, DataModel.SymbolUsageFlags.Reference);
                 context.CaseWarning(m_Principel, principal.Name);
             }
         }
 
-        private     static          Option                  _allowedOption(DataModel.SymbolType type)
+        private     static          Option                          _allowedOption(DataModel.SymbolType type)
         {
             switch(type) {
             case DataModel.SymbolType.View:
@@ -93,22 +98,22 @@ namespace Jannesen.Language.TypedTSql.Node
             }
         }
 
-        private static  Core.ParseEnum<Option>              _parseEnum = new Core.ParseEnum<Option>(
-                                                                "Code option",
-                                                                new Core.ParseEnum<Option>.Seq(Option.ENCRYPTION,                       "ENCRYPTION"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.RECOMPILE,                        "RECOMPILE"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.SCHEMABINDING,                    "SCHEMABINDING"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.VIEW_METADATA,                    "VIEW_METADATA"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.RETURNS_NULL_ON_NULL_INPUT,       "RETURNS", "NULL", "ON", "NULL", "INPUT"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.CALLED_NULL_ON_NULL_INPUT,        "CALLED", "NULL", "ON", "NULL", "INPUT"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_CALLER,                Core.TokenID.EXEC,    "AS", "CALLER"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_CALLER,                Core.TokenID.EXECUTE, "AS", "CALLER"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_SELF,                  Core.TokenID.EXEC,    "AS", "SELF"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_SELF,                  Core.TokenID.EXECUTE, "AS", "SELF"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_OWNER,                 Core.TokenID.EXEC,    "AS", "OWNER"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_OWNER,                 Core.TokenID.EXECUTE, "AS", "OWNER"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_PRINCIPEL,             Core.TokenID.EXEC,    "AS"),
-                                                                new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_PRINCIPEL,             Core.TokenID.EXECUTE, "AS")
-                                                            );
+        private static  Core.ParseEnum<Option>                      _parseEnum = new Core.ParseEnum<Option>(
+                                                                        "Code option",
+                                                                        new Core.ParseEnum<Option>.Seq(Option.ENCRYPTION,                       "ENCRYPTION"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.RECOMPILE,                        "RECOMPILE"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.SCHEMABINDING,                    "SCHEMABINDING"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.VIEW_METADATA,                    "VIEW_METADATA"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.RETURNS_NULL_ON_NULL_INPUT,       "RETURNS", "NULL", "ON", "NULL", "INPUT"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.CALLED_NULL_ON_NULL_INPUT,        "CALLED", "NULL", "ON", "NULL", "INPUT"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_CALLER,                Core.TokenID.EXEC,    "AS", "CALLER"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_CALLER,                Core.TokenID.EXECUTE, "AS", "CALLER"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_SELF,                  Core.TokenID.EXEC,    "AS", "SELF"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_SELF,                  Core.TokenID.EXECUTE, "AS", "SELF"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_OWNER,                 Core.TokenID.EXEC,    "AS", "OWNER"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_OWNER,                 Core.TokenID.EXECUTE, "AS", "OWNER"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_PRINCIPEL,             Core.TokenID.EXEC,    "AS"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_PRINCIPEL,             Core.TokenID.EXECUTE, "AS")
+                                                                    );
     }
 }

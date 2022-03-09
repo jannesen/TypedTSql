@@ -1,14 +1,15 @@
 ﻿using System;
-
+using Jannesen.Language.TypedTSql.Library;
 namespace Jannesen.Language.TypedTSql.DataModel
 {
     public class TempTable: ITable, ISymbol
     {
-        public                  SymbolType              Type                    { get { return SymbolType.TempTable; } }
+        public                  SymbolType              Type                    { get { return SymbolType.TempTable;              } }
         public                  string                  Name                    { get; private set; }
+        public                  string                  FullName             { get { return SqlStatic.QuoteNameIfNeeded(Name); } }
         public                  object                  Declaration             { get; private set; }
-        public                  ISymbol                 Parent                  { get { return null;                 } }
-        public                  ISymbol                 SymbolNameReference     { get { return null;                 } }
+        public                  ISymbol                 ParentSymbol            { get { return null;                              } }
+        public                  ISymbol                 SymbolNameReference     { get { return null;                              } }
         public                  IColumnList             Columns                 { get; private set; }
         public                  IndexList               Indexes                 { get; private set; }
 

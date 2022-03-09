@@ -7,11 +7,11 @@ namespace Jannesen.Language.TypedTSql.Node
 {
     public class Node_IntoVariables: AstParseNode
     {
-        public      readonly    ISetVariable[]                      n_VariableNames;
+        public      readonly    Node_AssignVariable[]               n_VariableNames;
 
         public                                                      Node_IntoVariables(Core.ParserReader reader)
         {
-            var setvars = new List<ISetVariable>();
+            var setvars = new List<Node_AssignVariable>();
 
             do {
                 setvars.Add(ParseVarVariable(reader));

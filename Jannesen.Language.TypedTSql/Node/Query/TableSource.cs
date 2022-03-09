@@ -34,5 +34,16 @@ namespace Jannesen.Language.TypedTSql.Node
                 }
             }
         }
+
+        public                  TableSource_RowSet          FindByName(string name)
+        {
+            foreach (var rowSet in n_RowSets) {
+                if (rowSet.n_Alias?.ValueString == name) {
+                    return rowSet;
+                }
+            }
+
+            return null;
+        }
     }
 }

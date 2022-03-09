@@ -22,7 +22,7 @@ namespace Jannesen.Language.TypedTSql.Node
    public class Statement_EXECUTE_procedure: Statement
     {
         public      readonly    Node_EntityNameReference        n_ProcedureReference;
-        public      readonly    ISetVariable                    n_ProcedureReturn;
+        public      readonly    Node_AssignVariable             n_ProcedureReturn;
         public      readonly    Node_EXEC_Parameter[]           n_Parameters;
 
         public      static      bool                            CanParse(Core.ParserReader reader, IParseContext parseContext)
@@ -41,7 +41,10 @@ namespace Jannesen.Language.TypedTSql.Node
 
             return false;
         }
-        public                                                  Statement_EXECUTE_procedure(Core.ParserReader reader, IParseContext parseContext)
+        public                                                  Statement_EXECUTE_procedure(Core.ParserReader reader, IParseContext parseContext): this(reader, parseContext, true)
+        {
+        }
+        public                                                  Statement_EXECUTE_procedure(Core.ParserReader reader, IParseContext parseContext, bool statement)
         {
             ParseToken(reader, Core.TokenID.EXEC, Core.TokenID.EXECUTE);
 
@@ -51,7 +54,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 ParseToken(reader, Core.TokenID.Equal);
             }
 
-            n_ProcedureReference = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.StoredProcedure));
+            n_ProcedureReference = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.StoredProcedure, DataModel.SymbolUsageFlags.Reference));
 
             if (Node_EXEC_Parameter.CanParse(reader)) {
                 var     parameters = new List<Node_EXEC_Parameter>();
@@ -64,7 +67,9 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Parameters = parameters.ToArray();
             }
 
-            ParseStatementEnd(reader, parseContext);
+            if (statement) {
+                ParseStatementEnd(reader, parseContext);
+            }
         }
 
         public      override    void                            TranspileNode(Transpile.Context context)
@@ -73,7 +78,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Parameters?.TranspileNodes(context);
 
             if (n_ProcedureReturn != null) {
-                context.VariableSetType(n_ProcedureReturn, DataModel.SqlTypeNative.Int);
+                n_ProcedureReturn.TranspileAssign(context, DataModel.SqlTypeNative.Int);
             }
 
             if (n_ProcedureReference.Entity != null) {
@@ -85,6 +90,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     break;
 
                 case DataModel.SymbolType.StoredProcedure_extended:
+                    _validateCallExtendedParameters(context);
                     break;
 
                 default:
@@ -144,6 +150,14 @@ namespace Jannesen.Language.TypedTSql.Node
             else {
                 if (n_Parameters != null && n_Parameters.Length > 0)
                     throw new TranspileException(this, "The procedure has no parameters.");
+            }
+        }
+        private                 void                            _validateCallExtendedParameters(Transpile.Context context)
+        {
+            if (n_Parameters != null) {
+                foreach(var p in n_Parameters) {
+                    p.TranspileParameter(context, null);
+                }
             }
         }
     }

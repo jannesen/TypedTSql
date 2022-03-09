@@ -35,11 +35,11 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
                 context.AddError(this, err);
             }
         }
-
         public      override    void                        Emit(Core.EmitWriter emitWriter)
         {
             EmitCustom(emitWriter, _customEmit);
         }
+
         private                 void                        _customEmit(Core.EmitWriter emitWriter)
         {
             var trimWriter = new Core.EmitWriterTrimFull(emitWriter);

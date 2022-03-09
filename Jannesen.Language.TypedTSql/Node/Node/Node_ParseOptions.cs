@@ -29,7 +29,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 if (schema == null)
                     throw new TranspileException(n_Schema, "Unknown schema '" + name + "'.");
 
-                n_Schema.SetSymbol(schema);
+                n_Schema.SetSymbolUsage(schema, DataModel.SymbolUsageFlags.Reference);
             }
         }
         public      override    void                    TranspileNode(Transpile.Context context)

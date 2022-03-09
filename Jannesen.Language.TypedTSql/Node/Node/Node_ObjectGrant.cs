@@ -24,6 +24,8 @@ namespace Jannesen.Language.TypedTSql.Node
         public      readonly        Permissions                     n_Permissions;
         public      readonly        Core.TokenWithSymbol[]          n_DatabasePrincipals;
 
+        public                      DataModel.DatabasePrincipal[]   Principals;
+
         public                                                      Node_ObjectGrant(Core.ParserReader reader, DataModel.SymbolType type)
         {
             var databaseprincipals = new List<Core.TokenWithSymbol>();
@@ -46,14 +48,17 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public      override        void                            TranspileNode(Transpile.Context context)
         {
-            foreach(var dp in n_DatabasePrincipals) {
+            Principals = new DataModel.DatabasePrincipal[n_DatabasePrincipals.Length];
+
+            for (int i = 0 ; i < n_DatabasePrincipals.Length ; i++) {
+                var dp = n_DatabasePrincipals[i];
                 var principal = context.Catalog.GetPrincipal(dp.ValueString);
                 if (principal == null) {
                     context.AddError(dp, "Unknown principal '" + dp.ValueString + "'.");
                     continue;
                 }
-
-                dp.SetSymbol(principal);
+                Principals[i] = principal;
+                dp.SetSymbolUsage(principal, DataModel.SymbolUsageFlags.Reference);
                 context.CaseWarning(dp, principal.Name);
             }
         }
@@ -104,17 +109,17 @@ namespace Jannesen.Language.TypedTSql.Node
             emitWriter.WriteText(";");
         }
 
-        private static  Core.ParseEnum<Permissions>              _permissionsEnum = new Core.ParseEnum<Permissions>(
-                                                                    "Permissions",
-                                                                    new Core.ParseEnum<Permissions>.Seq(Permissions.SELECT,             Core.TokenID.SELECT),
-                                                                    new Core.ParseEnum<Permissions>.Seq(Permissions.INSERT,             Core.TokenID.INSERT),
-                                                                    new Core.ParseEnum<Permissions>.Seq(Permissions.UPDATE,             Core.TokenID.UPDATE),
-                                                                    new Core.ParseEnum<Permissions>.Seq(Permissions.DELETE,             Core.TokenID.DELETE),
-                                                                    new Core.ParseEnum<Permissions>.Seq(Permissions.EXECUTE,            Core.TokenID.EXECUTE),
-                                                                    new Core.ParseEnum<Permissions>.Seq(Permissions.REFERENCES,         Core.TokenID.REFERENCES),
-                                                                    new Core.ParseEnum<Permissions>.Seq(Permissions.VIEW_DEFINITION,    "VIEW", "DEFINITION"),
-                                                                    new Core.ParseEnum<Permissions>.Seq(Permissions.CONTROL,            "CONTROL"),
-                                                                    new Core.ParseEnum<Permissions>.Seq(Permissions.TAKE_OWNERSHIP,     "TAKE", "OWNERSHIP")
-                                                                );
+        private static  Core.ParseEnum<Permissions>                 _permissionsEnum = new Core.ParseEnum<Permissions>(
+                                                                        "Permissions",
+                                                                        new Core.ParseEnum<Permissions>.Seq(Permissions.SELECT,             Core.TokenID.SELECT),
+                                                                        new Core.ParseEnum<Permissions>.Seq(Permissions.INSERT,             Core.TokenID.INSERT),
+                                                                        new Core.ParseEnum<Permissions>.Seq(Permissions.UPDATE,             Core.TokenID.UPDATE),
+                                                                        new Core.ParseEnum<Permissions>.Seq(Permissions.DELETE,             Core.TokenID.DELETE),
+                                                                        new Core.ParseEnum<Permissions>.Seq(Permissions.EXECUTE,            Core.TokenID.EXECUTE),
+                                                                        new Core.ParseEnum<Permissions>.Seq(Permissions.REFERENCES,         Core.TokenID.REFERENCES),
+                                                                        new Core.ParseEnum<Permissions>.Seq(Permissions.VIEW_DEFINITION,    "VIEW", "DEFINITION"),
+                                                                        new Core.ParseEnum<Permissions>.Seq(Permissions.CONTROL,            "CONTROL"),
+                                                                        new Core.ParseEnum<Permissions>.Seq(Permissions.TAKE_OWNERSHIP,     "TAKE", "OWNERSHIP")
+                                                                    );
     }
 }

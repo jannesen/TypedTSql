@@ -550,8 +550,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
                                 SymbolType          ISymbol.Type                    { get { return SymbolType.NativeType;   } }
                                 string              ISymbol.Name                    { get { return SystemType.ToString();   } }
+                                string              ISymbol.FullName             { get { return SystemType.ToString();   } }
                                 object              ISymbol.Declaration             { get { return null;                    } }
-                                ISymbol             ISymbol.Parent                  { get { return null;                    } }
+                                ISymbol             ISymbol.ParentSymbol            { get { return null;                    } }
                                 ISymbol             ISymbol.SymbolNameReference     { get { return null;                    } }
 
         private                 string              _maxLengthToString()

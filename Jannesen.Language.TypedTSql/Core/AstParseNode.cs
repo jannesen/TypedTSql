@@ -54,7 +54,7 @@ namespace Jannesen.Language.TypedTSql.Core
                 return _children;
             }
         }
-        public                  IAstNode                            Parent
+        public                  IAstNode                            ParentNode
         {
             get {
                 return _parent;
@@ -235,13 +235,9 @@ namespace Jannesen.Language.TypedTSql.Core
         {
             return (TokenWithSymbol)ParseToken(reader, TokenID.Name, TokenID.QuotedName);
         }
-        public                  Node.ISetVariable                   ParseVarVariable(ParserReader reader)
+        public                  Node.Node_AssignVariable            ParseVarVariable(ParserReader reader)
         {
-            if (Node.Node_VarVariable.CanParse(reader)) {
-                return AddChild(new Node.Node_VarVariable(reader));
-            }
-
-            return (Node.ISetVariable)ParseToken(reader, Core.TokenID.LocalName);
+            return AddChild(new Node.Node_AssignVariable(reader));
         }
 
         public                  Token                               ParseInteger(ParserReader reader)
@@ -292,7 +288,7 @@ namespace Jannesen.Language.TypedTSql.Core
                 _children = new AstNodeList();
 
             _children.Add(child);
-            child.SetParent(this);
+            child.SetParentNode(this);
 
             return child;
         }
@@ -321,7 +317,7 @@ namespace Jannesen.Language.TypedTSql.Core
                 _children = new AstNodeList();
 
             _children.Insert(_children.IndexOf(curNode), node);
-            node.SetParent(this);
+            node.SetParentNode(this);
         }
         public                  void                                InsertRangeChild(int index, List<Node.Node_CustomNode> nodes)
         {
@@ -331,10 +327,10 @@ namespace Jannesen.Language.TypedTSql.Core
             _children.InsertRange(index, nodes);
 
             foreach(var n in nodes)
-                n.SetParent(this);
+                n.SetParentNode(this);
         }
 
-        public                  void                                SetParent(IAstNode parent)
+        public                  void                                SetParentNode(IAstNode parent)
         {
             _parent = parent;
         }

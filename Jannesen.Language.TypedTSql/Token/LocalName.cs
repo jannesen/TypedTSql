@@ -2,7 +2,7 @@
 
 namespace Jannesen.Language.TypedTSql.Token
 {
-    public class TokenLocalName: Core.TokenWithSymbol, Node.ISetVariable
+    public class TokenLocalName: Core.TokenWithSymbol
     {
         public      override        Core.TokenID            ID
         {
@@ -23,7 +23,11 @@ namespace Jannesen.Language.TypedTSql.Token
 
         public      override        void                    Emit(Core.EmitWriter emitWriter)
         {
-            var sqlName = hasSymbol ? ((DataModel.Variable)Symbol).SqlName : null;
+            string sqlName = null;
+
+            if (SymbolData is DataModel.SymbolUsage symbolUsage) {
+                sqlName = (symbolUsage.Symbol as DataModel.Variable)?.SqlName;
+            }
 
             if (sqlName != null && sqlName != Text) {
                 emitWriter.WriteText(sqlName);
@@ -37,12 +41,6 @@ namespace Jannesen.Language.TypedTSql.Token
         {
             get {
                 return this;
-            }
-        }
-        public                      Node.VarDeclareScope    isVarDeclare
-        {
-            get {
-                return Node.VarDeclareScope.None;
             }
         }
     }

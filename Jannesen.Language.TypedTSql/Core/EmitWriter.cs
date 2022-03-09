@@ -406,6 +406,28 @@ namespace Jannesen.Language.TypedTSql.Core
             Nodes = new List<IAstNode>();
         }
 
+        public                  int                     IndexEndWhitespace()
+        {
+            var i = Nodes.Count;
+
+            while (i > 0 && Nodes[i-1].isWhitespaceOrComment)
+                --i;
+
+            return i;
+        }
+        public                  void                    EmitNodes(EmitWriter emitWriter, int start)
+        {
+            while (start < Nodes.Count) {
+                emitWriter.WriteNode(Nodes[start++]);
+            }
+        }
+        public                  void                    EmitNodes(EmitWriter emitWriter, int start, int length)
+        {
+            while (length-- > 0) {
+                emitWriter.WriteNode(Nodes[start++]);
+            }
+        }
+
         public      override    void                    WriteText(string text)
         {
             Nodes.Add(new Node.Node_CustomNode(text));

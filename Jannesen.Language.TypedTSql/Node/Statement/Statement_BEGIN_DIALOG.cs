@@ -8,7 +8,7 @@ namespace Jannesen.Language.TypedTSql.Node
     [StatementParser(Core.TokenID.BEGIN, prio:3)]
     public class Statement_BEGIN_DIALOG: Statement
     {
-        public      readonly    Node.ISetVariable                   n_DialogHandle;
+        public      readonly    Node_AssignVariable                 n_DialogHandle;
         public      readonly    Core.Token                          n_InitiatorServiceName;
         public      readonly    Core.Token                          n_TargetServiceName;
         public      readonly    Core.Token                          n_ServiceBrokerGuid;
@@ -81,7 +81,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override    void                                TranspileNode(Transpile.Context context)
         {
-            context.VariableSetType(n_DialogHandle, DataModel.SqlTypeNative.UniqueIdentifier);
+            n_DialogHandle.TranspileAssign(context, DataModel.SqlTypeNative.UniqueIdentifier);
             Core.TokenWithSymbol.SetNoSymbol(n_InitiatorServiceName);
             Core.TokenWithSymbol.SetNoSymbol(n_TargetServiceName);
             Core.TokenWithSymbol.SetNoSymbol(n_ServiceBrokerGuid);

@@ -41,6 +41,8 @@ namespace Jannesen.Language.TypedTSql.Node
                                                            n_Name,
                                                            DataModel.VariableFlags.Nullable);
                     context.VariableDeclare(n_Name, VarDeclareScope.BlockScope, Variable);
+                    n_Name.SetSymbolUsage(Variable, DataModel.SymbolUsageFlags.Declaration |
+                                               (n_Expression != null ? DataModel.SymbolUsageFlags.Write : DataModel.SymbolUsageFlags.None));
                 }
 
                 if (n_Expression != null) {

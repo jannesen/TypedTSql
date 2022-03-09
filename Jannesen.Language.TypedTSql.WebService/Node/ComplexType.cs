@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
 using LTTSQL = Jannesen.Language.TypedTSql;
 using Jannesen.Language.TypedTSql.Library;
-using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.WebService.Node
 {
@@ -40,7 +36,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 return;
             }
 
-            n_Name.SetSymbol(webComplexType.Entity);
+            n_Name.SetSymbolUsage(webComplexType.Entity, DataModel.SymbolUsageFlags.Reference);
             context.CaseWarning(n_Name, webComplexType.ComplexTypeName);
 
             WebComplexType = webComplexType;

@@ -11,6 +11,8 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly    Core.TokenWithSymbol                n_Label;
 
+        public                  DataModel.Label                     Label       { get; private set; }
+
         public                                                      Statement_GOTO(Core.ParserReader reader, IParseContext parseContext)
         {
             ParseToken(reader, Core.TokenID.GOTO);
@@ -26,7 +28,8 @@ namespace Jannesen.Language.TypedTSql.Node
                 return;
             }
 
-            n_Label.SetSymbol(label);
+            Label = label;
+            n_Label.SetSymbolUsage(label, DataModel.SymbolUsageFlags.Declaration);
             context.CaseWarning(n_Label, label.Name);
         }
     }

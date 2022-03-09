@@ -55,7 +55,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             // https://msdn.microsoft.com/en-us/library/ms188059.aspx
             case "IDENTITY_INSERT":
-                n_Table = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.Table));
+                n_Table = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.Table, DataModel.SymbolUsageFlags.Reference));
                 n_Value = ParseToken(reader, "ON", "OFF");
                 break;
 

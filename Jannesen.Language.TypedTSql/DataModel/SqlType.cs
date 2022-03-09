@@ -11,7 +11,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public      virtual     ValueRecordList         Values          { get { throw new InvalidOperationException(this.GetType().Name + ": has no values.");          } }
         public      virtual     IColumnList             Columns         { get { throw new InvalidOperationException(this.GetType().Name + ": has no columns.");         } }
         public      virtual     IndexList               Indexes         { get { throw new InvalidOperationException(this.GetType().Name + ": has no indexes.");         } }
-        public      virtual     JsonSchema       JsonSchema      { get { throw new InvalidOperationException(this.GetType().Name + ": has json-schema.");        } }
+        public      virtual     JsonSchema              JsonSchema      { get { throw new InvalidOperationException(this.GetType().Name + ": has json-schema.");        } }
         public      virtual     Entity                  Entity          { get { return null;                                                                            } }
 
         public      virtual     string                  ToSql()

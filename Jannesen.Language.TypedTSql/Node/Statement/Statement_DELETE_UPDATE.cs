@@ -12,22 +12,22 @@ namespace Jannesen.Language.TypedTSql.Node
     //      [ OPTION ( <query_hint> [ ,...n ] ) ]
     public abstract class Statement_DELETE_UPDATE: Statement
     {
-        public                  ITableSource                        n_Target                { get; private set; }
+        public                  IDataTarget                         n_Target                { get; private set; }
         public                  TableSource                         n_From                  { get; private set; }
         public                  Node_CursorName                     n_WhereCursor           { get; private set; }
         public                  IExprNode                           n_WhereExpression       { get; private set; }
         public                  Node_QueryOptions                   n_QueryOptions          { get; private set; }
 
-        protected               void                                ParseTarget(Core.ParserReader reader)
+        protected               void                                ParseTarget(Core.ParserReader reader, DataModel.SymbolUsageFlags usage)
         {
             switch(reader.CurrentToken.validateToken(Core.TokenID.Name, Core.TokenID.QuotedName, Core.TokenID.LocalName)) {
             case Core.TokenID.Name:
             case Core.TokenID.QuotedName:
-                n_Target = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.Unknown));
+                n_Target = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.Unknown, usage));
                 break;
 
             case Core.TokenID.LocalName:
-                n_Target = AddChild(new Node_TableVariable(reader));
+                n_Target = AddChild(new Node_TableVariable(reader, usage));
                 break;
             }
         }
@@ -43,7 +43,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 if (reader.CurrentToken.isToken(Core.TokenID.CURRENT)) {
                     ParseToken(reader, Core.TokenID.CURRENT);
                     ParseToken(reader, Core.TokenID.OF);
-                    n_WhereCursor = AddChild(new Node_CursorName(reader));
+                    n_WhereCursor = AddChild(new Node_CursorName(reader, DataModel.SymbolUsageFlags.Reference));
                 }
                 else
                     n_WhereExpression = ParseExpression(reader);
@@ -60,31 +60,26 @@ namespace Jannesen.Language.TypedTSql.Node
                 contextStatement.SetQueryOptions(n_QueryOptions.n_Options);
             }
         }
-        protected               void                                TranspileFromWhereExpression(Transpile.ContextStatementQuery contextStatement, Transpile.ContextRowSets contextRowSet)
+        protected               void                                TranspileFromWhereExpression(Transpile.ContextStatementQuery contextStatement, Transpile.ContextRowSets contextRowSet, DataModel.SymbolUsageFlags usage)
         {
             if (n_From != null) {
                 var contextFrom = new Transpile.ContextRowSets(contextStatement);
-                n_From?.TranspileNode(contextFrom);
-                n_Target.TranspileNode(contextFrom);
+                n_From.TranspileNode(contextFrom);
 
-                var rowset = contextFrom.RowSets.FindRowSet(((Node_EntityNameReference)n_Target).n_Name.ValueString);
-                if (rowset != null) {
-                    contextStatement.SetTarget(rowset);
-
-                    if (rowset.Source == null)
-                        contextRowSet.AddError(n_Target, "Can't use rowset as target.");
+                if (n_Target is Node_EntityNameReference entityNameReference) {
+                    entityNameReference.TranspileAliasTarget(contextFrom, n_From, usage);
                 }
-                else
-                    contextRowSet.AddError(n_Target, "Unknown rowset alias.");
+                else {
+                    contextStatement.AddError(n_From, "Target needs to be a alias.");
+                }
 
+                contextStatement.SetTarget(n_Target);
                 contextRowSet.RowSets.AddRange(contextFrom.RowSets);
             }
             else {
                 n_Target.TranspileNode(contextRowSet);
-
-                var rowset = new DataModel.RowSet("", n_Target.getColumnList(contextStatement), source: n_Target.getDataSource());
-                contextStatement.SetTarget(rowset);
-                contextRowSet.RowSets.Add(rowset);
+                contextStatement.SetTarget(n_Target);
+                contextRowSet.RowSets.Add(new DataModel.RowSet("", n_Target.Columns, source: n_Target.Table));
             }
 
             if (n_WhereCursor != null)

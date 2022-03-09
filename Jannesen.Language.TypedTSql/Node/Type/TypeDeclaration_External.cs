@@ -44,11 +44,12 @@ namespace Jannesen.Language.TypedTSql.Node
                 return;
             }
 
-            n_AssemblyName.SetSymbol(Assembly);
+            n_AssemblyName.SetSymbolUsage(Assembly, DataModel.SymbolUsageFlags.Reference);
             context.CaseWarning(n_AssemblyName, Assembly.EntityName.Name);
             n_Interfaces.TranspileNode(context);
             TranspileGrant(context);
         }
+
         public      override    void                            Transpiled()
         {
             _entity.Transpiled(Assembly, n_AssemblyClass.ValueString, n_Interfaces.Interfaces);

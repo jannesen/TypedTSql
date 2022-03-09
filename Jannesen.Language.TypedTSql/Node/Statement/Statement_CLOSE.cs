@@ -15,7 +15,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public                                                      Statement_CLOSE(Core.ParserReader reader, IParseContext parseContext)
         {
             ParseToken(reader, Core.TokenID.CLOSE);
-            n_Cursor = AddChild(new Node_CursorName(reader));
+            n_Cursor = AddChild(new Node_CursorName(reader, DataModel.SymbolUsageFlags.Reference));
             ParseStatementEnd(reader, parseContext);
         }
 

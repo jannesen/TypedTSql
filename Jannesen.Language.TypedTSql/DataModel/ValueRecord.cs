@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
@@ -7,9 +8,10 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public                  SymbolType          Type                    { get { return SymbolType.UDTValue; } }
         public                  string              Name                    { get ; private set; }
+        public                  string              FullName             { get { return SqlStatic.QuoteName(Name); } }
         public      readonly    object              Value;
         public                  object              Declaration             { get ; private set; }
-        public                  DataModel.ISymbol   Parent                  { get { return null; } }
+        public                  DataModel.ISymbol   ParentSymbol            { get { return null; } }
         public                  DataModel.ISymbol   SymbolNameReference     { get { return null; } }
         public      readonly    ValueFieldList      Fields;
 

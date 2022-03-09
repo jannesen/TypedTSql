@@ -8,14 +8,13 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly    Node_EntityNameReference        n_Object;
         public      readonly    Node_TableHints                 n_With;
-        public      override    DataModel.IColumnList           ColumnList          { get { return _t_ColumnList;    } }
-        public      override    DataModel.ISymbol               t_Source            { get { return n_Object.Entity;  } }
-
+        public      override    DataModel.IColumnList           ColumnList          => _t_ColumnList;
+        public      override    DataModel.ISymbol               t_Source            => n_Object.Entity;
         private                 DataModel.IColumnList           _t_ColumnList;
 
         public                                                  TableSource_RowSet_object(Core.ParserReader reader, bool allowAlias): base(allowAlias)
         {
-            n_Object = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.TableOrView));
+            n_Object = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.TableOrView, DataModel.SymbolUsageFlags.Select));
 
             ParseTableAlias(reader);
 
@@ -31,11 +30,16 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Object.TranspileNode(context);
             n_With?.TranspileNode(context);
 
-            _t_ColumnList = n_Object.getColumnList(context);
+            _t_ColumnList = n_Object.Columns ?? new DataModel.ColumnListErrorStub();
             TranspileRowSet(context);
 
             if (n_With != null)
                 n_With.CheckIndexes(context, n_Object.Entity);
+        }
+        public      override    bool                            SetUsage(DataModel.SymbolUsageFlags usage)
+        {
+            n_Object.SetUsage(usage);
+            return true;
         }
     }
 }

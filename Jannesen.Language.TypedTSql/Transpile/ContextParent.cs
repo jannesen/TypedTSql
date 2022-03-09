@@ -13,7 +13,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
         public      override    Node.Node_ParseOptions              Options                 { get { return _parent.Options;              } }
         public      override    bool                                ReportNeedTranspile     { get { return _parent.ReportNeedTranspile;  } }
         public      override    Node.DeclarationEntity              DeclarationEntity       { get { return _parent.DeclarationEntity;    } }
-        public      override    DataModel.RowSet                    Target                  { get { return _parent.Target;               } }
+        public      override    Node.IDataTarget                    Target                  { get { return _parent.Target;               } }
         public      override    DataModel.QueryOptions              QueryOptions            { get { return _parent.QueryOptions;         } }
         public      override    DataModel.ISqlType                  ScopeIndentityType      { get { return _parent.ScopeIndentityType;   }
                                                                                               set { _parent.ScopeIndentityType = value;  } }

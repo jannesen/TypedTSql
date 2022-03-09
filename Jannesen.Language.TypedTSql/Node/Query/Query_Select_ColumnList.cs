@@ -10,37 +10,45 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly        Query_Select_Column[]           n_Columns;
 
+        public                      DataModel.ColumnListResult      ResultColumnList        { get; private set; }
+
         public                                                      Query_Select_ColumnList(Core.ParserReader reader, Query_SelectContext selectContext)
         {
             var columns = new List<Query_Select_Column>();
 
             do {
-                if (selectContext == Query_SelectContext.ExpressionResponseObject || selectContext == Query_SelectContext.ExpressionResponseValue)
+                if (selectContext == Query_SelectContext.ExpressionResponseObject ||
+                    selectContext == Query_SelectContext.ExpressionResponseValue)
                     columns.Add(AddChild(new Query_Select_ColumnResponse(reader, selectContext)));
                 else
-                if (selectContext == Query_SelectContext.StatementInsertTargetNamed)
-                    columns.Add(AddChild(new Query_Select_ColumnTargetNamed(reader)));
+                if ((selectContext == Query_SelectContext.StatementSelect ||
+                     selectContext == Query_SelectContext.StatementReceive) &&
+                     Query_Select_ColumnVariableAssign.CanParse(reader))
+                    columns.Add(AddChild(new Query_Select_ColumnVariableAssign(reader)));
                 else
-                if ((selectContext == Query_SelectContext.StatementSelect || selectContext == Query_SelectContext.StatementReceive) && Query_Select_ColumnAssign.CanParse(reader))
-                    columns.Add(AddChild(new Query_Select_ColumnAssign(reader)));
+                if (selectContext != Query_SelectContext.StatementReceive &&
+                    selectContext != Query_SelectContext.StatementStore &&
+                    Query_Select_ColumnWildcard.CanParse(reader))
+                    columns.Add(AddChild(new Query_Select_ColumnWildcard(reader, selectContext)));
                 else
-                if (selectContext != Query_SelectContext.StatementReceive && Query_Select_ColumnWildcard.CanParse(reader))
-                    columns.Add(AddChild(new Query_Select_ColumnWildcard(reader)));
-                else
-                    columns.Add(AddChild(new Query_Select_ColumnExpression(reader)));
+                    columns.Add(AddChild(new Query_Select_ColumnExpression(reader, selectContext)));
             }
             while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
 
             n_Columns = columns.ToArray();
         }
 
-        public                      DataModel.ColumnListResult      GetResultSet(Transpile.Context context)
+        public      override        void                            TranspileNode(Transpile.Context context)
         {
+            ResultColumnList = null;
+
+            n_Columns.TranspileNodes(context);
+
             bool                        variableAssigment = false;
             List<DataModel.Column>      columnList        = null;
 
             foreach(var column in n_Columns) {
-                if (column is Query_Select_ColumnAssign) {
+                if (column.isVariableAssign) {
                     variableAssigment = true;
                 }
                 else {
@@ -50,15 +58,14 @@ namespace Jannesen.Language.TypedTSql.Node
                     column.AddColumnToList(context, columnList);
                 }
 
-                if (variableAssigment && columnList != null)
+                if (variableAssigment && columnList != null) { 
                     throw new TranspileException(column, "Variable assignment and resultset not possible.");
+                }
             }
 
-            return columnList != null ? new DataModel.ColumnListResult(columnList.ToArray()) : null;
-        }
-        public      override        void                            TranspileNode(Transpile.Context context)
-        {
-            n_Columns.TranspileNodes(context);
+            if (columnList != null) {
+                ResultColumnList = new DataModel.ColumnListResult(columnList.ToArray());
+            }
         }
     }
 }

@@ -28,6 +28,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             public      readonly    Core.TokenWithSymbol        n_Column;
             public      readonly    bool                        n_Descending;
+            public                  DataModel.Column            t_Column                    { get; private set; }
             public                  DataModel.IndexColumn       t_IndexColumn               { get; private set; }
 
             public                                              Column(Core.ParserReader reader)
@@ -41,12 +42,12 @@ namespace Jannesen.Language.TypedTSql.Node
 
             public      override    void                        TranspileNode(Transpile.Context context)
             {
-                var     column = context.ColumnList?.FindColumn(n_Column.ValueString, out bool ambiguous);
+                t_Column = context.ColumnList?.FindColumn(n_Column.ValueString, out bool ambiguous);
 
-                if (column != null) {
-                    n_Column.SetSymbol(column);
-                    context.CaseWarning(n_Column, column.Name);
-                    t_IndexColumn = new DataModel.IndexColumn(column, n_Descending);
+                if (t_Column != null) {
+                    n_Column.SetSymbolUsage(t_Column, DataModel.SymbolUsageFlags.Reference);
+                    context.CaseWarning(n_Column, t_Column.Name);
+                    t_IndexColumn = new DataModel.IndexColumn(t_Column, n_Descending);
                 }
                 else
                     context.AddError(n_Column, "Unknown column in table.");
@@ -116,7 +117,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                               columns,
                                               declaration:n_Name);
                 if (t_Index != null)
-                    n_Name.SetSymbol(t_Index);
+                    n_Name.SetSymbolUsage(t_Index, DataModel.SymbolUsageFlags.Declaration);
             }
             else {
                 t_Index = new DataModel.Index(n_Flags, "", columns);

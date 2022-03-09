@@ -21,7 +21,7 @@ namespace Jannesen.Language.TypedTSql.Node
     public class Statement_EXEC_SQL: Statement
     {
         private     readonly    Core.Token                      _n_exec_sql;
-        public      readonly    ISetVariable                    n_ProcedureReturn;
+        public      readonly    Node_AssignVariable             n_ProcedureReturn;
         public      readonly    IExprNode                       n_Statement;
         public      readonly    Node_EXEC_Parameter[]           n_Parameters;
 
@@ -59,7 +59,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 context.AddError(this, "EXEC_SQL has no parameters");
 
             if (n_ProcedureReturn != null) {
-                context.VariableSetType(n_ProcedureReturn, DataModel.SqlTypeNative.Int);
+                n_ProcedureReturn.TranspileAssign(context, DataModel.SqlTypeNative.Int);
             }
 
             foreach(var p in n_Parameters) {
@@ -100,9 +100,9 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 prms.Append(param.n_Name.Text);
                 prms.Append(" ");
-                prms.Append(param.n_Expression.SqlType.NativeType.ToSql());
+                prms.Append(param.SqlType.NativeType.ToSql());
 
-                if (param.n_Output)
+                if (param.n_VarOutput != null)
                     prms.Append(" OUT");
             }
 

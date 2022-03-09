@@ -23,7 +23,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             n_Scope = ParseToken(reader, "VAR", "LET").isToken("VAR") ? VarDeclareScope.CodeScope : VarDeclareScope.BlockScope;
             n_VariableName = (Token.TokenLocalName)ParseToken(reader, Core.TokenID.LocalName);
-            ParseToken(reader, Core.TokenID.Equal, Core.TokenID.PlusAssign, Core.TokenID.MinusAssign, Core.TokenID.MultAssign, Core.TokenID.DivAssign, Core.TokenID.ModAssign, Core.TokenID.AndAssign, Core.TokenID.XorAssign, Core.TokenID.OrAssign);
+            ParseToken(reader, Core.TokenID.Equal);
             n_Expression = ParseExpression(reader);
 
             ParseStatementEnd(reader, parseContext);
@@ -32,15 +32,9 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    void                                TranspileNode(Transpile.Context context)
         {
             Variable = null;
-
             n_Expression.TranspileNode(context);
-
-            Variable = new DataModel.VariableLocal(n_VariableName.Text,
-                                                   n_Expression.SqlType,
-                                                   n_VariableName,
-                                                   DataModel.VariableFlags.Nullable | DataModel.VariableFlags.VarDeclare);
-            context.VariableDeclare(n_VariableName, n_Scope, Variable);
-            Variable.setAssigned();
+            Variable = context.VarVariableSet(n_VariableName, n_Scope, n_Expression.SqlType);
+            n_VariableName.SetSymbolUsage(Variable, DataModel.SymbolUsageFlags.Declaration | DataModel.SymbolUsageFlags.Write);
         }
 
         public      override    void                                Emit(Core.EmitWriter emitWriter)

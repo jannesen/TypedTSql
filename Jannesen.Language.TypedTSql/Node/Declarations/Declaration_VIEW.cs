@@ -61,7 +61,7 @@ namespace Jannesen.Language.TypedTSql.Node
             TranspileStatement(context, query:true);
 
             Entity.Transpiled(returns: new DataModel.SqlTypeTable(Entity, ((Query_Select)n_Statement).Resultset?.GetUniqueNamedList(), null));
-            n_Name.n_Name.SetSymbol(Entity);
+            n_Name.n_Name.SetSymbolUsage(Entity, DataModel.SymbolUsageFlags.Declaration);
 
             Transpiled = true;
         }

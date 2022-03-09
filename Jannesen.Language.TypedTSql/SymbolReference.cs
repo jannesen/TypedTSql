@@ -6,9 +6,14 @@ namespace Jannesen.Language.TypedTSql
 {
     public class SymbolReference
     {
-        public              SourceFile                  SourceFile      { get; private set; }
-        public              Core.TokenWithSymbol        Token           { get; private set; }
-        public              string                      Line            { get; private set; }
+        public struct Usage
+        {
+            public string                           Containing;
+            public DataModel.SymbolUsageFlags       UsageFlags;
+        }
+        public              SymbolReferenceList         SymbolReferenceList { get; private set; }
+        public              SourceFile                  SourceFile          { get; private set; }
+        public              Core.TokenWithSymbol        Token               { get; private set; }
 
         public              DataModel.DocumentSpan      DocumentSpan
         {
@@ -17,29 +22,14 @@ namespace Jannesen.Language.TypedTSql
             }
         }
 
-        public                                          SymbolReference(SourceFile sourceFile, Core.TokenWithSymbol token)
+        public                                          SymbolReference(SymbolReferenceList symbolReferenceListSourceFile, SourceFile sourceFile, Core.TokenWithSymbol token)
         {
-            this.SourceFile = sourceFile;
-            this.Token      = token;
-            this.Line       = _getLine();
+            this.SymbolReferenceList = symbolReferenceListSourceFile;
+            this.SourceFile          = sourceFile;
+            this.Token               = token;
         }
 
-        public  override    string                      ToString()
-        {
-            var rtn = new StringBuilder();
-
-            rtn.Append(SourceFile.Filename);
-            rtn.Append(" - (");
-            rtn.Append(Token.Beginning.Lineno);
-            rtn.Append(",");
-            rtn.Append(Token.Beginning.Linepos);
-            rtn.Append("): ");
-            rtn.Append(Line);
-
-            return rtn.ToString();
-        }
-
-        private             string                      _getLine()
+        public              List<Core.Token>            GetLineTokens()
         {
             var lineno = Token.Beginning.Lineno;
             var tokens = SourceFile.Tokens;
@@ -75,10 +65,38 @@ namespace Jannesen.Language.TypedTSql
             while (tokennr < tokens.Count && tokens[tokennr].isWhitespaceOrComment)
                 ++tokennr;
 
-            StringBuilder   rtn = new StringBuilder();
+            var rtn = new List<Core.Token>();
 
             while (tokennr < tokens.Count && tokens[tokennr].Ending.Lineno == lineno)
-                rtn.Append(tokens[tokennr++].Text);
+                rtn.Add(tokens[tokennr++]);
+
+            return rtn;
+        }
+        public              Usage                       GetUsage()
+        {
+            string              containing = null;
+
+            var symbolUsage = Token.SymbolData?.GetSymbolUsage(SymbolReferenceList.Symbol);
+
+            for (Core.IAstNode node = Token ; node != null ; node = node.ParentNode) {
+                if (node is Node.DeclarationEntity declarationEntity) {
+                    containing = declarationEntity.EntityName.Fullname;
+                    break;
+                }
+            }
+
+            return new Usage() {
+                       Containing = containing,
+                       UsageFlags = (symbolUsage != null) ? symbolUsage.Usage : DataModel.SymbolUsageFlags.Unknown
+                   };
+        }
+        public  static      string                      GetLine(IEnumerable<Core.Token> tokens)
+        {
+            var rtn = new StringBuilder();
+
+            foreach(var t in tokens) {
+                rtn.Append(t.Text);
+            }
 
             return rtn.ToString();
         }

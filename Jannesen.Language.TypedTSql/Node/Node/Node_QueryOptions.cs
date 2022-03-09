@@ -13,6 +13,8 @@ namespace Jannesen.Language.TypedTSql.Node
             public      readonly        Token.TokenLocalName        n_VariableName;
             public      readonly        IExprNode                   n_Value;
 
+            private                     DataModel.Variable          _variable;
+
             public                                                  OptimizeForVariable(Core.ParserReader reader)
             {
                 n_VariableName = (Token.TokenLocalName)ParseToken(reader, Core.TokenID.LocalName);
@@ -22,13 +24,18 @@ namespace Jannesen.Language.TypedTSql.Node
 
             public      override        void                        TranspileNode(Transpile.Context context)
             {
+                _variable = null;
+
                 try {
                     var variable = context.VariableGet(n_VariableName);
+
                     n_Value.TranspileNode(context);
                     if (n_Value.ExpressionType != ExprType.Const)
                         context.AddError(n_Value, "Expect constante");
 
                     if (variable != null) {
+                        _variable = variable;
+                        n_VariableName.SetSymbolUsage(variable, DataModel.SymbolUsageFlags.Reference);
                         Validate.ConstByType(variable.SqlType, n_Value);
                     }
                 }

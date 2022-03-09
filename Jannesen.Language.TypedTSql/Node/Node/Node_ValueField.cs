@@ -32,7 +32,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (!fields.TryGetValue(name, out var field))
                 fields.Add(field = new DataModel.ValueRecordField(name));
 
-            n_Name.SetSymbol(field);
+            n_Name.SetSymbolUsage(field, DataModel.SymbolUsageFlags.Reference);
         }
     }
 }

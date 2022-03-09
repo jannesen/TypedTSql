@@ -7,12 +7,15 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 {
     public class PERMISSIONS: Func_Scalar
     {
+        public                  DataModel.EntityObject      Entity      { get; private set; }
+
         internal                                            PERMISSIONS(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader): base(declaration, reader)
         {
         }
 
         public      override    void                        TranspileNode(Transpile.Context context)
         {
+            Entity = null;
             base.TranspileNode(context);
 
             var stringToken = LogicHelpers.ConstString(n_Arguments.n_Expressions[0]);
@@ -26,13 +29,13 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 
                     var entityName = new DataModel.EntityName(parseEntityName.Schema, parseEntityName.Name);
 
-                    var entity = context.Catalog.GetObject(entityName);
-                    if (entity == null) {
+                    Entity = context.Catalog.GetObject(entityName);
+                    if (Entity == null) {
                         context.AddError(stringToken, "Unknown object '" + entityName + "'.");
                         return;
                     }
 
-                    stringToken.SetSymbol(entity);
+                    stringToken.SetSymbolUsage(Entity, DataModel.SymbolUsageFlags.Reference);
                 }
             }
         }

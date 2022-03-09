@@ -39,7 +39,7 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseToken(reader, Core.TokenID.TRIGGER);
             n_Name = AddChild(new Node_EntityNameDefine(reader));
             ParseToken(reader, Core.TokenID.ON);
-            n_Table = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.TableOrView));
+            n_Table = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.TableOrView, DataModel.SymbolUsageFlags.Reference));
 
             ParseWith(reader, DataModel.SymbolType.Trigger);
 
@@ -67,7 +67,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 TranspileOptions(context);
 
                 Entity.Transpiled();
-                n_Name.n_Name.SetSymbol(Entity);
+                n_Name.n_Name.SetSymbolUsage(Entity, DataModel.SymbolUsageFlags.Declaration);
                 _declarationTranspiled = true;
             }
 

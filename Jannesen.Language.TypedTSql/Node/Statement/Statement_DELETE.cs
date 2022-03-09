@@ -18,7 +18,7 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseToken(reader, Core.TokenID.DELETE);
             ParseOptionalToken(reader, Core.TokenID.FROM);
 
-            ParseTarget(reader);
+            ParseTarget(reader, DataModel.SymbolUsageFlags.Delete);
             ParseFromWhereOption(reader);
 
             ParseStatementEnd(reader, parseContext);
@@ -32,7 +32,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             var contextRowSet    = new Transpile.ContextRowSets(contextStatement);
 
-            TranspileFromWhereExpression(contextStatement, contextRowSet);
+            TranspileFromWhereExpression(contextStatement, contextRowSet, DataModel.SymbolUsageFlags.Delete);
         }
     }
 }

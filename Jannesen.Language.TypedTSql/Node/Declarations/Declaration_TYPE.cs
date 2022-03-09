@@ -63,10 +63,11 @@ namespace Jannesen.Language.TypedTSql.Node
             }
 
             n_TypeDeclaration.Transpiled();
-            n_Name.n_Name.SetSymbol(Entity);
+            n_Name.n_Name.SetSymbolUsage(Entity, DataModel.SymbolUsageFlags.Declaration);
 
             Transpiled = true;
         }
+
         public      override    void                            Emit(Core.EmitWriter emitWriter)
         {
             n_TypeDeclaration.Emit(emitWriter, this);

@@ -8,7 +8,7 @@ namespace Jannesen.Language.TypedTSql.Node
     [StatementParser(Core.TokenID.Name, prio:3)]
     public class Statement_GET_CONVERSATION_GROUP: Statement
     {
-        public      readonly    Node.ISetVariable                   n_ConversationGroupId;
+        public      readonly    Node_AssignVariable                 n_ConversationGroupId;
         public      readonly    Node_EntityNameReference            n_Queue;
 
         public      static      bool                                CanParse(Core.ParserReader reader, IParseContext parseContext)
@@ -22,13 +22,13 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseToken(reader, "GROUP");
             n_ConversationGroupId = ParseVarVariable(reader);
             ParseToken(reader, Core.TokenID.FROM);
-            n_Queue = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.Queue));
+            n_Queue = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.Queue, DataModel.SymbolUsageFlags.Select));
             ParseStatementEnd(reader, parseContext);
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)
         {
-            context.VariableSetType(n_ConversationGroupId, DataModel.SqlTypeNative.UniqueIdentifier);
+            n_ConversationGroupId.TranspileAssign(context, DataModel.SqlTypeNative.UniqueIdentifier);
             n_Queue.TranspileNode(context);
         }
     }

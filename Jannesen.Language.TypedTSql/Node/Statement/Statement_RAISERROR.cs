@@ -85,7 +85,7 @@ namespace Jannesen.Language.TypedTSql.Node
             reader.CurrentToken.validateToken(ids);
 
             if (reader.CurrentToken.isToken(Core.TokenID.LocalName))
-                return AddChild(new Expr_PrimativeValue(reader, localVariable:true));
+                return AddChild(new Expr_Variable(reader));
 
             return ParseToken(reader);
         }

@@ -21,11 +21,11 @@ namespace Jannesen.Language.TypedTSql.Node
         public      readonly    Core.Token                      n_JoinOption;
         public      readonly    JoinOption                      n_JoinOptions;
         public      readonly    TableSource_RowSet_alias        n_RowSet;
-        public      override    Core.TokenWithSymbol            n_Alias             { get { return n_RowSet.n_Alias;        } }
-        public      override    DataModel.IColumnList           ColumnList          { get { return n_RowSet.ColumnList; } }
-        public      override    DataModel.RowSet                t_RowSet            { get { return n_RowSet.t_RowSet;       } }
-        public      override    JoinType                        n_JoinType          { get { return _n_JoinType;             } }
-        public      override    IExprNode                       n_On                { get { return _n_On;                   } }
+        public      override    Core.TokenWithSymbol            n_Alias             => n_RowSet.n_Alias;
+        public      override    DataModel.IColumnList           ColumnList          => n_RowSet.ColumnList;
+        public      override    DataModel.RowSet                t_RowSet            => n_RowSet.t_RowSet;
+        public      override    JoinType                        n_JoinType          => _n_JoinType;
+        public      override    IExprNode                       n_On                => _n_On;
 
         private                 JoinType                        _n_JoinType;
         private                 IExprNode                       _n_On;
@@ -102,6 +102,10 @@ namespace Jannesen.Language.TypedTSql.Node
             _n_On?.TranspileNode(context);
 
             _transpileProcess(context);
+        }
+        public      override    bool                            SetUsage(DataModel.SymbolUsageFlags usage)
+        {
+            return n_RowSet.SetUsage(usage);
         }
 
         private                 void                            _transpileProcess(Transpile.Context context)

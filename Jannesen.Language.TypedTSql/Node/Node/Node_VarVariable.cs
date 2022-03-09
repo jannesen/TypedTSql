@@ -1,16 +1,14 @@
 ﻿using System;
 using Jannesen.Language.TypedTSql.Core;
-using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.Node
 {
-    public class Node_VarVariable: AstParseNode, ISetVariable
+    public abstract class Node_VarVariable: AstParseNode
     {
         public      readonly    VarDeclareScope                     n_Scope;
         public      readonly    Token.TokenLocalName                n_Name;
 
-        public                  Token.TokenLocalName                TokenName           { get { return n_Name; } }
-        public                  VarDeclareScope                     isVarDeclare        { get { return n_Scope;   } }
+        public                  DataModel.Variable                  Variable            { get; protected set; }
 
         public      static      bool                                CanParse(Core.ParserReader reader)
         {
@@ -18,7 +16,13 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                                                      Node_VarVariable(Core.ParserReader reader)
         {
-            n_Scope = ParseToken(reader, "VAR", "LET").isToken("VAR") ? VarDeclareScope.CodeScope : VarDeclareScope.BlockScope;
+            if (reader.CurrentToken.isToken("VAR", "LET")) {
+                n_Scope = ParseToken(reader, "VAR", "LET").isToken("VAR") ? VarDeclareScope.CodeScope : VarDeclareScope.BlockScope;
+            }
+            else {
+                n_Scope = VarDeclareScope.None;
+            }
+
             n_Name = (Token.TokenLocalName)ParseToken(reader, TokenID.LocalName);
         }
 
@@ -32,7 +36,6 @@ namespace Jannesen.Language.TypedTSql.Node
                 c.Emit(emitWriter);
             }
         }
-
         public      static      void                                EmitVarVariable(EmitWriter emitWriter, DataModel.VariableList variableList, int indent)
         {
             if (variableList != null) { 

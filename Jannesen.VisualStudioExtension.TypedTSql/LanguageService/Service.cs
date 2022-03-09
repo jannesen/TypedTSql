@@ -14,14 +14,12 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         public  const           string                              GUID        = "65623183-4333-4555-9B2A-AC2A78208E9B";
         public                  VSPackage                           Package                         { get ; private set; }
         public                  ErrorListProvider                   ErrorListProvider               { get ; private set; }
-        public                  Library.SimpleLibrary               Library                         { get ; private set; }
 
         private                 List<Project>                       _projects;
         private                 EnvDTE.Events                       _events;
         private                 EnvDTE.BuildEvents                  _buildEvents;
         private                 EnvDTE.DocumentEvents               _documentEvents;
         private                 EnvDTE.SolutionEvents               _solutionEvents;
-        private                 uint                                _objectLibraryCookie;
         private                 object                              _lockObject;
 
         public                                                      Service(VSPackage package)
@@ -34,7 +32,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             _lockObject = new object();
 
             _registerErrorListProvider();
-            _registerLibrary();
             _registerEvents();
         }
         public                  void                                Dispose()
@@ -43,7 +40,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             _unregisterEvents();
             _stopProjects();
-            _unregisterLibrary();
             _unregisterErrorListProvider();
         }
 
@@ -108,19 +104,22 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
         {
             if (!string.IsNullOrEmpty(Project.FullName)) {
                 var         vsproject = VSPackage.GetIVsProject(null, Project.FullName);
-                Project     project   = null;
 
-                lock(_lockObject) {
-                    for (int i = 0 ; i < _projects.Count ; ++i) {
-                        if (object.Equals(_projects[i].VSProject, vsproject)) {
-                            project = _projects[i];
-                            _projects.RemoveAt(i);
-                            break;
+                if (vsproject != null) { 
+                    Project     project   = null;
+
+                    lock(_lockObject) {
+                        for (int i = 0 ; i < _projects.Count ; ++i) {
+                            if (object.Equals(_projects[i].VSProject, vsproject)) {
+                                project = _projects[i];
+                                _projects.RemoveAt(i);
+                                break;
+                            }
                         }
                     }
-                }
 
-                project.Stop();
+                    project?.Stop();
+                }
             }
         }
 
@@ -158,27 +157,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             if (ErrorListProvider != null) {
                 ErrorListProvider.Dispose();
                 ErrorListProvider = null;
-            }
-        }
-        private                 void                                _registerLibrary()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            try {
-                Library = new Library.SimpleLibrary();
-                ErrorHandler.ThrowOnFailure(((IServiceProvider)Package).GetService<IVsObjectManager2>(typeof(SVsObjectManager)).RegisterSimpleLibrary(Library, out _objectLibraryCookie));
-            }
-            catch(Exception err) {
-                Library = null;
-                VSPackage.DisplayError(new Exception("Failed to register TypedTSql.Library.", err));
-            }
-        }
-        private                 void                                _unregisterLibrary()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (Library != null) {
-                ((IServiceProvider)Package).GetService<IVsObjectManager2>(typeof(SVsObjectManager)).UnregisterLibrary(_objectLibraryCookie);
             }
         }
         private                 void                                _registerEvents()

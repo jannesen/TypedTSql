@@ -7,9 +7,9 @@ namespace Jannesen.Language.TypedTSql.Node
     public class TableSource_RowSet_inserted_deleted: TableSource_RowSet_alias
     {
         public      readonly    Core.Token                      n_Name;
-        public      override    DataModel.IColumnList           ColumnList      { get { return _t_ColumnList ; } }
+        public      override    DataModel.IColumnList           ColumnList      { get { return _t_table.Columns ; } }
 
-        private                 DataModel.IColumnList           _t_ColumnList;
+        private                 DataModel.EntityObjectTable     _t_table;
 
         public      static      bool                            CanParse(Core.ParserReader reader)
         {
@@ -23,28 +23,20 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override    void                            TranspileNode(Transpile.Context context)
         {
-            _t_ColumnList = null;
+            _t_table      = null;
 
             try {
-                _t_ColumnList = _getColumnList(context);
+                if (!(context.DeclarationEntity is Declaration_TRIGGER declarationTrigger))
+                    throw new ErrorException("Not in a trigger.");
+
+                if ((_t_table = (declarationTrigger.n_Table.Entity as DataModel.EntityObjectTable)) == null)
+                    throw new ErrorException("Can't find trigger table.");
             }
             catch(Exception err) {
                 context.AddError(n_Name, err);
             }
 
             TranspileRowSet(context);
-        }
-
-        private                 DataModel.IColumnList           _getColumnList(Transpile.Context context)
-        {
-            if (!(context.DeclarationEntity is Declaration_TRIGGER declarationTrigger))
-                throw new ErrorException("Not in a trigger.");
-
-            var columnList = (declarationTrigger.n_Table.Entity as DataModel.EntityObjectTable)?.Columns;
-            if (columnList == null)
-                throw new ErrorException("Can't get columns from trigger table.");
-
-            return columnList;
         }
     }
 }

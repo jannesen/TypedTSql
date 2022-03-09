@@ -14,14 +14,14 @@ namespace Jannesen.Language.TypedTSql.Core
     public interface IAstNode
     {
         AstNodeList     Children                { get; }
-        IAstNode        Parent                  { get; }
+        IAstNode        ParentNode              { get; }
         bool            isWhitespaceOrComment   { get; }
 
-        Token           GetFirstToken(GetTokenMode mode);
-        Token           GetLastToken(GetTokenMode mode);
-        void            Emit(EmitWriter emitWriter);
+        Token               GetFirstToken(GetTokenMode mode);
+        Token               GetLastToken(GetTokenMode mode);
+        void                Emit(EmitWriter emitWriter);
 
-        void            SetParent(IAstNode parent);
+        void                SetParentNode(IAstNode parent);
     }
 
     public class AstNodeList: List<IAstNode>

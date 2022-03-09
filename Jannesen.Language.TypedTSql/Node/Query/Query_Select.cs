@@ -8,10 +8,12 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         StatementSelect         = 1,
         StatementInsert,
+        StatementInsertTargetVarVariable,
         StatementInsertTargetNamed,
         StatementDeclareCursor,
         StatementView,
         StatementReceive,
+        StatementStore,
         FunctionInlineTable,
         TableSourceSubquery,
         ExpressionSubquery,
@@ -34,8 +36,10 @@ namespace Jannesen.Language.TypedTSql.Node
             {
                 var selects = new List<Query_Select_SELECT> {  { AddChild(new Query_Select_SELECT(reader, selectContext)) }  };
 
-                if (selectContext != Query_SelectContext.ExpressionEXISTS         &&
-                    selectContext != Query_SelectContext.ExpressionResponseObject &&
+                if (selectContext != Query_SelectContext.StatementInsertTargetNamed       &&
+                    selectContext != Query_SelectContext.StatementInsertTargetVarVariable &&
+                    selectContext != Query_SelectContext.ExpressionEXISTS                 &&
+                    selectContext != Query_SelectContext.ExpressionResponseObject         &&
                     selectContext != Query_SelectContext.ExpressionResponseObject)
                 {
                     while (ParseOptionalToken(reader, Core.TokenID.UNION) != null) {
@@ -89,20 +93,13 @@ namespace Jannesen.Language.TypedTSql.Node
 
             select.TranspileNode(contextRowSet);
 
-            var resultset = n_Selects[0].n_Columns?.GetResultSet(contextRowSet);
+            var resultset = n_Selects[0].n_Columns?.ResultColumnList;
             if (resultset != null) {
                 n_OrderBy?.TranspileNode(new Transpile.ContextRowSets(contextRowSet, resultset));
-
-                if (select.n_Into != null) {
-                    if (!context.GetDeclarationObjectCode().Entity.TempTableAdd(select.n_Into.ValueString, select.n_Into, resultset.GetUniqueNamedList(), null, out var tempTable)) {
-                        context.AddError(select.n_Into, "Temp table already defined at a differend location.");
-                    }
-                    select.n_Into.SetSymbol(tempTable);
-                }
             }
             else {
                 if (select.n_Into != null)
-                    throw new TranspileException(n_Selects[0].n_Into, "Into not possible with variable assignment.");
+                    throw new TranspileException(n_Selects[0].n_Into.n_Into, "INTO and variable assignment are mutual exclusif.");
 
                 if (n_OrderBy != null) {
                     n_OrderBy.TranspileNode(contextRowSet);
@@ -131,15 +128,20 @@ namespace Jannesen.Language.TypedTSql.Node
 
         private                 DataModel.IColumnList       _transpileNode_Union(Transpile.Context context)
         {
-            foreach (var select in n_Selects)
+            foreach (var select in n_Selects) {
+                if (select.n_Into != null) {
+                    throw new TranspileException(select.n_Into, "INTO not allowed with UNION.");
+                }
+
                 select.TranspileNode(new Transpile.ContextRowSets(context));
+            }
 
             foreach(var select in n_Selects) {
                 if (select.n_Columns == null)
                     throw new TranspileException(select, "Select has no columns");
 
                 if (select.n_Into != null)
-                    throw new TranspileException(select.n_Into, "INTO not possible in UNION select.");
+                    throw new TranspileException(select.n_Into.n_Into, "INTO not possible in UNION select.");
 
                 foreach (var column in select.n_Columns.n_Columns) {
                     if (column is Query_Select_ColumnExpression) {
@@ -186,21 +188,21 @@ namespace Jannesen.Language.TypedTSql.Node
                 }
 
                 DataModel.ColumnUnion       column;
-
+                DataModel.Column            referencedColumn; 
                 if (firstcol.n_ColumnName != null)
                     column = new DataModel.ColumnUnion(firstcol.n_ColumnName.ValueString, expressions, typeResult,
                                                        declaration: firstcol.n_ColumnName);
                 else
-                if (firstcol.n_Expression is Expr_PrimativeValue primativeData && primativeData.Referenced is DataModel.Column expressionColumn)
-                    column = new DataModel.ColumnUnion(expressionColumn.Name, expressions, typeResult,
-                                                       nameReference:   expressionColumn,
-                                                       declaration:     expressionColumn.Declaration);
+                if ((referencedColumn = firstcol.n_Expression.ReferencedColumn) != null)
+                    column = new DataModel.ColumnUnion(referencedColumn.Name, expressions, typeResult,
+                                                       nameReference:   referencedColumn,
+                                                       declaration:     referencedColumn.Declaration);
                 else
                     column = new DataModel.ColumnUnion("", expressions, typeResult);
 
                 if (column.Name.Length > 0) {
                     for (int i = 0 ; i < n_Selects.Length ; ++i)
-                        ((Query_Select_ColumnExpression)n_Selects[i].n_Columns.n_Columns[colidx]).n_ColumnName?.SetSymbol(column);
+                        ((Query_Select_ColumnExpression)n_Selects[i].n_Columns.n_Columns[colidx]).n_ColumnName?.SetSymbolUsage(column, DataModel.SymbolUsageFlags.Write);
                 }
 
                 columns[colidx] = column;

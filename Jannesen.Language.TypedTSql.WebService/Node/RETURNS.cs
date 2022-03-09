@@ -98,7 +98,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         public      static      void                                WriteResponseXml(XmlWriter xmlWriter, LTTSQL.DataModel.ISqlType sqlType)
         {
             if (sqlType is LTTSQL.DataModel.SqlTypeResponseNode reponseNodeType) {
@@ -129,7 +128,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 }
             }
             else
-                xmlWriter.WriteAttributeString("type",  SqlTypeToString(sqlType));;
+                xmlWriter.WriteAttributeString("type",  SqlTypeToString(sqlType));
         }
         public      static      string                              SqlTypeToString(DataModel.ISqlType sqlType)
         {
@@ -156,8 +155,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     WriteResponseXml(xmlWriter, field.SqlType);
                 xmlWriter.WriteEndElement();
             }
-        }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
+        }        
         private     static      string                              _responseMsgName(DataModel.ISqlType returns)
         {
             using (var buffer = new MemoryStream()) {

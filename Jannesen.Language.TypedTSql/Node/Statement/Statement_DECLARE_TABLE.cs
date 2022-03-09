@@ -40,6 +40,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                          n_Name,
                                                          DataModel.VariableFlags.None);
                 context.VariableDeclare(n_Name, VarDeclareScope.BlockScope, t_Variable);
+                n_Name.SetSymbolUsage(t_Variable, DataModel.SymbolUsageFlags.Declaration);
             }
         }
     }

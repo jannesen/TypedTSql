@@ -27,15 +27,17 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override    void                            TranspileNode(Transpile.Context context)
         {
+            var contextQuery = new Transpile.ContextSubquery(context);
+
             _t_ColumnList = null;
 
-            n_Select.TranspileNode(context);
+            n_Select.TranspileNode(contextQuery);
 
             _t_ColumnList = _transpileResult(context);
 
             TranspileRowSet(context);
         }
-        public  override        void                            Emit(EmitWriter emitWriter)
+        public      override    void                            Emit(EmitWriter emitWriter)
         {
             foreach(var n in Children) {
                 n.Emit(emitWriter);

@@ -8,7 +8,6 @@ namespace Jannesen.Language.TypedTSql.Node
     public class Expr_ServiceComplexType: ExprCalculation, IExprResponseNode, IReferencedEntity
     {
         public      readonly    Core.TokenWithSymbol            n_Name;
-        public      readonly    DataModel.EntityName            n_EntityName;
         public      readonly    IExprNode[]                     n_Arguments;
 
         public      override    DataModel.ValueFlags            ValueFlags              { get { return _sqlResponseType != null ? DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable : DataModel.ValueFlags.Error;  } }
@@ -70,7 +69,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 return;
             }
 
-            n_Name.SetSymbol(complexTypeEntity);
+            n_Name.SetSymbolUsage(complexTypeEntity, DataModel.SymbolUsageFlags.Reference);
             context.CaseWarning(n_Name, complexType.ComplexTypeName);
 
             _complexType = complexType;

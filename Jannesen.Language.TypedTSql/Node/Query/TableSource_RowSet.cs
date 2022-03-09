@@ -23,5 +23,9 @@ namespace Jannesen.Language.TypedTSql.Node
         public      abstract    DataModel.IColumnList           ColumnList                      { get; }
         public      abstract    DataModel.RowSet                t_RowSet                        { get; }
         public      virtual     DataModel.ISymbol               t_Source                        { get { return null;            } }
+        public      virtual     bool                            SetUsage(DataModel.SymbolUsageFlags usage)
+        {
+            return false;
+        }
     }
 }

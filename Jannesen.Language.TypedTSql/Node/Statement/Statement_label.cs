@@ -11,6 +11,8 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      readonly    Core.TokenWithSymbol                n_Label;
 
+        public                  DataModel.Label                     Label       { get; private set; }
+
         public      static      bool                                CanParse(Core.ParserReader reader, IParseContext parseContext)
         {
             return reader.CurrentToken.ID == Core.TokenID.Name && reader.NextPeek().ID == Core.TokenID.Colon;
@@ -25,6 +27,17 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             context.RootContext.ScopeIndentityType = null;
             context.RootContext.GetLabelList();
+        }
+        public                  void                                TranspileLabel(Transpile.Context context, DataModel.LabelList labelList)
+        {
+            Label = new DataModel.Label(n_Label.ValueString, n_Label);
+
+            if (!labelList.TryAdd(Label)) {
+                context.AddError(n_Label, "Label '" + n_Label.ValueString + "' already defined.");
+                return;
+            }
+
+            n_Label.SetSymbolUsage(Label, DataModel.SymbolUsageFlags.Reference);
         }
     }
 }

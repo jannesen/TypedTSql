@@ -175,6 +175,11 @@
     <Compile Include="Editor\QuickInfo\QuickInfoControllerProvider.cs" />
     <Compile Include="Editor\QuickInfo\QuickInfoSourceProvider.cs" />
     <Compile Include="Editor\Rename\RenameCommandHandler.cs" />
+    <Compile Include="FindAllReferences\ContainingColumnDefinition.cs" />
+    <Compile Include="FindAllReferences\FindAllReferenceWindow.cs" />
+    <Compile Include="FindAllReferences\ReferenceEntry.cs" />
+    <Compile Include="FindAllReferences\TypedTSqlDefinitionBucket.cs" />
+    <Compile Include="FindAllReferences\UsageColumnDefinition.cs" />
     <Compile Include="Rename\DatabaseItem.cs" />
     <Compile Include="Rename\FileItem.cs" />
     <Compile Include="Rename\FileLocationItem.cs" />
@@ -200,11 +205,6 @@
     <Compile Include="LanguageService\Project.cs" />
     <Compile Include="LanguageService\QuickInfo.cs" />
     <Compile Include="LanguageService\Service.cs" />
-    <Compile Include="LanguageService\SimpleLibrary\NavInfo.cs" />
-    <Compile Include="LanguageService\SimpleLibrary\SimpleLibrary.cs" />
-    <Compile Include="LanguageService\SimpleLibrary\SimpleObject.cs" />
-    <Compile Include="LanguageService\SimpleLibrary\SimpleObjectList.cs" />
-    <Compile Include="LanguageService\SimpleLibrary\SimpleObjectSymbolReference.cs" />
     <Compile Include="LanguageService\TextBufferLanguageServiceProject.cs" />
     <Compile Include="Library\Helpers.cs" />
     <Compile Include="Library\StandardGlyphGroup.cs" />

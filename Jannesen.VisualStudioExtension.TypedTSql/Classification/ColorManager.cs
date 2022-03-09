@@ -4,9 +4,6 @@ using System.ComponentModel.Composition;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text.Classification;
 
-// Disable CS0618 warning for now.
-#pragma warning disable CS0618
-
 namespace Jannesen.VisualStudioExtension.TypedTSql.Classification
 {
     [Export]

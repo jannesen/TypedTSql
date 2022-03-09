@@ -6,11 +6,21 @@ namespace Jannesen.Language.TypedTSql.Node
 {
     public class Node_EXEC_Parameter: Core.AstParseNode
     {
-        public      readonly    Core.TokenWithSymbol    n_Name;
+        public      readonly    TokenWithSymbol         n_Name;
         public      readonly    IExprNode               n_Expression;
-        public      readonly    ISetVariable            n_Var;
-        public      readonly    bool                    n_Output;
+        public      readonly    Node_AssignVariable     n_VarOutput;
         public      readonly    bool                    n_Default;
+
+        public                  DataModel.ISqlType      SqlType
+        {
+            get {
+                if (n_Expression != null) return n_Expression.SqlType;
+                if (n_VarOutput != null)  return n_VarOutput.SqlType;
+                return null;
+            }
+        }
+
+        private                 DataModel.Variable      _t_callingParameter;
 
         public      static      bool                    CanParse(Core.ParserReader reader)
         {
@@ -29,54 +39,40 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Default = true;
             }
             else {
-                if (reader.CurrentToken.isToken("VAR", "LET")) {
-                    n_Var = ParseVarVariable(reader);
+                if (reader.CurrentToken.isToken("VAR", "LET") || reader.NextPeek().isToken("OUTPUT")) {
+                    n_VarOutput = ParseVarVariable(reader);
+                    ParseToken(reader, "OUTPUT");
                 }
                 else { 
                     n_Expression = ParseSimpleExpression(reader);
                 }
 
-                if (ParseOptionalToken(reader, "OUTPUT") != null)
-                    n_Output = true;
             }
         }
 
         public      override    void                    TranspileNode(Transpile.Context context)
         {
-            n_Expression?.TranspileNode(context);
         }
         public                  void                    TranspileParameter(Transpile.Context context, DataModel.Variable callingParameter)
         {
             try {
-                if (n_Var != null) {
-                    if (!n_Output) {
-                        context.AddError(this, "var without output.");
-                    }
+                _t_callingParameter = callingParameter;
 
-                    if (callingParameter != null) {
-                        context.VarVariableSet(n_Var.TokenName, n_Var.isVarDeclare, callingParameter.SqlType);
-                    }
-                    else {
-                        context.AddError(n_Name, "Can't determin type of parameter.");
-                    }
-                }
-                else {
-                    if (n_Output) {
-                        var variable = context.VariableGet(n_Expression.GetVariableToken());
-                        if (variable != null) {
-                            if (!variable.isReadonly) { 
-                                variable.setAssigned();
-                            }
-                            else { 
-                                context.AddError(n_Expression, "Not allowed to assign a readonly variable.");
-                            }
-                        }
-                    }
+                n_Expression?.TranspileNode(context);
+
+                if (n_VarOutput != null) {
+                    n_VarOutput.TranspileAssign(context, callingParameter?.SqlType);
+                    n_VarOutput.Variable?.setUsed();
                 }
                 
-                if (n_Expression != null && callingParameter != null) {
+                if (callingParameter != null) {
                     try {
-                        Validate.Assign(context, this, callingParameter, this.n_Expression, output:this.n_Output);
+                        if (n_Expression != null) {
+                            Validate.Assign(context, this, callingParameter, n_Expression, output:false);
+                        }
+                        if (n_VarOutput != null) {
+                            Validate.Assign(context, this, callingParameter, n_VarOutput, output:true);
+                        }
                     }
                     catch(Exception err) {
                         context.AddError(this, err);
@@ -85,7 +81,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 if (n_Name != null) {
                     if (callingParameter != null) { 
-                        n_Name.SetSymbol(callingParameter);
+                        n_Name.SetSymbolUsage(callingParameter, DataModel.SymbolUsageFlags.Reference);
 
                         if (n_Name.Text != callingParameter.Name) {
                             context.AddError(n_Name, "Case missmatch, expect '" + callingParameter.Name + "'.");

@@ -84,18 +84,13 @@ namespace Jannesen.Language.TypedTSql.Transpile
         private                 void                                _parseLabelList(DataModel.LabelList labelList, Core.IAstNode node)
         {
             if (node is Node.Statement_label statementLabel) {
-                var label = new DataModel.Label(statementLabel.n_Label.ValueString, statementLabel.n_Label);
-                if (!labelList.TryAdd(label)) {
-                    AddError(statementLabel.n_Label, "Label '" + statementLabel.n_Label.ValueString + "' already defined.");
-                    return;
-                }
-
-                statementLabel.n_Label.SetSymbol(label);
+                statementLabel.TranspileLabel(this, labelList);
             }
             else
             if (node.Children != null) {
-                foreach (var c in node.Children)
+                foreach (var c in node.Children) { 
                     _parseLabelList(labelList, c);
+                }
             }
         }
     }

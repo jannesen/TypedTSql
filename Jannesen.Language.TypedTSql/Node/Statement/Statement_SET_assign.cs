@@ -10,7 +10,8 @@ namespace Jannesen.Language.TypedTSql.Node
     [StatementParser(Core.TokenID.SET, prio:2)]
     public class Statement_SET_assign: Statement
     {
-        public      readonly    ISetVariable                        n_VariableName;
+        public      readonly    Node_AssignVariable                 n_VariableName;
+        public      readonly    Core.Token                          n_Assign;
         public      readonly    IExprNode                           n_Expression;
 
         public      static      bool                                CanParse(Core.ParserReader reader, IParseContext parseContext)
@@ -23,7 +24,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             ParseToken(reader, Core.TokenID.SET);
             n_VariableName = ParseVarVariable(reader);
-            ParseToken(reader, Core.TokenID.Equal, Core.TokenID.PlusAssign, Core.TokenID.MinusAssign, Core.TokenID.MultAssign, Core.TokenID.DivAssign, Core.TokenID.ModAssign, Core.TokenID.AndAssign, Core.TokenID.XorAssign, Core.TokenID.OrAssign);
+            n_Assign = ParseToken(reader, Core.TokenID.Equal, Core.TokenID.PlusAssign, Core.TokenID.MinusAssign, Core.TokenID.MultAssign, Core.TokenID.DivAssign, Core.TokenID.ModAssign, Core.TokenID.AndAssign, Core.TokenID.XorAssign, Core.TokenID.OrAssign);
             n_Expression = ParseExpression(reader);
 
             ParseStatementEnd(reader, parseContext);
@@ -32,7 +33,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    void                                TranspileNode(Transpile.Context context)
         {
             n_Expression.TranspileNode(context);
-            context.VariableSet(n_VariableName, n_Expression);
+            n_VariableName.TranspileAssign(context, n_Expression, !n_Assign.isToken(Core.TokenID.Equal));
         }
     }
 }

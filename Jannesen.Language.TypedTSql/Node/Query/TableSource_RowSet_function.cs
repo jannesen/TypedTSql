@@ -23,7 +23,7 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                                                  TableSource_RowSet_function(Core.ParserReader reader, bool allowAlias): base(allowAlias)
         {
-            n_Function      = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.FunctionTable));
+            n_Function      = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.FunctionTable, DataModel.SymbolUsageFlags.Select));
             n_FuncArguments = AddChild(new Expr_Collection(reader, false));
 
             ParseTableAlias(reader);

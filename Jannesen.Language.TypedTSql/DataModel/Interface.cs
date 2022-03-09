@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
@@ -10,8 +8,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public              SymbolType              Type                    { get; private set; }
         public              string                  Name                    { get; private set; }
+        public              string                  FullName             { get { return SqlStatic.QuoteName(Name); } }
         public              object                  Declaration             { get; private set; }
-        public              ISymbol                 Parent                  { get; private set; }
+        public              ISymbol                 ParentSymbol            { get; private set; }
         public              ISymbol                 SymbolNameReference     { get { return null;                 } }
         public              ParameterList           Parameters              { get; private set; }
         public              ISqlType                Returns                 { get; private set; }
@@ -27,7 +26,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
         public              void                    SetParent(ISymbol parent)
         {
-            this.Parent = parent;
+            this.ParentSymbol = parent;
         }
     }
 
