@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectCapability Include="ProjectConfigurationsDeclaredAsItems" />
+		<ProjectCapability Include="ProjectConfigurationsInferredFromUsage" />
 		<ProjectCapability Include="DeclaredSourceItems" />
         <ProjectCapability Include="UseFileGlobs" />
         <ProjectCapability Include="ReferencesFolder;ProjectReferences;ReferenceManagerProjects;ReferenceManagerBrowse" />
