@@ -85,8 +85,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn
 
         protected   override    DataModel.ISqlType                  TranspileReturnType(IExprNode[] arguments)
         {
-            System.Diagnostics.Debug.WriteLine("BuildinFunction " + this.GetType().Name + " not implemented, default to SqlTypeAny.");
-            return new DataModel.SqlTypeAny();
+            throw new NotImplementedException("BuildinFunction " + this.GetType().Name + " not implemented, default to SqlTypeAny.");
         }
     }
 }

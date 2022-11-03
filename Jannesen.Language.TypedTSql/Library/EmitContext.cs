@@ -150,8 +150,13 @@ namespace Jannesen.Language.TypedTSql.Library
             bool    rtn = true;
 
             foreach (var entityDeclaration in _entities) {
-                if (!entityDeclaration.EmitCode(this))
-                    rtn = false;
+                try {
+                    if (!entityDeclaration.EmitCode(this))
+                        rtn = false;
+                }
+                catch(Exception err) {
+                    throw new EmitException(entityDeclaration, "Error while emiting '" + entityDeclaration.EntityName.ToString() + "': " + err.Message);
+                }
             }
 
             return rtn;

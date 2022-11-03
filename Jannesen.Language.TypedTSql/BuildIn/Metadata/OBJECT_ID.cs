@@ -11,8 +11,9 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
         {
         }
 
-//      protected   override    DataModel.SqlType           TranspileReturnType(IExpr[] arguments)
-//      {
-//      }
+        protected   override    DataModel.ISqlType          TranspileReturnType(IExprNode[] arguments)
+        {
+            return DataModel.SqlTypeNative.Int;
+        }
     }
 }

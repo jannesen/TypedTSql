@@ -29,6 +29,10 @@ namespace Jannesen.Language.TypedTSql
         {
             this.Declaration = declaration;
         }
+        public                                  EmitException(object declaration, string message, Exception innerException): base(message, innerException)
+        {
+            this.Declaration = declaration;
+        }
     }
     public class SqlError: EmitError
     {
