@@ -26,7 +26,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         private                 DataModel.Variable                  _variable;
 
-        public                                                      Expr_Variable(Core.ParserReader reader, bool localVariable=false)
+        public                                                      Expr_Variable(Core.ParserReader reader)
         {
             n_Variable = (Token.TokenLocalName)ParseToken(reader, Core.TokenID.LocalName);
         }

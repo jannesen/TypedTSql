@@ -360,7 +360,9 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             DataModel.IColumnList   columnList = null;
 
-            if (n_SelectValuesExecute is Statement_EXECUTE_procedure execproc && execproc.n_ProcedureReference.Entity is DataModel.EntityObjectCode entityObject) {
+            if (n_SelectValuesExecute is Statement_EXECUTE_procedure execproc &&
+                execproc.n_ProcedureReference is Node_EntityNameReference procedureName &&
+                procedureName.Entity is DataModel.EntityObjectCode entityObject) {
                 var resulsets = entityObject.Resultsets;
                 if (resulsets == null || resulsets.Count == 0) {
                     context.AddError(execproc, "Procedure '" + entityObject.EntityName.ToString() + "' don't returns a dataset.");

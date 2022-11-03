@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.Library;
+using Jannesen.Language.TypedTSql.Core;
+using System.Runtime.Remoting.Messaging;
 
 namespace Jannesen.Language.TypedTSql.Node
 {
@@ -19,22 +21,22 @@ namespace Jannesen.Language.TypedTSql.Node
     //      [ AS { LOGIN | USER } = ' name ' ]
     [StatementParser(Core.TokenID.EXEC,    prio:2)]
     [StatementParser(Core.TokenID.EXECUTE, prio:2)]
-   public class Statement_EXECUTE_procedure: Statement
+    public class Statement_EXECUTE_procedure: Statement
     {
-        public      readonly    Node_EntityNameReference        n_ProcedureReference;
+        public      readonly    AstParseNode                    n_ProcedureReference;
         public      readonly    Node_AssignVariable             n_ProcedureReturn;
         public      readonly    Node_EXEC_Parameter[]           n_Parameters;
 
-        public      static      bool                            CanParse(Core.ParserReader reader, IParseContext parseContext)
+        public      static      bool                            CanParse(ParserReader reader, IParseContext parseContext)
         {
-            if (reader.CurrentToken.isToken(Core.TokenID.EXEC, Core.TokenID.EXECUTE)) {
-                Core.Token[]        peek = reader.Peek(3);
-
-                if (peek[1].isToken("VAR", "LET") && peek[2].isToken(Core.TokenID.LocalName)) {
+            if (reader.CurrentToken.isToken(Core.TokenID.EXEC, TokenID.EXECUTE)) {
+                if (reader.NextPeek().isToken(TokenID.Name, TokenID.QuotedName, TokenID.LocalName)) {
                     return true;
                 }
 
-                if (peek[1].isToken(Core.TokenID.LocalName, Core.TokenID.Name, Core.TokenID.QuotedName)) {
+                var  peek = reader.Peek(3);
+
+                if (peek[1].isToken("VAR", "LET") && peek[2].isToken(TokenID.LocalName)) {
                     return true;
                 }
             }
@@ -46,15 +48,23 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public                                                  Statement_EXECUTE_procedure(Core.ParserReader reader, IParseContext parseContext, bool statement)
         {
-            ParseToken(reader, Core.TokenID.EXEC, Core.TokenID.EXECUTE);
+            ParseToken(reader, TokenID.EXEC, TokenID.EXECUTE);
 
-            if (reader.CurrentToken.isToken(Core.TokenID.LocalName) ||
-                (reader.CurrentToken.isToken("VAR", "LET") && reader.NextPeek().isToken(Core.TokenID.LocalName))) {
-                n_ProcedureReturn = ParseVarVariable(reader);
-                ParseToken(reader, Core.TokenID.Equal);
+            if (!reader.NextPeek().isToken(TokenID.Name, TokenID.QuotedName)) {
+                var  peek = reader.Peek(3);
+                int i = 0;
+
+                if (peek[i].isToken("VAR", "LET")) ++i;
+
+                if (peek[i].isToken(TokenID.LocalName) && peek[i + 1].isToken(TokenID.Equal)) {
+                    n_ProcedureReturn = ParseVarVariable(reader);
+                    ParseToken(reader, TokenID.Equal);
+                }
             }
 
-            n_ProcedureReference = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.StoredProcedure, DataModel.SymbolUsageFlags.Reference));
+            n_ProcedureReference = AddChild((reader.CurrentToken.isToken(Core.TokenID.LocalName))
+                                                ? (AstParseNode)new Expr_Variable(reader)
+                                                : (AstParseNode)new Node_EntityNameReference(reader, EntityReferenceType.StoredProcedure, DataModel.SymbolUsageFlags.Reference));
 
             if (Node_EXEC_Parameter.CanParse(reader)) {
                 var     parameters = new List<Node_EXEC_Parameter>();
@@ -81,16 +91,16 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_ProcedureReturn.TranspileAssign(context, DataModel.SqlTypeNative.Int);
             }
 
-            if (n_ProcedureReference.Entity != null) {
-                switch(n_ProcedureReference.Entity.Type) {
+            if (n_ProcedureReference is Node_EntityNameReference procedureName && procedureName.Entity != null) {
+                switch(procedureName.Entity.Type) {
                 case DataModel.SymbolType.StoredProcedure:
                 case DataModel.SymbolType.StoredProcedure_clr:
                 case DataModel.SymbolType.ServiceMethod:
-                    _validateCallParameters(context, (DataModel.EntityObjectCode)n_ProcedureReference.Entity);
+                    _transpileNamedProcedureParameters(context, (DataModel.EntityObjectCode)procedureName.Entity);
                     break;
 
                 case DataModel.SymbolType.StoredProcedure_extended:
-                    _validateCallExtendedParameters(context);
+                    _transpileParameters(context);
                     break;
 
                 default:
@@ -98,9 +108,12 @@ namespace Jannesen.Language.TypedTSql.Node
                     break;
                 }
             }
+            else {
+                _transpileParameters(context);
+            }
         }
 
-        private                 void                            _validateCallParameters(Transpile.Context context, DataModel.EntityObjectCode calling_procedure)
+        private                 void                            _transpileNamedProcedureParameters(Transpile.Context context, DataModel.EntityObjectCode calling_procedure)
         {
             DataModel.ParameterList     calling_parameters = calling_procedure.Parameters;
 
@@ -152,7 +165,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     throw new TranspileException(this, "The procedure has no parameters.");
             }
         }
-        private                 void                            _validateCallExtendedParameters(Transpile.Context context)
+        private                 void                            _transpileParameters(Transpile.Context context)
         {
             if (n_Parameters != null) {
                 foreach(var p in n_Parameters) {
