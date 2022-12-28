@@ -127,11 +127,10 @@ namespace Jannesen.Language.TypedTSql.Node
                         rtn.Add(entityName);
                 }
             }
-            else {
-                if (node.Children != null) {
-                    foreach(var child in node.Children)
-                        _externalObjectReferences_walk(child, rtn);
-                }
+
+            if (node.Children != null) {
+                foreach(var child in node.Children)
+                    _externalObjectReferences_walk(child, rtn);
             }
         }
     }
