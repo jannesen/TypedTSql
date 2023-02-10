@@ -83,12 +83,6 @@ namespace Jannesen.Language.TypedTSql
         public                  void                                    InitRebuild()
         {
             lock(_lockObject) {
-                if (_output != null) {
-                    _output.Write("USE ");
-                    _output.WriteLine(Library.SqlStatic.QuoteName(DatabaseName));
-                    _output.WriteLine("GO");
-                }
-
                 ResetSettings();
 
                 Print("# kill database connection");
