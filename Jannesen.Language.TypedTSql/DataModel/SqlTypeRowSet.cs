@@ -13,6 +13,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                  IndexList                   Indexes         { get { throw new InvalidOperationException(this.GetType().Name + ": has no indexes.");         } }
         public      virtual     JsonSchema                  JsonSchema      { get { throw new InvalidOperationException(this.GetType().Name + ": has no json-schema.");     } }
         public                  Entity                      Entity          { get { return null;                                                                            } }
+        public      virtual     ISqlType                    ParentType      { get { return null;                                                                            } }
         public                  string                      ToSql()
         {
             throw new InvalidOperationException("Can't get sql-type of " + this.GetType().Name + ".");

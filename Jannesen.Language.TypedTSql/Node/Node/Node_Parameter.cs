@@ -7,14 +7,8 @@ namespace Jannesen.Language.TypedTSql.Node
 {
     public abstract class Node_Parameter: Core.AstParseNode
     {
-        public      readonly    Core.TokenWithSymbol                n_Name;
-
+        public      abstract    Core.TokenWithSymbol                n_Name              { get; }
         public      abstract    DataModel.Parameter                 Parameter           { get; }
-
-        public                                                      Node_Parameter(Core.ParserReader reader)
-        {
-            n_Name = (Core.TokenWithSymbol)ParseToken(reader, Core.TokenID.LocalName);
-        }
     }
 
     // @parameter_name [ AS ] Datatype [ = default ] [ READONLY ]
@@ -31,12 +25,15 @@ namespace Jannesen.Language.TypedTSql.Node
         public      readonly    IExprNode                   n_Default;
         public      readonly    DataModel.VariableFlags     n_Flags;
 
-        public      override    DataModel.Parameter         Parameter           { get { return _parameter; } }
+        public      override    Core.TokenWithSymbol        n_Name              => _Name;
+        public      override    DataModel.Parameter         Parameter           => _parameter;
 
-        public                  DataModel.Parameter         _parameter;
+        private                 Core.TokenWithSymbol        _Name;
+        private                 DataModel.Parameter         _parameter;
 
-        public                                              Node_SqlParameter(Core.ParserReader reader, InterfaceType interfaceType): base(reader)
+        public                                              Node_SqlParameter(Core.ParserReader reader, InterfaceType interfaceType)
         {
+            _Name = (Core.TokenWithSymbol)ParseToken(reader, Core.TokenID.LocalName);
             n_Type = AddChild(new Node_Datatype(reader));
 
             if (interfaceType == InterfaceType.Procedure)

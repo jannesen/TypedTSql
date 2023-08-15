@@ -7,6 +7,34 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
     [LTTSQL.Library.DeclarationParser("WEBCOMPLEXTYPE")]
     public class WEBCOMPLEXTYPE: LTTSQL.Node.DeclarationServiceComplexType, LTTSQL.Node.IParseContext
     {
+        public class AS: Core.AstParseNode
+        {
+            public      readonly    Token.DataIsland                    n_AsType;
+            public                  Emit.JcNSExpression                 AsType                  { get; private set; }
+
+            public                                                      AS(Core.ParserReader reader)
+            {
+                ParseToken(reader, Core.TokenID.AS);
+                n_AsType = (Token.DataIsland)ParseToken(reader, Core.TokenID.DataIsland);
+            }
+
+            public      override    void                                TranspileNode(Transpile.Context context)
+            {
+                AsType = null;
+
+                try {
+                    AsType = new Emit.JcNSExpression(n_AsType.ValueString);
+                }
+                catch(Exception err) {
+                    context.AddError(n_AsType, err);
+                }
+            }
+            public      override    void                                Emit(Core.EmitWriter emitWriter)
+            {
+                EmitCommentNewine(emitWriter);
+            }
+        }
+
         public class Receives: LTTSQL.Core.AstParseNode
         {
             public      readonly    LTTSQL.Core.AstParseNode                n_ReceivesType;
@@ -50,7 +78,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         }
 
         public      readonly    Declaration                             n_Declaration;
-        public      readonly    LTTSQL.Node.Node_AS                     n_As;
+        public      readonly    AS                                      n_As;
         public      readonly    Receives                                n_Receives;
 
         public      override    LTTSQL.DataModel.SymbolType             EntityType                  { get { return LTTSQL.DataModel.SymbolType.ServiceComplexType;       } }
@@ -77,7 +105,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         {
             AddLeading(reader);
             n_Declaration = AddChild(new Declaration(reader));
-            n_As          = AddChild(new LTTSQL.Node.Node_AS(reader));
+            n_As          = AddChild(new AS(reader));
             ParseParameters(reader, LTTSQL.Node.Node_SqlParameter.InterfaceType.Function);
 
             if (reader.CurrentToken.isToken("RECEIVES")) {

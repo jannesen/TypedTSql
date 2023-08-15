@@ -69,7 +69,7 @@ namespace Jannesen.Language.TypedTSql.Node
             this.ReferenceType = type;
 
             if (type != EntityReferenceType.FromReference && n_EntityName.Schema == null) {
-                string schema = _getSchema(n_EntityName.Name, reader);
+                var schema = _getSchema(n_EntityName.Name, reader);
 
                 if (schema != null)
                     n_EntityName = new DataModel.EntityName(schema, n_EntityName.Name);
@@ -248,11 +248,32 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override    void                            Emit(Core.EmitWriter emitWriter)
         {
-            foreach(var node in Children) {
+            if (_entity is DataModel.ISqlType sqlType && sqlType.ParentType != null) {
+                bool o = true;
+
+                foreach (var node in Children) {
+                    if (object.ReferenceEquals(node, n_Schema)) {
+                        o = false;
+                        continue;
+                    }
+                    if (object.ReferenceEquals(node, n_Name)) {
+                        emitWriter.WriteText(sqlType.ToSql());
+                        o = true;
+                        continue;
+                    }
+
+                    if (o) {
+                        node.Emit(emitWriter);
+                    }
+                }
+            }
+            else {                
+                foreach (var node in Children) {
                 if (object.ReferenceEquals(node, n_Name) && _addSchema != null)
                     emitWriter.WriteText(Library.SqlStatic.QuoteNameIfNeeded(_addSchema) + ".");
 
-                node.Emit(emitWriter);
+                    node.Emit(emitWriter);
+                }
             }
         }
 
@@ -383,6 +404,12 @@ namespace Jannesen.Language.TypedTSql.Node
             }
 
             return rtn >= 0 ? tables[rtn] : null;
+        }
+        private                 bool                            _sysProcedure(string name)
+        {
+            return (ReferenceType == EntityReferenceType.StoredProcedure &&
+                    (name.StartsWith("sp_", StringComparison.Ordinal) ||
+                     name.StartsWith("xp_", StringComparison.Ordinal)));
         }
     }
 }

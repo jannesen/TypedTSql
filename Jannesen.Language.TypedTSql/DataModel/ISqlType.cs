@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlTypes;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
@@ -20,7 +21,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         CheckStrong     = 0x0200,
         CheckStrict     = 0x0300,
         Flags           = 0x1000,
-        RecVersion         = 0x2000
+        RecVersion      = 0x2000
     }
 
     public interface ISqlType
@@ -34,6 +35,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         IndexList               Indexes             { get; }
         Entity                  Entity              { get; }
         JsonSchema              JsonSchema          { get; }
+        ISqlType                ParentType          { get; }
 
         string                  ToSql();
     }

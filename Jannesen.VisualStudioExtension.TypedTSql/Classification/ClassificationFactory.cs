@@ -55,6 +55,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Classification
                 case LTTS.DataModel.SymbolType.TypeUser:                               return cfType;
                 case LTTS.DataModel.SymbolType.TypeExternal:                           return cfType;
                 case LTTS.DataModel.SymbolType.TypeTable:                              return cfType;
+                case LTTS.DataModel.SymbolType.TypeExtend:                             return cfType;
                 case LTTS.DataModel.SymbolType.TableInternal:                          return cfTable;
                 case LTTS.DataModel.SymbolType.TableSystem:                            return cfTable;
                 case LTTS.DataModel.SymbolType.TableUser:                              return cfTable;

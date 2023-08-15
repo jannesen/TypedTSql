@@ -135,6 +135,12 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             if (sqlType == null)
                 return "";
 
+            var p = sqlType.ParentType;
+            while (p != null) {
+                sqlType = p;
+                p = sqlType.ParentType;
+            }
+
             if ((sqlType.TypeFlags & LTTSQL.DataModel.SqlTypeFlags.SimpleType) != 0)
                 return sqlType.NativeType.NativeTypeString;
 

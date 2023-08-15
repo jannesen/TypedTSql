@@ -32,7 +32,6 @@ namespace Jannesen.Language.TypedTSql.Node
         }
 
         public      abstract    bool                                IsMember(DeclarationObjectCode method);
-        public      abstract    object                              TranspilseNodeAS(Node.Node_AS node);
 
         public      override    void                                TranspileInit(Transpiler transpiler, GlobalCatalog catalog, SourceFile sourceFile)
         {

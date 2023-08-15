@@ -5,12 +5,12 @@ using LTTSQL = Jannesen.Language.TypedTSql;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
 {
-    public class FromExpression
+    public class JcNSExpression
     {
         public  readonly    string      From;
         public  readonly    string      Expression;
 
-        public                          FromExpression(string s)
+        public                          JcNSExpression(string s)
         {
             s = s.Trim();
             var i = s.IndexOf(':');
@@ -22,10 +22,4 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         }
     }
 
-    public class TypeMapDictionary: Dictionary<LTTSQL.DataModel.ISqlType, FromExpression>
-    {
-        public                          TypeMapDictionary()
-        {
-        }
-    }
 }

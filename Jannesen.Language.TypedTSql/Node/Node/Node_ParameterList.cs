@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Jannesen.Language.TypedTSql.Core;
 using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.Node
@@ -43,7 +44,35 @@ namespace Jannesen.Language.TypedTSql.Node
 
             t_Parameters = _createParameterList(context);
         }
+        public      override    void                                Emit(EmitWriter emitWriter)
+        {
+            if (Children != null) {
+                var children = new List<IAstNode>(Children);
 
+    next:
+                for (int i = 0 ; i < children.Count; i++) {
+                    if (children[i] is Node_Parameter p && p.n_Name == null) {
+                        int e = i;
+                        int b = i;
+                        --i;
+
+                        while (i >= 0 && children[i].isWhitespaceOrComment) {
+                            --i;
+                        }
+
+                        if (i >= 0 && children[i] is Token.Operator t && t.ID == TokenID.Comma) {
+                            b = i;
+                        }
+                        children.RemoveRange(b, e-b+1);
+                        goto next;
+                    }
+                }
+
+                foreach(var node in children) {
+                    node.Emit(emitWriter);
+                }
+            }
+        }
 
         private                 DataModel.ParameterList             _createParameterList(Transpile.Context context)
         {

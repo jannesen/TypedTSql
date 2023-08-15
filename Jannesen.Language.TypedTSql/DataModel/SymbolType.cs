@@ -10,6 +10,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         TypeUser,
         TypeExternal,
         TypeTable,
+        TypeExtend,
         Default,
         Rule,
         TableInternal,

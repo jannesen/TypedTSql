@@ -6,24 +6,24 @@ using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
 {
-    internal class WebConfigEmitor
+    internal class WebServiceConfigEmitor: FileEmitor
     {
         private abstract class Method
         {
             public                  string                  Path;
 
-            public  abstract        string[]                DependentAssembly           { get; }
+            public  abstract        string[]                Assemblies                  { get; }
             public  abstract        string                  HttpHandler                 { get; }
 
-            public  abstract        void                    Emit(WebConfigEmitor configEmitor, XmlWriter xmlWriter);
+            public  abstract        void                    Emit(WebServiceConfigEmitor configEmitor, XmlWriter xmlWriter);
         }
 
         private class WebMethod: Method
         {
             private                 Node.WEBMETHOD          _webMethod;
 
-            public  override        string[]                DependentAssembly       { get { return _webMethod.n_Declaration.n_DependentAssembly;    } }
-            public  override        string                  HttpHandler             { get { return _webMethod.n_Declaration.n_HttpHandler;          } }
+            public  override        string[]                Assemblies          { get { return _webMethod.n_Declaration.n_WebHandlerAssemblies?.n_Assemblies;  } }
+            public  override        string                  HttpHandler         { get { return _webMethod.n_Declaration.n_WebHttpHandler;                      } }
 
             public                                          WebMethod(Node.WEBMETHOD webMethod)
             {
@@ -31,17 +31,17 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 this._webMethod = webMethod;
             }
 
-            public  override        void                    Emit(WebConfigEmitor configEmitor, XmlWriter xmlWriter)
+            public  override        void                    Emit(WebServiceConfigEmitor configEmitor, XmlWriter xmlWriter)
             {
                 foreach (var method in _webMethod.n_Declaration.n_Methods) {
                     xmlWriter.WriteStartElement("http-handler");
                         xmlWriter.WriteAttributeString("path",      Path);
                         xmlWriter.WriteAttributeString("verb",      method);
-                        xmlWriter.WriteAttributeString("type",      _webMethod.n_Declaration.n_HttpHandler);
+                        xmlWriter.WriteAttributeString("type",      _webMethod.n_Declaration.n_WebHttpHandler);
                         xmlWriter.WriteAttributeString("procedure", _webMethod.EntityName.Fullname);
 
-                        if (_webMethod.n_Declaration.n_Options != null) {
-                            foreach(var optionValue in _webMethod.n_Declaration.n_Options)
+                        if (_webMethod.n_Declaration.n_WebHandlerOptions != null) {
+                            foreach(var optionValue in _webMethod.n_Declaration.n_WebHandlerOptions.n_Options)
                                 xmlWriter.WriteAttributeString(optionValue.n_Name, optionValue.n_Value);
                         }
 
@@ -55,21 +55,23 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                             if (options == null || !options.n_Key || method != "POST") {
                                 var source = arg.Source;
 
-                                xmlWriter.WriteStartElement("parameter");
-                                xmlWriter.WriteAttributeString("name",      arg.n_Name.Text.Substring(1));
-                                xmlWriter.WriteAttributeString("type",      Node.RETURNS.SqlTypeToString(arg.Parameter.SqlType));
-                                xmlWriter.WriteAttributeString("source",    source);
+                                if (arg.n_Name != null) {
+                                    xmlWriter.WriteStartElement("parameter");
+                                    xmlWriter.WriteAttributeString("name",      arg.n_Name.Text.Substring(1));
+                                    xmlWriter.WriteAttributeString("type",      Node.RETURNS.SqlTypeToString(arg.Parameter.SqlType));
+                                    xmlWriter.WriteAttributeString("source",    source);
 
-                                if (options != null) {
-                                    if (!options.n_Required)
-                                        xmlWriter.WriteAttributeString("optional",  "1");
-                                }
-                                else {
-                                    if (source.StartsWith("body:", StringComparison.Ordinal) && method == "DELETE")
-                                        xmlWriter.WriteAttributeString("optional",  "1");
-                                }
+                                    if (options != null) {
+                                        if (!options.n_Required)
+                                            xmlWriter.WriteAttributeString("optional",  "1");
+                                    }
+                                    else {
+                                        if (source.StartsWith("body:", StringComparison.Ordinal) && method == "DELETE")
+                                            xmlWriter.WriteAttributeString("optional",  "1");
+                                    }
 
-                                xmlWriter.WriteEndElement();
+                                    xmlWriter.WriteEndElement();
+                                }
                             }
                         }
 
@@ -82,8 +84,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                             }
                         }
 
-                        if (_webMethod.n_Declaration.n_HandlerConfig != null)
-                            _webMethod.n_Declaration.n_HandlerConfig.WriteContentTo(xmlWriter);
+                        if (_webMethod.n_Declaration.n_WebHandlerConfig != null)
+                            _webMethod.n_Declaration.n_WebHandlerConfig.WriteContentTo(xmlWriter);
 
                     xmlWriter.WriteEndElement();
                 }
@@ -94,7 +96,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         {
             private                 string                  _procedureName;
 
-            public  override        string[]                DependentAssembly       { get { return null;                                            } }
+            public  override        string[]                Assemblies              { get { return null;                                            } }
             public  override        string                  HttpHandler             { get { return "sql-json2";                                     } }
 
             public                                          IndexMethod(string path, string procedureName)
@@ -103,7 +105,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 this._procedureName = procedureName;
             }
 
-            public  override        void                    Emit(WebConfigEmitor configEmitor, XmlWriter xmlWriter)
+            public  override        void                    Emit(WebServiceConfigEmitor configEmitor, XmlWriter xmlWriter)
             {
                 xmlWriter.WriteStartElement("http-handler");
                     xmlWriter.WriteAttributeString("path",      Path);
@@ -125,7 +127,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         private                 List<Method>            _methods;
         private                 List<string>            _loads;
 
-        public                                          WebConfigEmitor(string basedirectory, string database)
+        public                                          WebServiceConfigEmitor(string basedirectory, string database)
         {
             BaseDirectory = basedirectory;
             Database      = database;
@@ -141,8 +143,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         {
             _addMethod(new IndexMethod(pathname, procedureName));
         }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
-        public void                    Emit(EmitContext emitContext)
+        public                  void                    Emit(EmitContext emitContext)
         {
             _methods.Sort((m1, m2) => string.Compare(m1.Path, m2.Path, StringComparison.InvariantCulture));
 
@@ -191,8 +192,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 break;
             }
 
-            if (method.DependentAssembly != null) {
-                foreach(string n in method.DependentAssembly)
+            if (method.Assemblies != null) {
+                foreach(string n in method.Assemblies)
                     _adddLoad(n);
             }
 

@@ -10,6 +10,8 @@ namespace Jannesen.Language.TypedTSql.Node
     {
         public      abstract    DataModel.SymbolType            EntityType      { get; }
         public      abstract    DataModel.EntityType            Entity          { get; }
+        public      virtual     bool                            HasEmitCode     => true;
+
         public      abstract    void                            TranspileInit(Declaration_TYPE declaration, GlobalCatalog catalog, SourceFile sourceFile);
         public      abstract    void                            Transpiled();
         public      abstract    void                            Emit(Core.EmitWriter emitWriter, Declaration_TYPE statement);

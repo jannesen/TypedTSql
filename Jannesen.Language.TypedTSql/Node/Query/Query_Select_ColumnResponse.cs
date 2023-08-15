@@ -9,7 +9,6 @@ namespace Jannesen.Language.TypedTSql.Node
         public      readonly        Query_SelectContext     n_SelectContext;
         public      readonly        TokenWithSymbol         n_FieldName;
         public      readonly        IExprNode               n_Expression;
-        public      readonly        Node_AS                 n_As;
 
         public                      DataModel.Column        ResultColumn        { get; private set; }
 
@@ -28,9 +27,6 @@ namespace Jannesen.Language.TypedTSql.Node
                 selectContext == Query_SelectContext.ExpressionResponseValue)
             {
                 n_Expression = ParseExpression(reader, ParseExprContext.ServiceReturns);
-
-                if (reader.CurrentToken.isToken(Core.TokenID.AS))
-                    n_As = AddChild(new Node_AS(reader));
             }
             else
                 n_Expression = ParseExpression(reader);
@@ -53,7 +49,6 @@ namespace Jannesen.Language.TypedTSql.Node
             }
 
             n_Expression.TranspileNode(context);
-            n_As?.TranspileNode(context);
 
             if (n_FieldName != null) {
                 ResultColumn = new DataModel.ColumnExpr(n_FieldName,

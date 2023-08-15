@@ -16,6 +16,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public      virtual     IndexList               Indexes         { get { throw new InvalidOperationException(this.GetType().Name + ": has no indexes.");         } }
         public      virtual     JsonSchema              JsonSchema      { get { throw new InvalidOperationException(this.GetType().Name + ": has no json-schema.");     } }
         public      virtual     Entity                  Entity          { get { return this;                                                                            } }
+        public      virtual     ISqlType                ParentType      { get { return null;                                                                            } }
         public      virtual     string                  ToSql()         { return EntityName.Fullname;                                                                     }
 
         protected                                       EntityType(SymbolType type, DataModel.EntityName name, EntityFlags flags): base(type, name, flags)

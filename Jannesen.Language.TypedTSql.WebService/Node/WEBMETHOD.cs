@@ -13,6 +13,49 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
     {
         public class ServiceDeclaration: LTTSQL.Core.AstParseNode
         {
+            public class WebOptions:  LTTSQL.Core.AstParseNode
+            {
+                public      readonly        OptionValue[]                       n_Options;
+
+                internal                                                        WebOptions(LTTSQL.Core.ParserReader reader)
+                {
+                    var options = new List<OptionValue>();
+
+                    ParseToken(reader, "WEB_OPTIONS");
+
+                    do {
+                        options.Add(AddChild(new OptionValue(reader)));
+                    }
+                    while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
+
+                    n_Options = options.ToArray();
+                }
+                public      override        void                                TranspileNode(LTTSQL.Transpile.Context context)
+                {
+                    n_Options.TranspileNodes(context);
+                }
+            }
+            public class WebAssemblies:  LTTSQL.Core.AstParseNode
+            {
+                public      readonly        string[]                            n_Assemblies;
+
+                internal                                                        WebAssemblies(LTTSQL.Core.ParserReader reader)
+                {
+                    var assemblies = new List<string>();
+
+                    ParseToken(reader, "WEB_ASSEMBLIES");
+
+                    do {
+                        assemblies.Add(ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString);
+                    }
+                    while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
+
+                    n_Assemblies = assemblies.ToArray();
+                }
+                public      override        void                                TranspileNode(LTTSQL.Transpile.Context context)
+                {
+                }
+            }
             public class OptionValue: LTTSQL.Core.AstParseNode
             {
                 public      string                                              n_Name          { get; private set; }
@@ -34,21 +77,19 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     }
                 }
             }
+
             public      readonly        LTTSQL.Node.Node_ServiceEntityName  n_ServiceMethodName;
             public      readonly        string[]                            n_Methods;
-            public      readonly        string                              n_HttpHandler;
-            public      readonly        LTTSQL.Core.Token                   n_Proxy;
-            public      readonly        OptionValue[]                       n_Options;
-            public      readonly        string[]                            n_DependentAssembly;
-            public      readonly        XmlElement                          n_HandlerConfig;
+            public      readonly        string                              n_WebHttpHandler;
+            public      readonly        WebOptions                          n_WebHandlerOptions;
+            public      readonly        WebAssemblies                       n_WebHandlerAssemblies;
+            public      readonly        XmlElement                          n_WebHandlerConfig;
             public      readonly        LTTSQL.DataModel.EntityName         n_EntityName;
-            public                      Emit.FromExpression                 Proxy               { get; private set; }
+            public      readonly        LTTSQL.Core.Token                   n_JcProxy;
+            public                      Emit.JcNSExpression                 JcProxy             { get; private set; }
 
             public                                                          ServiceDeclaration(LTTSQL.Core.ParserReader reader)
             {
-                List<OptionValue>       options = null;
-                List<string>            dependentAssembly = null;
-
                 ParseToken(reader, "WEBMETHOD");
                 n_ServiceMethodName = AddChild(new LTTSQL.Node.Node_ServiceEntityName(reader));
                 ParseToken(reader, LTTSQL.Core.TokenID.METHOD);
@@ -64,39 +105,33 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     n_Methods = methods.ToArray();
                 }
 
-                switch(Core.TokenWithSymbol.SetKeyword(ParseToken(reader, "HANDLER", "PROXY")).Text.ToUpperInvariant()) {
-                case "HANDLER":
-                    n_HttpHandler = ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString;
-                    break;
+                while (reader.CurrentToken.isToken("WEB_HANDLER", "WEB_OPTIONS", "WEB_ASSEMBLIES", "WEB_HANDLERCONFIG", "JC_PROXY")) {
+                    switch(reader.CurrentToken.Text.ToUpperInvariant()) {
+                    case "WEB_HANDLER":
+                        ParseToken(reader, "WEB_HANDLER");
+                        n_WebHttpHandler = ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString;
+                        break;
 
-                case "PROXY":
-                    n_HttpHandler = "sql-json2";
-                    n_Proxy = ParseToken(reader, LTTSQL.Core.TokenID.String);
-                    break;
+                    case "WEB_OPTIONS":
+                        n_WebHandlerOptions = AddChild(new WebOptions(reader));
+                        break;
+
+                    case "WEB_ASSEMBLIES":
+                        n_WebHandlerAssemblies = AddChild(new WebAssemblies(reader));
+                        break;
+
+                    case "WEB_HANDLERCONFIG":
+                        ParseToken(reader, "WEB_HANDLERCONFIG");
+                        n_WebHandlerConfig = ParseToken(reader, LTTSQL.Core.TokenID.DataIsland).ValueXmlFragment;
+                        break;
+
+                    case "JC_PROXY":
+                        ParseToken(reader, "JC_PROXY");
+                        n_WebHttpHandler = "sql-json2";
+                        n_JcProxy = ParseToken(reader, LTTSQL.Core.TokenID.String);
+                        break;
+                    }
                 }
-
-                while (reader.CurrentToken.isToken(LTTSQL.Core.TokenID.QuotedName)) {
-                    if (options == null)
-                        options = new List<OptionValue>();
-
-                    options.Add(AddChild(new OptionValue(reader)));
-                }
-
-                while (reader.CurrentToken.isToken(LTTSQL.Core.TokenID.DEPENDENTASSEMBLY)) {
-                    ParseToken(reader);
-                    if (dependentAssembly == null)
-                        dependentAssembly = new List<string>();
-
-                    dependentAssembly.Add(ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString);
-                }
-
-                if (reader.CurrentToken.isToken(LTTSQL.Core.TokenID.HANDLERCONFIG)) {
-                    ParseToken(reader);
-                    n_HandlerConfig = ParseToken(reader, LTTSQL.Core.TokenID.DataIsland).ValueXmlFragment;
-                }
-
-                n_Options           = options?.ToArray();
-                n_DependentAssembly = dependentAssembly?.ToArray();
 
                 string name = n_ServiceMethodName.n_ServiceEntitiyName.Name + "/" + _sqlName();
                 foreach(var method in n_Methods)
@@ -108,22 +143,22 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             public      override        void                                TranspileNode(LTTSQL.Transpile.Context context)
             {
                 n_ServiceMethodName.TranspileNode(context);
-                n_Options?.TranspileNodes(context);
+                n_WebHandlerOptions?.TranspileNode(context);
 
-                if (n_Proxy != null) {
+                if (n_JcProxy != null) {
                     try {
-                        Proxy   = new Emit.FromExpression(n_Proxy.ValueString);
+                        JcProxy   = new Emit.JcNSExpression(n_JcProxy.ValueString);
                     }
                     catch(Exception err) {
-                        context.AddError(n_Proxy, err);
+                        context.AddError(n_JcProxy, err);
                     }
                 }
             }
 
-            public                      string                              GetOptionValueByName(string name)
+            public                      string                              GetWebHandlerOptionValueByName(string name)
             {
-                if (n_Options != null) {
-                    foreach(var o in n_Options) {
+                if (n_WebHandlerOptions != null) {
+                    foreach(var o in n_WebHandlerOptions.n_Options) {
                         if (o.n_Name == name)
                             return o.n_Value;
                     }
@@ -179,10 +214,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         }
         public class ServiceParameter: LTTSQL.Node.Node_Parameter
         {
+            public      override    Core.TokenWithSymbol                n_Name              => _Name;
             public      readonly    LTTSQL.Core.AstParseNode            n_Type;
             public      readonly    ParameterSource                     n_Source;
             public      readonly    ParameterOptions                    n_Options;
-            public      readonly    LTTSQL.Node.Node_AS                 n_As;
 
             public                  LTTSQL.DataModel.ISqlType           SqlType             { get { return ((LTTSQL.Node.ISqlType)n_Type).SqlType;  } }
             public      override    LTTSQL.DataModel.Parameter          Parameter           { get { return _parameter;          } }
@@ -199,29 +234,31 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 }
             }
 
+            private                 Core.TokenWithSymbol                _Name;
             private                 LTTSQL.DataModel.Parameter          _parameter;
 
             public                  bool                                DefaultValue;
 
-            public                                                      ServiceParameter(LTTSQL.Core.ParserReader reader): base(reader)
+            public                                                      ServiceParameter(LTTSQL.Core.ParserReader reader)
             {
+                if (reader.CurrentToken.isToken(Core.TokenID.LocalName)) {
+                    _Name = (Core.TokenWithSymbol)ParseToken(reader, Core.TokenID.LocalName);
+                }
+
                 if (JsonType.CanParse(reader)) {
                     var jsonType = new JsonType(reader, false);
                     n_Type   = AddChild(jsonType);
 
                     if (reader.CurrentToken.isToken(Core.TokenID.SOURCE))
-                        n_Source = AddChild(new ParameterSource(reader, true));
+                        n_Source = AddChild(new ParameterSource(reader));
 
                     AddChild(jsonType.ParseSchema(reader));
                 }
                 else {
                     n_Type   = AddChild(ComplexType.CanParse(reader) ? (LTTSQL.Core.AstParseNode)new ComplexType(reader)
                                                                      : (LTTSQL.Core.AstParseNode)new LTTSQL.Node.Node_Datatype(reader));
-                    n_Source  = AddChild(new ParameterSource(reader, false));
+                    n_Source  = AddChild(new ParameterSource(reader));
                     n_Options = AddChild(new ParameterOptions(reader));
-
-                    if (reader.CurrentToken.isToken(LTTSQL.Core.TokenID.AS))
-                        n_As   = AddChild(new LTTSQL.Node.Node_AS(reader));
                 }
             }
 
@@ -233,7 +270,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     n_Type.TranspileNode(context);
                     n_Source?.TranspileNode(context);
                     n_Options?.TranspileNode(context);
-                    n_As?.TranspileNode(context);
 
                     var    sqlType      = SqlType;
                     var    flags        = DataModel.VariableFlags.Nullable;
@@ -252,12 +288,19 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                         }
                     }
 
-                    _parameter = new LTTSQL.DataModel.Parameter(n_Name.Text,
-                                                                sqlType ?? new DataModel.SqlTypeAny(),
-                                                                n_Name,
-                                                                flags,
-                                                                defaultvalue);
-                    n_Name.SetSymbolUsage(_parameter, DataModel.SymbolUsageFlags.Declaration);
+                    if (n_Name != null) {
+                        _parameter = new LTTSQL.DataModel.Parameter(n_Name.Text,
+                                                                    sqlType ?? new DataModel.SqlTypeAny(),
+                                                                    n_Name,
+                                                                    flags,
+                                                                    defaultvalue);
+                        n_Name.SetSymbolUsage(_parameter, DataModel.SymbolUsageFlags.Declaration);
+                    }
+                    else {
+                        if (n_Source == null || !n_Source.n_Source.Contains(":")) {
+                            context.AddError((Core.IAstNode)n_Source ?? (Core.IAstNode)this, "Invalid source");
+                        }
+                    }
                 }
                 catch(Exception err) {
                     context.AddError(this, err);
@@ -279,49 +322,16 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         }
         public class ParameterSource: LTTSQL.Core.AstParseNode
         {
-            public class CustomSourceType:  LTTSQL.Core.AstParseNode
-            {
-                public      readonly        Core.Token                      n_Name;
-                public      readonly        LTTSQL.Node.Node_AS             n_As;
-
-                public                                                      CustomSourceType(LTTSQL.Core.ParserReader reader)
-                {
-                    n_Name = ParseToken(reader, Core.TokenID.String);
-                    n_As = AddChild(new LTTSQL.Node.Node_AS(reader));
-                }
-
-                public      override    void                                TranspileNode(LTTSQL.Transpile.Context context)
-                {
-                    n_As.TranspileNode(context);
-                }
-            }
-
             public      readonly    string                              n_Source;
-            public      readonly    CustomSourceType[]                  n_CustomSource;
 
-            public                                                      ParameterSource(LTTSQL.Core.ParserReader reader, bool jsontype)
+            public                                                      ParameterSource(LTTSQL.Core.ParserReader reader)
             {
                 ParseToken(reader, LTTSQL.Core.TokenID.SOURCE);
                 n_Source = ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString;
-
-                if (!jsontype) {
-                    if (ParseOptionalToken(reader, Core.TokenID.LrBracket) != null) {
-                        var customSource = new List<CustomSourceType>();
-
-                        do {
-                            customSource.Add(AddChild(new CustomSourceType(reader)));
-                        }
-                        while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
-
-                        n_CustomSource = customSource.ToArray();
-                        ParseToken(reader, Core.TokenID.RrBracket);
-                    }
-                }
             }
 
             public      override    void                                TranspileNode(LTTSQL.Transpile.Context context)
             {
-                n_CustomSource?.TranspileNodes(context);
             }
             public      override    void                                Emit(LTTSQL.Core.EmitWriter emitWriter)
             {
@@ -414,8 +424,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
             TranspileStatement(context);
 
-            if (n_Declaration.n_HttpHandler == "sql-json2") {
-                if (n_Declaration.n_Proxy != null && n_returns != null && n_returns.Count != 1)
+            if (n_Declaration.n_WebHttpHandler == "sql-json2") {
+                if (n_Declaration.n_JcProxy != null && n_returns != null && n_returns.Count != 1)
                     context.AddError(this, "sql-json2 and proxy only support 1 RETURNS");
             }
 

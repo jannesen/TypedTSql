@@ -18,7 +18,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             public abstract class JsonSchemaElement: LTTSQL.Core.AstParseNode
             {
                 public                  DataModel.JsonFlags                 n_Flags     { get; private set; }
-                public                  LTTSQL.Node.Node_AS                 n_As        { get; private set; }
 
                 public                  LTTSQL.DataModel.JsonSchema         JsonSchema  { get { return _jsonSchema;         } }
 
@@ -35,13 +34,9 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 {
                     if (ParseOptionalToken(reader, LTTSQL.Core.TokenID.REQUIRED) != null)
                         n_Flags |= DataModel.JsonFlags.Required;
-
-                    if (reader.CurrentToken.isToken(LTTSQL.Core.TokenID.AS))
-                        n_As = AddChild(new LTTSQL.Node.Node_AS(reader));
                 }
                 public      override    void                                TranspileNode(LTTSQL.Transpile.Context context)
                 {
-                    n_As?.TranspileNode(context);
                 }
             }
             public class JsonSchemaObject: JsonSchemaElement

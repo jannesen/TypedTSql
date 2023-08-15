@@ -11,8 +11,8 @@ namespace Jannesen.Language.TypedTSql.Node
         public      abstract    DataModel.EntityName        EntityName          { get; }
         public      abstract    bool                        callableFromCode    { get; }
         public      virtual     DeclarationService          DeclarationService  { get { throw new InvalidOperationException(EntityName + " is not a service");      } }
-
-        public                  bool                        Transpiled      { get; protected set; }
+        public      virtual     bool                        HasEmitCode         { get { return true; } }
+        public                  bool                        Transpiled          { get; protected set; }
 
         protected               bool                        _declarationTranspiled;
 
@@ -30,12 +30,16 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         public      virtual     bool                        EmitCode(EmitContext emitContext, SourceFile sourceFile)
         {
-            emitContext.Database.Print("# create " + EntityType.ToString().ToLowerInvariant().PadRight(30, ' ') + " " + EntityName.ToString());
-            var emitWriter = new Core.EmitWriterSourceMap(emitContext, sourceFile.Filename, Children.FirstNoWhithspaceToken.Beginning.Lineno);
+            if (HasEmitCode) {
+                emitContext.Database.Print("# create " + EntityType.ToString().ToLowerInvariant().PadRight(30, ' ') + " " + EntityName.ToString());
+                var emitWriter = new Core.EmitWriterSourceMap(emitContext, sourceFile.Filename, Children.FirstNoWhithspaceToken.Beginning.Lineno);
 
-            Emit(emitWriter);
+                Emit(emitWriter);
 
-            return emitContext.Database.ExecuteStatement(emitWriter.GetSql(), emitWriter.SourceMap, emitContext.AddEmitError) == 0;
+                return emitContext.Database.ExecuteStatement(emitWriter.GetSql(), emitWriter.SourceMap, emitContext.AddEmitError) == 0;
+            }
+
+            return true;
         }
         public      virtual     void                        EmitGrant(EmitContext emitContext, SourceFile sourceFile)
         {

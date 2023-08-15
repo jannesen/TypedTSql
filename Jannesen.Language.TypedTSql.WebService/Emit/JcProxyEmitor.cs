@@ -6,7 +6,7 @@ using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
 {
-    internal class ProxyEmitor
+    internal class JcProxyEmitor: FileEmitor
     {
         abstract class DeclareName
         {
@@ -321,9 +321,9 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 _imports.Add(new DeclareImport("$JT", "jc3/jannesen.datatype"));
             }
 
-            public                  void                                    AddMethod(Node.WEBSERVICE webService, Node.WEBMETHOD webMethod)
+            public                  void                                    AddMethod(Node.WEBSERVICE_EMITOR_JC_PROXY webServiceEmitor, Node.WEBMETHOD webMethod)
             {
-                _proxys.Add((new ProcessMethod(this, webService)).Process(webMethod));
+                _proxys.Add((new ProcessMethod(this, webServiceEmitor)).Process(webMethod));
             }
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
             public                  void                                    Emit(EmitContext emitContext)
@@ -410,15 +410,15 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         class ProcessMethod
         {
             private     readonly    ProxyFile                               _proxyFile;
-            private     readonly    Node.WEBSERVICE                         _webService;
+            private     readonly    Node.WEBSERVICE_EMITOR_JC_PROXY         _webServiceEmitor;
             private                 List<RecordField>                       _callArgs;
             private                 List<RecordField>                       _reqArgs;
             private                 DeclareType                             _textjson;
 
-            public                                                          ProcessMethod(ProxyFile proxyFile, Node.WEBSERVICE webService)
+            public                                                          ProcessMethod(ProxyFile proxyFile, Node.WEBSERVICE_EMITOR_JC_PROXY webServiceEmitor)
             {
-                _proxyFile  = proxyFile;
-                _webService = webService;
+                _proxyFile        = proxyFile;
+                _webServiceEmitor = webServiceEmitor;
             }
 
             public                  DeclareProxy                            Process(Node.WEBMETHOD webMethod)
@@ -440,11 +440,11 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                 var declareProxy = new DeclareProxy();
 
-                declareProxy.Name     = webMethod.n_Declaration.Proxy.Expression;
+                declareProxy.Name     = webMethod.n_Declaration.JcProxy.Expression;
                 declareProxy.Methods   = webMethod.n_Declaration.n_Methods;
-                declareProxy.Callname = "\"" + (_webService.n_BaseUrl ?? "") + webMethod.n_Declaration.n_ServiceMethodName.n_Name.ValueString.Replace("\"", "\\\"") + "\"";
+                declareProxy.Callname = "\"" + (_webServiceEmitor.n_BaseUrl ?? "") + webMethod.n_Declaration.n_ServiceMethodName.n_Name.ValueString.Replace("\"", "\\\"") + "\"";
 
-                var timeout = webMethod.n_Declaration.GetOptionValueByName("timeout");
+                var timeout = webMethod.n_Declaration.GetWebHandlerOptionValueByName("timeout");
                 if (timeout != null)
                     declareProxy.Timeout = int.Parse(timeout, System.Globalization.CultureInfo.InvariantCulture) * 1000;
 
@@ -483,38 +483,15 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 case "textjson": {
                         DeclareType type;
 
-                        var @as = parameter.n_As;
-                        if (@as == null) {
-                            if (parameter.n_Type is Node.ComplexType complexType)
-                                type = _getAsType(complexType.WebComplexType.n_As);
-                            else
-                                type = _getType(parameter.n_Type, parameter.SqlType);
-
-                            if (parameter.n_Options != null && parameter.n_Options.n_Required)
-                                type = _proxyFile.getRequired(type);
-                        }
+                        if (parameter.n_Type is Node.ComplexType complexType)
+                            type = _getAsType(complexType.WebComplexType);
                         else
-                            type = _getAsType(@as);
+                            type = _getType(parameter.n_Type, parameter.SqlType);
+
+                        if (parameter.n_Options != null && parameter.n_Options.n_Required)
+                            type = _proxyFile.getRequired(type);
 
                         _addSimpleParameter(source, name, type);
-                    }
-                    break;
-
-                default:
-                    if (parameter.n_Source.n_CustomSource != null) {
-                        foreach (var customSource in parameter.n_Source.n_CustomSource) {
-                            source = customSource.n_Name.ValueString;
-                            int    sep2 = source.IndexOf(':');
-
-                            if (sep2 > 0) {
-                                name   = source.Substring(sep2 + 1);
-                                source = source.Substring(0, sep2);
-                            }
-                            else
-                                name = parameter.n_Name.Text.Substring(1);
-
-                            _addSimpleParameter(source, name, _getAsType(customSource.n_As));
-                        }
                     }
                     break;
                 }
@@ -523,36 +500,31 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             {
                 DeclareType type;
 
-                if (element.n_As != null) {
-                    type = _getAsType(element.n_As);
-                }
-                else {
-                    if (element is Node.JsonType.JsonSchema.JsonSchemaValue value) {
-                        if (value.n_Type is Node.ComplexType complexType)
-                            type = _getAsType(complexType.WebComplexType.n_As);
-                        else
-                            type = _getType(value.n_Type, ((LTTSQL.Node.Node_Datatype)value.n_Type).SqlType);
-                    }
-                    else if (element is Node.JsonType.JsonSchema.JsonSchemaArray array)
-                    {
-                        type = _proxyFile.getSet(_getByJsonScheme(array.n_JsonSchemaElement));
-                    }
-                    else if (element is Node.JsonType.JsonSchema.JsonSchemaObject obj)
-                    {
-                        var properties = obj.n_Properties;
-                        var fields     = new RecordField[properties.Length];
-
-                        for(int i = 0 ; i < properties.Length ; ++i)
-                            fields[i] = new RecordField() { Name=properties[i].n_Name.ValueString, Type=_getByJsonScheme(properties[i].n_JsonSchemaElement) };
-
-                        type = _proxyFile.getRecord(fields);
-                    }
+                if (element is Node.JsonType.JsonSchema.JsonSchemaValue value) {
+                    if (value.n_Type is Node.ComplexType complexType)
+                        type = _getAsType(complexType.WebComplexType);
                     else
-                        throw new InvalidOperationException("Invalid jsonschema type.");
-
-                    if ((element.n_Flags & DataModel.JsonFlags.Required) != 0 && element is Node.JsonType.JsonSchema.JsonSchemaValue)
-                        type = _proxyFile.getRequired(type);
+                        type = _getType(value.n_Type, ((LTTSQL.Node.Node_Datatype)value.n_Type).SqlType);
                 }
+                else if (element is Node.JsonType.JsonSchema.JsonSchemaArray array)
+                {
+                    type = _proxyFile.getSet(_getByJsonScheme(array.n_JsonSchemaElement));
+                }
+                else if (element is Node.JsonType.JsonSchema.JsonSchemaObject obj)
+                {
+                    var properties = obj.n_Properties;
+                    var fields     = new RecordField[properties.Length];
+
+                    for(int i = 0 ; i < properties.Length ; ++i)
+                        fields[i] = new RecordField() { Name=properties[i].n_Name.ValueString, Type=_getByJsonScheme(properties[i].n_JsonSchemaElement) };
+
+                    type = _proxyFile.getRecord(fields);
+                }
+                else
+                    throw new InvalidOperationException("Invalid jsonschema type.");
+
+                if ((element.n_Flags & DataModel.JsonFlags.Required) != 0 && element is Node.JsonType.JsonSchema.JsonSchemaValue)
+                    type = _proxyFile.getRequired(type);
 
                 return type;
             }
@@ -591,23 +563,18 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
             private                 DeclareType                             _getColumnType(LTTSQL.Node.Query_Select_ColumnResponse column)
             {
-                var asType = column.n_As;
-
-                if (asType == null && column.n_Expression is LTTSQL.Node.Expr_ServiceComplexType responseComplexType)
-                    asType = ((Node.WEBCOMPLEXTYPE)responseComplexType.DeclarationComplexType).n_As;
-
-                if (asType != null)
-                    return _getAsType(asType);
+                if (column.n_Expression is LTTSQL.Node.Expr_ServiceComplexType responseComplexType)
+                    return _getAsType((Node.WEBCOMPLEXTYPE)responseComplexType.DeclarationComplexType);
 
                 return (column.n_Expression is LTTSQL.Node.IExprResponseNode columnExprResponseNode)
                                     ? _getTypeResponseNode(columnExprResponseNode)
                                     : _getType(column, column.n_Expression.SqlType);
             }
-            private                 DeclareType                             _getType(object declaration, LTTSQL.DataModel.ISqlType sqlType)
+            private                 DeclareSimpleType                       _getType(object declaration, LTTSQL.DataModel.ISqlType sqlType)
             {
-                var typeMap = _webService.n_TypeMap?.TypeDictionary;
+                var typeMapDictionary = _webServiceEmitor.n_TypeMap?.TypeMapDictionary;
 
-                if (typeMap != null && typeMap.TryGetValue(sqlType, out var typeMapEntry))
+                if (typeMapDictionary != null && typeMapDictionary.TryGetValue(sqlType, out var typeMapEntry))
                     return _proxyFile.getSimpleType(typeMapEntry.From, typeMapEntry.Expression);
 
                 if (sqlType is LTTSQL.DataModel.SqlTypeNative nativeType) {
@@ -654,9 +621,9 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                 throw new EmitException(declaration, "No type mapping for '" + sqlType.ToString() + "'.");
             }
-            private                 DeclareSimpleType                       _getAsType(LTTSQL.Node.Node_AS nodeAs)
+            private                 DeclareSimpleType                       _getAsType(Node.WEBCOMPLEXTYPE wct)
             {
-                var x = (FromExpression)nodeAs.AsType;
+                var x = wct.n_As.AsType;
                 return _proxyFile.getSimpleType(x.From, x.Expression);
             }
             private                 void                                    _addSimpleParameter(string source, string name, DeclareType type)
@@ -672,23 +639,32 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
         }
 
+        private     readonly        Node.WEBSERVICE_EMITOR_JC_PROXY         _webServiceEmitor;
+        private     readonly        string                                  _baseEmitDirectory;
         private     readonly        Dictionary<string, ProxyFile>           _proxyFiles;
 
-        public                                                          ProxyEmitor()
+        public                                                          JcProxyEmitor(Node.WEBSERVICE_EMITOR_JC_PROXY webServiceEmitor, string baseEmitDirectory)
         {
-            _proxyFiles = new Dictionary<string, ProxyFile>();
+            _webServiceEmitor  = webServiceEmitor;
+            _baseEmitDirectory = baseEmitDirectory;
+            _proxyFiles        = new Dictionary<string, ProxyFile>();
         }
 
-        public                  void                                    AddMethod(Node.WEBSERVICE webService, string baseEmitDirectory, Node.WEBMETHOD webMethod)
+        public                  void                                    AddWebMethod(Node.WEBMETHOD webMethod)
         {
-            var filename =  baseEmitDirectory + "\\" + webMethod.n_Declaration.Proxy.From.Replace("/", "\\") + ".proxy.ts";
+            if (webMethod.n_Declaration.JcProxy != null) {
+                var filename =  _baseEmitDirectory + "\\" + webMethod.n_Declaration.JcProxy.From.Replace("/", "\\") + ".proxy.ts";
 
-            if (!_proxyFiles.TryGetValue(filename, out var proxyFile)) {
-                proxyFile = new ProxyFile(filename);
-                _proxyFiles.Add(filename, proxyFile);
+                if (!_proxyFiles.TryGetValue(filename, out var proxyFile)) {
+                    proxyFile = new ProxyFile(filename);
+                    _proxyFiles.Add(filename, proxyFile);
+                }
+
+                proxyFile.AddMethod(_webServiceEmitor, webMethod);
             }
-
-            proxyFile.AddMethod(webService, webMethod);
+        }
+        public                  void                                    AddIndexMethod(string pathname, string procedureName)
+        {
         }
 
         public                  void                                    Emit(EmitContext emitContext)

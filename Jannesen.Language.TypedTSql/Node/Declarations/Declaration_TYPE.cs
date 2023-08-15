@@ -14,18 +14,9 @@ namespace Jannesen.Language.TypedTSql.Node
     [DeclarationParser(Core.TokenID.TYPE)]
     public class Declaration_TYPE: DeclarationEntity
     {
-        public      override    DataModel.SymbolType            EntityType
-        {
-            get {
-                return n_TypeDeclaration.EntityType;
-            }
-        }
-        public      override    DataModel.EntityName            EntityName
-        {
-            get {
-                return n_Name.n_EntitiyName;
-            }
-        }
+        public      override    DataModel.SymbolType            EntityType      => n_TypeDeclaration.EntityType;
+        public      override    DataModel.EntityName            EntityName      => n_Name.n_EntitiyName;
+        public      override    bool                            HasEmitCode     => n_TypeDeclaration.HasEmitCode;
 
         public      override    bool                            callableFromCode                    { get { return false; } }
 
@@ -40,10 +31,11 @@ namespace Jannesen.Language.TypedTSql.Node
 
             n_Name = AddChild(new Node_EntityNameDefine(reader));
 
-            switch(reader.CurrentToken.validateToken("FROM", "EXTERNAL", "AS")) {
+            switch(reader.CurrentToken.validateToken("FROM", "EXTERNAL", "AS", "EXTEND")) {
             case "FROM":        n_TypeDeclaration = AddChild(new TypeDeclaration_User(reader));     break;
             case "EXTERNAL":    n_TypeDeclaration = AddChild(new TypeDeclaration_External(reader)); break;
             case "AS":          n_TypeDeclaration = AddChild(new TypeDeclaration_Table(reader));    break;
+            case "EXTEND":      n_TypeDeclaration = AddChild(new TypeDeclaration_Extend(reader));   break;
             }
         }
 

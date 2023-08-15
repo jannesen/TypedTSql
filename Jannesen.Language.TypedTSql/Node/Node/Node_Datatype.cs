@@ -49,11 +49,32 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override    void                        Emit(Core.EmitWriter emitWriter)
         {
-            foreach(var node in Children) {
-                if (object.ReferenceEquals(node, n_Name) && _addSchema != null)
-                    emitWriter.WriteText(Library.SqlStatic.QuoteNameIfNeeded(_addSchema) + ".");
+            if (_sqlType.ParentType != null) {
+                bool o = true;
 
-                node.Emit(emitWriter);
+                foreach (var node in Children) {
+                    if (object.ReferenceEquals(node, n_Schema)) {
+                        o = false;
+                        continue;
+                    }
+                    if (object.ReferenceEquals(node, n_Name)) {
+                        emitWriter.WriteText(_sqlType.ToSql());
+                        o = true;
+                        continue;
+                    }
+
+                    if (o) {
+                        node.Emit(emitWriter);
+                    }
+                }
+            }
+            else {
+                foreach(var node in Children) {
+                    if (object.ReferenceEquals(node, n_Name) && _addSchema != null)
+                        emitWriter.WriteText(Library.SqlStatic.QuoteNameIfNeeded(_addSchema) + ".");
+
+                    node.Emit(emitWriter);
+                }
             }
         }
         public                  void                        EmitNative(Core.EmitWriter emitWriter)

@@ -218,6 +218,20 @@ namespace Jannesen.Language.TypedTSql
 
             return (EntityTypeExternal)entityType;
         }
+        internal                EntityTypeExtend                                DefineTypeExtend(EntityName name)
+        {
+            if (_types.TryGetValue(name, out var entityType)) {
+                if ((entityType.EntityFlags & EntityFlags.SourceDeclaration) != 0)
+                    return null;
+
+                if (entityType.Type != SymbolType.TypeExtend)
+                    throw new InvalidOperationException("Not allowed to change the type from " + entityType.Type + " to TypeExternal.");
+            }
+            else
+                _types.Add(entityType = new EntityTypeExtend(name, EntityFlags.SourceDeclaration));
+
+            return (EntityTypeExtend)entityType;
+        }
         internal                EntityObjectCode                                DefineObjectCode(SymbolType type, EntityName name)
         {
             if (_objects.TryGetValue(name, out var entityObject)) {
