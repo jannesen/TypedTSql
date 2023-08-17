@@ -20,7 +20,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         {
             public                      SymbolType              Type                    { get { return SymbolType.JsonSchemaObjectProperty;     } }
             public                      string                  Name                    { get { return _name;                                   } }
-            public                      string                  FullName             { get { return _name;                                   } }
+            public                      string                  FullName                { get { return _name;                                   } }
             public                      object                  Declaration             { get { return _declaration;                            } }
             public                      ISymbol                 ParentSymbol            { get { return null;                                    } }
             public                      ISymbol                 SymbolNameReference     { get { return null;                                    } }

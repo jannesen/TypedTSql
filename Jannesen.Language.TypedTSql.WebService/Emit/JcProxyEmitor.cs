@@ -325,7 +325,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             {
                 _proxys.Add((new ProcessMethod(this, webServiceEmitor)).Process(webMethod));
             }
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
             public                  void                                    Emit(EmitContext emitContext)
             {
                 _imports.NameOptimalisation("$");
