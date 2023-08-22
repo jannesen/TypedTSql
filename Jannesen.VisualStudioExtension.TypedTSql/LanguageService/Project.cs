@@ -604,19 +604,21 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 var gsServiceProvider = (VSInterop.IServiceProvider)VSPackage.GetGlobalService(typeof(VSInterop.IServiceProvider));
                 var gsComponentModel  = (VSComponentModelHost.IComponentModel)VSPackage.GetGlobalService(typeof(VSComponentModelHost.SComponentModel));
 
-                using (var vsserviceProvider = new VSShell.ServiceProvider(gsServiceProvider)) {
-                    var runningDocumentTable = new VSShell.RunningDocumentTable(vsserviceProvider);
-                    var adapter              = gsComponentModel.GetService<Microsoft.VisualStudio.Editor.IVsEditorAdaptersFactoryService>();
+                if (gsComponentModel != null) {
+                    using (var vsserviceProvider = new VSShell.ServiceProvider(gsServiceProvider)) {
+                        var runningDocumentTable = new VSShell.RunningDocumentTable(vsserviceProvider);
+                        var adapter              = gsComponentModel?.GetService<Microsoft.VisualStudio.Editor.IVsEditorAdaptersFactoryService>();
 
-                    foreach(var d in runningDocumentTable) {
-                        string      fullpath = d.Moniker.ToUpperInvariant();
+                        foreach(var d in runningDocumentTable) {
+                            string      fullpath = d.Moniker.ToUpperInvariant();
 
-                        if (_sourceFiles.TryGetValue(fullpath, out SourceFile sourceFile)) {
-                            files.Add(fullpath);
+                            if (_sourceFiles.TryGetValue(fullpath, out SourceFile sourceFile)) {
+                                files.Add(fullpath);
 
-                            lock(_lockObject) {
-                                if (sourceFile.SetTextBuffer(adapter.GetDataBuffer((Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer)d.DocData)))
-                                    setWork |= WorkFlags.Parse;
+                                lock(_lockObject) {
+                                    if (sourceFile.SetTextBuffer(adapter.GetDataBuffer((Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer)d.DocData)))
+                                        setWork |= WorkFlags.Parse;
+                                }
                             }
                         }
                     }

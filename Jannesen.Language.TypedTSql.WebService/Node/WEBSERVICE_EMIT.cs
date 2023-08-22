@@ -47,6 +47,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     emitors.Add(AddChild(new WEBSERVICE_EMITOR_JC_PROXY(reader, parseContext)));
                     break;
 
+                case "OPENAPI":
+                    emitors.Add(AddChild(new WEBSERVICE_EMITOR_OPENAPI(reader, parseContext)));
+                    break;
+
                 default:
                     throw new ParseException(reader.CurrentToken, "Except DIRECTORY,INDEX,WEBSERVICECONFIG,JC_PROXY got " + reader.CurrentToken.Text.ToString() + ".");
                 }

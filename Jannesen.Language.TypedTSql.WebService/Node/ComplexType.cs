@@ -27,8 +27,15 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         {
             WebComplexType = null;
 
-            var name                  = n_Name.ValueString;
-            var complexTypeEntityName = LTTSQL.Node.DeclarationServiceComplexType.BuildEntityName(context.GetDeclarationObject<LTTSQL.Node.DeclarationServiceMethod>().ServiceName, name);
+            var name        = n_Name.ValueString;
+            var serviceName = (context.DeclarationEntity as LTTSQL.Node.DeclarationServiceMethod)?.ServiceName ??
+                              (context.DeclarationEntity as LTTSQL.Node.DeclarationService)?.n_Name.n_EntitiyName;
+
+            if (serviceName == null) {
+                throw new InvalidOperationException("Can't determin webservice name.");
+            }
+
+            var complexTypeEntityName = LTTSQL.Node.DeclarationServiceComplexType.BuildEntityName(serviceName, name);
             var webComplexTypeEntity  = (context.Catalog.GetObject(complexTypeEntityName, false) as DataModel.EntityObjectCode);
 
             if (!(webComplexTypeEntity?.DeclarationObjectCode is Node.WEBCOMPLEXTYPE webComplexType)) {

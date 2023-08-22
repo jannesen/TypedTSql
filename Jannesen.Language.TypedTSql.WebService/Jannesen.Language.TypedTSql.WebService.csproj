@@ -37,22 +37,25 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
-      <Version>3.3.3</Version>
+      <Version>3.3.4</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">
-      <Version>6.0.0</Version>
+      <Version>7.0.3</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
-    </PackageReference>  
+    </PackageReference>
+    <PackageReference Include="YamlDotNet">
+      <Version>13.2.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Jannesen.Language.TypedTSql\Jannesen.Language.TypedTSql.csproj">
       <Project>{d812b8b4-b1fe-4e62-9e32-d0aed385a6af}</Project>
       <Name>Jannesen.Language.TypedTSql</Name>
     </ProjectReference>
-  </ItemGroup>  
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="*.cs" />
     <Compile Include="Node\*.cs" />
