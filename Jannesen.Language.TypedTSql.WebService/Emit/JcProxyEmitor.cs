@@ -483,7 +483,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                         DeclareType type;
 
                         if (parameter.n_Type is Node.ComplexType complexType)
-                            type = _getAsType(complexType.WebComplexType);
+                            type = _getComplextAsType(parameter.n_Type, complexType.WebComplexType);
                         else
                             type = _getType(parameter.n_Type, parameter.SqlType);
 
@@ -501,7 +501,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                 if (element is Node.JsonType.JsonSchema.JsonSchemaValue value) {
                     if (value.n_Type is Node.ComplexType complexType)
-                        type = _getAsType(complexType.WebComplexType);
+                        type = _getComplextAsType(value.n_Type, complexType.WebComplexType);
                     else
                         type = _getType(value.n_Type, ((LTTSQL.Node.Node_Datatype)value.n_Type).SqlType);
                 }
@@ -563,7 +563,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             private                 DeclareType                             _getColumnType(LTTSQL.Node.Query_Select_ColumnResponse column)
             {
                 if (column.n_Expression is LTTSQL.Node.Expr_ServiceComplexType responseComplexType)
-                    return _getAsType((Node.WEBCOMPLEXTYPE)responseComplexType.DeclarationComplexType);
+                    return _getComplextAsType(column.n_Expression, responseComplexType.DeclarationComplexType);
 
                 return (column.n_Expression is LTTSQL.Node.IExprResponseNode columnExprResponseNode)
                                     ? _getTypeResponseNode(columnExprResponseNode)
@@ -620,10 +620,15 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                 throw new EmitException(declaration, "No type mapping for '" + sqlType.ToString() + "'.");
             }
-            private                 DeclareSimpleType                       _getAsType(Node.WEBCOMPLEXTYPE wct)
+            private                 DeclareSimpleType                       _getComplextAsType(object declaration, LTTSQL.Node.DeclarationServiceComplexType wct)
             {
-                var x = wct.n_As.AsType;
-                return _proxyFile.getSimpleType(x.From, x.Expression);
+                var typeMapDictionary = _webServiceEmitor.n_TypeMap?.TypeMapDictionary;
+
+                if (typeMapDictionary != null && typeMapDictionary.TryGetValue(wct, out var typeMapEntry)) {
+                    return _proxyFile.getSimpleType(typeMapEntry.From, typeMapEntry.Expression);
+                }
+
+                throw new EmitException(declaration, "No type mapping for webcomplextype '" + wct.ComplexTypeName + "'.");
             }
             private                 void                                    _addSimpleParameter(string source, string name, DeclareType type)
             {
