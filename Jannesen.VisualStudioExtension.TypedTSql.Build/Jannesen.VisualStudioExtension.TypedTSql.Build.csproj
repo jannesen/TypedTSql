@@ -73,6 +73,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="YamlDotNet">
+      <Version>13.2.0</Version>
+      <IncludeAssets>runtime</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="*.cs" />
     <Compile Include="Library\*.cs" />
     <None Include="*.targets">
