@@ -339,10 +339,9 @@ add_parameter:                  {
         }
         private                 void                                    _createResponse(OpenApiOperation operation, string handler, Node.WEBMETHOD webMethod)
         {
-            operation.x_handler = handler;
             operation.responses = new OpenApiResponses();
 
-            switch(operation.x_handler) {
+            switch(handler) {
             case "sql-json2":
                 if (webMethod.n_returns != null && webMethod.n_returns.Count > 0) {
                     _addReponse(operation, "application/json", _getOpenApiSchema(webMethod.n_returns));
@@ -585,7 +584,6 @@ add_parameter:                  {
             if (sqlType is LTTSQL.DataModel.EntityTypeExternal entityTypeExternal)
             {
                 return new OpenApiSchemaType() {
-                           x_sqltype = entityTypeExternal.EntityName.Fullname,
                            type      = "string",
                            format    = entityTypeExternal.Name
                        };
@@ -643,7 +641,6 @@ add_parameter:                  {
             switch(nativeType.SystemType) {
             case LTTSQL.DataModel.SystemType.Bit:
                 return new OpenApiSchemaType() {
-                            x_sqltype = nativeType.NativeTypeString,
                             type      = "boolean"
                         };
 
@@ -652,7 +649,6 @@ add_parameter:                  {
             case LTTSQL.DataModel.SystemType.Int:
             case LTTSQL.DataModel.SystemType.BigInt:
                 return new OpenApiSchemaType() {
-                            x_sqltype = nativeType.NativeTypeString,
                             type      = "integer"
                         };
 
@@ -663,7 +659,6 @@ add_parameter:                  {
             case LTTSQL.DataModel.SystemType.Real:
             case LTTSQL.DataModel.SystemType.Float:
                 return new OpenApiSchemaType() {
-                            x_sqltype = nativeType.NativeTypeString,
                             type      = "number"
                         };
 
@@ -672,7 +667,6 @@ add_parameter:                  {
             case LTTSQL.DataModel.SystemType.VarChar:
             case LTTSQL.DataModel.SystemType.NVarChar:
                 return new OpenApiSchemaType() {
-                            x_sqltype = nativeType.NativeTypeString,
                             type      = "string",
                             maxLength = (nativeType.MaxLength>0) ? (int?)nativeType.MaxLength : null
                         };
@@ -680,21 +674,18 @@ add_parameter:                  {
             case LTTSQL.DataModel.SystemType.Binary:
             case LTTSQL.DataModel.SystemType.VarBinary:
                 return new OpenApiSchemaType() {
-                            x_sqltype = nativeType.NativeTypeString,
                             type      = "string",
                             format    = "base64"
                         };
 
             case LTTSQL.DataModel.SystemType.Date:
                 return new OpenApiSchemaType() {
-                            x_sqltype = nativeType.NativeTypeString,
                             type      = "string",
                             format    = "date"
                         };
 
             case LTTSQL.DataModel.SystemType.Time:
                 return new OpenApiSchemaType() {
-                            x_sqltype = nativeType.NativeTypeString,
                             type      = "string",
                             format    = "time"
                         };
@@ -703,7 +694,6 @@ add_parameter:                  {
             case LTTSQL.DataModel.SystemType.DateTime:
             case LTTSQL.DataModel.SystemType.DateTime2:
                 return new OpenApiSchemaType() {
-                            x_sqltype = nativeType.NativeTypeString,
                             type      = "string",
                             format    = "date-time"
                         };

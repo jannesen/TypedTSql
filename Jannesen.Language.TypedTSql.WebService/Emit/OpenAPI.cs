@@ -45,8 +45,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public OpenApiParameters                    parameters          { get; set; }
         public OpenApiBody                          requestBody         { get; set; }
         public OpenApiResponses                     responses           { get; set; }
-        [YamlMember(Alias="x-handler")]
-        public string                               x_handler           { get; set; }
         [YamlMember(Alias="x-timeout")]
         public int                                  x_timeout           { get; set; }
     }
@@ -161,8 +159,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public          int?                        maxLength           { get; set; }
         public          Int64?                      minimum             { get; set; }
         public          Int64?                      maximum             { get; set; }
-        [YamlMember(Alias="x-sqltype")]
-        public          string                      x_sqltype           { get; set; }
         [YamlMember(Alias="x-values")]
         public          OpenApiX_Values             x_values            { get; set; }
         [YamlMember(Alias="x-post-schema")]
@@ -179,7 +175,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                    left.maxLength     == right.maxLength     &&
                    left.minimum       == right.minimum       &&
                    left.maximum       == right.maximum       &&
-                   left.x_sqltype     == right.x_sqltype     &&
                    left.x_post_schema == right.x_post_schema &&
                    EnumerableExtensions.EqualItems(left.required, right.required)  &&
                    EnumerableExtensions.EqualItems(left.x_values, right.x_values);
@@ -205,7 +200,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 hashCode = (hashCode * 397) ^ maxLength.GetHashCode();
                 hashCode = (hashCode * 397) ^ minimum.GetHashCode();
                 hashCode = (hashCode * 397) ^ maximum.GetHashCode();
-                hashCode = (hashCode * 397) ^ (x_sqltype     != null ? x_sqltype.GetHashCode()     : 0);
                 hashCode = (hashCode * 397) ^ (x_values      != null ? x_values.GetItemsHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (x_post_schema != null ? x_post_schema.GetHashCode() : 0);
                 return hashCode;
