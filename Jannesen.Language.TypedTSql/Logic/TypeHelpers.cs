@@ -110,6 +110,11 @@ namespace Jannesen.Language.TypedTSql.Logic
             }
 
             var nativeType1 = sqlType1.NativeType;
+
+            if (operation.ID == Core.TokenID.ShiftLeft || operation.ID == Core.TokenID.ShiftRight) {
+                return nativeType1;
+            }
+
             var nativeType2 = sqlType2.NativeType;
 
             var rtn = expr1.isConstant()

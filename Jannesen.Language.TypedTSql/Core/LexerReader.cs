@@ -39,91 +39,156 @@ namespace Jannesen.Language.TypedTSql.Core
 
             int c = _charAt(_curpos++);
 
-            if (_isWhiteSpace(c))                                                   return _readWhiteSpace();
-
-            if (_isNameStart(c)) {
-                if ((c == 'N' || c == 'n') && _charAt(_curpos) == '\'') {
-                    ++_curpos;
-                    return _readString(Core.TokenID.String, '\'');
-                }
-
-                return _readName();
-            }
-
-            if (c == '@')                                                           return _readLocalName();
-            if (c == '[')                                                           return _readQuoted();
-            if (c == '"')                                                           return _readString(Core.TokenID.QuotedName, '"');
-            if (c == '\'')                                                          return _readString(Core.TokenID.String,     '\'');
-            if (c == '0' && (_charAt(_curpos) == 'X' || _charAt(_curpos) == 'x'))   return _readBinary();
-            if (c == '`')                                                           return _readDataIsland();
-            if (_isDigit(c))                                                        return _readNumber();
-            if (c == '\n')                                                          return _newToken(Core.TokenID.WhiteSpace);
-            if (c == '-' && _charAt(_curpos) == '-')                                return _readLineComment();
-            if (c == '/' && _charAt(_curpos) == '*')                                return _readBlockComment();
-
-            if (_charAt(_curpos) == '=') {
-                switch(c) {
-                case '>':   ++_curpos;  return _newToken(Core.TokenID.GreaterEqual);
-                case '<':   ++_curpos;  return _newToken(Core.TokenID.LessEqual);
-                case '+':   ++_curpos;  return _newToken(Core.TokenID.PlusAssign);
-                case '-':   ++_curpos;  return _newToken(Core.TokenID.MinusAssign);
-                case '*':   ++_curpos;  return _newToken(Core.TokenID.MultAssign);
-                case '/':   ++_curpos;  return _newToken(Core.TokenID.DivAssign);
-                case '%':   ++_curpos;  return _newToken(Core.TokenID.ModAssign);
-                case '&':   ++_curpos;  return _newToken(Core.TokenID.AndAssign);
-                case '^':   ++_curpos;  return _newToken(Core.TokenID.XorAssign);
-                case '|':   ++_curpos;  return _newToken(Core.TokenID.OrAssign);
-
-                case '=':
-                    if (_charAt(_curpos+1) == '=') {
-                        _curpos += 2;
-                        return _newToken(Core.TokenID.DistinctEqual);
-                    }
-                    break;
-
-                case '!':
-                    if (_charAt(_curpos+1) == '=') {
-                        _curpos += 2;
-                        return _newToken(Core.TokenID.DistinctNotEqual);
-                    }
-                    else {
-                        _curpos += 1;
-                        return _newToken(Core.TokenID.NotEqual);
-                    }                    
-                }
-            }
-
-            if (c == '<' && _charAt(_curpos) == '>') {
-                ++_curpos;
-                return _newToken(Core.TokenID.NotEqual);
-            }
-
             switch(c) {
-            case '=':       return _newToken(Core.TokenID.Equal);
-            case '>':       return _newToken(Core.TokenID.Greater);
-            case '<':       return _newToken(Core.TokenID.Less);
-            case '!':       return _newToken(Core.TokenID.Exclamation);
-            case '.':       return _newToken(Core.TokenID.Dot);
-            case '(':       return _newToken(Core.TokenID.LrBracket);
-            case ')':       return _newToken(Core.TokenID.RrBracket);
-            case ',':       return _newToken(Core.TokenID.Comma);
-            case ';':       return _newToken(Core.TokenID.Semicolon);
-            case '*':       return _newToken(Core.TokenID.Star);
-            case '/':       return _newToken(Core.TokenID.Divide);
-            case '%':       return _newToken(Core.TokenID.Module);
-            case '+':       return _newToken(Core.TokenID.Plus);
-            case '-':       return _newToken(Core.TokenID.Minus);
-            case '~':       return _newToken(Core.TokenID.BitNot);
-            case '|':       return _newToken(Core.TokenID.BitOr);
-            case '&':       return _newToken(Core.TokenID.BitAnd);
-            case '^':       return _newToken(Core.TokenID.BitXor);
+            case '<':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.LessEqual);
+                case '>':   ++_curpos; return _newToken(Core.TokenID.NotEqual);
+                case '<':   ++_curpos; return _newToken(Core.TokenID.ShiftLeft);
+                }
+
+                return _newToken(Core.TokenID.Less);
+
+            case '>':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.GreaterEqual);
+                case '>':   ++_curpos; return _newToken(Core.TokenID.ShiftRight);
+                }
+                return _newToken(Core.TokenID.Greater);
+
+            case '=':
+                if (_charAt(_curpos) == '=' && _charAt(_curpos+1) == '=') {
+                    _curpos += 2;
+                    return _newToken(Core.TokenID.DistinctEqual);
+                }
+                return _newToken(Core.TokenID.Equal);
+
+            case '!':
+                if (_charAt(_curpos) == '=' && _charAt(_curpos+1) == '=') {
+                    _curpos += 2;
+                    return _newToken(Core.TokenID.DistinctNotEqual);
+                }
+                if (_charAt(_curpos) == '=') {
+                    _curpos += 1;
+                    return _newToken(Core.TokenID.NotEqual);
+                }
+                return _newToken(Core.TokenID.Exclamation);
+
+            case '.':
+                return _newToken(Core.TokenID.Dot);
+
+            case '(':
+                return _newToken(Core.TokenID.LrBracket);
+
+            case ')':
+                return _newToken(Core.TokenID.RrBracket);
+
+            case ',':
+                return _newToken(Core.TokenID.Comma);
+
+            case ';':
+                return _newToken(Core.TokenID.Semicolon);
+
+            case '*':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.MultAssign);
+                }
+                return _newToken(Core.TokenID.Star);
+
+            case '/':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.DivAssign);
+                case '*':   return _readBlockComment();
+                }
+                return _newToken(Core.TokenID.Divide);
+
+            case '%':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.ModAssign);
+                }
+                return _newToken(Core.TokenID.Module);
+
+            case '+':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.PlusAssign);
+                }
+                return _newToken(Core.TokenID.Plus);
+
+            case '-':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.MinusAssign);
+                case '-':   return _readLineComment();
+                }
+                return _newToken(Core.TokenID.Minus);
+
+            case '~':
+                return _newToken(Core.TokenID.BitNot);
+
+            case '|':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.OrAssign);
+                }
+                return _newToken(Core.TokenID.BitOr);
+
+            case '&':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.AndAssign);
+                }
+                return _newToken(Core.TokenID.BitAnd);
+
+            case '^':
+                switch(_charAt(_curpos)) {
+                case '=':   ++_curpos; return _newToken(Core.TokenID.XorAssign);
+                }
+                return _newToken(Core.TokenID.BitXor);
+
             case ':':
-                if (_charAt(_curpos) == ':') {
-                    ++_curpos;
-                    return _newToken(Core.TokenID.DoubleColon);
+                switch(_charAt(_curpos)) {
+                case ':':   ++_curpos;  return _newToken(Core.TokenID.DoubleColon);
                 }
 
                 return _newToken(Core.TokenID.Colon);
+
+            case '@':
+                return _readLocalName();
+
+            case '[':
+                return _readQuoted();
+
+            case '"':
+                return _readString(Core.TokenID.QuotedName, '"');
+
+            case '\'':
+                return _readString(Core.TokenID.String,     '\'');
+
+            case '`':
+                return _readDataIsland();
+
+            case '\n':
+                return _newToken(Core.TokenID.WhiteSpace);
+
+            default:
+                if (_isWhiteSpace(c)) {
+                    return _readWhiteSpace();
+                }
+
+                if (_isNameStart(c)) {
+                    if ((c == 'N' || c == 'n') && _charAt(_curpos) == '\'') {
+                        ++_curpos;
+                        return _readString(Core.TokenID.String, '\'');
+                    }
+
+                    return _readName();
+                }
+
+                if (_isDigit(c)) {
+                    if (c == '0' && (_charAt(_curpos) == 'X' || _charAt(_curpos) == 'x')) {
+                        return _readBinary();
+                    }
+                    return _readNumber();
+                }
+                break;
+
             case -1:        return null;
             }
 

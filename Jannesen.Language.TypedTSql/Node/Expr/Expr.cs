@@ -95,37 +95,42 @@ namespace Jannesen.Language.TypedTSql.Node
         }
         private     static      IExprNode               _precedence4_ValueCollate(Core.ParserReader reader)
         {
-            var expr = _precedence5_AddSub(reader);
+            var expr = _precedence5_Shift(reader);
 
             if (Expr_Operator_Collate.CanParse(reader))
                 expr = new Expr_Operator_Collate(reader, expr);
 
             return expr;
         }
-        private     static      IExprNode               _precedence5_AddSub(Core.ParserReader reader)
+        private     static      IExprNode               _precedence5_Shift(Core.ParserReader reader)
         {
-            return Expr_Operator_Calculation.Parse(reader, _precedence6_MulDiv, (r) => (r == Core.TokenID.Plus ||
+            return Expr_Operator_Calculation.Parse(reader, _precedence6_AddSub, (r) => (r == Core.TokenID.ShiftLeft ||
+                                                                                        r == Core.TokenID.ShiftRight));
+        }
+        private     static      IExprNode               _precedence6_AddSub(Core.ParserReader reader)
+        {
+            return Expr_Operator_Calculation.Parse(reader, _precedence7_MulDiv, (r) => (r == Core.TokenID.Plus ||
                                                                                         r == Core.TokenID.Minus ||
                                                                                         r == Core.TokenID.BitAnd ||
                                                                                         r == Core.TokenID.BitOr ||
                                                                                         r == Core.TokenID.BitXor));
         }
-        private     static      IExprNode               _precedence6_MulDiv(Core.ParserReader reader)
+        private     static      IExprNode               _precedence7_MulDiv(Core.ParserReader reader)
         {
-            return Expr_Operator_Calculation.Parse(reader, _precedence7_Value, (r) => (r == Core.TokenID.Star ||
+            return Expr_Operator_Calculation.Parse(reader, _precedence8_Value, (r) => (r == Core.TokenID.Star ||
                                                                                        r == Core.TokenID.Divide ||
                                                                                        r == Core.TokenID.Module));
         }
-        private     static      IExprNode               _precedence7_Value(Core.ParserReader reader)
+        private     static      IExprNode               _precedence8_Value(Core.ParserReader reader)
         {
-            var expr = _precedence8_Primative(reader);
+            var expr = _precedence9_Primative(reader);
 
             while (reader.CurrentToken.isToken(Core.TokenID.Dot))
                 expr = new Expr_ObjectMethodProperty(reader, expr);
 
             return expr;
         }
-        private     static      IExprNode               _precedence8_Primative(Core.ParserReader reader)
+        private     static      IExprNode               _precedence9_Primative(Core.ParserReader reader)
         {
             switch (reader.CurrentToken.ID) {
             // Constant
@@ -151,11 +156,11 @@ namespace Jannesen.Language.TypedTSql.Node
                 if (Expr_Constant.CanParse(reader))
                     return new Expr_Constant(reader);
 
-                return new Expr_Operator_Unary(reader, _precedence8_Primative);
+                return new Expr_Operator_Unary(reader, _precedence9_Primative);
 
             // OperatorUnary
             case Core.TokenID.BitNot:
-                return new Expr_Operator_Unary(reader, _precedence8_Primative);
+                return new Expr_Operator_Unary(reader, _precedence9_Primative);
 
             // CaseExpression
             case Core.TokenID.CASE:

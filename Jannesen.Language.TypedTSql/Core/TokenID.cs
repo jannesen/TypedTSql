@@ -39,6 +39,8 @@ namespace Jannesen.Language.TypedTSql.Core
         BitOr,
         BitAnd,
         BitXor,
+        ShiftLeft,
+        ShiftRight,
         LessEqual,
         GreaterEqual,
         PlusAssign,

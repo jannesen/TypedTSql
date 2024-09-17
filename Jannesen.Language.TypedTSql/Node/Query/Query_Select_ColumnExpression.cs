@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.Node
 {
@@ -37,6 +38,9 @@ namespace Jannesen.Language.TypedTSql.Node
             ResultColumn = null;
 
             n_Expression.TranspileNode(context);
+
+            if (n_Expression.ValueFlags.isBooleanExpression())
+                throw new TranspileException(n_Expression, "Expression is a boolean expression.");
 
             var target = context.Target;
             if (target != null) {

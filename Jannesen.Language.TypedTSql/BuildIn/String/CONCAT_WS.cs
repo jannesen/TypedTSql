@@ -5,23 +5,25 @@ using Jannesen.Language.TypedTSql.BuildIn;
 
 namespace Jannesen.Language.TypedTSql.BuildIn.Func
 {
-    // https://learn.microsoft.com/en-us/sql/t-sql/functions/concat-transact-sql
-    public class CONCAT: Func_Scalar
+    // https://learn.microsoft.com/en-us/sql/t-sql/functions/concat-ws-transact-sql
+    public class CONCAT_WS: Func_Scalar
     {
-        internal                                            CONCAT(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader): base(declaration, reader)
+        internal                                            CONCAT_WS(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader): base(declaration, reader)
         {
         }
 
         protected   override    FlagsTypeCollation          TranspileResult(IExprNode[] arguments)
         {
-            Validate.NumberOfArguments(arguments, 2, 256);
+            Validate.NumberOfArguments(arguments, 3, 256);
 
             var     valueFlags = DataModel.ValueFlags.None;
             bool    var        = false;
             bool    n          = false;
             int     length     = 0;
 
-            for (int i = 0 ; i < arguments.Length ; ++i) {
+            var seplength = Validate.ConstString(arguments[0]).Length;
+
+            for (int i = 1 ; i < arguments.Length ; ++i) {
                 valueFlags |= arguments[i].ValueFlags;
                 Validate.ValueString(arguments[i]);
 
@@ -36,7 +38,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
                     case DataModel.SystemType.NVarChar:     var = true; n = true;   break;
                     }
 
-                    length = (nativeType.MaxLength == -1) ? -1 : length + nativeType.MaxLength;
+                    length = (nativeType.MaxLength == -1) ? -1 : length + seplength + nativeType.MaxLength;
                 }
             }
 
