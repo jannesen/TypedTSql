@@ -21,10 +21,10 @@ namespace Jannesen.Language.TypedTSql.Library
             this.Declaration = declaration;
         }
 
-        public                  void                            Transpile(Transpiler transpiler, GlobalCatalog catalog, bool reportNeedTranspile,  ref bool transpiled, ref bool needtranspile)
+        public                  void                            Transpile(Transpile.TranspileContext transpileContext, bool reportNeedTranspile,  ref bool transpiled, ref bool needtranspile)
         {
             if (!Declaration.Transpiled) {
-                var context = new Transpile.ContextRoot(transpiler, SourceFile, catalog, Options, reportNeedTranspile, Declaration);
+                var context = new Transpile.ContextRoot(transpileContext, SourceFile, Options, reportNeedTranspile, Declaration);
 
                 try {
                     Declaration.TranspileNode(context);

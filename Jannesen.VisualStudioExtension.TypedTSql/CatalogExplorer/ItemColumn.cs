@@ -57,7 +57,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                 var findAllReferencesWindow = new FindAllReferences.FindAllReferenceWindow(ServiceProvider);
 
                 await ItemProject.WhenReadyAndLocked((project) => {
-                        findAllReferencesWindow.AddEntries(ItemProject.VSProject, project.FindReferences(_getColumn(project)));
+                        findAllReferencesWindow.AddEntries(ItemProject.VSProject, project.FindReferences(_getColumnSymbol(project)));
                     });
             }
             catch(Exception err) {
@@ -70,14 +70,14 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
                 await ItemProject.WhenReadyAndLocked((project) => {
                                                 (new Rename.Renamer(ServiceProvider,
                                                                     project,
-                                                                    _getColumn(project))).Run();
+                                                                    _getColumnSymbol(project))).Run();
                                             });
             }
             catch(Exception err) {
                 VSPackage.DisplayError(new Exception("OnRenamer failed.", err));
             }
         }
-        private                 LTTS_DataModel.Column           _getColumn(LanguageService.Project project)
+        private                 LTTS_DataModel.ISymbol          _getColumnSymbol(LanguageService.Project project)
         {
             var itemEntity  = ItemEntity;
             var entityTable = (LTTS_DataModel.EntityObjectTable)project.GlobalCatalog.GetEntity(itemEntity.EntityType, itemEntity.EntityName);
@@ -85,7 +85,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.CatalogExplorer
             if (column == null)
                 throw new Exception("Can't find column '" + itemEntity.EntityName.Fullname + "." + ColumnName + "' in global catalog.");
 
-            return column;
+            return column.Symbol;
         }
     }
 }

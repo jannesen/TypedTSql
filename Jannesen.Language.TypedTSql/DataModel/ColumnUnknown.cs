@@ -4,13 +4,15 @@ using System.Data.SqlClient;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    public class ColumnUnknown: Column
+    public class ColumnUnknown: Column, ISymbol
     {
-        public      override    string                  Name                    { get { return _name;               } }
-        public      override    object                  Declaration             { get { return _declaration;        } }
-        public      override    ValueFlags              ValueFlags              { get { return ValueFlags.Error;    } }
-        public      override    ISqlType                SqlType                 { get { return new SqlTypeAny();    } }
-        public      override    string                  CollationName           { get { return null;                } }
+        public      override    ISymbol                 Symbol                  => this;
+        public                  SymbolType              Type                    => SymbolType.Column;
+        public      override    string                  Name                    => _name;
+        public      override    object                  Declaration             => _declaration;
+        public      override    ValueFlags              ValueFlags              => ValueFlags.Error;
+        public      override    ISqlType                SqlType                 => new SqlTypeAny();
+        public      override    string                  CollationName           => null;
 
         private                 string                  _name;
         private                 object                  _declaration;

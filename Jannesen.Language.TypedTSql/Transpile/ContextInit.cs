@@ -4,22 +4,24 @@ namespace Jannesen.Language.TypedTSql.Transpile
 {
     public class ContextInit: Context
     {
+        public      override    TranspileContext                    TranspileContext        { get { return _transpileContext;                                                                   } }
         public      override    Context                             Parent                  { get { throw new InvalidOperationException("Context.Parent not available in init.");               } }
         public      override    ContextRoot                         RootContext             { get { throw new InvalidOperationException("Context.RootContext not available in init.");          } }
         public      override    ContextBlock                        BlockContext            { get { throw new InvalidOperationException("Context.BlockContext not available in init.");         } }
-        public      override    Transpiler                          Transpiler              { get { throw new InvalidOperationException("Context.Transpiler not available in init.");           } }
         public      override    SourceFile                          SourceFile              { get { return _sourceFile;             } }
-        public      override    GlobalCatalog                       Catalog                 { get { throw new InvalidOperationException("Context.Catalog not available in init.");              } }
         public      override    Node.Node_ParseOptions              Options                 { get { throw new InvalidOperationException("Context.Options not available in init.");              } }
         public      override    bool                                ReportNeedTranspile     { get { throw new InvalidOperationException("Context.ReportNeedTranspile not available in init.");  } }
         public      override    Node.DeclarationEntity              DeclarationEntity       { get { throw new InvalidOperationException("Context.DeclarationEntity not available in init.");    } }
         public      override    DataModel.ISqlType                  ScopeIndentityType      { get { throw new InvalidOperationException("Context.ScopeIndentityType not available in init.");   }
                                                                                               set { throw new InvalidOperationException("Context.ScopeIndentityType not available in init.");   } }
+
+        private                 TranspileContext                    _transpileContext;
         private                 SourceFile                          _sourceFile;
 
-        internal                                                    ContextInit(SourceFile sourceFile)
+        internal                                                    ContextInit(TranspileContext transpileContext, SourceFile sourceFile)
         {
-            _sourceFile          = sourceFile;
+            _transpileContext = transpileContext;
+            _sourceFile       = sourceFile;
         }
 
         public      override    void                                AddError(Core.IAstNode node, Exception err)

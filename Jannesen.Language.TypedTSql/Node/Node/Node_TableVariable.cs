@@ -10,7 +10,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public                  DataModel.Variable              Variable        { get; private set; }
 
         public                  bool                            isVarDeclare    { get { return false;                       } }
-        public                  DataModel.ISymbol               Table           { get { return Variable;                    } }
+        public                  DataModel.ISymbol               Table           { get { return Variable.Symbol;             } }
         public                  DataModel.IColumnList           Columns         { get { return Variable?.SqlType?.Columns;  } }
 
         public                                                  Node_TableVariable(Core.ParserReader reader, DataModel.SymbolUsageFlags usage)
@@ -37,7 +37,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public                  void                            SetUsage(DataModel.SymbolUsageFlags usage)
         {
             Usage = usage;
-            n_Name.SymbolData?.UpdateSymbolUsage(Variable, usage);
+            n_Name.SymbolData?.UpdateSymbolUsage(Variable.Symbol, usage);
         }
 
         public                  DataModel.Column                GetColumnForAssign(string name, DataModel.ISqlType sqlType, string collationName, DataModel.ValueFlags flags, object declaration, DataModel.ISymbol nameReference, out bool declared)

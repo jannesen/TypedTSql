@@ -4,15 +4,17 @@ using System.Data.SqlClient;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    public class ColumnUnion: Column
+    public class ColumnUnion: Column, ISymbol
     {
-        public      override    string                  Name                    { get { return _name;                } }
-        public      override    object                  Declaration             { get { return _declaration;         } }
-        public      override    ISymbol                 SymbolNameReference     { get { return _symbolNameReference; } }
-        public      override    ISqlType                SqlType                 { get { return _sqlType;             } }
-        public      override    string                  CollationName           { get { return _collationName;       } }
-        public      override    ValueFlags              ValueFlags              { get { return _flags;               } }
-        public                  Node.IExprNode[]        Exprs                   { get { return _exprs;               } }
+        public      override    ISymbol                 Symbol                  => this;
+        public                  SymbolType              Type                    => SymbolType.Column;
+        public      override    string                  Name                    => _name;
+        public      override    object                  Declaration             => _declaration;
+        public      override    ISymbol                 SymbolNameReference     => _symbolNameReference;
+        public      override    ISqlType                SqlType                 => _sqlType;
+        public      override    string                  CollationName           => _collationName;
+        public      override    ValueFlags              ValueFlags              => _flags;
+        public                  Node.IExprNode[]        Exprs                   => _exprs;
 
         private                 string                  _name;
         private                 object                  _declaration;

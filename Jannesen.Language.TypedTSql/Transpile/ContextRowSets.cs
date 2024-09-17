@@ -14,7 +14,7 @@ namespace Jannesen.Language.TypedTSql.Transpile
         }
         internal                                                    ContextRowSets(Context parent, DataModel.IColumnList columnList): base(parent)
         {
-            _rowsets  = new DataModel.RowSetList { { new DataModel.RowSet("", columnList) } };
+            _rowsets  = new DataModel.RowSetList { { new DataModel.RowSet(DataModel.RowSetFlags.None, columnList) } };
         }
 
         public      override    DataModel.RowSet                    FindRowSet(string name)

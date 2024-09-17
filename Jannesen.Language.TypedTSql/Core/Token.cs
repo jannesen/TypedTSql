@@ -162,11 +162,13 @@ namespace Jannesen.Language.TypedTSql.Core
         }
         public                      int                     isToken(params TokenNameID[] nameIDs)
         {
-            string text = Text.ToUpperInvariant();
+            if (isNameOrKeyword) {
+                string text = Text.ToUpperInvariant();
 
-            for(int i = 0 ; i < nameIDs.Length ; ++i) {
-                if (nameIDs[i].Name == text)
-                    return i;
+                for(int i = 0 ; i < nameIDs.Length ; ++i) {
+                    if (nameIDs[i].Name == text)
+                        return i;
+                }
             }
 
             return -1;

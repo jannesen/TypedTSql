@@ -23,9 +23,9 @@ namespace Jannesen.Language.TypedTSql.Node
             n_ParentType = new Node_EntityNameReference(reader, EntityReferenceType.UserDataType, DataModel.SymbolUsageFlags.Reference);
         }
 
-        public      override    void                            TranspileInit(Declaration_TYPE declaration, GlobalCatalog catalog, SourceFile sourceFile)
+        public      override    void                            TranspileInit(Transpile.TranspileContext transpileContext, Declaration_TYPE declaration, SourceFile sourceFile)
         {
-            if ((_entity = catalog.DefineTypeExtend(declaration.EntityName)) == null)
+            if ((_entity = transpileContext.Catalog.DefineTypeExtend(declaration.EntityName)) == null)
                 throw new TranspileException(declaration.n_Name, "Duplicate definition of type.");
 
             _entity.TranspileInit(new DataModel.DocumentSpan(sourceFile.Filename, declaration));

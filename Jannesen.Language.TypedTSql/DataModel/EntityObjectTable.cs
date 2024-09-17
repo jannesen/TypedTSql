@@ -39,7 +39,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         {
             if (_columns != null) {
                 foreach(var column in _columns)
-                    (column as ColumnDS)?.SetParent(this);
+                    column.SetParent(this);
             }
             if (_indexes != null) {
                 foreach(var index in _indexes)

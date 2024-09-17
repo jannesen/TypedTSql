@@ -29,7 +29,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
                 n_Expr1.TranspileNode(context);
                 n_Expr2.TranspileNode(context);
 
-                TypeHelpers.OperationCompare(context, null, n_Expr1, n_Expr2);
+                TypeHelpers.OperationCompare(context, CompareOperator.DistinctNotEqual, n_Expr1, n_Expr2);
             }
             catch(Exception err) {
                 context.AddError(this, err);

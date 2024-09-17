@@ -13,7 +13,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
 
         private                 DataModel.IColumnList               _t_ColumnList;
 
-        internal                                                    OPENQUERY(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader, bool allowAlias): base(declaration, reader, allowAlias)
+        internal                                                    OPENQUERY(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader): base(declaration, reader)
         {
             ParseToken(reader, Core.TokenID.LrBracket);
             n_LinkedServer   = Core.TokenWithSymbol.SetNoSymbol(ParseName(reader));
@@ -26,9 +26,6 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
 
         public      override    void                                TranspileNode(Transpile.Context context)
         {
-            _t_ColumnList = null;
-
-            TranspileRowSet(context);
             _t_ColumnList = new DataModel.ColumnListDynamic();
         }
     }

@@ -12,7 +12,9 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public                                              TableSource(Core.ParserReader reader)
         {
-            var rowsets = new List<TableSource_RowSet>() { {  AddChild(TableSource_RowSet_alias.Parse(reader, true)) } };
+            var rowsets = new List<TableSource_RowSet>();
+
+            rowsets.Add(AddChild(TableSource_RowSet_alias.Parse(reader)));
 
             while (TableSource_RowSet_join.CanParse(reader))
                 rowsets.Add(AddChild(new TableSource_RowSet_join(reader)));
@@ -22,15 +24,42 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override    void                        TranspileNode(Transpile.Context context)
         {
-            foreach(var n in n_RowSets) {
-                try {
-                    n.TranspileNode(context);
+            var    rowNullable = new bool[n_RowSets.Length];
 
-                    if (n.n_Alias == null && n_RowSets.Length > 1)
-                        context.AddError(n, "Unnamed rowset is not allowed.");
+            for (int i = 0 ; i < n_RowSets.Length ; ++i) {
+                switch(n_RowSets[i].n_JoinType) {
+                case DataModel.JoinType.INNER:
+                    break;
+
+                case DataModel.JoinType.LEFT_OUTER:
+                case DataModel.JoinType.FULL_OUTER:
+                case DataModel.JoinType.CROSS_JOIN:
+                case DataModel.JoinType.CROSS_APPLY:
+                case DataModel.JoinType.OUTER_APPLY:
+                    rowNullable[i] = true;
+                    break;
+
+                case DataModel.JoinType.RIGHT_OUTER:
+                    for (int j = 0 ; j < i ; ++j) {
+                        rowNullable[i] = true;
+                    }
+                    break;
+                }
+            }
+
+            for (int i = 0; i < n_RowSets.Length ; ++i) {
+                var rowset = n_RowSets[i];
+
+                try {
+                    rowset.TranspileNode(context);
+                    rowset.TranspileRowSet(context, rowNullable[i]);
+
+                    if (rowset.n_Alias == null && n_RowSets.Length > 1) {
+                        context.AddError(rowset, "Unnamed rowset is not allowed.");
+                    }
                 }
                 catch(Exception err) {
-                    context.AddError(n, err);
+                    context.AddError(rowset, err);
                 }
             }
         }

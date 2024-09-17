@@ -68,6 +68,104 @@ namespace Jannesen.Language.TypedTSql.Logic
 
             throw new TranspileException(expr, "Not a integer value.");
         }
+        public      static      void                        ValueIntNumber(Node.IExprNode expr)
+        {
+            if (expr == null) {
+                return;
+            }
+
+            Value(expr);
+
+            var sqlType = expr.SqlType;
+
+            if (sqlType == null || sqlType is DataModel.SqlTypeAny)
+                return;
+
+            switch(sqlType.NativeType.SystemType) {
+            case DataModel.SystemType.TinyInt:
+            case DataModel.SystemType.SmallInt:
+            case DataModel.SystemType.Int:
+            case DataModel.SystemType.BigInt:
+            case DataModel.SystemType.Numeric:
+            case DataModel.SystemType.Decimal:
+                return;
+
+            default:
+                throw new TranspileException(expr, sqlType.NativeType.ToString() + " is not a int/number.");
+            }
+        }
+        public      static      void                        ValueIntFloat(Node.IExprNode expr)
+        {
+            if (expr == null) {
+                return;
+            }
+
+            Value(expr);
+
+            var sqlType = expr.SqlType;
+
+            if (sqlType == null || sqlType is DataModel.SqlTypeAny)
+                return;
+
+            switch(sqlType.NativeType.SystemType) {
+            case DataModel.SystemType.TinyInt:
+            case DataModel.SystemType.SmallInt:
+            case DataModel.SystemType.Int:
+            case DataModel.SystemType.BigInt:
+            case DataModel.SystemType.Float:
+            case DataModel.SystemType.Real:
+                return;
+
+            default:
+                throw new TranspileException(expr, sqlType.NativeType.ToString() + " is not a int/number.");
+            }
+        }
+        public      static      void                        ValueIntBinary(Node.IExprNode expr)
+        {
+            if (expr == null) {
+                return;
+            }
+
+            Value(expr);
+
+            var sqlType = expr.SqlType;
+            if (sqlType == null || sqlType is DataModel.SqlTypeAny)
+                return;
+
+            switch(sqlType.NativeType.SystemType) {
+            case DataModel.SystemType.TinyInt:
+            case DataModel.SystemType.SmallInt:
+            case DataModel.SystemType.Int:
+            case DataModel.SystemType.BigInt:
+            case DataModel.SystemType.Binary:
+            case DataModel.SystemType.VarBinary:
+                return;
+            }
+
+            throw new TranspileException(expr, "Not a integer/binary value.");
+        }
+        public      static      void                        ValueBit(Node.IExprNode expr)
+        {
+            if (expr == null) {
+                return;
+            }
+
+            Value(expr);
+
+            var sqlType = expr.SqlType;
+            if (sqlType == null || sqlType is DataModel.SqlTypeAny)
+                return;
+
+            switch(sqlType.NativeType.SystemType) {
+            case DataModel.SystemType.TinyInt:
+            case DataModel.SystemType.SmallInt:
+            case DataModel.SystemType.Int:
+            case DataModel.SystemType.Bit:
+                return;
+            }
+
+            throw new TranspileException(expr, "Not a integer/bit value.");
+        }
         public      static      object                      ValueInt(Node.IExprNode expr, int minValue, int maxValue)
         {
             if (expr == null) {
@@ -167,6 +265,37 @@ namespace Jannesen.Language.TypedTSql.Logic
 
             throw new TranspileException(expr, "Not a integer value.");
         }
+        public      static      object                      ConstNumber(Node.IExprNode expr, decimal minValue, decimal maxValue)
+        {
+            if (expr == null) {
+                return null;
+            }
+
+            Value(expr);
+
+            var sqlType = expr.SqlType;
+            if (sqlType == null || sqlType is DataModel.SqlTypeAny)
+                return null;
+
+            switch(sqlType.NativeType.SystemType) {
+            case DataModel.SystemType.Numeric:
+            case DataModel.SystemType.Decimal:
+                if (!expr.isConstant())
+                    throw new TranspileException(expr, "Expect const value.");
+
+                object v = expr.ConstValue();
+
+                if (!(v is decimal))
+                    throw new TranspileException(expr, "Expect const number-value.");
+
+                if (!(minValue <= (decimal)v && (decimal)v <= maxValue))
+                    throw new TranspileException(expr, "Number value out of range. Value must by between " + minValue + " and " + maxValue + ".");
+
+                return v;
+            }
+
+            throw new TranspileException(expr, "Not a number value.");
+        }
         public      static      string                      ConstString(Node.IExprNode expr)
         {
             if (expr == null) {
@@ -197,6 +326,31 @@ namespace Jannesen.Language.TypedTSql.Logic
 
             throw new TranspileException(expr, "Not a string value.");
         }
+        public      static      object                      ConstBit(Node.IExprNode expr)
+        {
+            if (expr == null) {
+                return null;
+            }
+
+            Value(expr);
+
+            var sqlType = expr.SqlType;
+            if (sqlType == null || sqlType is DataModel.SqlTypeAny)
+                return null;
+
+            switch(sqlType.NativeType.SystemType) {
+            case DataModel.SystemType.Bit:
+            case DataModel.SystemType.TinyInt:
+            case DataModel.SystemType.SmallInt:
+            case DataModel.SystemType.Int:
+                if (!expr.isConstant())
+                    throw new TranspileException(expr, "Expect const value.");
+
+                return expr.ConstValue();
+            }
+
+            throw new TranspileException(expr, "Not a bit/integer value.");
+        }
         public      static      void                        ValueNumber(Node.IExprNode expr)
         {
             if (expr == null) {
@@ -215,6 +369,8 @@ namespace Jannesen.Language.TypedTSql.Logic
             case DataModel.SystemType.SmallInt:
             case DataModel.SystemType.Int:
             case DataModel.SystemType.BigInt:
+            case DataModel.SystemType.SmallMoney:
+            case DataModel.SystemType.Money:
             case DataModel.SystemType.Numeric:
             case DataModel.SystemType.Decimal:
             case DataModel.SystemType.Real:
@@ -351,7 +507,7 @@ namespace Jannesen.Language.TypedTSql.Logic
             var actual = (arguments == null ? 0 : arguments.Length);
 
             if (!(minExpected <= actual && actual <= maxExpected))
-                throw new ErrorException("Invalid number of arguments.");
+                throw new ErrorException("Invalid number of arguments. Expect between " + minExpected + " and " + maxExpected + " got " + actual + " .");
         }
         public      static      bool                        ConstByType(DataModel.ISqlType sqlType, DataModel.IExprResult expr)
         {
@@ -379,6 +535,8 @@ namespace Jannesen.Language.TypedTSql.Logic
             case "WK":
             case "WEEKDAY":
             case "DW":
+            case "ISO_WEEK":
+            case "ISOWK":
                 return DatePartMode.Date;
 
             case "HOUR":
@@ -470,7 +628,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                 QuickFixLogic.QuickFix_Expr(context, targetType, (Node.IExprNode)expr);
 
             if ((targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrong || targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrict) && expr is DataModel.ColumnExpr)
-                QuickFixLogic.QuickFix_Expr(context, targetType, ((DataModel.ColumnExpr)expr).Expr);
+                QuickFixLogic.QuickFix_Expr(context, targetType, ((DataModel.Column)expr).Expr);
 
             if ((expr.SqlType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrong || expr.SqlType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrict)  &&
                 (expr.SqlType.TypeFlags & DataModel.SqlTypeFlags.UserType) != 0  &&
@@ -495,7 +653,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                 QuickFixLogic.QuickFix_Expr(context, targetType, (Node.IExprNode)expr);
 
             if ((targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrong || targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrict) && expr is DataModel.ColumnExpr)
-                QuickFixLogic.QuickFix_Expr(context, targetType, ((DataModel.ColumnExpr)expr).Expr);
+                QuickFixLogic.QuickFix_Expr(context, targetType, ((DataModel.Column)expr).Expr);
 
             throw new Exception("Not allowed to assign a " + expr.SqlType.ToString() + " to " + targetType.ToString() + ".");
         }

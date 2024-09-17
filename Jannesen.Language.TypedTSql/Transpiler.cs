@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Text;
+using Jannesen.Language.TypedTSql.DataModel;
 using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql
@@ -60,7 +61,7 @@ namespace Jannesen.Language.TypedTSql
             Files              = new SourceFileList();
             DeclarationParsers = new NodeParser<Node.Declaration>();
             StatementParsers   = new NodeParser<Node.Statement>();
-            _extensions = new HashSet<Assembly>();
+            _extensions        = new HashSet<Assembly>();
 
             BuildIn.Catalog.Load();
             LoadExtension(this.GetType().Assembly);
@@ -150,16 +151,18 @@ namespace Jannesen.Language.TypedTSql
 
             globalCatalog.BeforeTranspile();
 
+            var transpileContext = new Transpile.TranspileContext(this, globalCatalog);
+
             foreach(var f in Files)
-                f.TranspileInit(globalCatalog, _transpileCount > 0);
+                f.TranspileInit(transpileContext, _transpileCount > 0);
 
             if (ErrorCount == 0) {
-                _transpileServiceDeclarations(globalCatalog);
-                _transpileInit(globalCatalog);
+                _transpileServiceDeclarations(transpileContext);
+                _transpileInit(transpileContext);
                 globalCatalog.CleanupTranspile();
 
                 if (ErrorCount == 0)
-                    passCount = _transpileEntity(globalCatalog);
+                    passCount = _transpileEntity(transpileContext);
             }
 #if DEBUG
             if (ErrorCount == 0)
@@ -233,7 +236,7 @@ namespace Jannesen.Language.TypedTSql
             throw new KeyNotFoundException("Can't find token in source files.");
         }
 
-        private             void                                    _transpileServiceDeclarations(GlobalCatalog catalog)
+        private             void                                    _transpileServiceDeclarations(Transpile.TranspileContext transpileContext)
         {
             var serviceDeclarations   = new Node.DeclarationServiceList(16);
 
@@ -242,7 +245,7 @@ namespace Jannesen.Language.TypedTSql
                     foreach (var declaration in sourceFile.Declarations) {
                         try {
                             if (declaration is Node.DeclarationService declarationService) {
-                                declarationService.TranspileInit(this, catalog, sourceFile);
+                                declarationService.TranspileInit(transpileContext, sourceFile);
                                 if (!serviceDeclarations.TryAdd(declarationService))
                                     sourceFile.AddTranspileMessage(new TypedTSqlTranspileError(sourceFile,  declaration, "Service already declared."));
                             }
@@ -256,7 +259,7 @@ namespace Jannesen.Language.TypedTSql
 
             ServiceDeclarations = serviceDeclarations;
         }
-        private             void                                    _transpileInit(GlobalCatalog globalCatalog)
+        private             void                                    _transpileInit(Transpile.TranspileContext transpileContext)
         {
             var entityDeclarationSort = new Internal.EntityDeclarationSort();
 
@@ -264,8 +267,8 @@ namespace Jannesen.Language.TypedTSql
                 if (sourceFile.Declarations != null) {
                     foreach (var declaration in sourceFile.Declarations) {
                         try {
+                            declaration.TranspileInit(transpileContext, sourceFile);
                             if (declaration is Node.DeclarationEntity declarationEntity) {
-                                declarationEntity.TranspileInit(this, globalCatalog, sourceFile);
                                 entityDeclarationSort.AddEntityDeclaration(new EntityDeclaration(sourceFile, sourceFile.Options, declarationEntity));
                             }
                         }
@@ -278,7 +281,7 @@ namespace Jannesen.Language.TypedTSql
 
             _entityDeclarations = entityDeclarationSort.Process();
         }
-        private             int                                     _transpileEntity(GlobalCatalog globalCatalog)
+        private             int                                     _transpileEntity(Transpile.TranspileContext transpileContext)
         {
             int         passCount = 0;
             bool        transpiled;
@@ -292,7 +295,7 @@ namespace Jannesen.Language.TypedTSql
                     return passCount;
 
                 foreach (var entityDeclaration in EntityDeclarations)
-                    entityDeclaration.Transpile(this, globalCatalog, false, ref transpiled, ref needsTranspiled);
+                    entityDeclaration.Transpile(transpileContext, false, ref transpiled, ref needsTranspiled);
 
                 ++passCount;
             }
@@ -300,7 +303,7 @@ namespace Jannesen.Language.TypedTSql
 
             if (needsTranspiled) {
                 foreach (var entityDeclaration in EntityDeclarations)
-                    entityDeclaration.Transpile(this, globalCatalog, true, ref transpiled, ref needsTranspiled);
+                    entityDeclaration.Transpile(transpileContext, true, ref transpiled, ref needsTranspiled);
             }
 
             return passCount;

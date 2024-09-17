@@ -4,12 +4,11 @@ namespace Jannesen.Language.TypedTSql.Transpile
 {
     public class ContextParent: Context
     {
+        public      override    TranspileContext                    TranspileContext        { get { return _parent.TranspileContext;     } }
         public      override    Context                             Parent                  { get { return _parent;                      } }
         public      override    ContextRoot                         RootContext             { get { return _parent.RootContext;          } }
         public      override    ContextBlock                        BlockContext            { get { return _parent.BlockContext;         } }
-        public      override    Transpiler                          Transpiler              { get { return _parent.Transpiler;           } }
         public      override    SourceFile                          SourceFile              { get { return _parent.SourceFile;           } }
-        public      override    GlobalCatalog                       Catalog                 { get { return _parent.Catalog;              } }
         public      override    Node.Node_ParseOptions              Options                 { get { return _parent.Options;              } }
         public      override    bool                                ReportNeedTranspile     { get { return _parent.ReportNeedTranspile;  } }
         public      override    Node.DeclarationEntity              DeclarationEntity       { get { return _parent.DeclarationEntity;    } }

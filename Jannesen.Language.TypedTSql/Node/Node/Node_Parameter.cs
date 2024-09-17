@@ -85,7 +85,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                      n_Name,
                                                      n_Flags,
                                                      n_Default?.getConstValue(n_Type.SqlType));
-                n_Name.SetSymbolUsage(Parameter, DataModel.SymbolUsageFlags.Declaration);
+                n_Name.SetSymbolUsage(Parameter.Symbol, DataModel.SymbolUsageFlags.Declaration);
 
                 Validate.ConstByType(n_Type.SqlType, n_Default);
             }

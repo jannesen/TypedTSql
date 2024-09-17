@@ -130,9 +130,9 @@ namespace Jannesen.Language.TypedTSql.Node
                 var transpileExpr = new TranspileExpr(this, context);
 
                 if (transpileExpr.Transpile()) {
-                    this._valueFlags        = transpileExpr.ValueFlags;
-                    this._sqlType           = transpileExpr.SqlType;
-                    this._referencedColumn  = transpileExpr.ReferencedColumn;
+                    this._sqlType           = transpileExpr.State.SqlType;
+                    this._valueFlags        = transpileExpr.State.ValueFlags;
+                    this._referencedColumn  = transpileExpr.State.ReferencedColumn;
                 }
             }
             catch(Exception err) {
@@ -147,15 +147,36 @@ namespace Jannesen.Language.TypedTSql.Node
 
             tokenWithSymbol.SetSymbolData(symbol);
         }
-        
+
         struct TranspileExpr
         {
+            public struct SState
+            {
+                public  DataModel.ValueFlags    ValueFlags;
+                public  object                  CurType;
+                public  DataModel.Column        ReferencedColumn;
+
+                public  DataModel.ISqlType      SqlType => (DataModel.ISqlType)CurType;
+
+                public                          SState(DataModel.ValueFlags valueFlags, object curType)
+                {
+                    ValueFlags       = valueFlags;
+                    CurType          = curType;
+                    ReferencedColumn = null;
+                }
+                public                          SState(DataModel.Column column)
+                {
+                    ValueFlags       = column.ValueFlags;
+                    CurType          = column.SqlType;
+                    ReferencedColumn = column;
+                }
+            }
+
+
             public  readonly    Expr_ColumnUserFunction ExprPrimativeValue;
             public  readonly    Core.IAstNode[]         Nodes;
             public  readonly    Transpile.Context       Context;
-            public              DataModel.ValueFlags    ValueFlags;
-            public              DataModel.ISqlType      SqlType;
-            public              DataModel.Column        ReferencedColumn;
+            public              SState                  State;
             private             int                     _nodeindex;
 
             public                                      TranspileExpr(Expr_ColumnUserFunction exprPrimativeValue, Transpile.Context context)
@@ -163,9 +184,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 this.ExprPrimativeValue = exprPrimativeValue;
                 this.Nodes              = exprPrimativeValue.n_Nodes;
                 this.Context            = context;
-                this.ValueFlags         = DataModel.ValueFlags.None;
-                this.SqlType            = null;
-                this.ReferencedColumn   = null;
+                this.State              = new SState(DataModel.ValueFlags.None, null);
                 this._nodeindex         = 0;
             }
 
@@ -177,7 +196,6 @@ namespace Jannesen.Language.TypedTSql.Node
 
                     ++_nodeindex;
                     while (_nodeindex < Nodes.Length) {
-                        ReferencedColumn = null;
                         if (!_transpileNext(Nodes[_nodeindex]))
                             return false;
 
@@ -204,8 +222,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                 Context.CaseWarning(token, rowset.Name);
                                 token.SetSymbolUsage(rowset, DataModel.SymbolUsageFlags.Reference);
 
-                                ValueFlags = DataModel.ValueFlags.RowSet;
-                                SqlType    = new DataModel.SqlTypeRowSet(rowset);
+                                State = new SState(DataModel.ValueFlags.None, rowset);
                                 return true;
                             }
 
@@ -219,9 +236,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                 else
                                     Context.CaseWarning(token, column.Name);
 
-                                ValueFlags = column.ValueFlags | DataModel.ValueFlags.Column;
-                                SqlType    = column.SqlType;
-                                ReferencedColumn = column;
+                                State = new SState(column);
                                 return true;
                             }
                         }
@@ -250,11 +265,11 @@ namespace Jannesen.Language.TypedTSql.Node
             }
             private             bool                    _transpileNext(Core.IAstNode node)
             {
-                if ((SqlType.TypeFlags & DataModel.SqlTypeFlags.RowSet) != 0) {
+                if (State.CurType is DataModel.RowSet rowset) {
                     if (node is Core.TokenWithSymbol token && token.isNameOrQuotedName) {
                         var name = token.ValueString;
 
-                        var column = SqlType.Columns.FindColumn(name, out bool ambiguous);
+                        var column = rowset.FindColumn(name, out bool ambiguous);
                         if (column == null) {
                             Context.AddError(node, "Unknown column [" + name + "].");
                             return false;
@@ -268,9 +283,7 @@ namespace Jannesen.Language.TypedTSql.Node
                         else
                             Context.CaseWarning(token, column.Name);
 
-                        ValueFlags = column.ValueFlags | DataModel.ValueFlags.Column;
-                        SqlType    = column.SqlType;
-                        ReferencedColumn = column;
+                        State = new SState(column);
                         return true;
                     }
 
@@ -278,21 +291,20 @@ namespace Jannesen.Language.TypedTSql.Node
                     return false;
                 }
 
-                if (SqlType == null || SqlType is DataModel.SqlTypeAny) {
-                    ValueFlags = DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable;
-                    SqlType = new DataModel.SqlTypeAny();
+                if (State.CurType == null || State.CurType is DataModel.SqlTypeAny) {
+                    State = new SState(DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable, DataModel.SqlTypeAny.Instance);
                     return true;
                 }
 
-                if ((SqlType as DataModel.SqlTypeNative)?.SystemType == DataModel.SystemType.Xml) {
+                if ((State.CurType as DataModel.SqlTypeNative)?.SystemType == DataModel.SystemType.Xml) {
                     if (node is Call call) {
-                        SqlType = _transpileFirstXml_method(call);
-                        if (SqlType == null) {
+                        var type = _transpileFirstXml_method(call);
+                        if (type == null) {
                             Context.AddError(node, "Unknown method '" + call.n_Name.ValueString + "'.");
                             return false;
                         }
 
-                        ValueFlags = DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable;
+                        State = new SState(DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable, type);
                         return true;
                     }
                     else {
@@ -301,21 +313,21 @@ namespace Jannesen.Language.TypedTSql.Node
                     }
                 }
                 else
-                if ((SqlType.TypeFlags & DataModel.SqlTypeFlags.Interface) != 0) {
+                if (State.CurType is DataModel.ISqlType sqlType && (sqlType.TypeFlags & DataModel.SqlTypeFlags.Interface) != 0) {
                     if (node is Call call) {
-                        SqlType = Validate.Method(SqlType.Interfaces, false, call.n_Name, call.n_Arguments.n_Expressions);
-                        ValueFlags = DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable;
+                        State = new SState(DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable,
+                                           Validate.Method(sqlType.Interfaces, false, call.n_Name, call.n_Arguments.n_Expressions));
                         return true;
                     }
 
                     if (node is Core.TokenWithSymbol token) {
-                        SqlType = Validate.Property(SqlType.Interfaces, false, token);
-                        ValueFlags = DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable;
+                        State = new SState(DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable,
+                                           Validate.Property(sqlType.Interfaces, false, token));
                         return true;
                     }
                 }
 
-                Context.AddError(node, "Type '" + SqlType.ToString() + "' has no properties or methods.");
+                Context.AddError(node, "Type '" + State.CurType.ToString() + "' has no properties or methods.");
                 return false;
             }
             private             bool                    _transpileUserFunction(string schema, Call call)
@@ -324,8 +336,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     return false;
                 }
 
-                ValueFlags = DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable;
-                SqlType    = call.EntityObjectCode.Returns;
+                State = new SState(DataModel.ValueFlags.Function|DataModel.ValueFlags.Nullable, call.EntityObjectCode.Returns);
                 return true;
             }
             private             DataModel.ISqlType      _transpileFirstXml_method(Call call)

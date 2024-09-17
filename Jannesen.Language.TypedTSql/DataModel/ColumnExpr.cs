@@ -4,18 +4,18 @@ using System.Data.SqlClient;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    public class ColumnExpr: Column
+    public class ColumnExpr: Column, ISymbol
     {
-        public      override    string                  Name                    { get { return _name;                } }
-        public      override    object                  Declaration             { get { return _declaration;         } }
-        public      override    ISqlType                SqlType                 { get { return _expr.SqlType;        } }
-        public      override    string                  CollationName           { get { return _expr.CollationName;  } }
-        public      override    ValueFlags              ValueFlags              { get { return _valueFlags;          } }
-        public                  Core.TokenWithSymbol    NameToken               { get { return _nameToken;           } }
-        public                  Node.IExprNode          Expr                    { get { return _expr;                } }
+        public      override    ISymbol                 Symbol                  => this;
+        public                  SymbolType              Type                    => SymbolType.Column;
+        public      override    string                  Name                    => _name;
+        public      override    object                  Declaration             => _declaration;
+        public      override    ISqlType                SqlType                 => _expr.SqlType;
+        public      override    string                  CollationName           => _expr.CollationName;
+        public      override    ValueFlags              ValueFlags              => _valueFlags;
+        public      override    Node.IExprNode          Expr                    => _expr;
 
         private                 string                  _name;
-        private                 Core.TokenWithSymbol    _nameToken;
         private                 Node.IExprNode          _expr;
         public                  ValueFlags              _valueFlags;
         private                 object                  _declaration;
@@ -30,7 +30,6 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                                          ColumnExpr(Core.TokenWithSymbol name, Node.IExprNode expr, object declaration=null)
         {
             _name        = name.ValueString;
-            _nameToken   = name;
             _expr        = expr;
             _valueFlags  = expr.ValueFlags;
             _declaration = declaration;

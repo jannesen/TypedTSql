@@ -15,7 +15,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             public  abstract        string[]                Assemblies                  { get; }
             public  abstract        string                  HttpHandler                 { get; }
 
-            public  abstract        void                    Emit(WebServiceConfigEmitor configEmitor, XmlWriter xmlWriter);
+            public  abstract        void                    Emit(Node.WEBSERVICE_EMITOR_WEBSERVICECONFIG configNode, XmlWriter xmlWriter);
         }
 
         private class WebMethod: Method
@@ -31,7 +31,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 this._webMethod = webMethod;
             }
 
-            public  override        void                    Emit(WebServiceConfigEmitor configEmitor, XmlWriter xmlWriter)
+            public  override        void                    Emit(Node.WEBSERVICE_EMITOR_WEBSERVICECONFIG configNode, XmlWriter xmlWriter)
             {
                 foreach (var method in _webMethod.n_Declaration.n_Methods) {
                     xmlWriter.WriteStartElement("http-handler");
@@ -45,8 +45,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                                 xmlWriter.WriteAttributeString(optionValue.n_Name, optionValue.n_Value);
                         }
 
-                        if (configEmitor.Database != null) { 
-                            xmlWriter.WriteAttributeString("database",  configEmitor.Database);
+                        if (configNode.n_Database != null) { 
+                            xmlWriter.WriteAttributeString("database",  configNode.n_Database);
                         }
 
                         foreach(Node.WEBMETHOD.ServiceParameter arg in _webMethod.n_Parameters.n_Parameters) {
@@ -76,11 +76,24 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                         }
 
                         if (_webMethod.n_returns != null && method != "DELETE") {
-                            foreach(var rtn in _webMethod.n_returns) {
-                                xmlWriter.WriteStartElement("response");
-                                    xmlWriter.WriteAttributeString("responsemsg", rtn.ResponseTypeName);
-                                    Node.RETURNS.WriteResponseXml(xmlWriter, rtn.SqlType);
-                                xmlWriter.WriteEndElement();
+                            for (int i = 0 ; i < _webMethod.n_returns.Count ; ++i) {
+                                var rtn = _webMethod.n_returns[i];
+
+                                bool dup = false;
+
+                                for (int j = 0 ; j < i ; ++j) {
+                                    if (rtn.ResponseTypeName == _webMethod.n_returns[j].ResponseTypeName) {
+                                        dup = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!dup) {
+                                    xmlWriter.WriteStartElement("response");
+                                        xmlWriter.WriteAttributeString("responsemsg", rtn.ResponseTypeName);
+                                        Node.RETURNS.WriteResponseXml(xmlWriter, rtn.SqlType);
+                                    xmlWriter.WriteEndElement();
+                                }
                             }
                         }
 
@@ -105,15 +118,15 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 this._procedureName = procedureName;
             }
 
-            public  override        void                    Emit(WebServiceConfigEmitor configEmitor, XmlWriter xmlWriter)
+            public  override        void                    Emit(Node.WEBSERVICE_EMITOR_WEBSERVICECONFIG configNode, XmlWriter xmlWriter)
             {
                 xmlWriter.WriteStartElement("http-handler");
                     xmlWriter.WriteAttributeString("path",      Path);
                     xmlWriter.WriteAttributeString("verb",      "GET");
                     xmlWriter.WriteAttributeString("type",      "sql-json2");
                     xmlWriter.WriteAttributeString("procedure", _procedureName);
-                    if (configEmitor.Database != null) { 
-                        xmlWriter.WriteAttributeString("database",  configEmitor.Database);
+                    if (configNode.n_Database != null) { 
+                        xmlWriter.WriteAttributeString("database",  configNode.n_Database);
                     }
                     xmlWriter.WriteStartElement("response");
                         xmlWriter.WriteAttributeString("type",        "array:nvarchar(256)");
@@ -122,19 +135,24 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
         }
 
-        public      readonly    string                  BaseDirectory;
-        public      readonly    string                  Database;
-        private                 List<Method>            _methods;
-        private                 List<string>            _loads;
+        public      readonly    string                                      Filename;
+        public      readonly    Node.WEBSERVICE_EMITOR_WEBSERVICECONFIG     ConfigNode;
 
-        public                                          WebServiceConfigEmitor(string basedirectory, string database)
+        private                 List<Method>                                _methods;
+        private                 List<string>                                _loads;
+
+        public                                          WebServiceConfigEmitor(Node.WEBSERVICE_EMITOR_WEBSERVICECONFIG configNode, string basedirectory)
         {
-            BaseDirectory = basedirectory;
-            Database      = database;
+            Filename   = Path.Combine(basedirectory, configNode.n_File);
+            ConfigNode = configNode;
             this._methods = new List<Method>();
             this._loads   = new List<string>();
         }
 
+        public                  void                    CleanTarget()
+        {
+            Library.FileHelpers.DeleteFile(Filename);
+        }
         public                  void                    AddWebMethod(Node.WEBMETHOD webMethod)
         {
             _addMethod(new WebMethod(webMethod));
@@ -146,8 +164,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public                  void                    Emit(EmitContext emitContext)
         {
             _methods.Sort((m1, m2) => string.Compare(m1.Path, m2.Path, StringComparison.InvariantCulture));
-
-            string      filename = BaseDirectory + "\\webservice.config";
 
             try {
                 using (var fileData = new MemoryStream()) {
@@ -168,16 +184,16 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                             }
 
                             foreach(var method in _methods)
-                                method.Emit(this, xmlWriter);
+                                method.Emit(ConfigNode, xmlWriter);
 
                         xmlWriter.WriteEndElement();
                     }
 
-                    FileUpdate.Update(filename, fileData);
+                    FileUpdate.Update(Filename, fileData);
                 }
             }
             catch(Exception err) {
-                emitContext.AddEmitError(new EmitError("Emit '" + filename + "' failed: " + err.Message));
+                emitContext.AddEmitError(new EmitError("Emit '" + Filename + "' failed: " + err.Message));
             }
         }
 

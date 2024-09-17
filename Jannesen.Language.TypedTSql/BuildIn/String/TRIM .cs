@@ -13,8 +13,12 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 
         protected   override    DataModel.ISqlType          TranspileReturnType(IExprNode[] arguments)
         {
-            Validate.NumberOfArguments(arguments, 1);
+            Validate.NumberOfArguments(arguments, 1, 2);
             Validate.Value(arguments[0]);
+
+            if (arguments.Length > 1) {
+                Validate.ValueString(arguments[1]);
+            }
 
             var sqlType = arguments[0].SqlType;
             if (sqlType is DataModel.SqlTypeAny)
@@ -23,7 +27,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             switch(sqlType.NativeType.SystemType) {
             case DataModel.SystemType.VarChar:  return sqlType;
             case DataModel.SystemType.NVarChar: return sqlType;
-            case DataModel.SystemType.Char:     return new DataModel.SqlTypeNative(DataModel.SystemType.VarChar, maxLength: sqlType.NativeType.MaxLength);
+            case DataModel.SystemType.Char:     return new DataModel.SqlTypeNative(DataModel.SystemType.VarChar,  maxLength: sqlType.NativeType.MaxLength);
             case DataModel.SystemType.NChar:    return new DataModel.SqlTypeNative(DataModel.SystemType.NVarChar, maxLength: sqlType.NativeType.MaxLength);
             default:                            return null;
             }

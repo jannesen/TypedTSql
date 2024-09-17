@@ -53,6 +53,8 @@ namespace Jannesen.Language.TypedTSql.Logic
             case Core.TokenID.BitAnd:       return value1 & value2;
             case Core.TokenID.BitOr:        return value1 | value2;
             case Core.TokenID.BitXor:       return value1 ^ value2;
+            case Core.TokenID.ShiftLeft:    return value1 << value2;
+            case Core.TokenID.ShiftRight:   return value1 >> value2;
             case Core.TokenID.Star:         return value1 * value2;
             case Core.TokenID.Divide:       return value1 / value2;
             case Core.TokenID.Module:       return value1 % value2;

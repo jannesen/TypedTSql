@@ -62,12 +62,12 @@ namespace Jannesen.Language.TypedTSql.Node
             }
         }
 
-        public      override    void                            TranspileInit(Transpiler transpiler, GlobalCatalog catalog, SourceFile sourceFile)
+        public      override    void                            TranspileInit(Transpile.TranspileContext transpileContext, SourceFile sourceFile)
         {
             Transpiled             = false;
             _declarationTranspiled = false;
 
-            if ((EntityAssembly = catalog.DefineAssembly(EntityName)) == null)
+            if ((EntityAssembly = transpileContext.Catalog.DefineAssembly(EntityName)) == null)
                 throw new TranspileException(n_Name, "Duplicate definition of assembly.");
 
             EntityAssembly.TranspileInit(new DataModel.DocumentSpan(sourceFile.Filename, this));

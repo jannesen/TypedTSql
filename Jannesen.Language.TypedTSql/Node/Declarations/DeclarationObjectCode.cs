@@ -75,14 +75,14 @@ namespace Jannesen.Language.TypedTSql.Node
             return (new List<DataModel.EntityName>(rtn)).ToArray();
         }
 
-        public      override    void                                TranspileInit(Transpiler transpiler, GlobalCatalog catalog, SourceFile sourceFile)
+        public      override    void                                TranspileInit(Transpile.TranspileContext transpileContext, SourceFile sourceFile)
         {
             Transpiled             = false;
             _declarationTranspiled = false;
 
             var entityName = EntityName;
             if (entityName != null) {
-                if ((Entity = catalog.DefineObjectCode(EntityType, entityName)) == null)
+                if ((Entity = transpileContext.Catalog.DefineObjectCode(EntityType, entityName)) == null)
                     throw new TranspileException(GetNameToken(), "Duplicate definition of object.");
 
                 Entity.TranspileInit(this, new DataModel.DocumentSpan(sourceFile.Filename, this));

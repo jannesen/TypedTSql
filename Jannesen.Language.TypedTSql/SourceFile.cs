@@ -86,7 +86,7 @@ namespace Jannesen.Language.TypedTSql
             return filename.EndsWith(".ttsql", StringComparison.OrdinalIgnoreCase);
         }
 
-        internal                void                                            TranspileInit(GlobalCatalog catalog, bool resetSymbols)
+        internal                void                                            TranspileInit(Transpile.TranspileContext transpileContext, bool resetSymbols)
         {
             _transpileMessages.Clear();
 
@@ -97,7 +97,7 @@ namespace Jannesen.Language.TypedTSql
                 }
             }
 
-            _options.TranspileInit(this, catalog);
+            _options.TranspileInit(transpileContext, this);
         }
         internal                void                                            FindSymbols(SymbolReferenceList symbolReferenceList, DataModel.ISymbol symbol)
         {

@@ -57,11 +57,11 @@ namespace Jannesen.Language.TypedTSql.BuildIn
                 if (type.IsClass && type.IsPublic) {
                     switch(type.Namespace) {
                     case "Jannesen.Language.TypedTSql.BuildIn.Func":
-                        ScalarFunctions.Add(new BuildinFunctionDeclaration(type, false));
+                        ScalarFunctions.Add(new BuildinFunctionDeclaration(type));
                         break;
 
                     case "Jannesen.Language.TypedTSql.BuildIn.RowSet":
-                        RowSetFunctions.Add(new BuildinFunctionDeclaration(type, true));
+                        RowSetFunctions.Add(new BuildinFunctionDeclaration(type));
                         break;
                     }
                 }

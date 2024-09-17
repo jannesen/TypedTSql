@@ -25,7 +25,6 @@ namespace Jannesen.Language.TypedTSql.DataModel
             Const           = 0x00020000,
             Column          = 0x00040000,
             Variable        = 0x00080000,
-            RowSet          = 0x00100000,
             Function        = 0x00200000,
 
         ValueExpression     = 0x01000000,

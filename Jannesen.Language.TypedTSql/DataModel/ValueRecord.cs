@@ -8,18 +8,20 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public                  SymbolType          Type                    { get { return SymbolType.UDTValue; } }
         public                  string              Name                    { get ; private set; }
-        public                  string              FullName             { get { return SqlStatic.QuoteName(Name); } }
+        public                  string              FullName                { get { return SqlStatic.QuoteName(Name); } }
         public      readonly    object              Value;
         public                  object              Declaration             { get ; private set; }
         public                  DataModel.ISymbol   ParentSymbol            { get { return null; } }
         public                  DataModel.ISymbol   SymbolNameReference     { get { return null; } }
+        public      readonly    bool                Public;
         public      readonly    ValueFieldList      Fields;
 
-        public                                      ValueRecord(string name, object value, object declaration, ValueFieldList fields)
+        public                                      ValueRecord(string name, object value, object declaration, bool @public, ValueFieldList fields)
         {
             this.Name        = name;
             this.Value       = value;
             this.Declaration = declaration;
+            this.Public      = @public;
             this.Fields      = fields;
         }
     }
@@ -31,6 +33,17 @@ namespace Jannesen.Language.TypedTSql.DataModel
         }
         public                                      ValueRecordList(IReadOnlyList<ValueRecord> list): base(list)
         {
+        }
+
+        public                  bool                hasPublic()
+        {
+            foreach(var v in this) {
+                if (v.Public) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         protected   override    string              ItemKey(ValueRecord item)

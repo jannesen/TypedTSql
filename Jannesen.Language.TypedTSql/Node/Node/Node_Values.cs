@@ -13,13 +13,22 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public                                                  Node_Values(Core.ParserReader reader)
         {
+            bool    @public = true;
+
             ParseToken(reader, Core.TokenID.VALUES);
             ParseToken(reader, Core.TokenID.LrBracket);
 
             var n_records = new List<Node_ValueRecord>();
 
             do {
-                n_records.Add(new Node_ValueRecord(reader));
+                if (ParseOptionalToken(reader, "PUBLIC") != null) {
+                    @public = true;
+                }
+                else if (ParseOptionalToken(reader, "PRIVATE") != null) {
+                    @public = false;
+                }
+
+                n_records.Add(new Node_ValueRecord(reader, @public));
             }
             while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
 

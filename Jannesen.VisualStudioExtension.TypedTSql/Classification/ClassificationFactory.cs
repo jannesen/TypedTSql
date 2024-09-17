@@ -100,6 +100,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Classification
             case LTTS.Core.TokenID.BitOr:                           return cfOperator;
             case LTTS.Core.TokenID.BitAnd:                          return cfOperator;
             case LTTS.Core.TokenID.BitXor:                          return cfOperator;
+            case LTTS.Core.TokenID.ShiftLeft:                       return cfOperator;
+            case LTTS.Core.TokenID.ShiftRight:                      return cfOperator;
             case LTTS.Core.TokenID.LessEqual:                       return cfOperator;
             case LTTS.Core.TokenID.GreaterEqual:                    return cfOperator;
             case LTTS.Core.TokenID.PlusAssign:                      return cfOperator;

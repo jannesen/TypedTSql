@@ -30,8 +30,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public  static readonly SqlTypeNative       VarChar_4           = new SqlTypeNative(SystemType.VarChar, maxLength:4);
         public  static readonly SqlTypeNative       VarChar_16          = new SqlTypeNative(SystemType.VarChar, maxLength:16);
         public  static readonly SqlTypeNative       VarChar_48          = new SqlTypeNative(SystemType.VarChar, maxLength:48);
+        public  static readonly SqlTypeNative       VarChar_8000        = new SqlTypeNative(SystemType.VarChar, maxLength:8000);
         public  static readonly SqlTypeNative       VarChar_MAX         = new SqlTypeNative(SystemType.VarChar, maxLength:-1);
-        public  static readonly SqlTypeNative       NChar_2             = new SqlTypeNative(SystemType.NChar, maxLength:2);
+        public  static readonly SqlTypeNative       NChar_2             = new SqlTypeNative(SystemType.NChar,   maxLength:2);
         public  static readonly SqlTypeNative       NVarChar_32         = new SqlTypeNative(SystemType.NVarChar, maxLength:32);
         public  static readonly SqlTypeNative       NVarChar_40         = new SqlTypeNative(SystemType.NVarChar, maxLength:40);
         public  static readonly SqlTypeNative       NVarChar_128        = new SqlTypeNative(SystemType.NVarChar, maxLength:128);
@@ -550,7 +551,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
                                 SymbolType          ISymbol.Type                    { get { return SymbolType.NativeType;   } }
                                 string              ISymbol.Name                    { get { return SystemType.ToString();   } }
-                                string              ISymbol.FullName             { get { return SystemType.ToString();   } }
+                                string              ISymbol.FullName                { get { return SystemType.ToString();   } }
                                 object              ISymbol.Declaration             { get { return null;                    } }
                                 ISymbol             ISymbol.ParentSymbol            { get { return null;                    } }
                                 ISymbol             ISymbol.SymbolNameReference     { get { return null;                    } }

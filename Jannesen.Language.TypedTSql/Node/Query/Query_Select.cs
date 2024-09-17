@@ -187,22 +187,25 @@ namespace Jannesen.Language.TypedTSql.Node
                     context.AddError(firstcol, err);
                 }
 
-                DataModel.ColumnUnion       column;
-                DataModel.Column            referencedColumn; 
-                if (firstcol.n_ColumnName != null)
+                DataModel.Column    column;
+                DataModel.Column    referencedColumn; 
+                if (firstcol.n_ColumnName != null) {
                     column = new DataModel.ColumnUnion(firstcol.n_ColumnName.ValueString, expressions, typeResult,
                                                        declaration: firstcol.n_ColumnName);
-                else
-                if ((referencedColumn = firstcol.n_Expression.ReferencedColumn) != null)
+                }
+                else if ((referencedColumn = firstcol.n_Expression.ReferencedColumn) != null) {
                     column = new DataModel.ColumnUnion(referencedColumn.Name, expressions, typeResult,
-                                                       nameReference:   referencedColumn,
+                                                       nameReference:   referencedColumn.Symbol,
                                                        declaration:     referencedColumn.Declaration);
-                else
+                }
+                else {
                     column = new DataModel.ColumnUnion("", expressions, typeResult);
+                }
 
                 if (column.Name.Length > 0) {
-                    for (int i = 0 ; i < n_Selects.Length ; ++i)
+                    for (int i = 0 ; i < n_Selects.Length ; ++i) {
                         ((Query_Select_ColumnExpression)n_Selects[i].n_Columns.n_Columns[colidx]).n_ColumnName?.SetSymbolUsage(column, DataModel.SymbolUsageFlags.Write);
+                    }
                 }
 
                 columns[colidx] = column;

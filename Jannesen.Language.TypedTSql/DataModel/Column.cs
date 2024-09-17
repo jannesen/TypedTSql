@@ -4,9 +4,9 @@ using System.Data.SqlClient;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    public abstract class Column: IExprResult, ISymbol
+    public abstract class Column: IExprResult
     {
-        public                  SymbolType              Type                    { get { return SymbolType.Column;    } }
+        public      abstract    ISymbol                 Symbol                  { get; }
         public      abstract    string                  Name                    { get; }
         public                  string                  FullName                { get { return ParentSymbol != null
                                                                                             ? (ParentSymbol.FullName ?? "???") + "." + Library.SqlStatic.QuoteName(Name)
@@ -18,6 +18,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public      abstract    ValueFlags              ValueFlags              { get; }
         public      abstract    ISqlType                SqlType                 { get; }
         public      abstract    string                  CollationName           { get; }
+        public      virtual     Node.IExprNode          Expr                    { get { return null;                 } }
         public                  bool                    isNullable              { get { return (ValueFlags & ValueFlags.Nullable     ) != 0;    } }
         public                  bool                    isUnnammed              { get { return (ValueFlags & ValueFlags.Unnammed     ) != 0;    } }
         public                  bool                    isAnsiPadded            { get { return (ValueFlags & ValueFlags.AnsiPadded   ) != 0;    } }
@@ -36,6 +37,10 @@ namespace Jannesen.Language.TypedTSql.DataModel
         }
 
         public      virtual     void                    SetUsed()
+        {
+        }
+
+        internal    virtual     void                    SetParent(DataModel.ISymbol parent)
         {
         }
 

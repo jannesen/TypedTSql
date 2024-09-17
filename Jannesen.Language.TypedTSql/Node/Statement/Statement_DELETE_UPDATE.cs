@@ -79,7 +79,8 @@ namespace Jannesen.Language.TypedTSql.Node
             else {
                 n_Target.TranspileNode(contextRowSet);
                 contextStatement.SetTarget(n_Target);
-                contextRowSet.RowSets.Add(new DataModel.RowSet("", n_Target.Columns, source: n_Target.Table));
+                contextRowSet.RowSets.Add(new DataModel.RowSet(DataModel.RowSetFlags.Target, n_Target.Columns,
+                                                               source: n_Target.Table));
             }
 
             if (n_WhereCursor != null)

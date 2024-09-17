@@ -75,6 +75,14 @@ namespace Jannesen.Language.TypedTSql.Core
         {
             _symbolData = new DataModel.SymbolUsage(symbol, usage);
         }
+        public                      void                    SetSymbolUsage(DataModel.Column column, DataModel.SymbolUsageFlags usage)
+        {
+            SetSymbolUsage(column.Symbol, usage);
+        }
+        public                      void                    SetSymbolUsage(DataModel.Variable variable, DataModel.SymbolUsageFlags usage)
+        {
+            SetSymbolUsage(variable.Symbol, usage);
+        }
         internal                    void                    ClearSymbol()
         {
             if (_symbolData != null) {

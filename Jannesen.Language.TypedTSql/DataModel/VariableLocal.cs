@@ -2,12 +2,15 @@
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    public class VariableLocal: Variable
+    public class VariableLocal: Variable, ISymbol
     {
-        public  override        SymbolType              Type                { get { return DataModel.SymbolType.LocalVariable; } }
-        public  override        object                  Declaration         { get { return _declaration; } }
-        public  override        VariableFlags           Flags               { get { return _flags; } }
-        public  override        string                  SqlName             { get { return _sqlName; } }
+        public  override        ISymbol                 Symbol              => this;
+        public                  SymbolType              Type                => SymbolType.LocalVariable;
+        public                  object                  Declaration         => _declaration;
+        public                  DataModel.ISymbol       ParentSymbol        => null;
+        public                  DataModel.ISymbol       SymbolNameReference => null;
+        public  override        VariableFlags           Flags               => _flags;
+        public  override        string                  SqlName             => _sqlName;
 
         private                 object                  _declaration;
         private                 VariableFlags           _flags;

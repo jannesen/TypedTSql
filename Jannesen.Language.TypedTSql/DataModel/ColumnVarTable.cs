@@ -4,15 +4,17 @@ using System.Data.SqlClient;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    public class ColumnVarTable: Column
+    public class ColumnVarTable: Column, ISymbol
     {
-        public      override    string                  Name                    { get { return _name;                } }
-        public      override    object                  Declaration             { get { return _declaration;         } }
-        public      override    ISymbol                 ParentSymbol            { get { return _parent;              } }
-        public      override    ISqlType                SqlType                 { get { return _sqlType;             } }
-        public      override    string                  CollationName           { get { return _collationName;       } }
-        public      override    ISymbol                 SymbolNameReference     { get { return _nameReference;       } }
-        public      override    ValueFlags              ValueFlags              { get { return _flags;               } }
+        public      override    ISymbol                 Symbol                  => this;
+        public                  SymbolType              Type                    => SymbolType.Column;
+        public      override    string                  Name                    => _name;
+        public      override    object                  Declaration             => _declaration;
+        public      override    ISymbol                 ParentSymbol            => _parent;
+        public      override    ISqlType                SqlType                 => _sqlType;
+        public      override    string                  CollationName           => _collationName;
+        public      override    ISymbol                 SymbolNameReference     => _nameReference;
+        public      override    ValueFlags              ValueFlags              => _flags;
 
         private                 ISymbol                 _parent;
         private                 string                  _name;
@@ -37,7 +39,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             _declaration         = declaration;
             _collationName       = collationName;
             _nameReference       = nameReference;
-            _flags               = (flags & ValueFlags.Nullable);
+            _flags               = (flags & ValueFlags.Nullable) | ValueFlags.Column;
         }
     }
 }
