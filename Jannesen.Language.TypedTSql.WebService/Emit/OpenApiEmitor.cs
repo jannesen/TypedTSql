@@ -495,7 +495,7 @@ add_parameter:                  {
                 oneOf.oneOf.Add(_getOpenApiSchema(r.n_Expression, r.n_Expression));
             }
 
-            return oneOf;
+            return (oneOf.oneOf.Count == 1) ? oneOf.oneOf.First() : oneOf;
         }
         private                 OpenApiSchema                           _getOpenApiSchema(object declaration, LTTSQL.Node.IExprNode expression)
         {
