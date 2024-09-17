@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using YamlDotNet.Serialization;
 using LTTSQL = Jannesen.Language.TypedTSql;
+using Jannesen.Language.TypedTSql.Logic;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
 {
@@ -251,30 +252,35 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                         }
                     }
                     else {
-                        foreach (var x in parameter.Source.Split('|')) {
+                        var sources             = parameter.Source.Split('|');
+                        var parameterIsOptional = sources.Length > 1 || parameter.Parameter?.DefaultValue != default;
+                        
+                        foreach (var x in sources) {
                             var     sn     = x.Split(':');
                             var     source = sn[0];
                             var     name   = (sn.Length >= 2 ? sn[1] : parameter.n_Name.Text.Substring(1));
                             string  @in;
-                            bool    required;
+                            bool    required = !parameterIsOptional && parameter.n_Options.n_Required;
 
                             switch(source) {
                             case "urlpath":
                                 @in = "path";
-                                required = parameter.n_Options.n_Required;
                                 goto add_parameter;
                             case "querystring":
                                 @in = "query";
-                                required = true;
-
 add_parameter:                  {
                                     var typeschema = _getOpenApiSchema(parameter, parameter.SqlType);
+                                    if (parameter.Parameter?.DefaultValue != default) {
+                                        if (typeschema is OpenApiSchemaType s) {
+                                            s.@default = parameter.Parameter.DefaultValue;
+                                        }
+                                    }
 
                                     if (operation.parameters == null) operation.parameters = new OpenApiParameters();
                                     if (operation.parameters.TryGet(@in, name, out var found)) {
                                         if (required) {
                                             if (found.schema != typeschema) {
-                                                throw new EmitException(parameter, "parameter already defined with deferent type.");
+                                                throw new EmitException(parameter, "parameter already defined with different type.");
                                             }
 
                                             found.required = true;
@@ -284,7 +290,7 @@ add_parameter:                  {
                                         operation.parameters.Add(new OpenApiParameter() {
                                                                      @in      = @in,
                                                                      name     = name,
-                                                                     required = true,
+                                                                     required = required,
                                                                      schema   = typeschema
                                                                  });
                                     }
@@ -308,7 +314,7 @@ add_parameter:                  {
                                                             };
                                 }
 
-                                _addPropertyToRequest(parameter, operation, name, _getOpenApiSchema(parameter, parameter.SqlType), parameter.n_Options.n_Required);
+                                _addPropertyToRequest(parameter, operation, name, _getOpenApiSchema(parameter, parameter.SqlType), !parameterIsOptional && parameter.n_Options.n_Required);
                                 break;
 
                             case "header":
@@ -700,7 +706,7 @@ add_parameter:                  {
             switch(nativeType.SystemType) {
             case LTTSQL.DataModel.SystemType.Bit:
                 return new OpenApiSchemaType() {
-                            type      = "boolean"
+                            type      = "boolean",
                         };
 
             case LTTSQL.DataModel.SystemType.TinyInt:

@@ -212,6 +212,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public              int?                                    maxLength               { get; set; }
         public              object                                  minValue                { get; set; }
         public              object                                  maxValue                { get; set; }
+        public              object                                  @default                { get; set; }
         public              object                                  multipleOf              { get; set; }
         public              string                                  pattern                 { get; set; }
 
@@ -278,6 +279,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                    left.maxValue      == right.maxValue     &&
                    left.multipleOf    == right.multipleOf   &&
                    left.pattern       == right.pattern      &&
+                   left.@default      == right.@default     &&
                    left._attributes   == right._attributes;
         }
         public  static      bool                                    operator != (OpenApiSchemaType left, OpenApiSchemaType right)
@@ -304,6 +306,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 hashCode = (hashCode * 397) ^ (maxValue      != null ? maxValue.GetHashCode()      : 0);
                 hashCode = (hashCode * 397) ^ (multipleOf    != null ? multipleOf.GetHashCode()    : 0);
                 hashCode = (hashCode * 397) ^ (pattern       != null ? pattern.GetHashCode()       : 0);
+                hashCode = (hashCode * 397) ^ (@default      != null ? @default.GetHashCode()       : 0);
                 hashCode = (hashCode * 397) ^ (_attributes   != null ? _attributes.GetHashCode()   : 0);
                 return hashCode;
             }
@@ -322,12 +325,13 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             if (items       != null) x.Add("items",         items           );
             if (properties  != null) x.Add("properties",    properties      );
             if (required    != null) x.Add("required",      required        );
-            if (minLength.HasValue) x.Add("minLength",      maxLength.Value );
-            if (maxLength.HasValue) x.Add("maxLength",      maxLength.Value );
+            if (minLength.HasValue)  x.Add("minLength",     minLength.Value );
+            if (maxLength.HasValue)  x.Add("maxLength",     maxLength.Value );
             if (minValue    != null) x.Add("minValue",      minValue        );
             if (maxValue    != null) x.Add("maxValue",      maxValue        );
             if (multipleOf  != null) x.Add("multipleOf",    multipleOf      );
             if (pattern     != null) x.Add("pattern",       pattern         );
+            if (@default    != null) x.Add("default",       @default        );
 
             if (_attributes  != null) {
                 foreach (var o in _attributes) {
