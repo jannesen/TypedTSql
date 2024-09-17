@@ -76,11 +76,24 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                         }
 
                         if (_webMethod.n_returns != null && method != "DELETE") {
-                            foreach(var rtn in _webMethod.n_returns) {
-                                xmlWriter.WriteStartElement("response");
-                                    xmlWriter.WriteAttributeString("responsemsg", rtn.ResponseTypeName);
-                                    Node.RETURNS.WriteResponseXml(xmlWriter, rtn.SqlType);
-                                xmlWriter.WriteEndElement();
+                            for (int i = 0 ; i < _webMethod.n_returns.Count ; ++i) {
+                                var rtn = _webMethod.n_returns[i];
+
+                                bool dup = false;
+
+                                for (int j = 0 ; j < i ; ++j) {
+                                    if (rtn.ResponseTypeName == _webMethod.n_returns[j].ResponseTypeName) {
+                                        dup = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!dup) {
+                                    xmlWriter.WriteStartElement("response");
+                                        xmlWriter.WriteAttributeString("responsemsg", rtn.ResponseTypeName);
+                                        Node.RETURNS.WriteResponseXml(xmlWriter, rtn.SqlType);
+                                    xmlWriter.WriteEndElement();
+                                }
                             }
                         }
 
