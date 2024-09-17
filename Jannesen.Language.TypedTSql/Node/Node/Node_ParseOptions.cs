@@ -21,11 +21,11 @@ namespace Jannesen.Language.TypedTSql.Node
             }
         }
 
-        internal                void                    TranspileInit(SourceFile sourceFile, GlobalCatalog catalog)
+        internal                void                    TranspileInit(Transpile.TranspileContext transpileContext, SourceFile sourceFile)
         {
             if (n_Schema != null) {
                 var name   = n_Schema.ValueString;
-                var schema = catalog.GetSchema(name);
+                var schema = transpileContext.Catalog.GetSchema(name);
                 if (schema == null)
                     throw new TranspileException(n_Schema, "Unknown schema '" + name + "'.");
 

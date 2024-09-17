@@ -38,6 +38,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         SequenceObject,
         ServiceQueue,
         Synonym,
+        Attribute,
         Service,
         ServiceMethod,
         ServiceComplexType,

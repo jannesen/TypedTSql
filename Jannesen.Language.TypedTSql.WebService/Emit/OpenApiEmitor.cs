@@ -5,9 +5,9 @@ using System.Text;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
-
 using LTTSQL = Jannesen.Language.TypedTSql;
 using Jannesen.Language.TypedTSql.Library;
+using Jannesen.Language.TypedTSql.WebService.Library;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
 {
@@ -123,10 +123,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
         }
 
-        public      readonly        string                              Filename;
-        public      readonly        Node.WEBSERVICE_EMITOR_OPENAPI      ConfigNode;
-        private     readonly        OpenApiDocument                     _openApiDocument;
-        private     readonly        Dictionary<object, string>          _typeSchemaMap;
+        public      readonly        string                                  Filename;
+        public      readonly        Node.WEBSERVICE_EMITOR_OPENAPI          ConfigNode;
+        private     readonly        OpenApiDocument                         _openApiDocument;
+        private     readonly        Dictionary<object, OpenApiSchemaRef>    _typeSchemaMap;
 
         private     static          ISerializer                         _yamlSerializer = _initSerializer();
 
@@ -142,7 +142,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                                      },
                                      paths = new OpenApiPaths()
                                  };
-            _typeSchemaMap = new Dictionary<object, string>(4096);
+            _typeSchemaMap     = new Dictionary<object, OpenApiSchemaRef>(4096);
         }
 
         public                  void                                    CleanTarget()
@@ -152,13 +152,37 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public                  void                                    AddWebMethod(Node.WEBMETHOD webMethod)
         {
             if (ConfigNode.n_Path == null || webMethod.n_Name.StartsWith(ConfigNode.n_Path)) {
-                var pathItem = _getCreatePathItem(webMethod.n_Name);
+                var path     = webMethod.n_Name.Contains("{") ? (new NameNormalizer()).Normalize(webMethod.n_Name) : "/" + webMethod.n_Name;
+                var pathItem = _getCreatePathItem(path);
 
                 foreach (var method in webMethod.n_Declaration.n_Methods) {
                     var operation = _createOperation(pathItem, method);
                     _setOperationExtendedProperties(operation, webMethod);
                     _processParameters(operation, webMethod.n_Parameters.n_Parameters, method);
-                    _createResponse(operation, webMethod.n_Declaration.n_WebHttpHandler, webMethod);
+                    _createResponse(operation, webMethod.n_Declaration.n_WebHttpHandler, webMethod, method);
+
+                    if (webMethod.n_Declaration.n_Attributes?.Attributes != null) {
+                        foreach (var a in webMethod.n_Declaration.n_Attributes?.Attributes) {
+                            operation.SetAttribute(a.Name, a.Value);
+                        }
+                    }
+
+                    if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
+                        switch(operation.x_kind) {
+                        case "select-lookup":
+                        case "select-search":
+                            var selectValueType = webMethod.t_SelectValueType;
+
+                            if (selectValueType != null && _typeSchemaMap.TryGetValue(selectValueType, out var schemaRef) &&
+                                schemaRef.schema is OpenApiSchemaType schema) {
+                                schema.SetAttribute("x-" + operation.x_kind, path);
+                            }
+                            else {
+                                throw new EmitException(webMethod.n_Declaration.n_ServiceMethodName, "Can't find related schema for '" + operation.x_kind + "'");
+                            }
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -177,10 +201,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
         }
 
-        private                 OpenApiPathItem                         _getCreatePathItem(string name)
+        private                 OpenApiPathItem                         _getCreatePathItem(string path)
         {
-            var path = name.Contains("{") ? (new NameNormalizer()).Normalize(name) : "/" + name;
-
             if (!_openApiDocument.paths.TryGetValue(path, out var pathItem)) {
                 pathItem = new OpenApiPathItem();
                 _openApiDocument.paths.Add(path, pathItem);
@@ -218,6 +240,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         {
             var timeout = webMethod.n_Declaration.GetWebHandlerOptionValueByName("timeout");
             operation.x_timeout = timeout != null ? int.Parse(timeout) : 30;
+            operation.x_kind    = webMethod.n_Declaration.n_Kind;
         }
         private                 void                                    _processParameters(OpenApiOperation operation, LTTSQL.Node.Node_Parameter[] parameters, string method)
         {
@@ -337,17 +360,17 @@ add_parameter:                  {
                 }
             }
         }
-        private                 void                                    _createResponse(OpenApiOperation operation, string handler, Node.WEBMETHOD webMethod)
+        private                 void                                    _createResponse(OpenApiOperation operation, string handler, Node.WEBMETHOD webMethod, string method)
         {
             operation.responses = new OpenApiResponses();
 
             switch(handler) {
             case "sql-json2":
-                if (webMethod.n_returns != null && webMethod.n_returns.Count > 0) {
+                if (method != "DELETE" && webMethod.n_returns != null && webMethod.n_returns.Count > 0) {
                     _addReponse(operation, "application/json", _getOpenApiSchema(webMethod.n_returns));
                 }
                 else {
-                    operation.responses.Add("201", new OpenApiBody() {
+                    operation.responses.Add("200", new OpenApiBody() {
                                                        description = "Accepted"
                                                    });
                 }
@@ -416,10 +439,7 @@ add_parameter:                  {
                 }
 
                 if (required) {
-                    if (schema.required == null) {
-                        schema.required = new HashSet<string>();
-                    }
-                    schema.required.Add(name);
+                    schema.AddRequired(name);
                 }
 
                 schema = nextSchema;
@@ -456,7 +476,7 @@ add_parameter:                  {
             }
 
             var oneOf = new OpenApiSchemaOneOf() {
-                            oneOf = new HashSet<OpenApiSchema>()
+                            oneOf = new ComparableHashSet<OpenApiSchema>()
                         };
 
             foreach(var r in returns) {
@@ -469,7 +489,7 @@ add_parameter:                  {
         {
             if (expression is LTTSQL.Node.Expr_ServiceComplexType complexType) {
                 if (_typeSchemaMap.TryGetValue(complexType.DeclarationComplexType, out var schemaRef)) {
-                    return new OpenApiSchemaRef() { @ref = schemaRef };
+                    return schemaRef;
                 }
 
                 var schema = new OpenApiSchemaType() {
@@ -479,17 +499,14 @@ add_parameter:                  {
 
                 foreach(var column in complexType.ResponseColumns) {
                     if (!column.ResultColumn.isNullable) {
-                        if (schema.required == null) {
-                            schema.required = new HashSet<string>();
-                        }
-                        schema.required.Add(column.n_FieldName.ValueString);
+                        schema.AddRequired(column.n_FieldName.ValueString);
                     }
                     schema.properties.Add(column.n_FieldName.ValueString, _getOpenApiSchema(column, column.n_Expression));
                 }
 
                 if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
                     if ((complexType.DeclarationComplexType as Node.WEBCOMPLEXTYPE).ReceivesSqlType is LTTSQL.DataModel.EntityTypeUser postUdt) {
-                        schema.x_post_schema = _schemaName(postUdt);
+                        schema.SetAttribute("x-value-schema", _getOpenApiSchema(declaration, postUdt));
                     }
 
                     return _addOpenApiSchema(declaration, _schemaName(complexType), complexType.DeclarationComplexType, schema);
@@ -534,10 +551,7 @@ add_parameter:                  {
 
             foreach(var column in exprResponseNode.ResponseColumns) {
                 if (!column.ResultColumn.isNullable) {
-                    if (rtn.required == null) {
-                        rtn.required = new HashSet<string>();
-                    }
-                    rtn.required.Add(column.n_FieldName.ValueString);
+                    rtn.AddRequired(column.n_FieldName.ValueString);
                 }
                 rtn.properties.Add(column.n_FieldName.ValueString, _getOpenApiSchema(column, column.n_Expression));
             }
@@ -546,60 +560,96 @@ add_parameter:                  {
         }
         private                 OpenApiSchema                           _getOpenApiSchema(object declaration, LTTSQL.DataModel.ISqlType sqlType)
         {
-            if (_typeSchemaMap.TryGetValue(sqlType, out var @ref)) {
-                return new OpenApiSchemaRef() { @ref = @ref };
-            }
-
             if ((sqlType.TypeFlags & DataModel.SqlTypeFlags.Json) != 0) {
                 return _getOpenApiSchema(declaration, sqlType.JsonSchema);
             }
 
-            if (sqlType is LTTSQL.DataModel.EntityTypeUser     entityTypeUser)
-            {
-                var udtSchema = _getOpenApiSchema(declaration, entityTypeUser.NativeType);
+            if (sqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
+                return _getOpenApiSchema(declaration, entityTypeUser);
+            }
 
-                if ((sqlType.TypeFlags & DataModel.SqlTypeFlags.Values) != 0) {
-                    udtSchema.x_values = new OpenApiX_Values();
+            if (sqlType is LTTSQL.DataModel.EntityTypeExternal entityTypeExternal) {
+                return _getOpenApiSchema(declaration, entityTypeExternal);
+            }
 
-                    foreach(var value in sqlType.Values) {
+            if (sqlType is LTTSQL.DataModel.EntityTypeExtend entityTypeExtend) {
+                return _getOpenApiSchema(declaration, entityTypeExtend);
+            }
+
+            if (sqlType is LTTSQL.DataModel.SqlTypeNative nativeType) {
+                return _getOpenApiSchema(declaration, nativeType);
+            }
+
+            throw new EmitException(declaration, "Can't create openapischema for " + sqlType.GetType().Name + ".");
+        }
+        private                 OpenApiSchema                           _getOpenApiSchema(object declaration, LTTSQL.DataModel.EntityTypeUser entityTypeUser)
+        {
+            if (_typeSchemaMap.TryGetValue(entityTypeUser, out var schemaRef)) {
+                return schemaRef;
+            }
+
+            var udtSchema = _getOpenApiSchema(declaration, entityTypeUser.NativeType);
+
+            if (entityTypeUser.Attributes != null) {
+                foreach(var attr in entityTypeUser.Attributes) {
+                    udtSchema.SetAttribute(attr.Name, attr.Value);
+                }
+            }
+
+
+            if (entityTypeUser.Values != null && entityTypeUser.Values.hasPublic()) {
+                var x_values = new OpenApiX_Values();
+
+                bool select_static = udtSchema.GetAttribute("x-select-source") is string s && s == "static";
+
+                foreach(var value in entityTypeUser.Values) {
+                    if (value.Public) {
                         var x_value = new OpenApiX_Value() {
-                                          name  = value.Name,
-                                          value = value.Value
-                                      };
+                                            name  = value.Name,
+                                            value = value.Value
+                                        };
 
-                        if (value.Fields != null) {
-                            x_value.fields = new Dictionary<string, object>();
+                        if (select_static && value.Fields != null) {
+                            x_value.fields = new ComparableDictionary<string, object>();
                             foreach (var field in value.Fields) {
                                 x_value.fields.Add(field.Name, field.Value);
                             }
                         }
 
-                        udtSchema.x_values.Add(x_value);
+                        x_values.Add(x_value);
                     }
                 }
 
-                return _addOpenApiSchema(declaration, entityTypeUser, udtSchema);
+                udtSchema.SetAttribute("x-values", x_values);
             }
 
-            if (sqlType is LTTSQL.DataModel.EntityTypeExternal entityTypeExternal)
-            {
+            if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
+                return _addOpenApiSchema(declaration, _schemaName(entityTypeUser), entityTypeUser, udtSchema);
+            }
+            else {
+                return udtSchema;
+            }
+        }
+        private                 OpenApiSchema                           _getOpenApiSchema(object declaration, LTTSQL.DataModel.EntityTypeExternal entityTypeExternal)
+        {
                 return new OpenApiSchemaType() {
                            type      = "string",
                            format    = entityTypeExternal.Name
                        };
+        }
+        private                 OpenApiSchema                           _getOpenApiSchema(object declaration, LTTSQL.DataModel.EntityTypeExtend entityTypeExtend)
+        {
+            if (_typeSchemaMap.TryGetValue(entityTypeExtend, out var schemaRef)) {
+                return schemaRef;
             }
 
-            if (sqlType is LTTSQL.DataModel.EntityTypeExtend entityTypeExtend)
-            {
-                return _addOpenApiSchema(declaration, entityTypeExtend, _getOpenApiSchema(declaration, entityTypeExtend.ParentType));
+            var etschema = _getOpenApiSchema(declaration, entityTypeExtend.ParentType);
+            if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
+                return _addOpenApiSchema(declaration, _schemaName(entityTypeExtend), entityTypeExtend, etschema);
             }
-
-            if (sqlType is LTTSQL.DataModel.SqlTypeNative      nativeType)
-            {
-                return _getOpenApiSchema(declaration, nativeType);
+            else {
+                return etschema;
             }
-
-            throw new EmitException(declaration, "Can't create openapischema for " + sqlType.GetType().Name + ".");
         }
         private                 OpenApiSchema                           _getOpenApiSchema(object declaration, LTTSQL.DataModel.JsonSchema jsonSchema)
         {
@@ -613,10 +663,7 @@ add_parameter:                  {
                     schema.properties.Add(property.Name, _getOpenApiSchema(declaration, property.JsonSchema));
 
                     if (property.JsonSchema is LTTSQL.DataModel.JsonSchemaValue jsv && (jsv.Flags & DataModel.JsonFlags.Required) != 0) {
-                        if (schema.required == null) {
-                            schema.required   = new HashSet<string>();
-                        }
-                        schema.required.Add(property.Name);
+                        schema.AddRequired(property.Name);
                     }
                 }
 
@@ -675,7 +722,7 @@ add_parameter:                  {
             case LTTSQL.DataModel.SystemType.VarBinary:
                 return new OpenApiSchemaType() {
                             type      = "string",
-                            format    = "base64"
+                            format    = "byte"
                         };
 
             case LTTSQL.DataModel.SystemType.Date:
@@ -701,15 +748,6 @@ add_parameter:                  {
                 throw new EmitException(declaration, "No type mapping for '" + nativeType.ToString() + "'.");
             }
         }
-        private                 OpenApiSchema                           _addOpenApiSchema(object declaration, LTTSQL.DataModel.EntityType entityType, OpenApiSchema schema)
-        {
-            if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
-                return _addOpenApiSchema(declaration, _schemaName(entityType), entityType, schema);
-            }
-            else {
-                return schema;
-            }
-        }
         private                 OpenApiSchemaRef                        _addOpenApiSchema(object declaration, string name, object type, OpenApiSchema schema)
         {
             try {
@@ -724,9 +762,11 @@ add_parameter:                  {
 
                 _openApiDocument.components.schemas.Add(name, schema);
 
-                _typeSchemaMap.Add(type,  @ref);
+                var r = new OpenApiSchemaRef() { @ref = @ref, schema = schema };
 
-                return new OpenApiSchemaRef() { @ref = @ref };
+                _typeSchemaMap.Add(type,  r);
+
+                return r;
             }
             catch(Exception err) {
                 throw new EmitException(declaration, "Can't create openapi component.schemas.", err);
@@ -746,17 +786,19 @@ add_parameter:                  {
                                                         new OpenApiSchemaType() {
                                                             type       = "object",
                                                             properties = new OpenApiSchemaProperties() {
-                                                                             { "code",      new OpenApiSchemaType() { type = "string" }
-                                                                             },
+                                                                             { "code",      new OpenApiSchemaType() { type = "string" } },
                                                                              { "details",   new OpenApiSchemaType() {
-                                                                                                type        = "object",
-                                                                                                properties  = new OpenApiSchemaProperties() {
-                                                                                                                  { "class",    new OpenApiSchemaType() { type = "string" } },
-                                                                                                                  { "message",  new OpenApiSchemaType() { type = "string" } }
-                                                                                                              }
-                                                                                            }
-                                                                             }
-                                                                         }
+                                                                                                type       = "array",
+                                                                                                items      = new OpenApiSchemaType() {
+                                                                                                                  type        = "object",
+                                                                                                                  properties  = new OpenApiSchemaProperties() {
+                                                                                                                                    { "class",    new OpenApiSchemaType() { type = "string" } },
+                                                                                                                                    { "message",  new OpenApiSchemaType() { type = "string" } }
+                                                                                                                                }
+                                                                                                               }
+                                                                                               }
+                                                                              }
+                                                            }
                                                         });
             }
 
@@ -786,6 +828,10 @@ add_parameter:                  {
                                  }
                    };
         }
+        private static          string                                  _schemaName(LTTSQL.Node.Expr_ServiceComplexType complexType)
+        {
+            return "ct." + complexType.n_Name.ValueString.Replace('/', '.').Replace(':', '.');
+        }
         private static          string                                  _schemaName(LTTSQL.DataModel.EntityType entityType)
         {
             var rtn = "ut.";
@@ -795,10 +841,6 @@ add_parameter:                  {
             }
             rtn += entityType.EntityName.Name.Replace('/', '.').Replace(':', '.');
             return rtn;
-        }
-        private static          string                                  _schemaName(LTTSQL.Node.Expr_ServiceComplexType complexType)
-        {
-            return "ct." + complexType.n_Name.ValueString.Replace('/', '.').Replace(':', '.');
         }
 
         private static          ISerializer                             _initSerializer()

@@ -59,6 +59,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public      readonly    IExprNode                       n_DefaultValue;
         public      readonly    With                            n_With;
         public      readonly    Node_Values                     n_Values;
+        public      readonly    Node_Attributes                 n_Attributes;
         public      readonly    Node_InstallInto                n_InstallInto;
 
         public                  DataModel.SqlTypeNative         NativeType          { get { return _nativeType; } }
@@ -110,27 +111,32 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Values = AddChild(new Node_Values(reader));
             }
 
+            if (Node_Attributes.CanParse(reader)) {
+                n_Attributes = AddChild(new Node_Attributes(reader));
+            }
+
             if (n_Values != null && reader.CurrentToken.isToken("INSTALL")) {
                 n_InstallInto = AddChild(new Node_InstallInto(reader));
             }
         }
 
-        public      override    void                            TranspileInit(Declaration_TYPE declaration, GlobalCatalog catalog, SourceFile sourceFile)
+        public      override    void                            TranspileInit(Transpile.TranspileContext transpileContext, Declaration_TYPE declaration, SourceFile sourceFile)
         {
-            n_DefaultValue?.TranspileNode(new Transpile.ContextInit(sourceFile));
+            n_DefaultValue?.TranspileNode(new Transpile.ContextInit(transpileContext, sourceFile));
 
             _nativeType = DataModel.SqlTypeNative.ParseNativeType(n_TypeName.ValueString, n_Parm1?.Text, n_Parm2?.Text);
             n_TypeName.SetSymbolUsage(_nativeType, DataModel.SymbolUsageFlags.Reference);
 
             var defaultValue = n_DefaultValue?.getConstValue(_nativeType);
 
-            if ((_entity = catalog.DefineTypeUser(declaration.EntityName)) == null)
+            if ((_entity = transpileContext.Catalog.DefineTypeUser(declaration.EntityName)) == null)
                 throw new TranspileException(declaration.n_Name, "Duplicate definition of type.");
 
             _entity.TranspileInit(new DataModel.DocumentSpan(sourceFile.Filename, declaration), _nativeType, defaultValue);
         }
         public      override    void                            TranspileNode(Transpile.Context context)
         {
+            n_Attributes?.TranspileNode(context);
             n_Values?.TranspileNode(context);
             n_InstallInto?.TranspileNode(context);
             n_Values?.TranspileNode(this, context);
@@ -140,7 +146,8 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             _entity.Transpiled((n_With != null ? n_With.n_TypeFlags : DataModel.SqlTypeFlags.CheckSafe),
                                n_Values?.Fields,
-                               n_Values?.ValuesRecords);
+                               n_Values?.ValuesRecords,
+                               n_Attributes?.Attributes);
         }
 
         public      override    void                            Emit(Core.EmitWriter emitWriter, Declaration_TYPE type)

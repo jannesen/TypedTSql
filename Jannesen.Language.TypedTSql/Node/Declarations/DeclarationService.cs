@@ -13,7 +13,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                                 DataModel.SymbolType                DataModel.ISymbol.Type                          { get { return DataModel.SymbolType.Service; } }
                                 string                              DataModel.ISymbol.Name                          { get { return EntityName.Name;              } }
-                                string                              DataModel.ISymbol.FullName                   { get { return SqlStatic.QuoteName(EntityName.Name); } }
+                                string                              DataModel.ISymbol.FullName                      { get { return SqlStatic.QuoteName(EntityName.Name); } }
                                 object                              DataModel.ISymbol.Declaration                   { get { return _declaration; } }
                                 DataModel.ISymbol                   DataModel.ISymbol.ParentSymbol                  { get { return null; } }
                                 DataModel.ISymbol                   DataModel.ISymbol.SymbolNameReference           { get { return null; } }
@@ -33,7 +33,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      abstract    bool                                IsMember(DeclarationObjectCode method);
 
-        public      override    void                                TranspileInit(Transpiler transpiler, GlobalCatalog catalog, SourceFile sourceFile)
+        public      override    void                                TranspileInit(Transpile.TranspileContext transpileContext, SourceFile sourceFile)
         {
         }
         public      override    void                                TranspileNode(Transpile.Context context)

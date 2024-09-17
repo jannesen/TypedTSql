@@ -9,15 +9,17 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public  override        SqlTypeFlags            TypeFlags           { get { testTranspiled(); return _typeFlags;    } }
         public  override        SqlTypeNative           NativeType          { get { if (_nativeType == null) throw new InvalidOperationException("Native type not set."); return _nativeType;   } }
-        public  override        object                  DefaultValue        { get { return _nullValue;                   } }
-        public                  ValueRecordFieldList    Fields              { get { testTranspiled(); return _fields;       } }
+        public  override        object                  DefaultValue        { get { return _nullValue;                      } }
+        public                  ValueRecordFieldList    Fields              { get { testTranspiled(); return _fields;       } } //!!TODO not used
         public  override        ValueRecordList         Values              { get { testTranspiled(); return _values;       } }
+        public                  IAttributes             Attributes          => _attributes;
 
         private                 SqlTypeFlags            _typeFlags;
         private                 SqlTypeNative           _nativeType;
         private                 object                  _nullValue;
         private                 ValueRecordFieldList    _fields;
         private                 ValueRecordList         _values;
+        private                 IAttributes             _attributes;
 
         internal                                        EntityTypeUser(DataModel.EntityName name, EntityFlags flags): base(SymbolType.TypeUser, name, flags)
         {
@@ -41,11 +43,12 @@ namespace Jannesen.Language.TypedTSql.DataModel
                     throw new ErrorException("Can't change native type.");
             }
 
-            _nullValue = nullValue;
-            _fields    = null;
-            _values    = null;
+            _nullValue  = nullValue;
+            _fields     = null;
+            _values     = null;
+            _attributes = null;
         }
-        internal                void                    Transpiled(SqlTypeFlags typeFlags, ValueRecordFieldList fields, ValueRecordList values)
+        internal                void                    Transpiled(SqlTypeFlags typeFlags, ValueRecordFieldList fields, ValueRecordList values, IAttributes attributes)
         {
             _typeFlags = typeFlags | SqlTypeFlags.SimpleType | SqlTypeFlags.UserType;
             _fields    = fields;
@@ -53,6 +56,8 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
             if (values != null)
                 _typeFlags |= SqlTypeFlags.Values;
+
+            _attributes = attributes;
 
             Transpiled();
         }

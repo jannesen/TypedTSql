@@ -27,9 +27,9 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseGrant(reader);
         }
 
-        public      override    void                            TranspileInit(Declaration_TYPE declaration, GlobalCatalog catalog, SourceFile sourceFile)
+        public      override    void                            TranspileInit(Transpile.TranspileContext transpileContext, Declaration_TYPE declaration, SourceFile sourceFile)
         {
-            if ((_entity = catalog.DefineTypeExternal(declaration.EntityName)) == null)
+            if ((_entity = transpileContext.Catalog.DefineTypeExternal(declaration.EntityName)) == null)
                 throw new TranspileException(declaration.n_Name, "Duplicate definition of type.");
 
             _entity.TranspileInit(new DataModel.DocumentSpan(sourceFile.Filename, declaration));

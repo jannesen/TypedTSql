@@ -7,13 +7,15 @@ namespace Jannesen.Language.TypedTSql.Node
 {
     public class Node_ValueRecord: Core.AstParseNode
     {
+        public      readonly    bool                            n_Public;
         public      readonly    Core.TokenWithSymbol            n_Name;
         public      readonly    IExprNode                       n_Value;
         public      readonly    Node_ValueField[]               n_Fields;
         public                  DataModel.ValueRecord           ValueRecord                 { get; private set; }
 
-        public                                                  Node_ValueRecord(Core.ParserReader reader)
+        public                                                  Node_ValueRecord(Core.ParserReader reader, bool @public)
         {
+            n_Public = @public;
             n_Name = ParseName(reader);
             ParseToken(reader, Core.TokenID.Equal);
             n_Value = ParseExpression(reader);
@@ -68,6 +70,7 @@ namespace Jannesen.Language.TypedTSql.Node
             return new DataModel.ValueRecord(n_Name.ValueString,
                                              n_Value.getConstValue(),
                                              n_Name,
+                                             n_Public,
                                              fields);
         }
     }

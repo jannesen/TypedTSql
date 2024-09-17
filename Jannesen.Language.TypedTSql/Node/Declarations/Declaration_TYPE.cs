@@ -39,12 +39,12 @@ namespace Jannesen.Language.TypedTSql.Node
             }
         }
 
-        public      override    void                            TranspileInit(Transpiler transpiler, GlobalCatalog catalog, SourceFile sourceFile)
+        public      override    void                            TranspileInit(Transpile.TranspileContext transpileContext, SourceFile sourceFile)
         {
             Transpiled             = false;
             _declarationTranspiled = false;
 
-            n_TypeDeclaration.TranspileInit(this, catalog, sourceFile);
+            n_TypeDeclaration.TranspileInit(transpileContext, this, sourceFile);
         }
         public      override    void                            TranspileNode(Transpile.Context context)
         {

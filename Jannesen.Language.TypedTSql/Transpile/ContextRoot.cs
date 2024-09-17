@@ -4,12 +4,11 @@ namespace Jannesen.Language.TypedTSql.Transpile
 {
     public class ContextRoot: Context
     {
+        public      override    TranspileContext                    TranspileContext        { get { return _transpilerContext;      } }
         public      override    Context                             Parent                  { get { return null;                    } }
         public      override    ContextRoot                         RootContext             { get { return this;                    } }
         public      override    ContextBlock                        BlockContext            { get { return null;                    } }
-        public      override    Transpiler                          Transpiler              { get { return _transpiler;             } }
         public      override    SourceFile                          SourceFile              { get { return _sourceFile;             } }
-        public      override    GlobalCatalog                       Catalog                 { get { return _catalog;                } }
         public      override    Node.Node_ParseOptions              Options                 { get { return _options;                } }
         public      override    bool                                ReportNeedTranspile     { get { return _reportNeedTranspile;    } }
         public      override    Node.DeclarationEntity              DeclarationEntity       { get { return _declarationEntity;      } }
@@ -20,9 +19,8 @@ namespace Jannesen.Language.TypedTSql.Transpile
         public                  int                                 ForNr;
         public                  int                                 StoreTargetNr;
 
-        private                 Transpiler                          _transpiler;
+        private                 TranspileContext                    _transpilerContext;
         private                 SourceFile                          _sourceFile;
-        private                 GlobalCatalog                       _catalog;
         private                 Node.Node_ParseOptions              _options;
         private                 bool                                _reportNeedTranspile;
         private                 Node.DeclarationEntity              _declarationEntity;
@@ -31,11 +29,10 @@ namespace Jannesen.Language.TypedTSql.Transpile
         private                 DataModel.CursorList                _cursorList;
         private                 DataModel.ISqlType                  _scopeIndentityType;
 
-        internal                                                    ContextRoot(Transpiler transpiler, SourceFile sourceFile, GlobalCatalog catalog, Node.Node_ParseOptions options, bool reportNeedTranspile, Node.DeclarationEntity declarationEntity)
+        internal                                                    ContextRoot(TranspileContext transpilerContext, SourceFile sourceFile, Node.Node_ParseOptions options, bool reportNeedTranspile, Node.DeclarationEntity declarationEntity)
         {
-            _transpiler          = transpiler;
+            _transpilerContext   = transpilerContext;
             _sourceFile          = sourceFile;
-            _catalog             = catalog;
             _options             = options;
             _reportNeedTranspile = reportNeedTranspile;
             _declarationEntity   = declarationEntity;

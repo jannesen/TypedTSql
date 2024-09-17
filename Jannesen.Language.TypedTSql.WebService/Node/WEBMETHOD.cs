@@ -97,6 +97,9 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             public      readonly        XmlElement                          n_WebHandlerConfig;
             public      readonly        LTTSQL.DataModel.EntityName         n_EntityName;
             public      readonly        LTTSQL.Core.Token                   n_JcProxy;
+            public      readonly        LTTSQL.Node.Node_Attributes         n_Attributes;
+            public      readonly        string                              n_Kind;
+
             public                      Emit.JcNSExpression                 JcProxy             { get; private set; }
 
             public                                                          ServiceDeclaration(LTTSQL.Core.ParserReader reader)
@@ -116,18 +119,35 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     n_Methods = methods.ToArray();
                 }
 
-                while (reader.CurrentToken.isToken("WEB_HANDLER", "WEB_OPTIONS", "WEB_ASSEMBLIES", "WEB_HANDLERCONFIG", "JC_PROXY")) {
+                while (reader.CurrentToken.isToken("KIND", "WEB_HANDLER", "WEB_OPTIONS", "WEB_ASSEMBLIES", "WEB_HANDLERCONFIG", "JC_PROXY", "ATTRIBUTES")) {
                     switch(reader.CurrentToken.Text.ToUpperInvariant()) {
+                    case "KIND":
+                        if (n_Kind != null) {
+                            throw new ParseException(reader.CurrentToken, "KIND already defined.");
+                        }
+                        ParseToken(reader, "KIND");
+                        n_Kind = ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString;
+                        break;
+
                     case "WEB_HANDLER":
+                        if (n_WebHttpHandler != null || n_JcProxy != null) {
+                            throw new ParseException(reader.CurrentToken, "JC_PROXY,WEB_HANDLER already defined.");
+                        }
                         ParseToken(reader, "WEB_HANDLER");
                         n_WebHttpHandler = ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString;
                         break;
 
                     case "WEB_OPTIONS":
+                        if (n_WebHandlerOptions != null) {
+                            throw new ParseException(reader.CurrentToken, "WEB_OPTIONS already defined.");
+                        }
                         n_WebHandlerOptions = AddChild(new WebOptions(reader));
                         break;
 
                     case "WEB_ASSEMBLIES":
+                        if (n_WebHandlerAssemblies != null) {
+                            throw new ParseException(reader.CurrentToken, "WEB_ASSEMBLIES already defined.");
+                        }
                         n_WebHandlerAssemblies = AddChild(new WebAssemblies(reader));
                         break;
 
@@ -137,11 +157,25 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                         break;
 
                     case "JC_PROXY":
+                        if (n_WebHttpHandler != null || n_JcProxy != null) {
+                            throw new ParseException(reader.CurrentToken, "JC_PROXY,WEB_HANDLER already defined.");
+                        }
                         ParseToken(reader, "JC_PROXY");
                         n_WebHttpHandler = "sql-json2";
                         n_JcProxy = ParseToken(reader, LTTSQL.Core.TokenID.String);
                         break;
+
+                    case "ATTRIBUTES":
+                        if (n_Attributes != null) {
+                            throw new ParseException(reader.CurrentToken, "ATTRIBUTES already defined.");
+                        }
+                        n_Attributes = AddChild(new LTTSQL.Node.Node_Attributes(reader));
+                        break;
                     }
+                }
+
+                if (n_WebHttpHandler == null) {
+                    n_WebHttpHandler = "sql-json2";
                 }
 
                 string name = n_ServiceMethodName.n_ServiceEntitiyName.Name + "/" + _sqlName();
@@ -155,6 +189,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             {
                 n_ServiceMethodName.TranspileNode(context);
                 n_WebHandlerOptions?.TranspileNode(context);
+                n_Attributes?.TranspileNode(context);
 
                 if (n_JcProxy != null) {
                     try {
@@ -389,6 +424,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         public      readonly    string                                  n_Name;
         public                  List<RETURNS>                           n_returns                   { get; private set; }
 
+        public                  LTTSQL.DataModel.EntityTypeUser         t_SelectValueType           { get; private set; }
+
         public      override    LTTSQL.DataModel.EntityName             EntityName                  { get { return n_Declaration.n_EntityName;                           } }
         public      override    LTTSQL.DataModel.EntityName             ServiceName                 { get { return n_Declaration.n_ServiceMethodName.n_ServiceEntitiyName; } }
         public      override    LTTSQL.Node.DeclarationService          DeclarationService          { get { return n_Declaration.n_ServiceMethodName.DeclarationService; } }
@@ -407,6 +444,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
         public      override    void                                    TranspileNode(LTTSQL.Transpile.Context context)
         {
+            t_SelectValueType = null;
+
             if (!_declarationTranspiled) {
                 n_Declaration.TranspileNode(context);
                 if (DeclarationService == null || !DeclarationService.IsMember(this))
@@ -436,11 +475,92 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             TranspileStatement(context);
 
             if (n_Declaration.n_WebHttpHandler == "sql-json2") {
-                if (n_Declaration.n_JcProxy != null && n_returns != null && n_returns.Count != 1)
+                if (n_Declaration.n_JcProxy != null && n_returns != null && n_returns.Count != 1) {
                     context.AddError(this, "sql-json2 and proxy only support 1 RETURNS");
+                }
+            }
+
+            t_SelectValueType = _transpileSelectValueType(context);
+
+            if (t_SelectValueType != null) {
+                if (!(t_SelectValueType.Attributes?.Find("select-source")?.Value is string s && s == "remote")) {
+                    context.AddError(this.n_Declaration, "Source type '" + t_SelectValueType.EntityName.Fullname + "' is has not the attribute [select-source] = [remote].");
+                }
             }
 
             Transpiled = true;
+        }
+
+        public                  LTTSQL.DataModel.EntityTypeUser         _transpileSelectValueType(LTTSQL.Transpile.Context context)
+        {
+            switch(n_Declaration.n_Kind) {
+            case "select-lookup": {
+                    if (n_Parameters.n_Parameters.Length == 1 &&
+                        n_Parameters.n_Parameters[0].Parameter.SqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
+                        return entityTypeUser;
+                    }
+                    else {
+                        context.AddError(this, "Can't determin select-type for 'select-lookup'");
+                        return null;
+                    }
+                }
+
+            case "select-search": {
+                    LTTSQL.DataModel.EntityTypeUser     selectValueType = null;
+
+                    foreach(var r in n_returns) {
+                        if (r.SqlType is LTTSQL.DataModel.SqlTypeResponseNode reponseNodeType) {
+                            switch(reponseNodeType.NodeType) {
+                            case LTTSQL.DataModel.ResponseNodeType.ArrayValue: {
+                                    if (reponseNodeType.Columns?[0].SqlType?.Columns?[0].SqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
+                                        if (t_SelectValueType != null) {
+                                            context.AddError(r, "Can't determin select-type for 'select-search'");
+                                            return null;
+                                        }
+
+                                        selectValueType = entityTypeUser;
+                                    }
+                                    else {
+                                        context.AddError(r, "Can't determin select-type for 'select-search'");
+                                        return null;
+                                    }
+                                }
+                                break;
+
+                            case LTTSQL.DataModel.ResponseNodeType.ArrayObject: {
+                                    if (reponseNodeType.Columns?[0]?.SqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
+                                        if (t_SelectValueType != null) {
+                                            context.AddError(r, "Can't determin select-type for 'select-search'");
+                                            return null;
+                                        }
+
+                                        selectValueType = entityTypeUser;
+                                    }
+                                    else {
+                                        context.AddError(r, "Can't determin select-type for 'select-search'");
+                                        return null;
+                                    }
+                                }
+                                break;
+                            default:
+                                context.AddError(r, "Can't determin select-type for 'select-search'");
+                                return null;
+
+                            }
+                        }
+                    }
+
+                    if (selectValueType != null) {
+                        return selectValueType;
+                    }
+
+                    context.AddError(this, "Can't determin select-type for 'select-search'");
+                    return null;
+                }
+
+            default:
+                return null;
+            }
         }
 
                                 LTTSQL.Node.Statement                   LTTSQL.Node.IParseContext.StatementParent          => null;

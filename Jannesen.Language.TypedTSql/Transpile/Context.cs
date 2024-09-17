@@ -5,13 +5,12 @@ namespace Jannesen.Language.TypedTSql.Transpile
 {
     public abstract class Context
     {
+        public      abstract    TranspileContext                    TranspileContext        { get; }
         public      abstract    Context                             Parent                  { get; }
         public      abstract    ContextRoot                         RootContext             { get; }
         public      abstract    ContextBlock                        BlockContext            { get; }
-        public      abstract    Transpiler                          Transpiler              { get; }
         public      abstract    SourceFile                          SourceFile              { get; }
         public      abstract    Node.Node_ParseOptions              Options                 { get; }
-        public      abstract    GlobalCatalog                       Catalog                 { get; }
         public      abstract    bool                                ReportNeedTranspile     { get; }
         public      abstract    Node.DeclarationEntity              DeclarationEntity       { get; }
         public      virtual     Node.IDataTarget                    Target                  { get { return null;                                                                                    } }
@@ -19,6 +18,9 @@ namespace Jannesen.Language.TypedTSql.Transpile
         public      virtual     DataModel.QueryOptions              QueryOptions            { get { return DataModel.QueryOptions.NONE;                                                             } }
         public      virtual     DataModel.ISqlType                  ScopeIndentityType      { get { return null;                                                                                    }
                                                                                               set { throw new InvalidOperationException("ScopeIndentityType not available.");                       } }
+
+        public                  Transpiler                          Transpiler              => TranspileContext.Transpiler;
+        public                  GlobalCatalog                       Catalog                 => TranspileContext.Catalog;
 
         public                  Node.DeclarationObjectCode          GetDeclarationObjectCode()
         {
