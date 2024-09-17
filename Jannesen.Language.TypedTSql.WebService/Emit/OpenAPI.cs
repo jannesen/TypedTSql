@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Jannesen.Language.TypedTSql.WebService.Extensions;
 using YamlDotNet.Serialization;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
@@ -29,10 +31,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
     internal class OpenApiPathItem
     {
-        public OpenApiOperation         get                 {get; set;} 
-        public OpenApiOperation         put                 {get; set;} 
-        public OpenApiOperation         post                {get; set;} 
-        public OpenApiOperation         delete              {get; set;} 
+        public OpenApiOperation         get                 {get; set;}
+        public OpenApiOperation         put                 {get; set;}
+        public OpenApiOperation         post                {get; set;}
+        public OpenApiOperation         delete              {get; set;}
     }
 
     internal class OpenApiOperation
@@ -41,9 +43,24 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public string                               x_handler           { get; set; }
         [YamlMember(Alias="x-timeout")]
         public int                                  x_timeout           { get; set; }
-        public List<OpenApiParameter>               parameters          { get; set; }
+        public OpenApiParameters                    parameters          { get; set; }
         public OpenApiBody                          requestBody         { get; set; }
         public OpenApiResponses                     responses           { get; set; }
+    }
+
+    internal class OpenApiParameters: List<OpenApiParameter>
+    {
+        public      bool            TryGet(string @in, string name, out OpenApiParameter found) {
+            for (int i = 0 ; i < Count ; ++i) {
+                if (this[i].@in == @in && this[i].name == name) {
+                    found = this[i];
+                    return true;
+                }
+            }
+
+            found = null;
+            return false;
+        }
     }
 
     internal class OpenApiParameter
@@ -85,28 +102,113 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
     internal class OpenApiSchemaRef: OpenApiSchema
     {
         [YamlMember(Alias="$ref")]
-        public string                               @ref                { get; set; }
+        public          string                      @ref                { get; set; }
+
+        public static   bool                        operator == (OpenApiSchemaRef left, OpenApiSchemaRef right)
+        {
+            if (ReferenceEquals(left, right))  return true;
+            if (left is null || right is null) return false;
+            return left.@ref == right.@ref;
+        }
+        public static   bool                        operator != (OpenApiSchemaRef left, OpenApiSchemaRef right)
+        {
+            return !(left == right);
+        }
+
+        public override bool                        Equals(object obj)
+        {
+            return obj is OpenApiSchemaRef o && this == o;
+        }
+        public override int                         GetHashCode()
+        {
+            return @ref.GetHashCode();
+        }
     }
 
     internal class OpenApiSchemaType: OpenApiSchema
     {
-        public string                               type                { get; set; }
-        public string                               format              { get; set; }
-        public OpenApiSchema                        items               { get; set; }
-        public OpenApiSchemaProperties              properties          { get; set; }
-        public List<string>                         required            { get; set; }
-        public int?                                 maxLength           { get; set; }
-        public Int64?                               minimum             { get; set; }
-        public Int64?                               maximum             { get; set; }
+        public          string                      type                { get; set; }
+        public          string                      format              { get; set; }
+        public          OpenApiSchema               items               { get; set; }
+        public          OpenApiSchemaProperties     properties          { get; set; }
+        public          HashSet<string>             required            { get; set; }
+        public          int?                        maxLength           { get; set; }
+        public          Int64?                      minimum             { get; set; }
+        public          Int64?                      maximum             { get; set; }
         [YamlMember(Alias="x-sqltype")]
-        public string                               x_sqltype           { get; set; }
+        public          string                      x_sqltype           { get; set; }
         [YamlMember(Alias="x-values")]
-        public List<OpenApiX_Value>                 x_values            { get; set; }
+        public          OpenApiX_Values             x_values            { get; set; }
         [YamlMember(Alias="x-post-schema")]
-        public string                               x_post_schema       { get; set; }
+        public          string                      x_post_schema       { get; set; }
+
+        public static   bool                        operator == (OpenApiSchemaType left, OpenApiSchemaType right)
+        {
+            if (ReferenceEquals(left, right))  return true;
+            if (left is null || right is null) return false;
+            return left.type          == right.type          &&
+                   left.format        == right.format        &&
+                   left.items         == right.items         &&
+                   left.properties    == right.properties    &&
+                   left.maxLength     == right.maxLength     &&
+                   left.minimum       == right.minimum       &&
+                   left.maximum       == right.maximum       &&
+                   left.x_sqltype     == right.x_sqltype     &&
+                   left.x_post_schema == right.x_post_schema &&
+                   EnumerableExtensions.EqualItems(left.required, right.required)  &&
+                   EnumerableExtensions.EqualItems(left.x_values, right.x_values);
+        }
+        public static   bool                        operator != (OpenApiSchemaType left, OpenApiSchemaType right)
+        {
+            return !(left == right);
+        }
+
+        public override bool                        Equals(object obj)
+        {
+            return obj is OpenApiSchemaType o && this == o;
+        }
+        public override int                         GetHashCode()
+        {
+            unchecked {
+                var hashCode = 17;
+                hashCode = (hashCode * 397) ^ (type          != null ? type.GetHashCode()           : 0);
+                hashCode = (hashCode * 397) ^ (format        != null ? format.GetHashCode()        : 0);
+                hashCode = (hashCode * 397) ^ (items         != null ? items.GetHashCode()         : 0);
+                hashCode = (hashCode * 397) ^ (properties    != null ? properties.GetHashCode()    : 0);
+                hashCode = (hashCode * 397) ^ (required      != null ? required.GetItemsHashCode() : 0);
+                hashCode = (hashCode * 397) ^ maxLength.GetHashCode();
+                hashCode = (hashCode * 397) ^ minimum.GetHashCode();
+                hashCode = (hashCode * 397) ^ maximum.GetHashCode();
+                hashCode = (hashCode * 397) ^ (x_sqltype     != null ? x_sqltype.GetHashCode()     : 0);
+                hashCode = (hashCode * 397) ^ (x_values      != null ? x_values.GetItemsHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (x_post_schema != null ? x_post_schema.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
     }
 
     internal class OpenApiSchemaProperties: Dictionary<string, OpenApiSchema>
+    {
+        public static   bool                        operator == (OpenApiSchemaProperties left, OpenApiSchemaProperties right)
+        {
+            return EnumerableExtensions.EqualItems(left, right);
+        }
+        public static   bool                        operator != (OpenApiSchemaProperties left, OpenApiSchemaProperties right)
+        {
+            return !(left == right);
+        }
+
+        public override bool                        Equals(object obj)
+        {
+            return obj is OpenApiSchemaProperties o && this == o;
+        }
+        public override int                         GetHashCode()
+        {
+            return this.GetItemsHashCode();
+        }
+    }
+
+    internal class OpenApiX_Values: List<OpenApiX_Value>
     {
     }
 
@@ -115,34 +217,58 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public string                               name                { get; set; }
         public object                               value               { get; set; }
         public Dictionary<string, object>           fields              { get; set; }
+
+        public static   bool                        operator == (OpenApiX_Value left, OpenApiX_Value right)
+        {
+            if (ReferenceEquals(left, right))  return true;
+            if (left is null || right is null) return false;
+            return left.name  == right.name &&
+                   left.value == right.value &&
+                   EnumerableExtensions.EqualItems(left.fields, right.fields);
+        }
+        public static   bool                        operator != (OpenApiX_Value left, OpenApiX_Value right)
+        {
+            return !(left == right);
+        }
+
+        public override bool                        Equals(object obj)
+        {
+            return obj is OpenApiX_Value o && this == o;
+        }
+        public override int                         GetHashCode()
+        {
+            unchecked {
+                var hashCode = name != null ? name.GetHashCode() : 0;
+                hashCode = (hashCode * 397) ^ (value  != null ? value.GetHashCode()       : 0);
+                hashCode = (hashCode * 397) ^ (fields != null ? fields.GetItemsHashCode() : 0);
+                return hashCode;
+            }
+        }
+
     }
 
     internal class OpenApiSchemaOneOf: OpenApiSchema
     {
-        public List<OpenApiSchema>                  oneOf               { get; set; }
+        public HashSet<OpenApiSchema>               oneOf               { get; set; }
 
-        public static       bool    operator == (OpenApiSchemaOneOf obj1, OpenApiSchemaOneOf obj2)
+        public static   bool                        operator == (OpenApiSchemaOneOf obj1, OpenApiSchemaOneOf obj2)
         {
-            if (object.ReferenceEquals(obj1, obj2)) return true;
+            if (ReferenceEquals(obj1, obj2))  return true;
             if (obj1 is null || obj2 is null) return false;
 
-            return obj1.oneOf == obj2.oneOf;
+            return EnumerableExtensions.EqualItems(obj1.oneOf, obj2.oneOf);
         }
-        public static       bool    operator != (OpenApiSchemaOneOf obj1, OpenApiSchemaOneOf obj2)
+        public static   bool                        operator != (OpenApiSchemaOneOf obj1, OpenApiSchemaOneOf obj2)
         {
             return !(obj1 == obj2);
         }
-        public override     int     GetHashCode()
+        public override int                         GetHashCode()
         {
-            int rtn = 0;
-            if (oneOf != null) {
-                foreach(var o in oneOf) rtn ^= o.GetHashCode();
-            }
-            return rtn;
+            return oneOf.GetItemsHashCode();
         }
-        public override     bool    Equals(object obj)
+        public override bool                        Equals(object obj)
         {
-            return (obj is OpenApiSchemaOneOf o && this == o);
+            return obj is OpenApiSchemaOneOf o && this == o;
         }
     }
 }
