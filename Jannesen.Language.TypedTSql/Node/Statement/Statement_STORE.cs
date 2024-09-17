@@ -814,6 +814,11 @@ namespace Jannesen.Language.TypedTSql.Node
 
             private     static      string                              _collateSensitive(string s)
             {
+                if (s.StartsWith("SQL_Latin1_General_CP1_") ||
+                    s.StartsWith("Latin1_General_")) {
+                    return "Latin1_General_100_BIN2";
+                }
+
                 return s.Replace("_CI", "_CS").Replace("_AI", "_AS");
             }
 
@@ -958,7 +963,7 @@ namespace Jannesen.Language.TypedTSql.Node
                     }
                     else if (expr is Expr_Operator_Compare compare)
                     {
-                        if (compare.n_Operator.ID == TokenID.Equal) {
+                        if (compare.n_Operator == Logic.CompareOperator.Equal || compare.n_Operator == Logic.CompareOperator.DistinctEqual) {
                             var x1 = _where_Link_ValueExpr(compare.n_Expr1);
                             var x2 = _where_Link_ValueExpr(compare.n_Expr2);
 
@@ -970,8 +975,8 @@ namespace Jannesen.Language.TypedTSql.Node
                             }
 
                             if (x1 is DataModel.Column column && x2 is IExprNode expr2) {
-                                if (column.isNullable)
-                                    context.AddWarning(expr, "Column " + SqlStatic.QuoteName(column.Name) + " is nullable, using a '=' compare can have unexpected result. please use is_equal.");
+                                if (column.isNullable && compare.n_Operator == Logic.CompareOperator.Equal)
+                                    context.AddWarning(expr, "Column " + SqlStatic.QuoteName(column.Name) + " is nullable, using a '='/'<>' compare can have unexpected result. please use is_equal.");
 
                                 return new WhereLinkColumn[] { new WhereLinkColumn() { Column=column, Expr=expr2 } };
                             }

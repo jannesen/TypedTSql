@@ -38,8 +38,8 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_Expr1.TranspileNode(context);
                 n_ExprBegin.TranspileNode(context);
                 n_ExprEnd.TranspileNode(context);
-                TypeHelpers.OperationCompare(context, null, n_Expr1, n_ExprBegin);
-                TypeHelpers.OperationCompare(context, null, n_Expr1, n_ExprEnd);
+                TypeHelpers.OperationCompare(context, CompareOperator.GreaterEqual, n_Expr1, n_ExprBegin);
+                TypeHelpers.OperationCompare(context, CompareOperator.LessEqual,    n_Expr1, n_ExprEnd);
             }
             catch(Exception err) {
                 context.AddError(this, err);

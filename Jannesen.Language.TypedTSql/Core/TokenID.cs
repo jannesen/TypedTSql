@@ -19,6 +19,8 @@ namespace Jannesen.Language.TypedTSql.Core
         _operators          = 100,
         Equal,
         NotEqual,
+        DistinctEqual,
+        DistinctNotEqual,
         Greater,
         Less,
         Exclamation,

@@ -17,6 +17,18 @@ namespace Jannesen.Language.TypedTSql.Logic
         TSql,
         Save
     }
+    public enum CompareOperator
+    {
+        Unknown             = 0,
+        Equal               = 1,
+        NotEqual,
+        DistinctEqual,
+        DistinctNotEqual,
+        Less,
+        Greater,
+        LessEqual,
+        GreaterEqual
+    }
 
     public struct FlagsTypeCollation: IEquatable<FlagsTypeCollation>
     {
@@ -113,7 +125,7 @@ namespace Jannesen.Language.TypedTSql.Logic
 
             throw new ErrorException("Invalid operation '" + nativeType1.ToString() + " " + operation.ToString() + " " + nativeType2.ToString() + "'.");
         }
-        public      static      void                        OperationCompare(Transpile.Context context, Core.Token operation, Node.IExprNode expr1, Node.IExprNode expr2)
+        public      static      void                        OperationCompare(Transpile.Context context, CompareOperator operation, Node.IExprNode expr1, Node.IExprNode expr2)
         {
             if (!(expr1.isValid() && expr2.isValid()))
                 return ;
@@ -138,7 +150,8 @@ namespace Jannesen.Language.TypedTSql.Logic
                     if (sqlType1 == sqlType2)
                         return;
 
-                    if (operation != null && (operation.ID == Core.TokenID.Equal || operation.ID == Core.TokenID.NotEqual)) {
+                    if (operation == CompareOperator.Equal         || operation == CompareOperator.NotEqual ||
+                        operation == CompareOperator.DistinctEqual || operation == CompareOperator.DistinctNotEqual) {
                         if (_operationCompareFlagsCompareZero(sqlType1, expr2) || _operationCompareFlagsCompareZero(sqlType2, expr1))
                             return ;
                     }
@@ -157,7 +170,8 @@ namespace Jannesen.Language.TypedTSql.Logic
                     if (sqlType1 == sqlType2)
                         return;
 
-                    if (operation != null && (operation.ID == Core.TokenID.Equal || operation.ID == Core.TokenID.NotEqual)) {
+                    if (operation == CompareOperator.Equal         || operation == CompareOperator.NotEqual ||
+                        operation == CompareOperator.DistinctEqual || operation == CompareOperator.DistinctNotEqual) {
                         if (_operationCompareFlagsCompareZero(sqlType1, expr2) || _operationCompareFlagsCompareZero(sqlType2, expr1))
                             return ;
                     }

@@ -104,7 +104,7 @@ namespace Jannesen.Language.TypedTSql.Node
             foreach (var when in n_When) {
                 try {
                     if (n_Input != null)
-                        TypeHelpers.OperationCompare(context, null, n_Input, when.n_When);
+                        TypeHelpers.OperationCompare(context, CompareOperator.Equal, n_Input, when.n_When);
                     else
                         Validate.BooleanExpression(when.n_When);
                 }

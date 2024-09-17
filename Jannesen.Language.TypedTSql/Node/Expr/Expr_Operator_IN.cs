@@ -56,7 +56,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             foreach(var in_expr in ((Expr_Collection)n_In).n_Expressions) {
                 try {
-                    TypeHelpers.OperationCompare(context, null, n_Expr, in_expr);
+                    TypeHelpers.OperationCompare(context, CompareOperator.Equal, n_Expr, in_expr);
                 }
                 catch(Exception err) {
                     context.AddError(this, err);

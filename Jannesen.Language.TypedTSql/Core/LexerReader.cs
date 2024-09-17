@@ -65,7 +65,6 @@ namespace Jannesen.Language.TypedTSql.Core
                 switch(c) {
                 case '>':   ++_curpos;  return _newToken(Core.TokenID.GreaterEqual);
                 case '<':   ++_curpos;  return _newToken(Core.TokenID.LessEqual);
-                case '!':   ++_curpos;  return _newToken(Core.TokenID.NotEqual);
                 case '+':   ++_curpos;  return _newToken(Core.TokenID.PlusAssign);
                 case '-':   ++_curpos;  return _newToken(Core.TokenID.MinusAssign);
                 case '*':   ++_curpos;  return _newToken(Core.TokenID.MultAssign);
@@ -74,6 +73,23 @@ namespace Jannesen.Language.TypedTSql.Core
                 case '&':   ++_curpos;  return _newToken(Core.TokenID.AndAssign);
                 case '^':   ++_curpos;  return _newToken(Core.TokenID.XorAssign);
                 case '|':   ++_curpos;  return _newToken(Core.TokenID.OrAssign);
+
+                case '=':
+                    if (_charAt(_curpos+1) == '=') {
+                        _curpos += 2;
+                        return _newToken(Core.TokenID.DistinctEqual);
+                    }
+                    break;
+
+                case '!':
+                    if (_charAt(_curpos+1) == '=') {
+                        _curpos += 2;
+                        return _newToken(Core.TokenID.DistinctNotEqual);
+                    }
+                    else {
+                        _curpos += 1;
+                        return _newToken(Core.TokenID.NotEqual);
+                    }                    
                 }
             }
 
