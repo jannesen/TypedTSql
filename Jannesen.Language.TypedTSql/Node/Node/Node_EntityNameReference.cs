@@ -387,9 +387,9 @@ namespace Jannesen.Language.TypedTSql.Node
                                     var col1 = columns1[j];
                                     var col2 = columns2[j];
 
-                                    if (!(col1.Name          == col2.Name         &&
-                                          col1.Type          == col2.Type         &&
-                                          col1.ValueFlags    == col2.ValueFlags   &&
+                                    if (!(col1.Name          == col2.Name           &&
+                                          object.Equals(col1.SqlType, col2.SqlType) &&
+                                          col1.ValueFlags    == col2.ValueFlags     &&
                                           col1.CollationName == col2.CollationName)) {
                                         context.AddError(n_Name, "Temp table column '" + col1.Name + "' defined in '" + calledby[rtn].EntityName.ToString() + "' and '" + calledby[rtn].EntityName.ToString() + "' are not equal.");
                                     }

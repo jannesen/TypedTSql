@@ -143,7 +143,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                                       _returnType,
                                                                        n_ReturnVariable,
                                                                        DataModel.VariableFlags.Returns);
-                        n_ReturnVariable.SetSymbolUsage(_returnVariable, DataModel.SymbolUsageFlags.Declaration);
+                        n_ReturnVariable.SetSymbolUsage(_returnVariable.Symbol, DataModel.SymbolUsageFlags.Declaration);
 
                         if (n_Parameters != null && n_Parameters.t_Parameters.Contains(_returnVariable.Name))
                             context.AddError(n_ReturnVariable, "Variable already defined.");

@@ -6,8 +6,8 @@ namespace Jannesen.Language.TypedTSql.Node
     public class TableSource_RowSet_local: TableSource_RowSet_alias
     {
         public      readonly    Node_TableVariable              n_Variable;
-        public      override    DataModel.IColumnList           ColumnList          { get { return _t_ColumnList;        } }
-        public      override    DataModel.ISymbol               t_Source            { get { return n_Variable.Variable;  } }
+        public      override    DataModel.IColumnList           ColumnList          { get { return _t_ColumnList;               } }
+        public      override    DataModel.ISymbol               t_Source            { get { return n_Variable.Variable.Symbol;  } }
 
         private                 DataModel.IColumnList           _t_ColumnList;
 
@@ -30,8 +30,6 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Variable.Variable?.setUsed();
 
             _t_ColumnList = n_Variable.Columns ?? new DataModel.ColumnListErrorStub();
-
-            TranspileRowSet(context);
         }
         public      override    bool                            SetUsage(DataModel.SymbolUsageFlags usage)
         {

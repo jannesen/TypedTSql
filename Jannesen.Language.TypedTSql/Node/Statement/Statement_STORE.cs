@@ -91,7 +91,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 {
                     if (n_DenyUpdateofColumn != null) {
                         foreach(var denycolumn in n_DenyUpdateofColumn) {
-                            var column = context.RowSets[0].Columns.FindColumn(denycolumn.ValueString, out var ambigous);
+                            var column = context.RowSets[0].FindColumn(denycolumn.ValueString, out var ambigous);
 
                             if (column != null) {
                                 denycolumn.SetSymbolUsage(column, DataModel.SymbolUsageFlags.Reference);
@@ -205,7 +205,8 @@ namespace Jannesen.Language.TypedTSql.Node
                 var targetTable = (DataModel.ITable)n_Target.Entity;
                 if (targetTable != null) {
                     var contextRowSet    = new Transpile.ContextRowSets(context);
-                    contextRowSet.RowSets.Add(new DataModel.RowSet("", targetTable.Columns, source: n_Target.Entity));
+                    contextRowSet.RowSets.Add(new DataModel.RowSet(DataModel.RowSetFlags.Target, targetTable.Columns,
+                                                                   source: n_Target.Entity));
 
                     n_Where.TranspileNode(contextRowSet);
                     n_Outputs?.TranspileNodes(contextRowSet);

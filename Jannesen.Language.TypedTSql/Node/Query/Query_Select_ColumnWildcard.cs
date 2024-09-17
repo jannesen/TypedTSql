@@ -45,9 +45,9 @@ namespace Jannesen.Language.TypedTSql.Node
                 if (rowset != null) {
                     n_RowSetName.SetSymbolUsage(rowset, DataModel.SymbolUsageFlags.Reference);
 
-                    if ((rowset.Columns.Flags & DataModel.ColumnListFlags.DynamicList) == 0) {
+                    if ((rowset.Flags & DataModel.RowSetFlags.DynamicList) == 0) {
                         context.CaseWarning(n_RowSetName, rowset.Name);
-                        sourceColumns.AddRange(rowset.Columns);
+                        sourceColumns.AddRange(rowset.GetColumns());
                     }
                     else
                         context.AddError(n_RowSetName, "Not allowed to use wildcard on a dynamic column list.");
@@ -57,8 +57,8 @@ namespace Jannesen.Language.TypedTSql.Node
             }
             else {
                 foreach (var rowset in context.RowSets) {
-                    if ((rowset.Columns.Flags & DataModel.ColumnListFlags.DynamicList) == 0) {
-                        sourceColumns.AddRange(rowset.Columns);
+                    if ((rowset.Flags & DataModel.RowSetFlags.DynamicList) == 0) {
+                        sourceColumns.AddRange(rowset.GetColumns());
                     }
                     else {
                         context.AddError(this, "Not allowed to use wildcard on a dynamic column list [" + rowset.Name + "].");
@@ -82,8 +82,8 @@ namespace Jannesen.Language.TypedTSql.Node
 
                     if (targetColumn != null) {
                         targetColumns.Add(targetColumn);
-                        symbolData?.Add(new DataModel.SymbolSourceTarget(new DataModel.SymbolUsage(column,       DataModel.SymbolUsageFlags.Read),
-                                                                         new DataModel.SymbolUsage(targetColumn, declared ? DataModel.SymbolUsageFlags.Declaration | DataModel.SymbolUsageFlags.Write : DataModel.SymbolUsageFlags.Write)));
+                        symbolData?.Add(new DataModel.SymbolSourceTarget(new DataModel.SymbolUsage(column.Symbol,       DataModel.SymbolUsageFlags.Read),
+                                                                         new DataModel.SymbolUsage(targetColumn.Symbol, declared ? DataModel.SymbolUsageFlags.Declaration | DataModel.SymbolUsageFlags.Write : DataModel.SymbolUsageFlags.Write)));
                     }
                     else {
                         context.AddError(this, "Unknown column [" + column.Name + "] in target.");
@@ -95,7 +95,7 @@ namespace Jannesen.Language.TypedTSql.Node
             else {
                 if (symbolData != null) {
                     foreach(var column in sourceColumns) {
-                        symbolData.Add(new DataModel.SymbolUsage(column, DataModel.SymbolUsageFlags.Read));
+                        symbolData.Add(new DataModel.SymbolUsage(column.Symbol, DataModel.SymbolUsageFlags.Read));
                     }
                 }
                 ResultColumns = sourceColumns.ToArray();

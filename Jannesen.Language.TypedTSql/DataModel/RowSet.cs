@@ -4,26 +4,75 @@ using Jannesen.Language.TypedTSql.Library;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
+    [Flags]
+    public enum RowSetFlags
+    {
+        None            = 0,
+        Alias           = 0x0001,
+        Target          = 0x0002,
+        Nullable        = 0x0004,
+        DynamicList     = 0x0100,
+        ErrorStub       = 0x0200
+
+    }
+
+    public enum JoinType
+    {
+        NONE        = 0,
+        INNER,
+        LEFT_OUTER,
+        RIGHT_OUTER,
+        FULL_OUTER,
+        CROSS_JOIN,
+        CROSS_APPLY,
+        OUTER_APPLY
+    }
+
     public class RowSet: ISymbol
     {
-        public                  SymbolType                  Type                    { get { return DataModel.SymbolType.RowsetAlias;   } }
+        public                  SymbolType                  Type                    => DataModel.SymbolType.RowsetAlias;
         public                  string                      Name                    { get; private set; }
-        public                  string                      FullName                { get { return SqlStatic.QuoteNameIfNeeded(Name); } }
-        public                  IColumnList                 Columns                 { get; private set; }
+        public                  string                      FullName                => SqlStatic.QuoteNameIfNeeded(Name);
+        public                  RowSetFlags                 Flags                   { get; private set; }
         public                  object                      Declaration             { get; private set; }
-        public                  ISymbol                     ParentSymbol            { get { return null; } }
-        public                  ISymbol                     SymbolNameReference     { get { return null; } }
+        public                  ISymbol                     ParentSymbol            => null;
+        public                  ISymbol                     SymbolNameReference     => null;
         public                  ISymbol                     Source                  { get; private set; }
 
-        public                                              RowSet(string name, IColumnList columns, object declaration = null, DataModel.ISymbol source=null)
+        public                  bool                        isNullable              => (Flags & RowSetFlags.Nullable) != 0;
+        private                 IColumnList                 _columns;
+
+        public                                              RowSet(RowSetFlags flags, IColumnList columns, string name = "", object declaration = null, DataModel.ISymbol source=null)
         {
-            if (columns == null)
-                columns = new DataModel.ColumnListErrorStub();
+            _columns    = columns ?? new ColumnListErrorStub();
 
             Name        = name;
-            Columns     = columns;
+            Flags       = flags | _columns.RowSetFlags;
             Declaration = declaration;
             Source      = source;
+        }
+
+        public                  Column                      FindColumn(string name, out bool  ambiguous)
+        {
+            var c = _columns.FindColumn(name, out ambiguous);
+
+            if (c != null && (Flags & RowSetFlags.Nullable) != 0 && !c.isNullable) {
+                c = new ColumnNullable(c);
+            }
+
+            return c;
+        }
+        public                  IEnumerable<Column>         GetColumns()
+        {
+            for (int i = 0 ; i < _columns.Count ; ++i) {
+                var c = _columns[i];
+
+                if ((Flags & RowSetFlags.Nullable) != 0 && !c.isNullable) {
+                    c = new ColumnNullable(c);
+                }
+
+                yield return c;
+            }
         }
     }
 
@@ -39,15 +88,15 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
             return rtn;
         }
-        public                      DataModel.Column        FindColumn(string name, out bool ambiguous)
+        public                      Column                  FindColumn(string name, out bool ambiguous)
         {
             ambiguous = false;
 
-            Column      foundColumn = null;
+            Column   foundColumn = null;
 
             foreach(var r in this) {
-                if ((r.Columns.Flags & ColumnListFlags.ErrorStub) == 0) {
-                    var     c = r.Columns.FindColumn(name, out bool a);
+                if ((r.Flags & RowSetFlags.ErrorStub) == 0) {
+                    var     c = r.FindColumn(name, out bool a);
 
                     if (c != null) {
                         if (foundColumn == null)
@@ -63,11 +112,12 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
             if (foundColumn == null) {
                 foreach(var r in this) {
-                    if ((r.Columns.Flags & ColumnListFlags.ErrorStub) != 0) {
-                        var     c = r.Columns.FindColumn(name, out bool a);
+                    if ((r.Flags & RowSetFlags.ErrorStub) != 0) {
+                        var     c = r.FindColumn(name, out bool a);
 
-                        if (c != null)
+                        if (c != null) {
                             return c;
+                        }
                     }
                 }
             }

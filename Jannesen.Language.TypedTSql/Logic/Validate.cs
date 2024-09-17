@@ -470,7 +470,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                 QuickFixLogic.QuickFix_Expr(context, targetType, (Node.IExprNode)expr);
 
             if ((targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrong || targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrict) && expr is DataModel.ColumnExpr)
-                QuickFixLogic.QuickFix_Expr(context, targetType, ((DataModel.ColumnExpr)expr).Expr);
+                QuickFixLogic.QuickFix_Expr(context, targetType, ((DataModel.Column)expr).Expr);
 
             if ((expr.SqlType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrong || expr.SqlType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrict)  &&
                 (expr.SqlType.TypeFlags & DataModel.SqlTypeFlags.UserType) != 0  &&
@@ -495,7 +495,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                 QuickFixLogic.QuickFix_Expr(context, targetType, (Node.IExprNode)expr);
 
             if ((targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrong || targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrict) && expr is DataModel.ColumnExpr)
-                QuickFixLogic.QuickFix_Expr(context, targetType, ((DataModel.ColumnExpr)expr).Expr);
+                QuickFixLogic.QuickFix_Expr(context, targetType, ((DataModel.Column)expr).Expr);
 
             throw new Exception("Not allowed to assign a " + expr.SqlType.ToString() + " to " + targetType.ToString() + ".");
         }

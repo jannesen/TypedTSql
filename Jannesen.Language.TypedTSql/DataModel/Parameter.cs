@@ -4,12 +4,15 @@ using System.Data.SqlClient;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    public class Parameter: Variable
+    public class Parameter: Variable, ISymbol
     {
-        public  override        SymbolType              Type                { get { return SymbolType.Parameter; } }
-        public  override        object                  Declaration         { get { return _declaration;         } }
-        public  override        VariableFlags           Flags               { get { return _flags;               } }
-        public                  object                  DefaultValue        { get { return _defaultValue;        } }
+        public  override        ISymbol                 Symbol              => this;
+        public                  SymbolType              Type                => SymbolType.Parameter;
+        public                  object                  Declaration         => _declaration;
+        public                  DataModel.ISymbol       ParentSymbol        => null;
+        public                  DataModel.ISymbol       SymbolNameReference => null;
+        public  override        VariableFlags           Flags               => _flags;
+        public                  object                  DefaultValue        => _defaultValue;
 
         protected               object                  _declaration;
         protected               VariableFlags           _flags;
@@ -29,7 +32,8 @@ namespace Jannesen.Language.TypedTSql.DataModel
             Name            = dataReader.GetString   ( 1);
             SqlType         = dataReader.GetBoolean  (12) ? new DataModel.SqlTypeCursorRef()
                                                           : catalog.GetSqlType(database, dataReader, 2);
-            _flags          = (dataReader.GetBoolean (11) ? VariableFlags.Output          : VariableFlags.None) |
+            _flags          = VariableFlags.Nullable |
+                              (dataReader.GetBoolean (11) ? VariableFlags.Output          : VariableFlags.None) |
                               (dataReader.GetBoolean (13) ? VariableFlags.HasDefaultValue : VariableFlags.None) |
                               (dataReader.GetBoolean (14) ? VariableFlags.XmlDocument     : VariableFlags.None) |
                               (dataReader.GetBoolean (15) ? VariableFlags.Readonly        : VariableFlags.None);

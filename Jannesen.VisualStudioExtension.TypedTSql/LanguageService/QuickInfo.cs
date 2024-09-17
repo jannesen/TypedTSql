@@ -177,6 +177,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
                     if (column.ParentSymbol != null)
                         rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(column.ParentSymbol, false)));
+
+                    rtn.Children.Add(_stackPanelCategory("nullable", _textCatagory(column.isNullable ? "yes" : "no")));
                 }
             return rtn;
         }
@@ -188,6 +190,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
             if (details) {
                 if (variable.SqlType != null)
                     rtn.Children.Add(_stackPanelCategory("type", _processType(variable.SqlType)));
+
+                rtn.Children.Add(_stackPanelCategory("nullable", _textCatagory(variable.isNullable ? "yes" : "no")));
             }
 
             return rtn;
@@ -200,6 +204,8 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
                 if (rowset.Source != null)
                     rtn.Children.Add(_stackPanelCategory("source", _processSymbol(rowset.Source, true)));
+
+                rtn.Children.Add(_stackPanelCategory("nullable", _textCatagory(rowset.isNullable ? "yes" : "no")));
 
             return rtn;
         }

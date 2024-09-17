@@ -224,8 +224,9 @@ namespace Jannesen.Language.TypedTSql.Logic
         {
             FlagsTypeCollation  rtn = new FlagsTypeCollation() { ValueFlags = DataModel.ValueFlags.None };
 
-            foreach (var expr in expressions)
+            foreach (var expr in expressions) {
                 rtn.ValueFlags |= LogicStatic.ComputedValueFlags(expr.ValueFlags);
+            }
 
             if ((rtn.ValueFlags & DataModel.ValueFlags.Error) == 0) {
                 foreach (var expr in expressions) {

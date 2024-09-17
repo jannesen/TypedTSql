@@ -35,8 +35,6 @@ namespace Jannesen.Language.TypedTSql.Node
             catch(Exception err) {
                 context.AddError(n_Name, err);
             }
-
-            TranspileRowSet(context);
         }
     }
 }

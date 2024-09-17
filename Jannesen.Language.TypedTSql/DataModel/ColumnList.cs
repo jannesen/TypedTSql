@@ -4,31 +4,16 @@ using System.Data.SqlClient;
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    [Flags]
-    public enum ColumnListFlags
-    {
-        None            = 0,
-        UniqueNamed     = 0x0001,
-        DynamicList     = 0x0002,
-        ErrorStub       = 0x0010
-    }
-
     public interface IColumnList: IReadOnlyList<Column>
     {
-        ColumnListFlags                                 Flags           { get; }
-
+        RowSetFlags                                     RowSetFlags     { get; }
         Column                                          FindColumn(string name, out bool ambiguous);
         ColumnList                                      GetUniqueNamedList();
     }
 
     public class ColumnList: Library.ListHashName<Column>, IColumnList
     {
-        public                  ColumnListFlags         Flags
-        {
-            get {
-                return ColumnListFlags.UniqueNamed;
-            }
-        }
+        public                  RowSetFlags             RowSetFlags             => RowSetFlags.None;
 
         public                                          ColumnList(int capacity): base(capacity)
         {

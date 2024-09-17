@@ -40,17 +40,16 @@ namespace Jannesen.Language.TypedTSql.Node
             }
         }
 
-        protected               void                                TranspileRowSet(Transpile.Context context)
+        internal    override    void                                TranspileRowSet(Transpile.Context context, bool nullable)
         {
+            _t_RowSet = new DataModel.RowSet((nullable ? DataModel.RowSetFlags.Alias|DataModel.RowSetFlags.Nullable : DataModel.RowSetFlags.Alias),
+                                             ColumnList,
+                                             name:        (n_Alias != null ? n_Alias.ValueString : ""),
+                                             declaration: n_Alias,
+                                             source:      t_Source);
+
             if (n_Alias != null) {
-                _t_RowSet = new DataModel.RowSet(n_Alias.ValueString, ColumnList,
-                                                 declaration:n_Alias,
-                                                 source:t_Source);
                 n_Alias.SetSymbolUsage(_t_RowSet, DataModel.SymbolUsageFlags.Declaration);
-            }
-            else {
-                _t_RowSet = new DataModel.RowSet("", ColumnList,
-                                                 source:t_Source);
             }
 
             var rowsets = context.RowSets;

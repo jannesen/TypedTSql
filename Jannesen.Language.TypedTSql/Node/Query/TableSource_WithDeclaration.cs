@@ -39,7 +39,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             foreach(var c in n_Columns) {
                 var column = new DataModel.ColumnWith(c.n_Name.ValueString, c.n_Name, c.n_Type.SqlType);
-                c.n_Name.SetSymbolUsage(column, DataModel.SymbolUsageFlags.Declaration);
+                c.n_Name.SetSymbolUsage(column.Symbol, DataModel.SymbolUsageFlags.Declaration);
 
                 if (!columnList.TryAdd(column))
                     context.AddError(c.n_Name, "Column [" + c.n_Name.ValueString + "] already declared.");

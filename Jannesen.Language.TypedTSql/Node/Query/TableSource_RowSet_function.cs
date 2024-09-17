@@ -37,7 +37,6 @@ namespace Jannesen.Language.TypedTSql.Node
             n_FuncArguments.TranspileNode(context);
 
             _t_ColumnList = _transpileProcess(context);
-            TranspileRowSet(context);
 
             if (_t_ColumnList != null) {
                 Validate.FunctionArguments(context, this, (DataModel.EntityObjectCode)n_Function.Entity, n_FuncArguments.n_Expressions);

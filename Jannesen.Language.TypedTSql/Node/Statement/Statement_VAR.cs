@@ -34,7 +34,7 @@ namespace Jannesen.Language.TypedTSql.Node
             Variable = null;
             n_Expression.TranspileNode(context);
             Variable = context.VarVariableSet(n_VariableName, n_Scope, n_Expression.SqlType);
-            n_VariableName.SetSymbolUsage(Variable, DataModel.SymbolUsageFlags.Declaration | DataModel.SymbolUsageFlags.Write);
+            n_VariableName.SetSymbolUsage(Variable.Symbol, DataModel.SymbolUsageFlags.Declaration | DataModel.SymbolUsageFlags.Write);
         }
 
         public      override    void                                Emit(Core.EmitWriter emitWriter)

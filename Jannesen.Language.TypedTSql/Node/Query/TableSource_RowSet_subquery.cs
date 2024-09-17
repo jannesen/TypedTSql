@@ -34,7 +34,6 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Select.TranspileNode(contextQuery);
 
             _t_ColumnList = _transpileResult(context);
-            TranspileRowSet(context);
         }
         public      override    void                            Emit(EmitWriter emitWriter)
         {

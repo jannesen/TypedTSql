@@ -18,16 +18,13 @@ namespace Jannesen.Language.TypedTSql.DataModel
         VarDeclare          = 0x8000
     }
 
-    public abstract class Variable: ISymbol
+    public abstract class Variable
     {
-        public  abstract        SymbolType              Type                { get; }
+        public  abstract        ISymbol                 Symbol              { get; }
         public                  string                  Name                { get; protected set; }
-        public                  string                  FullName         { get { return Name; } }
+        public                  string                  FullName            { get { return Name; } }
         public  virtual         string                  SqlName             { get { return null; } }
         public                  ISqlType                SqlType             { get; protected set; }
-        public  abstract        object                  Declaration         { get; }
-        public                  DataModel.ISymbol       ParentSymbol        { get { return null; } }
-        public                  DataModel.ISymbol       SymbolNameReference { get { return null; } }
         public  abstract        VariableFlags           Flags               { get; }
 
         public                  bool                    isNullable          { get { return (Flags & VariableFlags.Nullable       ) != 0;    } }

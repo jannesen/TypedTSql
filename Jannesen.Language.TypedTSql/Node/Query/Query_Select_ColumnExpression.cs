@@ -60,15 +60,15 @@ namespace Jannesen.Language.TypedTSql.Node
                                                              n_Expression.CollationName,
                                                              n_Expression.ValueFlags,
                                                              null,
-                                                             exprColumn.ReferencedColumn,
+                                                             exprColumn.ReferencedColumn.Symbol,
                                                              out var declated);
 
                     if (ResultColumn == null) {
                         context.AddError(n_Expression, "Unknown target column [" + n_Expression.ReferencedColumn.Name + "].");
                     }
 
-                    exprColumn.SetColumnSymbol(new DataModel.SymbolSourceTarget(new DataModel.SymbolUsage(exprColumn.ReferencedColumn, DataModel.SymbolUsageFlags.Read),
-                                                                                new DataModel.SymbolUsage(ResultColumn,                declated ? DataModel.SymbolUsageFlags.Write | DataModel.SymbolUsageFlags.Declaration : DataModel.SymbolUsageFlags.Write)));
+                    exprColumn.SetColumnSymbol(new DataModel.SymbolSourceTarget(new DataModel.SymbolUsage(exprColumn.ReferencedColumn.Symbol, DataModel.SymbolUsageFlags.Read),
+                                                                                new DataModel.SymbolUsage(ResultColumn.Symbol,                declated ? DataModel.SymbolUsageFlags.Write | DataModel.SymbolUsageFlags.Declaration : DataModel.SymbolUsageFlags.Write)));
                 }
                 else {
                     context.AddError(this, "Target-column name missing");

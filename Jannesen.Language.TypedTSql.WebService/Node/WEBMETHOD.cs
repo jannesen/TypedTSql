@@ -340,7 +340,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                                                                     n_Name,
                                                                     flags,
                                                                     defaultvalue);
-                        n_Name.SetSymbolUsage(_parameter, DataModel.SymbolUsageFlags.Declaration);
+                        n_Name.SetSymbolUsage(_parameter.Symbol, DataModel.SymbolUsageFlags.Declaration);
                     }
                     else {
                         if (n_Source == null || !n_Source.n_Source.Contains(":")) {

@@ -6,24 +6,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
 {
     public class ColumnListResult: IColumnList
     {
-        public                      ColumnListFlags                     Flags
-        {
-            get {
-                return ColumnListFlags.None;
-            }
-        }
-        public                      int                                 Count
-        {
-            get {
-                return _columns.Length;
-            }
-        }
-        public                      Column                              this[int idx]
-        {
-            get {
-                return _columns[idx];
-            }
-        }
+        public                      RowSetFlags                         RowSetFlags     =>  RowSetFlags.None;
+        public                      int                                 Count           => _columns.Length;
+        public                      Column                              this[int idx]   => _columns[idx];
 
         private                     Column[]                            _columns;
 
@@ -76,8 +61,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
         }
                                     IEnumerator<Column>                 IEnumerable<Column>.GetEnumerator()
         {
-            foreach(var c in _columns)
+            foreach(var c in _columns) {
                 yield return c;
+            }
         }
     }
 }

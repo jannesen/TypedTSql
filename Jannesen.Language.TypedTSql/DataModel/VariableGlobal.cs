@@ -2,11 +2,14 @@
 
 namespace Jannesen.Language.TypedTSql.DataModel
 {
-    public class VariableGlobal: Variable
+    public class VariableGlobal: Variable, ISymbol
     {
-        public  override        DataModel.SymbolType    Type                { get { return DataModel.SymbolType.GlobalVariable; } }
-        public  override        object                  Declaration         { get { return null; } }
-        public  override        VariableFlags           Flags               { get { return VariableFlags.Nullable | VariableFlags.Readonly | VariableFlags.Used; } }
+        public  override        ISymbol                 Symbol              => this;
+        public                  SymbolType              Type                => SymbolType.GlobalVariable;
+        public                  object                  Declaration         => null;
+        public                  DataModel.ISymbol       ParentSymbol        => null;
+        public                  DataModel.ISymbol       SymbolNameReference => null;
+        public  override        VariableFlags           Flags               => VariableFlags.Nullable | VariableFlags.Readonly | VariableFlags.Used;
 
         protected                                       VariableGlobal()
         {

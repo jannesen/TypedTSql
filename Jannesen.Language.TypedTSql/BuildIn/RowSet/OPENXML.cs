@@ -59,8 +59,6 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
             catch(Exception err) {
                 context.AddError(this, err);
             }
-
-            TranspileRowSet(context);
         }
     }
 }

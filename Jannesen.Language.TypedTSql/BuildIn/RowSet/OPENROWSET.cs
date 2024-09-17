@@ -26,7 +26,6 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
         public      override    void                                TranspileNode(Transpile.Context context)
         {
             _t_ColumnList = new DataModel.ColumnListDynamic();
-            TranspileRowSet(context);
         }
     }
 }

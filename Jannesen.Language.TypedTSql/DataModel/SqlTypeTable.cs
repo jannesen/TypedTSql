@@ -26,7 +26,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
             if (columns != null) {
                 foreach(var column in columns)
-                    (column as ColumnDS)?.SetParent(parent);
+                    column.SetParent(parent);
             }
             if (indexes != null) {
                 foreach(var index in indexes)

@@ -37,11 +37,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
                 context.AddError(this, err);
             }
 
-            var columnList = new DataModel.ColumnList(1);
-            columnList.Add(new DataModel.ColumnNative("value", n_String.SqlType, n_String.CollationName));
-            _t_ColumnList = columnList;
-
-            TranspileRowSet(context);
+            _t_ColumnList = new DataModel.ColumnList(1) { new DataModel.ColumnNative("value", n_String.SqlType, n_String.CollationName) };
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Jannesen.Language.TypedTSql.Node
         {
         }
 
-        public                  bool                            isVarDeclare    { get { return true;        } }
-        public                  DataModel.ISymbol               Table           { get { return Variable;    } }
-        public                  DataModel.IColumnList           Columns         { get { return _columns;    } }
+        public                  bool                            isVarDeclare    { get { return true;            } }
+        public                  DataModel.ISymbol               Table           { get { return Variable.Symbol; } }
+        public                  DataModel.IColumnList           Columns         { get { return _columns;        } }
 
         private                 DataModel.ColumnList            _columns;
 
@@ -29,7 +29,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (!_columns.TryGetValue(name, out var column)) {
                 _columns.Add(column = new DataModel.ColumnVarTable(name,
                                                                    sqlType,
-                                                                   Variable,
+                                                                   Variable.Symbol,
                                                                    declaration,
                                                                    collationName,
                                                                    nameReference,

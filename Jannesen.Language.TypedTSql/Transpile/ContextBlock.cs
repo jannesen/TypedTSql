@@ -19,11 +19,11 @@ namespace Jannesen.Language.TypedTSql.Transpile
             if (VariableList != null) {
                 foreach(var v in VariableList) {
                     if (!v.isAssigned) {
-                        AddWarning((Core.Token)v.Declaration, "Variable " + v.Name + " never assigned.");
+                        AddWarning((Core.IAstNode)(v.Symbol.Declaration), "Variable " + v.Name + " never assigned.");
                     }
                     else
                     if (!v.isUsed) {
-                        AddWarning((Core.Token)v.Declaration, "Variable " + v.Name + " not used.");
+                        AddWarning((Core.IAstNode)(v.Symbol.Declaration), "Variable " + v.Name + " not used.");
                     }
                 }
             }

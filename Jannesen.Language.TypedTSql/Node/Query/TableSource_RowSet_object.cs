@@ -29,12 +29,9 @@ namespace Jannesen.Language.TypedTSql.Node
 
             n_Object.TranspileNode(context);
             n_With?.TranspileNode(context);
+            n_With?.CheckIndexes(context, n_Object.Entity);
 
             _t_ColumnList = n_Object.Columns ?? new DataModel.ColumnListErrorStub();
-            TranspileRowSet(context);
-
-            if (n_With != null)
-                n_With.CheckIndexes(context, n_Object.Entity);
         }
         public      override    bool                            SetUsage(DataModel.SymbolUsageFlags usage)
         {

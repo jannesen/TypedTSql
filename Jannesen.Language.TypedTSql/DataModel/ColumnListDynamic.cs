@@ -5,24 +5,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
 {
     public class ColumnListDynamic: IColumnList
     {
-        public      virtual         ColumnListFlags                     Flags
-        {
-            get {
-                return ColumnListFlags.DynamicList;
-            }
-        }
-        public                      int                                 Count
-        {
-            get {
-                return _columns.Count;
-            }
-        }
-        public                      Column                              this[int idx]
-        {
-            get {
-                return _columns[idx];
-            }
-        }
+        public      virtual         RowSetFlags                         RowSetFlags     => RowSetFlags.DynamicList;
+        public                      int                                 Count           => _columns.Count;
+        public                      Column                              this[int idx]   => _columns[idx];
 
         private                     ColumnList                          _columns;
 
