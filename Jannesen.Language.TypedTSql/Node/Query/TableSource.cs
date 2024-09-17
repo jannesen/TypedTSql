@@ -12,7 +12,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public                                              TableSource(Core.ParserReader reader)
         {
-            var rowsets = new List<TableSource_RowSet>() { {  AddChild(TableSource_RowSet_alias.Parse(reader, true)) } };
+            var rowsets = new List<TableSource_RowSet>() { {  AddChild(TableSource_RowSet_alias.Parse(reader)) } };
 
             while (TableSource_RowSet_join.CanParse(reader))
                 rowsets.Add(AddChild(new TableSource_RowSet_join(reader)));

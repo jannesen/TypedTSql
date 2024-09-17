@@ -15,7 +15,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
 
         private                 DataModel.IColumnList               _t_ColumnList;
 
-        internal                                                    OPENXML(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader, bool allowAlias): base(declaration, reader, allowAlias)
+        internal                                                    OPENXML(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader): base(declaration, reader)
         {
             ParseToken(reader, Core.TokenID.LrBracket);
             n_VariableIDoc = ParseExpression(reader);

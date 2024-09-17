@@ -17,7 +17,7 @@ namespace Jannesen.Language.TypedTSql.Internal
 
         private                 ConstructorInfo                 _constructor;
 
-        public                                                  BuildinFunctionDeclaration(Type parserClass, bool rowset)
+        public                                                  BuildinFunctionDeclaration(Type parserClass)
         {
             _checkBaseType(parserClass, typeof(Core.AstParseNode));
 
@@ -28,10 +28,10 @@ namespace Jannesen.Language.TypedTSql.Internal
                     throw new InvalidOperationException("Name is keyword withoutsymbol.");
             }
 
-            var args = rowset ? new Type[] { typeof(BuildinFunctionDeclaration), typeof(Core.ParserReader), typeof(bool) }
-                              : new Type[] { typeof(BuildinFunctionDeclaration), typeof(Core.ParserReader) };
-
-            _constructor    = parserClass.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public, null, args, null);
+            _constructor    = parserClass.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+                                                         null,
+                                                         new Type[] { typeof(BuildinFunctionDeclaration), typeof(Core.ParserReader) },
+                                                         null);
             if (_constructor == null)
                 throw new InvalidOperationException("Can't get constructor.");
         }

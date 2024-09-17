@@ -258,7 +258,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
 
         private                 DataModel.IColumnList               _t_ColumnList;
 
-        internal                                                    OPENJSON(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader, bool allowAlias): base(declaration, reader, allowAlias)
+        internal                                                    OPENJSON(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader): base(declaration, reader)
         {
             ParseToken(reader, Core.TokenID.LrBracket);
             n_Json = ParseExpression(reader);

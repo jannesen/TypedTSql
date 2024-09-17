@@ -16,7 +16,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             return reader.CurrentToken.isToken(Core.TokenID.LrBracket);
         }
-        public                                                  TableSource_RowSet_subquery(Core.ParserReader reader, bool allowAlias): base(allowAlias)
+        public                                                  TableSource_RowSet_subquery(Core.ParserReader reader)
         {
             ParseToken(reader, Core.TokenID.LrBracket);
             n_Select = AddChild(new Query_Select(reader, Query_SelectContext.TableSourceSubquery));
@@ -34,7 +34,6 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Select.TranspileNode(contextQuery);
 
             _t_ColumnList = _transpileResult(context);
-
             TranspileRowSet(context);
         }
         public      override    void                            Emit(EmitWriter emitWriter)
@@ -43,7 +42,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 n.Emit(emitWriter);
 
                 if (n is Core.Token token && token.ID == TokenID.RrBracket) {
-                    if (n_Alias == null && n_AllowAlias)
+                    if (n_Alias == null)
                         emitWriter.WriteText(" [$dummy]");
                 }
             }

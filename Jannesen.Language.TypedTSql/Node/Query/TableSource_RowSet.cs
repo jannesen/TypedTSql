@@ -19,7 +19,6 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      abstract    Core.TokenWithSymbol            n_Alias                         { get; }
         public      virtual     JoinType                        n_JoinType                      { get { return JoinType.NONE;   } }
-        public      virtual     IExprNode                       n_On                            { get { return null;            } }
         public      abstract    DataModel.IColumnList           ColumnList                      { get; }
         public      abstract    DataModel.RowSet                t_RowSet                        { get; }
         public      virtual     DataModel.ISymbol               t_Source                        { get { return null;            } }

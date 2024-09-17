@@ -21,14 +21,13 @@ namespace Jannesen.Language.TypedTSql.Node
         public      readonly    Core.Token                      n_JoinOption;
         public      readonly    JoinOption                      n_JoinOptions;
         public      readonly    TableSource_RowSet_alias        n_RowSet;
+        public      readonly    IExprNode                       n_OnExpr;
         public      override    Core.TokenWithSymbol            n_Alias             => n_RowSet.n_Alias;
         public      override    DataModel.IColumnList           ColumnList          => n_RowSet.ColumnList;
         public      override    DataModel.RowSet                t_RowSet            => n_RowSet.t_RowSet;
         public      override    JoinType                        n_JoinType          => _n_JoinType;
-        public      override    IExprNode                       n_On                => _n_On;
 
         private                 JoinType                        _n_JoinType;
-        private                 IExprNode                       _n_On;
 
         public      static      bool                            CanParse(Core.ParserReader reader)
         {
@@ -83,7 +82,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 break;
             }
 
-            n_RowSet = AddChild(TableSource_RowSet_alias.Parse(reader, true));
+            n_RowSet = AddChild(TableSource_RowSet_alias.Parse(reader));
 
             switch (_n_JoinType) {
             case JoinType.INNER:
@@ -91,7 +90,7 @@ namespace Jannesen.Language.TypedTSql.Node
             case JoinType.RIGHT_OUTER:
             case JoinType.FULL_OUTER:
                 ParseToken(reader, Core.TokenID.ON);
-                _n_On = ParseExpression(reader);
+                n_OnExpr = ParseExpression(reader);
                 break;
             }
         }
@@ -99,7 +98,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    void                            TranspileNode(Transpile.Context context)
         {
             n_RowSet.TranspileNode(context);
-            _n_On?.TranspileNode(context);
+            n_OnExpr?.TranspileNode(context);
 
             _transpileProcess(context);
         }

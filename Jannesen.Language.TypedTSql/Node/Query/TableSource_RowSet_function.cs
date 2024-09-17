@@ -21,7 +21,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 || (token[0].isNameOrQuotedName && token[1].isToken(Core.TokenID.Dot) && token[2].isNameOrQuotedName  && token[3].isToken(Core.TokenID.LrBracket))
                 || (token[0].isNameOrQuotedName && token[1].isToken(Core.TokenID.Dot) && token[2].isNameOrQuotedName  && token[3].isToken(Core.TokenID.Dot) && token[4].isNameOrQuotedName && token[5].isToken(Core.TokenID.LrBracket));
         }
-        public                                                  TableSource_RowSet_function(Core.ParserReader reader, bool allowAlias): base(allowAlias)
+        public                                                  TableSource_RowSet_function(Core.ParserReader reader)
         {
             n_Function      = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.FunctionTable, DataModel.SymbolUsageFlags.Select));
             n_FuncArguments = AddChild(new Expr_Collection(reader, false));

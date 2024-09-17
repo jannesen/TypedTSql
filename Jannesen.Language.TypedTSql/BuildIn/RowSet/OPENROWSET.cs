@@ -12,7 +12,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.RowSet
 
         private                 DataModel.IColumnList               _t_ColumnList;
 
-        internal                                                    OPENROWSET(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader, bool allowAlias): base(declaration, reader, allowAlias)
+        internal                                                    OPENROWSET(Internal.BuildinFunctionDeclaration declaration, Core.ParserReader reader): base(declaration, reader)
         {
             ParseToken(reader, Core.TokenID.LrBracket);
             n_ProviderString = ParseToken(reader, Core.TokenID.String);

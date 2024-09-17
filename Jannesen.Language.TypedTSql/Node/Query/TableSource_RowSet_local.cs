@@ -15,7 +15,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             return reader.CurrentToken.isToken(Core.TokenID.LocalName);
         }
-        public                                                  TableSource_RowSet_local(Core.ParserReader reader, bool allowAlias): base(allowAlias)
+        public                                                  TableSource_RowSet_local(Core.ParserReader reader)
         {
             n_Variable = AddChild(new Node_TableVariable(reader, DataModel.SymbolUsageFlags.Select));
 

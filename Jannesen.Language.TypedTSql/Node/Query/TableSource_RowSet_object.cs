@@ -12,7 +12,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    DataModel.ISymbol               t_Source            => n_Object.Entity;
         private                 DataModel.IColumnList           _t_ColumnList;
 
-        public                                                  TableSource_RowSet_object(Core.ParserReader reader, bool allowAlias): base(allowAlias)
+        public                                                  TableSource_RowSet_object(Core.ParserReader reader)
         {
             n_Object = AddChild(new Node_EntityNameReference(reader, EntityReferenceType.TableOrView, DataModel.SymbolUsageFlags.Select));
 

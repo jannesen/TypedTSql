@@ -15,7 +15,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             return reader.CurrentToken.isToken("INSERTED", "DELETED");
         }
-        public                                                  TableSource_RowSet_inserted_deleted(Core.ParserReader reader, bool allowAlias): base(allowAlias)
+        public                                                  TableSource_RowSet_inserted_deleted(Core.ParserReader reader)
         {
             n_Name = ParseToken(reader);
             ParseTableAlias(reader);

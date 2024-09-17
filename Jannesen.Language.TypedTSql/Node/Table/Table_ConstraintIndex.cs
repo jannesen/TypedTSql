@@ -42,7 +42,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             public      override    void                        TranspileNode(Transpile.Context context)
             {
-                t_Column = context.ColumnList?.FindColumn(n_Column.ValueString, out bool ambiguous);
+                t_Column = context.RowSets[0].Columns.FindColumn(n_Column.ValueString, out bool ambiguous);
 
                 if (t_Column != null) {
                     n_Column.SetSymbolUsage(t_Column, DataModel.SymbolUsageFlags.Reference);

@@ -11,11 +11,9 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public      override    ISqlType                SqlType                 { get { return _expr.SqlType;        } }
         public      override    string                  CollationName           { get { return _expr.CollationName;  } }
         public      override    ValueFlags              ValueFlags              { get { return _valueFlags;          } }
-        public                  Core.TokenWithSymbol    NameToken               { get { return _nameToken;           } }
         public                  Node.IExprNode          Expr                    { get { return _expr;                } }
 
         private                 string                  _name;
-        private                 Core.TokenWithSymbol    _nameToken;
         private                 Node.IExprNode          _expr;
         public                  ValueFlags              _valueFlags;
         private                 object                  _declaration;
@@ -30,7 +28,6 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public                                          ColumnExpr(Core.TokenWithSymbol name, Node.IExprNode expr, object declaration=null)
         {
             _name        = name.ValueString;
-            _nameToken   = name;
             _expr        = expr;
             _valueFlags  = expr.ValueFlags;
             _declaration = declaration;

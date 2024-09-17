@@ -35,13 +35,6 @@ namespace Jannesen.Language.TypedTSql.Transpile
             throw new InvalidOperationException("Excpect type " + typeof(T).Name);
         }
 
-        public                  DataModel.IColumnList               ColumnList
-        {
-            get {
-                return (RowSets != null && RowSets.Count == 1 && RowSets[0].Name.Length == 0) ? RowSets[0].Columns : null;
-            }
-        }
-
         public      virtual     void                                SetQueryOptions(DataModel.QueryOptions options)
         {
             throw new InvalidOperationException("QueryOptions not available.");
