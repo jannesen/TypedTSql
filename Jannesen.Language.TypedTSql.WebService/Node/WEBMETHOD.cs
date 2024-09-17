@@ -34,6 +34,17 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 {
                     n_Options.TranspileNodes(context);
                 }
+
+                public                      string                              FindOption(string name)
+                {
+                    for(int i = 0 ; i < n_Options.Length ; ++i) {
+                        if (n_Options[i].n_Name == name) {
+                            return n_Options[i].n_Value;
+                        }
+                    }
+
+                    return null;
+                }
             }
             public class WebAssemblies:  LTTSQL.Core.AstParseNode
             {

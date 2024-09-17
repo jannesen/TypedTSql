@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Jannesen.Language.TypedTSql.WebService.Library;
+using YamlDotNet.Core;
+using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
@@ -25,7 +27,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
     internal class OpenApiComponents
     {
-        public OpenApiSchemas                       schemas                 { get; set;}
+        public OpenApiSecuritySchemes   securitySchemes         { get; set;}
+        public OpenApiSchemas           schemas                 { get; set;}
     }
 
     internal class OpenApiPathItem
@@ -38,13 +41,37 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
     internal class OpenApiOperation
     {
+        public OpenApiSecurityList                  security            { get; set; }
+        public OpenApiParameters                    parameters          { get; set; }
+        public OpenApiBody                          requestBody         { get; set; }
+        public OpenApiResponses                     responses           { get; set; }
         [YamlMember(Alias="x-handler")]
         public string                               x_handler           { get; set; }
         [YamlMember(Alias="x-timeout")]
         public int                                  x_timeout           { get; set; }
-        public OpenApiParameters                    parameters          { get; set; }
-        public OpenApiBody                          requestBody         { get; set; }
-        public OpenApiResponses                     responses           { get; set; }
+    }
+
+    internal class OpenApiSecurityList: List<OpenApiSecurity>
+    {
+    }
+
+    internal class OpenApiSecurity: IYamlConvertible
+    {
+        public string                               name                { get; set; }
+        public string[]                             options             { get; set; }
+
+               void                                 IYamlConvertible.Read(IParser parser, Type expectedType, ObjectDeserializer nestedObjectDeserializer)
+        {
+            throw new InvalidOperationException("OpenApiSecurity Deserializer not supported."); 
+        }
+               void                                 IYamlConvertible.Write(IEmitter emitter, ObjectSerializer nestedObjectSerializer)
+        {
+            emitter.Emit(new MappingStart());
+            emitter.Emit(new Scalar(TagName.Empty, name));
+            nestedObjectSerializer(options, typeof(string[]));
+            emitter.Emit(new MappingEnd());
+
+        }
     }
 
     internal class OpenApiParameters: List<OpenApiParameter>
@@ -205,6 +232,24 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         {
             return this.GetItemsHashCode();
         }
+    }
+
+    internal class OpenApiSecuritySchemes: Dictionary<string, OpenApiSecurityScheme>
+    {
+    }
+
+    internal enum SecuritySchemeType
+    {
+        http    = 1,
+        apiKey  = 2
+    }
+
+    internal class OpenApiSecurityScheme
+    {
+        public  SecuritySchemeType      type;
+        public  string                  scheme;
+        public  string                  @in;
+        public  string                  name;
     }
 
     internal class OpenApiX_Values: List<OpenApiX_Value>
