@@ -8,7 +8,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
     {
         public                  SymbolType                  Type                    { get { return DataModel.SymbolType.RowsetAlias;   } }
         public                  string                      Name                    { get; private set; }
-        public                  string                      FullName             { get { return SqlStatic.QuoteNameIfNeeded(Name); } }
+        public                  string                      FullName                { get { return SqlStatic.QuoteNameIfNeeded(Name); } }
         public                  IColumnList                 Columns                 { get; private set; }
         public                  object                      Declaration             { get; private set; }
         public                  ISymbol                     ParentSymbol            { get { return null; } }

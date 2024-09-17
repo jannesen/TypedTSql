@@ -17,8 +17,9 @@ namespace Jannesen.Language.TypedTSql.Node
                                 IAttributeValue                 IAttributes.Find(string name)
         {
             for (int i = 0 ; i < n_Attributes.Length ; ++i) {
-                if (n_Attributes[i].n_Name.ValueString == name) {
-                    return n_Attributes[i];
+                var attr = (IAttributeValue)(n_Attributes[i]);
+                if (attr.Attr.Name == name) {
+                    return attr;
                 }
             }
 

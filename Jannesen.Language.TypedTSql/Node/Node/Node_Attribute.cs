@@ -35,11 +35,10 @@ namespace Jannesen.Language.TypedTSql.Node
         public  readonly        TokenWithSymbol             n_Name;
         public  readonly        IAstNode                    n_Value;
 
-        public                  TAttributeType              t_Type;
+        public                  TAttribute                  t_Attr;
         public                  object                      t_Value;
 
-                                string                      IAttributeValue.Name      => n_Name.ValueString;
-                                TAttributeType              IAttributeValue.Type      => t_Type;
+                                TAttribute                  IAttributeValue.Attr      => t_Attr;
                                 object                      IAttributeValue.Value     => t_Value;
 
         public                                              Node_Attribute(Core.ParserReader reader)
@@ -66,17 +65,18 @@ namespace Jannesen.Language.TypedTSql.Node
 
         public      override    void                        TranspileNode(Transpile.Context context)
         {
+            t_Attr  = null;
             t_Value = null;
 
-            var attr = context.TranspileContext.FindAttribute(n_Name.ValueString);
-            if (attr == null) {
+            t_Attr = context.TranspileContext.FindAttribute(n_Name.ValueString);
+            if (t_Attr == null) {
                 context.AddError(n_Name, "Unknown attribute '" + n_Name.ValueString +"',");
                 return;
             }
 
-            n_Name.SetSymbolUsage(attr, SymbolUsageFlags.Reference);
+            n_Name.SetSymbolUsage(t_Attr, SymbolUsageFlags.Reference);
 
-            switch(t_Type = attr.Type) {
+            switch(t_Attr.Type) {
             case TAttributeType.String:
                 {
                     if (n_Value is Token.String st) {
@@ -112,7 +112,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             case TAttributeType.Enum: {
                     if (n_Value is TokenWithSymbol t && t.isNameOrQuotedName) {
-                        var name = attr.FindName(t.ValueString);
+                        var name = t_Attr.FindName(t.ValueString);
                         if (name != null) {
                             t.SetSymbolUsage(name, SymbolUsageFlags.Reference);
                             t_Value = name.Name;
@@ -132,7 +132,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
                     if (n_Value is NameList nl) {
                         foreach(var n in nl.n_Names) {
-                            var name = attr.FindName(n.ValueString);
+                            var name = t_Attr.FindName(n.ValueString);
                             if (name != null) {
                                 n.SetSymbolUsage(name, SymbolUsageFlags.Reference);
                                 names.Add(name.Name);

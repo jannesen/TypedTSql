@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Jannesen.Language.TypedTSql.Library;
+using Jannesen.Language.TypedTSql.WebService.Library;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Text;
-using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using LTTSQL = Jannesen.Language.TypedTSql;
-using Jannesen.Language.TypedTSql.Library;
-using Jannesen.Language.TypedTSql.WebService.Library;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
 {
@@ -125,10 +124,11 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
         public      readonly        string                                  Filename;
         public      readonly        Node.WEBSERVICE_EMITOR_OPENAPI          ConfigNode;
+
         private     readonly        OpenApiDocument                         _openApiDocument;
         private     readonly        Dictionary<object, OpenApiSchemaRef>    _typeSchemaMap;
 
-        private     static          ISerializer                         _yamlSerializer = _initSerializer();
+        private     static          ISerializer                             _yamlSerializer = _initSerializer();
 
         public                                                          OpenApiEmitor(Node.WEBSERVICE_EMITOR_OPENAPI configNode, string baseEmitDirectory)
         {
@@ -142,7 +142,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                                      },
                                      paths = new OpenApiPaths()
                                  };
-            _typeSchemaMap     = new Dictionary<object, OpenApiSchemaRef>(4096);
+            _typeSchemaMap     = new Dictionary<object, OpenApiSchemaRef>(16384);
         }
 
         public                  void                                    CleanTarget()
@@ -160,27 +160,14 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                     _setOperationExtendedProperties(operation, webMethod);
                     _processParameters(operation, webMethod.n_Parameters.n_Parameters, method);
                     _createResponse(operation, webMethod.n_Declaration.n_WebHttpHandler, webMethod, method);
+                    _setAttributes(operation, webMethod, path);
 
-                    if (webMethod.n_Declaration.n_Attributes?.Attributes != null) {
-                        foreach (var a in webMethod.n_Declaration.n_Attributes?.Attributes) {
-                            operation.SetAttribute(a.Name, a.Value);
+                    if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Object) != 0) {
+                        if (operation.requestBody != null) {
+                            _optimizeBody(operation.requestBody);
                         }
-                    }
-
-                    if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
-                        switch(operation.x_kind) {
-                        case "select-lookup":
-                        case "select-search":
-                            var selectValueType = webMethod.t_SelectValueType;
-
-                            if (selectValueType != null && _typeSchemaMap.TryGetValue(selectValueType, out var schemaRef) &&
-                                schemaRef.schema is OpenApiSchemaType schema) {
-                                schema.SetAttribute("x-" + operation.x_kind, path);
-                            }
-                            else {
-                                throw new EmitException(webMethod.n_Declaration.n_ServiceMethodName, "Can't find related schema for '" + operation.x_kind + "'");
-                            }
-                            break;
+                        if (operation.responses.TryGetValue("200", out var response)) {
+                            _optimizeBody(response);
                         }
                     }
                 }
@@ -468,6 +455,31 @@ add_parameter:                  {
                                        options = new string[0]
                                    });
         }
+        private                 void                                    _setAttributes(OpenApiOperation operation, Node.WEBMETHOD webMethod, string path)
+        {
+            if (webMethod.n_Declaration.n_Attributes?.Attributes != null) {
+                foreach (var a in webMethod.n_Declaration.n_Attributes?.Attributes) {
+                    operation.SetAttribute(a.Attr.Name, a.Value);
+                }
+            }
+
+            if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
+                switch(operation.x_kind) {
+                case "select-lookup":
+                case "select-search":
+                    var selectValueType = webMethod.t_SelectValueType;
+
+                    if (selectValueType != null && _typeSchemaMap.TryGetValue(selectValueType, out var schemaRef) &&
+                        schemaRef.schema is OpenApiSchemaType schema) {
+                        schema.SetAttribute("x-" + operation.x_kind, path);
+                    }
+                    else {
+                        throw new EmitException(webMethod.n_Declaration.n_ServiceMethodName, "Can't find related schema for '" + operation.x_kind + "'");
+                    }
+                    break;
+                }
+            }
+        }
 
         private                 OpenApiSchema                           _getOpenApiSchema(List<Node.RETURNS> returns)
         {
@@ -509,7 +521,7 @@ add_parameter:                  {
                         schema.SetAttribute("x-value-schema", _getOpenApiSchema(declaration, postUdt));
                     }
 
-                    return _addOpenApiSchema(declaration, _schemaName(complexType), complexType.DeclarationComplexType, schema);
+                    return _addOpenApiSchema(_schemaName(complexType), complexType.DeclarationComplexType, schema);
                 }
                 else {
                     return schema;
@@ -592,7 +604,7 @@ add_parameter:                  {
 
             if (entityTypeUser.Attributes != null) {
                 foreach(var attr in entityTypeUser.Attributes) {
-                    udtSchema.SetAttribute(attr.Name, attr.Value);
+                    udtSchema.SetAttribute(attr.Attr.Name, attr.Value);
                 }
             }
 
@@ -624,7 +636,7 @@ add_parameter:                  {
             }
 
             if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
-                return _addOpenApiSchema(declaration, _schemaName(entityTypeUser), entityTypeUser, udtSchema);
+                return _addOpenApiSchema(_schemaName(entityTypeUser), entityTypeUser, udtSchema);
             }
             else {
                 return udtSchema;
@@ -645,7 +657,7 @@ add_parameter:                  {
 
             var etschema = _getOpenApiSchema(declaration, entityTypeExtend.ParentType);
             if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
-                return _addOpenApiSchema(declaration, _schemaName(entityTypeExtend), entityTypeExtend, etschema);
+                return _addOpenApiSchema(_schemaName(entityTypeExtend), entityTypeExtend, etschema);
             }
             else {
                 return etschema;
@@ -748,7 +760,7 @@ add_parameter:                  {
                 throw new EmitException(declaration, "No type mapping for '" + nativeType.ToString() + "'.");
             }
         }
-        private                 OpenApiSchemaRef                        _addOpenApiSchema(object declaration, string name, object type, OpenApiSchema schema)
+        private                 OpenApiSchemaRef                        _addOpenApiSchema(string name, object type, OpenApiSchema schema)
         {
             try {
                 var @ref = "#/components/schemas/" + name;
@@ -769,8 +781,58 @@ add_parameter:                  {
                 return r;
             }
             catch(Exception err) {
-                throw new EmitException(declaration, "Can't create openapi component.schemas.", err);
+                throw new InvalidOperationException("Can't create openapi component.schemas." + name, err);
             }
+        }
+        private                 void                                    _optimizeBody(OpenApiBody body)
+        {
+            if (body.content != null && body.content.TryGetValue("application/json", out var content)) {
+                var r = _getUniqueSchema(content.schema);
+                if (r != null) {
+                    content.schema = r;
+                }
+            }
+        }
+        private                 OpenApiSchema                           _getUniqueSchema(OpenApiSchema schema)
+        {
+            if (schema is OpenApiSchemaOneOf schemaOneOf) {
+                return null;
+            }
+
+            if (schema is OpenApiSchemaType schemaType) {
+                switch(schemaType.type) {
+                case "array": {
+                        var r = _getUniqueSchema(schemaType.items);
+                        if (r != null) {
+                            schemaType.items = r;
+                        }
+                    }
+                    break;
+
+                case "object":
+                    foreach(var k in schemaType.properties.Keys.ToArray()) {
+                        var r = _getUniqueSchema(schemaType.properties[k]);
+                        if (r != null) {
+                            schemaType.properties[k] = r;
+                        }
+                    }
+
+                    if (!_typeSchemaMap.TryGetValue(schemaType, out var ro)) {
+                        var name = "object-" + ((uint)(schemaType.GetHashCode())).ToString();
+
+                        if (_openApiDocument.components.schemas.ContainsKey(name)) {
+                            name += "-" + _typeSchemaMap.Count.ToString();
+                        }
+                        ro = _addOpenApiSchema(name, schemaType, schemaType);
+                    }
+
+                    return ro;
+                }
+
+                return null;
+            }
+
+            return null;
         }
         private                 OpenApiSchemaRef                        _getErrorSchema()
         {

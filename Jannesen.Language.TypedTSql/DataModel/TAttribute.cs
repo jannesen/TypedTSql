@@ -92,8 +92,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
 
     public interface IAttributeValue
     {
-        string          Name        {get;}
-        TAttributeType  Type        {get;}
+        TAttribute      Attr        {get;}
         object          Value       {get;}
     }
 }
