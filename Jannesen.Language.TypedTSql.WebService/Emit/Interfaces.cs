@@ -6,6 +6,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 {
     internal interface FileEmitor
     {
+        void        CleanTarget();
         void        AddWebMethod(Node.WEBMETHOD webMethod);
         void        AddIndexMethod(string pathname, string procedureName);
         void        Emit(EmitContext emitContext);

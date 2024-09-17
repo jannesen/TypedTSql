@@ -95,6 +95,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             }
         }
 
+        public      readonly    string                          n_Directory;
         public      readonly    string                          n_BaseUrl;
         public      readonly    TypeMap                         n_TypeMap;
 
@@ -105,6 +106,12 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
             while(!reader.CurrentToken.isToken(Core.TokenID.RrBracket)) {
                 switch(reader.CurrentToken.Text.ToUpper()) {
+                case "DIRECTORY":
+                    ParseToken(reader, "DIRECTORY");
+                    ParseToken(reader, LTTSQL.Core.TokenID.Equal);
+                    n_Directory = ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString;
+                    break;
+
                 case "BASEURL":
                     ParseToken(reader, "BASEURL");
                     ParseToken(reader, LTTSQL.Core.TokenID.Equal);
@@ -116,7 +123,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     break;
 
                 default:
-                    throw new ParseException(reader.CurrentToken, "Except DATABASE got " + reader.CurrentToken.Text.ToString() + ".");
+                    throw new ParseException(reader.CurrentToken, "Except DIRECTORY,BASEURL,DATABASE got " + reader.CurrentToken.Text.ToString() + ".");
                 }
             }
 
@@ -124,6 +131,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         }
         public      override    void                            TranspileNode(Transpile.Context context)
         {
+            if (n_Directory == null) {
+                context.AddError(this, "Missing DIRECTORY");
+            }
+
             n_TypeMap?.TranspileNode(context);
         }
         internal    override    Emit.FileEmitor                 ConstructEmitor(string basedirectory)

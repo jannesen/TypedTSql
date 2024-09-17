@@ -321,9 +321,9 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 _imports.Add(new DeclareImport("$JT", "jc3/jannesen.datatype"));
             }
 
-            public                  void                                    AddMethod(Node.WEBSERVICE_EMITOR_JC_PROXY webServiceEmitor, Node.WEBMETHOD webMethod)
+            public                  void                                    AddMethod(Node.WEBSERVICE_EMITOR_JC_PROXY configNode, Node.WEBMETHOD webMethod)
             {
-                _proxys.Add((new ProcessMethod(this, webServiceEmitor)).Process(webMethod));
+                _proxys.Add((new ProcessMethod(this, configNode)).Process(webMethod));
             }
             public                  void                                    Emit(EmitContext emitContext)
             {
@@ -409,15 +409,15 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         class ProcessMethod
         {
             private     readonly    ProxyFile                               _proxyFile;
-            private     readonly    Node.WEBSERVICE_EMITOR_JC_PROXY         _webServiceEmitor;
+            private     readonly    Node.WEBSERVICE_EMITOR_JC_PROXY         _configNode;
             private                 List<RecordField>                       _callArgs;
             private                 List<RecordField>                       _reqArgs;
             private                 DeclareType                             _textjson;
 
-            public                                                          ProcessMethod(ProxyFile proxyFile, Node.WEBSERVICE_EMITOR_JC_PROXY webServiceEmitor)
+            public                                                          ProcessMethod(ProxyFile proxyFile, Node.WEBSERVICE_EMITOR_JC_PROXY configNode)
             {
-                _proxyFile        = proxyFile;
-                _webServiceEmitor = webServiceEmitor;
+                _proxyFile  = proxyFile;
+                _configNode = configNode;
             }
 
             public                  DeclareProxy                            Process(Node.WEBMETHOD webMethod)
@@ -441,7 +441,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                 declareProxy.Name     = webMethod.n_Declaration.JcProxy.Expression;
                 declareProxy.Methods   = webMethod.n_Declaration.n_Methods;
-                declareProxy.Callname = "\"" + (_webServiceEmitor.n_BaseUrl ?? "") + webMethod.n_Declaration.n_ServiceMethodName.n_Name.ValueString.Replace("\"", "\\\"") + "\"";
+                declareProxy.Callname = "\"" + (_configNode.n_BaseUrl ?? "") + webMethod.n_Declaration.n_ServiceMethodName.n_Name.ValueString.Replace("\"", "\\\"") + "\"";
 
                 var timeout = webMethod.n_Declaration.GetWebHandlerOptionValueByName("timeout");
                 if (timeout != null)
@@ -571,7 +571,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
             private                 DeclareSimpleType                       _getType(object declaration, LTTSQL.DataModel.ISqlType sqlType)
             {
-                var typeMapDictionary = _webServiceEmitor.n_TypeMap?.TypeMapDictionary;
+                var typeMapDictionary = _configNode.n_TypeMap?.TypeMapDictionary;
 
                 if (typeMapDictionary != null && typeMapDictionary.TryGetValue(sqlType, out var typeMapEntry))
                     return _proxyFile.getSimpleType(typeMapEntry.From, typeMapEntry.Expression);
@@ -622,7 +622,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
             private                 DeclareSimpleType                       _getComplextAsType(object declaration, LTTSQL.Node.DeclarationServiceComplexType wct)
             {
-                var typeMapDictionary = _webServiceEmitor.n_TypeMap?.TypeMapDictionary;
+                var typeMapDictionary = _configNode.n_TypeMap?.TypeMapDictionary;
 
                 if (typeMapDictionary != null && typeMapDictionary.TryGetValue(wct, out var typeMapEntry)) {
                     return _proxyFile.getSimpleType(typeMapEntry.From, typeMapEntry.Expression);
@@ -643,28 +643,33 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             }
         }
 
-        private     readonly        Node.WEBSERVICE_EMITOR_JC_PROXY         _webServiceEmitor;
-        private     readonly        string                                  _baseEmitDirectory;
+        public      readonly        string                                  Directory;
+        public      readonly        Node.WEBSERVICE_EMITOR_JC_PROXY         ConfigNode;
+
         private     readonly        Dictionary<string, ProxyFile>           _proxyFiles;
 
-        public                                                          JcProxyEmitor(Node.WEBSERVICE_EMITOR_JC_PROXY webServiceEmitor, string baseEmitDirectory)
+        public                                                          JcProxyEmitor(Node.WEBSERVICE_EMITOR_JC_PROXY configNode, string baseEmitDirectory)
         {
-            _webServiceEmitor  = webServiceEmitor;
-            _baseEmitDirectory = baseEmitDirectory;
-            _proxyFiles        = new Dictionary<string, ProxyFile>();
+            Directory   = Path.Combine(baseEmitDirectory, configNode.n_Directory);
+            ConfigNode  = configNode;
+            _proxyFiles  = new Dictionary<string, ProxyFile>();
         }
 
+        public                  void                                    CleanTarget()
+        {
+            Library.FileHelpers.DeleteFilesDirectory(Directory, "*.ts");
+        }
         public                  void                                    AddWebMethod(Node.WEBMETHOD webMethod)
         {
             if (webMethod.n_Declaration.JcProxy != null) {
-                var filename =  _baseEmitDirectory + "\\" + webMethod.n_Declaration.JcProxy.From.Replace("/", "\\") + ".proxy.ts";
+                var filename =  Directory + "\\" + webMethod.n_Declaration.JcProxy.From.Replace("/", "\\") + ".proxy.ts";
 
                 if (!_proxyFiles.TryGetValue(filename, out var proxyFile)) {
                     proxyFile = new ProxyFile(filename);
                     _proxyFiles.Add(filename, proxyFile);
                 }
 
-                proxyFile.AddMethod(_webServiceEmitor, webMethod);
+                proxyFile.AddMethod(ConfigNode, webMethod);
             }
         }
         public                  void                                    AddIndexMethod(string pathname, string procedureName)
@@ -673,8 +678,9 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
         public                  void                                    Emit(EmitContext emitContext)
         {
-            foreach(var proxyFileFile in _proxyFiles.Values)
+            foreach(var proxyFileFile in _proxyFiles.Values) {
                 proxyFileFile.Emit(emitContext);
+            }
         }
     }
 }

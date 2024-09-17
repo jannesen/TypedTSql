@@ -119,35 +119,42 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 return _name[_pos++];
             }
         }
-        private     readonly        Node.WEBSERVICE_EMITOR_OPENAPI      _webServiceEmitor;
-        private     readonly        string                              _baseEmitDirectory;
+
+        public      readonly        string                              Filename;
+        public      readonly        Node.WEBSERVICE_EMITOR_OPENAPI      ConfigNode;
         private     readonly        OpenApiDocument                     _openApiDocument;
         private     readonly        Dictionary<object, string>          _typeSchemaMap;
 
-        public                                                          OpenApiEmitor(Node.WEBSERVICE_EMITOR_OPENAPI webServiceEmitor, string baseEmitDirectory)
+        public                                                          OpenApiEmitor(Node.WEBSERVICE_EMITOR_OPENAPI configNode, string baseEmitDirectory)
         {
-            _webServiceEmitor  = webServiceEmitor;
-            _baseEmitDirectory = baseEmitDirectory;
+            Filename           = System.IO.Path.Combine(baseEmitDirectory, configNode.n_File);
+            ConfigNode         = configNode;
             _openApiDocument   = new OpenApiDocument() {
                                      openapi = "3.0.0",
                                      info = new OpenApiInfo() {
-                                         title   = webServiceEmitor.n_Title,
-                                         version = webServiceEmitor.n_Version
+                                         title   = configNode.n_Title,
+                                         version = configNode.n_Version
                                      },
                                      paths = new OpenApiPaths()
                                  };
             _typeSchemaMap = new Dictionary<object, string>(4096);
         }
 
+        public                  void                                    CleanTarget()
+        {
+            Library.FileHelpers.DeleteFile(Filename);
+        }
         public                  void                                    AddWebMethod(Node.WEBMETHOD webMethod)
         {
-            var pathItem = _getCreatePathItem(webMethod.n_Name);
+            if (ConfigNode.n_Path == null || webMethod.n_Name.StartsWith(ConfigNode.n_Path)) {
+                var pathItem = _getCreatePathItem(webMethod.n_Name);
 
-            foreach (var method in webMethod.n_Declaration.n_Methods) {
-                var operation = _createOperation(pathItem, method);
-                _setOperationExtendedProperties(operation, webMethod);
-                _processParameters(operation, webMethod.n_Parameters.n_Parameters, method);
-                _createResponse(operation, webMethod.n_Declaration.n_WebHttpHandler, webMethod.n_returns);
+                foreach (var method in webMethod.n_Declaration.n_Methods) {
+                    var operation = _createOperation(pathItem, method);
+                    _setOperationExtendedProperties(operation, webMethod);
+                    _processParameters(operation, webMethod.n_Parameters.n_Parameters, method);
+                    _createResponse(operation, webMethod.n_Declaration.n_WebHttpHandler, webMethod.n_returns);
+                }
             }
         }
         public                  void                                    AddIndexMethod(string pathname, string procedureName)
@@ -156,15 +163,19 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
         public                  void                                    Emit(EmitContext emitContext)
         {
-            using (var outStream = new StreamWriter(_baseEmitDirectory + @"\openapi.yaml")) {
-                var serializer = (new SerializerBuilder())
-                                    .WithQuotingNecessaryStrings()
-                                    .WithNewLine("\n")
-                                    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitEmptyCollections)
-                                    .DisableAliases()
-                                    .Build();
+            using (var fileData = new MemoryStream()) {
+                using (var outStream = new StreamWriter(fileData, Encoding.UTF8, 4096, true)) {
+                    var serializer = (new SerializerBuilder())
+                                        .WithQuotingNecessaryStrings()
+                                        .WithNewLine("\n")
+                                        .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitEmptyCollections)
+                                        .DisableAliases()
+                                        .Build();
 
-                serializer.Serialize(outStream, _openApiDocument);
+                    serializer.Serialize(outStream, _openApiDocument);
+                }
+
+                FileUpdate.Update(Filename, fileData);
             }
         }
 
@@ -233,7 +244,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                     }
                     else {
                         foreach (var x in parameter.Source.Split('|')) {
-                            var sn = x.Split(':');
+                            var sn     = x.Split(':');
                             var source = sn[0];
                             var name   = (sn.Length >= 2 ? sn[1] : parameter.n_Name.Text.Substring(1));
                             string  @in;
@@ -289,30 +300,7 @@ add_parameter:                  {
                                                             };
                                 }
 
-                                {
-                                    var schema = operation.requestBody.content["application/json"].schema as OpenApiSchemaType;
-                                    if (schema?.type != "object") {
-                                        throw new EmitException(parameter, "requestbody is not a object");
-                                    }
-
-                                    var typeschema = _getOpenApiSchema(parameter, parameter.SqlType);
-
-                                    if (schema.properties.TryGetValue(name, out var p)) {
-                                        if (p != typeschema) {
-                                            throw new EmitException(parameter, "property already defined with deferent type.");
-                                        }
-                                    }
-                                    else {
-                                        schema.properties.Add(name, typeschema);
-                                    }
-
-                                    if (parameter.n_Options.n_Required) {
-                                        if (schema.required == null) {
-                                            schema.required = new HashSet<string>();
-                                        }
-                                        schema.required.Add(name);
-                                    }
-                                }
+                                _addPropertyToRequest(parameter, operation, name, _getOpenApiSchema(parameter, parameter.SqlType), parameter.n_Options.n_Required);
                                 break;
 
                             case "header":
@@ -390,11 +378,16 @@ add_parameter:                  {
                     schema.properties.Add(column.n_FieldName.ValueString, _getOpenApiSchema(column, column.n_Expression));
                 }
 
-                if ((complexType.DeclarationComplexType as Node.WEBCOMPLEXTYPE).ReceivesSqlType is LTTSQL.DataModel.EntityTypeUser postUdt) {
-                    schema.x_post_schema = _schemaName(postUdt);
-                }
+                if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
+                    if ((complexType.DeclarationComplexType as Node.WEBCOMPLEXTYPE).ReceivesSqlType is LTTSQL.DataModel.EntityTypeUser postUdt) {
+                        schema.x_post_schema = _schemaName(postUdt);
+                    }
 
-                return _addOpenApiSchema(declaration, _schemaName(complexType), complexType.DeclarationComplexType, schema);
+                    return _addOpenApiSchema(declaration, _schemaName(complexType), complexType.DeclarationComplexType, schema);
+                }
+                else {
+                    return schema;
+                }
             }
 
             if (expression is LTTSQL.Node.IExprResponseNode exprResponseNode) {
@@ -608,9 +601,14 @@ add_parameter:                  {
                 throw new EmitException(declaration, "No type mapping for '" + nativeType.ToString() + "'.");
             }
         }
-        private                 OpenApiSchemaRef                        _addOpenApiSchema(object declaration, LTTSQL.DataModel.EntityType entityType, OpenApiSchema schema)
+        private                 OpenApiSchema                           _addOpenApiSchema(object declaration, LTTSQL.DataModel.EntityType entityType, OpenApiSchema schema)
         {
-            return _addOpenApiSchema(declaration, _schemaName(entityType), entityType, schema);
+            if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
+                return _addOpenApiSchema(declaration, _schemaName(entityType), entityType, schema);
+            }
+            else {
+                return schema;
+            }
         }
         private                 OpenApiSchemaRef                        _addOpenApiSchema(object declaration, string name, object type, OpenApiSchema schema)
         {
@@ -632,6 +630,55 @@ add_parameter:                  {
             }
             catch(Exception err) {
                 throw new EmitException(declaration, "Can't create openapi component.schemas.", err);
+            }
+        }
+        private                 void                                    _addPropertyToRequest(object declaration, OpenApiOperation operation, string sjpath, OpenApiSchema typeschema, bool required)
+        {
+            var schema = operation.requestBody.content["application/json"].schema as OpenApiSchemaType;
+            if (schema?.type != "object") {
+                throw new EmitException(declaration, "requestbody is not a object");
+            }
+
+            var jpath = sjpath.Split('.');
+
+            for (int i=0 ; i < jpath.Length ; ++i) {
+                var name = jpath[i];
+
+                if (i < jpath.Length - 1) {
+                    if (schema.properties.TryGetValue(name, out var p)) {
+                        if (p is OpenApiSchemaType st && st.type == "object") {
+                            schema = st;
+                        }
+                        else {
+                            throw new EmitException(declaration, "property '" + name + "'already defined as non object.");
+                        }
+                    }
+                    else {
+                        var st = new OpenApiSchemaType() {
+                                        type       = "object",
+                                        properties = new OpenApiSchemaProperties()
+                                    };
+                        schema.properties.Add(name, st);
+                        schema = st;
+                    }
+                }
+                else {
+                    if (schema.properties.TryGetValue(name, out var p)) {
+                        if (p != typeschema) {
+                            throw new EmitException(declaration, "property already defined with deferent type.");
+                        }
+                    }
+                    else {
+                        schema.properties.Add(name, typeschema);
+                    }
+                }
+
+                if (required) {
+                    if (schema.required == null) {
+                        schema.required = new HashSet<string>();
+                    }
+                    schema.required.Add(name);
+                }
             }
         }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Jannesen.Language.TypedTSql.WebService.Extensions;
+using Jannesen.Language.TypedTSql.WebService.Library;
 using YamlDotNet.Serialization;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Jannesen.Language.TypedTSql.WebService.Extensions
+namespace Jannesen.Language.TypedTSql.WebService.Library
 {
     public static class EnumerableExtensions
     {

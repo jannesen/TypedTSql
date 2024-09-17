@@ -11,7 +11,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
     public class WEBSERVICE_EMIT: LTTSQL.Core.AstParseNode
     {
         public      readonly    WEBSERVICE                      WebService;
-        public      readonly    string                          n_Directory;
         public      readonly    string                          n_Index;
         public      readonly    DataModel.EntityName            n_IndexProcedure;
         public      readonly    WEBSERVICE_EMITOR[]             n_Emitors;
@@ -26,12 +25,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
             while(!reader.CurrentToken.isToken(Core.TokenID.RrBracket)) {
                 switch(reader.CurrentToken.Text.ToUpper()) {
-                case "DIRECTORY":
-                    ParseToken(reader, "DIRECTORY");
-                    ParseToken(reader, LTTSQL.Core.TokenID.Equal);
-                    n_Directory = ParseToken(reader, LTTSQL.Core.TokenID.String).ValueString;
-                    break;
-
                 case "INDEX":
                     ParseToken(reader, "INDEX");
                     ParseToken(reader, LTTSQL.Core.TokenID.Equal);
@@ -52,7 +45,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     break;
 
                 default:
-                    throw new ParseException(reader.CurrentToken, "Except DIRECTORY,INDEX,WEBSERVICECONFIG,JC_PROXY got " + reader.CurrentToken.Text.ToString() + ".");
+                    throw new ParseException(reader.CurrentToken, "Except INDEX,WEBSERVICECONFIG,JC_PROXY,OPENAPI got " + reader.CurrentToken.Text.ToString() + ".");
                 }
             }
 
@@ -69,7 +62,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         {
             if (n_IndexProcedure != null) {
                 stringWriter.Write("IF EXISTS (SELECT * FROM sys.sysobjects WHERE [id] = object_id(");
-                    stringWriter.Write(Library.SqlStatic.QuoteString(n_IndexProcedure.Fullname));
+                    stringWriter.Write(SqlStatic.QuoteString(n_IndexProcedure.Fullname));
                     stringWriter.WriteLine(") AND [type] in ('P'))");
                 stringWriter.Write("    DROP PROCEDURE ");
                     stringWriter.WriteLine(n_IndexProcedure.Fullname);
@@ -132,16 +125,23 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         }
         public                  void                            EmitServiceFiles(EmitContext emitContext, LTTSQL.Node.DeclarationServiceMethod[] methods, bool rebuild)
         {
-            var baseEmitDirectory = Path.Combine(emitContext.EmitOptions.BaseDirectory, n_Directory);
-
-            if (rebuild) {
-                _cleanwebtarget(emitContext, baseEmitDirectory, false);
-            }
-
             var emitors = new Emit.FileEmitor[n_Emitors.Length];
             for (int i = 0 ;  i < n_Emitors.Length ; ++i) {
-                emitors[i] = n_Emitors[i].ConstructEmitor(baseEmitDirectory);
+                emitors[i] = n_Emitors[i].ConstructEmitor(emitContext.EmitOptions.BaseDirectory);
             }
+
+            if (rebuild) {
+                for (int i = 0 ;  i < n_Emitors.Length ; ++i) {
+                    try {
+                        emitors[i].CleanTarget();
+                    }
+                    catch(Exception err) {
+                        emitContext.AddEmitError(new EmitError("failed to clean target." + err.Message));
+                        return;
+                    }
+                }
+            }
+
 
             foreach (Node.WEBMETHOD webMethod in methods) {
                 for (int i = 0 ; i < emitors.Length ;  ++i) {
@@ -192,53 +192,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             for (int i = 0 ; i < emitors.Length ;  ++i) {
                 emitors[i].Emit(emitContext);
             }
-        }
-
-        private                 void                            _cleanwebtarget(EmitContext emitContext, string directory, bool child)
-        {
-            try {
-                if (child || Directory.Exists(directory)) {
-                    foreach (string path in Directory.GetDirectories(directory)) {
-                        _cleanwebtarget(emitContext, path, true);
-                        _delete(path, true);
-                    }
-
-                    if (File.Exists(directory + "\\jannesen.web.config"))
-                        _delete(directory + "\\jannesen.web.config", false);
-
-                    foreach(var filename in Directory.GetFiles(directory, "*.ts", SearchOption.TopDirectoryOnly))
-                        _delete(filename, false);
-                }
-            }
-            catch(Exception err) {
-                emitContext.AddEmitError(new EmitError("failed to clean directory '" + directory + "': " + err.Message));
-            }
-        }
-        private     static      void                            _delete(string name, bool directory)
-        {
-            for (int i = 0 ;  ; ++i) {
-                try {
-                    if (directory)
-                        Directory.Delete(name);
-                    else
-                        File.Delete(name);
-                    return;
-                }
-                catch(IOException err) {
-                    if (err is FileNotFoundException || err is DirectoryNotFoundException)
-                        return;
-
-                    System.Diagnostics.Debug.WriteLine("_delete(" + name + "): " + err.Message);
-                    if (i > 100 || !_errorretry(err.HResult))
-                        throw;
-                }
-
-                System.Threading.Thread.Sleep(100);
-            }
-        }
-        private     static      bool                            _errorretry(int hresult)
-        {
-            return hresult == unchecked((int)0x80070020);
         }
     }
 }
