@@ -322,7 +322,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     object defaultvalue = null;
 
                     if (n_Options != null) {
-                        if (n_Options.n_Required && !n_Options.n_Key)
+                        if ((n_Options.n_Security || n_Options.n_Required) && !n_Options.n_Key)
                             flags &= ~DataModel.VariableFlags.Nullable;
 
                         if (n_Options.n_Default != null) {
@@ -386,27 +386,33 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         }
         public class ParameterOptions: LTTSQL.Core.AstParseNode
         {
+            public      readonly    bool                                n_Security;
             public      readonly    bool                                n_Key;
             public      readonly    bool                                n_Required;
             public      readonly    LTTSQL.Node.IExprNode               n_Default;
 
             public                                                      ParameterOptions(LTTSQL.Core.ParserReader reader)
             {
-                if (ParseOptionalToken(reader, Core.TokenID.KEY) != null)
-                    n_Key = true;
+                if (ParseOptionalToken(reader, "SECURITY") != null) {
+                    n_Security = true;
+                }
+                else {
+                    if (ParseOptionalToken(reader, Core.TokenID.KEY) != null)
+                        n_Key = true;
 
-                switch(reader.CurrentToken.ID) {
-                case LTTSQL.Core.TokenID.REQUIRED:
-                    ParseToken(reader);
-                    n_Required = true;
-                    break;
+                    switch(reader.CurrentToken.ID) {
+                    case LTTSQL.Core.TokenID.REQUIRED:
+                        ParseToken(reader);
+                        n_Required = true;
+                        break;
 
-                case LTTSQL.Core.TokenID.DEFAULT:
-                    ParseToken(reader);
-                    n_Default  = ParseExpression(reader);
-                    AddBeforeWhitespace(null);
-                    n_Required = false;
-                    break;
+                    case LTTSQL.Core.TokenID.DEFAULT:
+                        ParseToken(reader);
+                        n_Default  = ParseExpression(reader);
+                        AddBeforeWhitespace(null);
+                        n_Required = false;
+                        break;
+                    }
                 }
             }
 
@@ -465,7 +471,9 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 for (int i = 0 ; i < n_Parameters.n_Parameters.Length ; ++i) {
                     var     parameter = (ServiceParameter)n_Parameters.n_Parameters[i];
 
-                    if (parameter.n_Options == null || !parameter.n_Options.n_Required || parameter.n_Options.n_Key)
+                    if (parameter.n_Options == null ||
+                        !(parameter.n_Options.n_Security || parameter.n_Options.n_Required) ||
+                        parameter.n_Options.n_Key)
                         defaultValue = true;
 
                     parameter.DefaultValue = defaultValue;
@@ -495,14 +503,24 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
         {
             switch(n_Declaration.n_Kind) {
             case "select-lookup": {
-                    if (n_Parameters.n_Parameters.Length == 1 &&
-                        n_Parameters.n_Parameters[0].Parameter.SqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
-                        return entityTypeUser;
+                    DataModel.EntityTypeUser found  = null;
+                    int                             n      = 0;
+
+                    foreach(WEBMETHOD.ServiceParameter p in n_Parameters.n_Parameters) {
+                        if (!(p.n_Options != null && p.n_Options.n_Security)) {
+                            if (p.Parameter.SqlType is DataModel.EntityTypeUser entityTypeUser) {
+                                found = entityTypeUser;
+                            }
+                            ++n;
+                        }
                     }
-                    else {
-                        context.AddError(this, "Can't determin select-type for 'select-lookup'");
-                        return null;
+
+                    if (found != null && n == 1) {
+                        return found;
                     }
+
+                    context.AddError(n_Parameters, "Can't determin select-type for 'select-lookup'");
+                    return null;
                 }
 
             case "select-search": {

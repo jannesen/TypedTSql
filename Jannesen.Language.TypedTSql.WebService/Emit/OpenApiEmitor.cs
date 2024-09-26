@@ -235,7 +235,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             foreach(Node.WEBMETHOD.ServiceParameter parameter in parameters) {
                 var options = parameter.n_Options;
 
-                if (!(options != null && options.n_Key && method == "POST")) {
+                if (!(options != null && options.n_Security) &&
+                    !(options != null && options.n_Key && method == "POST")) {
                     if (parameter.n_Type is Node.JsonType jsonType) {
                         if (parameter.Source != "body:json") {
                             throw new EmitException(parameter, "json only supported with source='body:json'.");

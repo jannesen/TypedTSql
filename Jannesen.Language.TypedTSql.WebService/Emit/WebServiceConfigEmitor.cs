@@ -62,7 +62,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                                     xmlWriter.WriteAttributeString("source",    source);
 
                                     if (options != null) {
-                                        if (!options.n_Required)
+                                        if (!(options.n_Security || options.n_Required))
                                             xmlWriter.WriteAttributeString("optional",  "1");
                                     }
                                     else {
