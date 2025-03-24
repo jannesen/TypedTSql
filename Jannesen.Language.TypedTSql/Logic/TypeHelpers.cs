@@ -83,18 +83,6 @@ namespace Jannesen.Language.TypedTSql.Logic
             return sqlType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrict ? sqlType.NativeType : sqlType;
         }
 
-        public      static      ConversionType              Convert(DataModel.ISqlType targetSqlType, Node.IExprNode sourceExpr, DataModel.ISqlType sourceSqlType)
-        {
-            if (sourceExpr.isNull())
-                return ConversionType.Implicit;
-
-            if (sourceExpr.isConstant()) {
-                if (Validate.ConstByType(targetSqlType.NativeType, sourceExpr))
-                    return ConversionType.Implicit;
-            }
-
-            return Conversion(sourceSqlType.NativeType, targetSqlType.NativeType);
-        }
         public      static      DataModel.ISqlType          OperationCalculation(Core.Token operation, Node.IExprNode expr1, Node.IExprNode expr2)
         {
             var sqlType1 = expr1.SqlType;

@@ -568,7 +568,10 @@ namespace Jannesen.Language.TypedTSql.Logic
             if ((castSqlType.TypeFlags & DataModel.SqlTypeFlags.SimpleType) == 0)
                 throw new TranspileException(cast, "Not a native type.");
 
-            var rtn = TypeHelpers.Convert(castSqlType, expr, exprSqlType);
+            var rtn = expr.isNull()
+                        ? ConversionType.Implicit
+                        : TypeHelpers.Conversion(exprSqlType.NativeType, castSqlType.NativeType);
+
             if (rtn == ConversionType.NotAllowed)
                 throw new ErrorException("Conversion not allowed.");
 
