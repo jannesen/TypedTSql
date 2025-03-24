@@ -14,7 +14,13 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
         protected   override    DataModel.ISqlType          TranspileReturnType(IExprNode[] arguments)
         {
             Validate.NumberOfArguments(arguments, 0, 2);
-            Validate.ValueString(arguments[0]);
+
+            if (arguments.Length > 0) {
+                Validate.ValueString(arguments[0]);
+            }
+            if (arguments.Length > 1) {
+                Validate.ValueInt(arguments[1]);
+            }
 
             return DataModel.SqlTypeNative.VarBinary_85;
         }
