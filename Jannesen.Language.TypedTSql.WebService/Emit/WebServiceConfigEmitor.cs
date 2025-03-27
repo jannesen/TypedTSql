@@ -45,6 +45,15 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                                 xmlWriter.WriteAttributeString(optionValue.n_Name, optionValue.n_Value);
                         }
 
+                        if (_webMethod.n_Declaration.n_Attributes?.Attributes != null) {
+                            foreach (var attr in _webMethod.n_Declaration.n_Attributes.Attributes) {
+                                if (attr.Attr.Name == "description") {
+                                    xmlWriter.WriteAttributeString("description", attr.Value.ToString());
+                                    break;
+                                }
+                            }
+                        }
+
                         if (configNode.n_Database != null) { 
                             xmlWriter.WriteAttributeString("database",  configNode.n_Database);
                         }
