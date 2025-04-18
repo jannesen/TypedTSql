@@ -36,17 +36,17 @@ namespace Jannesen.Language.TypedTSql.Node
                 c.Emit(emitWriter);
             }
         }
-        public      static      void                                EmitVarVariable(EmitWriter emitWriter, DataModel.VariableList variableList, int indent)
+        public      static      void                                EmitVarVariable(EmitWriter emitWriter, DataModel.VariableList variableList, bool udtToNative, int indent)
         {
             if (variableList != null) { 
                 foreach(var v in variableList) {
                     if (v.isVarDeclare) {
+                        var sqlType = v.SqlType;
+
                         emitWriter.WriteIndent(indent);
                         emitWriter.WriteText("DECLARE ");
                         emitWriter.WriteText(v.SqlName ?? v.Name);
                         emitWriter.WriteText(" ");
-
-                        var sqlType = v.SqlType;
 
                         if (sqlType is DataModel.SqlTypeTable typeTable) {
                             int pos = emitWriter.Linepos;
@@ -71,8 +71,11 @@ namespace Jannesen.Language.TypedTSql.Node
                             emitWriter.WriteNewLine(pos);
                             emitWriter.WriteText(")");
                         }
+                        else if (udtToNative && (sqlType.TypeFlags & DataModel.SqlTypeFlags.UserType) != 0) {
+                            emitWriter.WriteText(sqlType.NativeType.NativeTypeString);
+                        }
                         else {
-                            emitWriter.WriteText(v.SqlType.ToSql());
+                            emitWriter.WriteText(sqlType.ToSql());
                         }
 
                         emitWriter.WriteText(";");

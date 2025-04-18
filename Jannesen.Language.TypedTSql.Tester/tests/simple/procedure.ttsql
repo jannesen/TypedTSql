@@ -1,0 +1,10 @@
+﻿schema [dbo]
+
+procedure [proc-test]
+(
+    @a      [localdatetime]
+)
+begin
+    var @b = @a
+    select @b
+end

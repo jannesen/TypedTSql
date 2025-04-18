@@ -15,7 +15,8 @@ namespace Jannesen.Language.TypedTSql.Node
         }
 
         private                 List<Statement>                 _statements;
-        public                  DataModel.VariableList          _variableList;
+        private                 DataModel.VariableList          _variableList;
+        private                 bool                            _udtToNative;
 
         public                                                  StatementBlock()
         {
@@ -61,6 +62,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             contextStatementBlock.EndBlock();
             _variableList = contextStatementBlock.VariableList;
+            _udtToNative  = context.DeclarationEntity.NeedUDTToNative;
         }
         public                  void                            Emit(Core.EmitWriter emitWriter, int indent)
         {
@@ -69,7 +71,7 @@ namespace Jannesen.Language.TypedTSql.Node
             if (this.Children != null) {
                 foreach(var node in this.Children) {
                     if (f && !(node is Node.Statement_DECLARE || node is Node.Statement_SET_option)) {
-                        Node_AssignVariable.EmitVarVariable(emitWriter, _variableList, indent);
+                        Node_AssignVariable.EmitVarVariable(emitWriter, _variableList, _udtToNative, indent);
                         f = false;
                     }
 

@@ -52,6 +52,8 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    DataModel.ISqlType              ReturnType                  { get { return _returnType;                                                                                                      } }
         public      override    DataModel.VariableLocal         ReturnVariable              { get { return _returnVariable;                                                                                                  } }
 
+        public      override    bool                            NeedUDTToNative             => n_Options != null && n_Options.m_Options == Node_ProgrammabilityOptions.Option.INLINE_ON;
+
         private                 DataModel.SymbolType            _functionType;
         private                 DataModel.ISqlType              _returnType;
         private                 DataModel.VariableLocal         _returnVariable;
@@ -80,7 +82,7 @@ namespace Jannesen.Language.TypedTSql.Node
                 n_ReturnType = AddChild(new Node_Datatype(reader));
             }
 
-            ParseWith(reader, DataModel.SymbolType.Function);
+            ParseWith(reader, _functionType);
             ParseGrant(reader, DataModel.SymbolType.Function);
 
             ParseOptionalToken(reader, Core.TokenID.AS);

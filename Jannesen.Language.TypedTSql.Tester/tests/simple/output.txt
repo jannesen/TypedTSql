@@ -1,0 +1,36 @@
+========== SQL CODE
+SET NOCOUNT                 ON;
+SET ANSI_WARNINGS           ON;
+SET ANSI_NULLS              ON;
+SET ANSI_PADDING            ON;
+SET QUOTED_IDENTIFIER       ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET NUMERIC_ROUNDABORT      OFF;
+SET LANGUAGE                US_ENGLISH;
+SET DATEFORMAT              YMD;
+SET DATEFIRST               7;
+SET ARITHABORT              ON;
+GO
+IF EXISTS (SELECT * FROM sys.sysobjects WHERE [id] = object_id('dbo.[proc-test]') AND [type] in ('P','PC'))
+    DROP PROCEDURE dbo.[proc-test]
+GO
+PRINT '# create storedprocedure                dbo.[proc-test]';
+GO
+CREATE procedure dbo.[proc-test]
+(
+    @a      datetime
+)
+AS
+begin
+    SET NOCOUNT,ANSI_NULLS,ANSI_PADDING,ANSI_WARNINGS,ARITHABORT,CONCAT_NULL_YIELDS_NULL,XACT_ABORT ON;
+    SET NUMERIC_ROUNDABORT OFF;
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+    DECLARE @b datetime;
+    SET @b = @a;
+    select @b;
+end
+GO
+PRINT '# set permissions';
+GO
+========== NO ERRORS 

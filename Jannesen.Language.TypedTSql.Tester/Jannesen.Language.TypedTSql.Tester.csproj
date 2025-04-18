@@ -61,7 +61,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.cs" />
+    <None Include="tests\simple\procedure.ttsql" />
     <None Include="tests\web-service-response\file.ttsql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="tests\simple\output.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

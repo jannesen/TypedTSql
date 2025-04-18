@@ -22,7 +22,9 @@ namespace Jannesen.Language.TypedTSql.Node
             EXECUTE_AS_CALLER               = 0x0100,
             EXECUTE_AS_SELF                 = 0x0200,
             EXECUTE_AS_OWNER                = 0x0400,
-            EXECUTE_AS_PRINCIPEL            = 0x0800
+            EXECUTE_AS_PRINCIPEL            = 0x0800,
+            INLINE_ON                       = 0x1000,
+            INLINE_OFF                      = 0x2000
         }
 
         public      readonly        Option                          m_Options;
@@ -44,8 +46,9 @@ namespace Jannesen.Language.TypedTSql.Node
                     break;
                 }
 
-                if ((option & ~_allowedOption(type)) != 0)
-                    reader.AddError(new ParseException(token, "Option to possible."));
+                if ((option & ~_allowedOption(type)) != 0) {
+                    reader.AddError(new ParseException(token, "Option not possible."));
+                }
 
                 m_Options |= option;
             }
@@ -73,25 +76,54 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             switch(type) {
             case DataModel.SymbolType.View:
-                return Option.ENCRYPTION | Option.SCHEMABINDING | Option.VIEW_METADATA;
+                return Option.ENCRYPTION |
+                       Option.SCHEMABINDING |
+                       Option.VIEW_METADATA;
+
+            case DataModel.SymbolType.FunctionScalar:
+                return Option.ENCRYPTION |
+                       Option.SCHEMABINDING |
+                       Option.RETURNS_NULL_ON_NULL_INPUT |
+                       Option.CALLED_NULL_ON_NULL_INPUT |
+                       Option.EXECUTE_AS_CALLER |
+                       Option.EXECUTE_AS_OWNER |
+                       Option.EXECUTE_AS_SELF |
+                       Option.EXECUTE_AS_PRINCIPEL |
+                       Option.INLINE_OFF |
+                       Option.INLINE_ON;
 
             case DataModel.SymbolType.Function:
-            case DataModel.SymbolType.FunctionScalar:
             case DataModel.SymbolType.FunctionScalar_clr:
             case DataModel.SymbolType.FunctionInlineTable:
             case DataModel.SymbolType.FunctionMultistatementTable:
             case DataModel.SymbolType.FunctionMultistatementTable_clr:
             case DataModel.SymbolType.FunctionAggregateFunction_clr:
-                return Option.ENCRYPTION | Option.SCHEMABINDING | Option.RETURNS_NULL_ON_NULL_INPUT | Option.CALLED_NULL_ON_NULL_INPUT | Option.EXECUTE_AS_CALLER | Option.EXECUTE_AS_OWNER |  Option.EXECUTE_AS_SELF | Option.EXECUTE_AS_PRINCIPEL;
+                return Option.ENCRYPTION |
+                       Option.SCHEMABINDING |
+                       Option.RETURNS_NULL_ON_NULL_INPUT |
+                       Option.CALLED_NULL_ON_NULL_INPUT |
+                       Option.EXECUTE_AS_CALLER |
+                       Option.EXECUTE_AS_OWNER |
+                       Option.EXECUTE_AS_SELF |
+                       Option.EXECUTE_AS_PRINCIPEL;
 
             case DataModel.SymbolType.StoredProcedure:
             case DataModel.SymbolType.StoredProcedure_clr:
             case DataModel.SymbolType.StoredProcedure_extended:
             case DataModel.SymbolType.ServiceMethod:
-                return Option.ENCRYPTION | Option.RECOMPILE | Option.EXECUTE_AS_CALLER | Option.EXECUTE_AS_OWNER |  Option.EXECUTE_AS_SELF | Option.EXECUTE_AS_PRINCIPEL;
+                return Option.ENCRYPTION |
+                       Option.RECOMPILE |
+                       Option.EXECUTE_AS_CALLER |
+                       Option.EXECUTE_AS_OWNER |
+                       Option.EXECUTE_AS_SELF |
+                       Option.EXECUTE_AS_PRINCIPEL;
 
             case DataModel.SymbolType.Trigger:
-                return Option.ENCRYPTION | Option.EXECUTE_AS_CALLER | Option.EXECUTE_AS_OWNER | Option.EXECUTE_AS_SELF | Option.EXECUTE_AS_PRINCIPEL;
+                return Option.ENCRYPTION |
+                       Option.EXECUTE_AS_CALLER |
+                       Option.EXECUTE_AS_OWNER |
+                       Option.EXECUTE_AS_SELF |
+                       Option.EXECUTE_AS_PRINCIPEL;
 
             default:
                 return 0;
@@ -113,7 +145,9 @@ namespace Jannesen.Language.TypedTSql.Node
                                                                         new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_OWNER,                 Core.TokenID.EXEC,    "AS", "OWNER"),
                                                                         new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_OWNER,                 Core.TokenID.EXECUTE, "AS", "OWNER"),
                                                                         new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_PRINCIPEL,             Core.TokenID.EXEC,    "AS"),
-                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_PRINCIPEL,             Core.TokenID.EXECUTE, "AS")
+                                                                        new Core.ParseEnum<Option>.Seq(Option.EXECUTE_AS_PRINCIPEL,             Core.TokenID.EXECUTE, "AS"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.INLINE_OFF,                       "INLINE", Core.TokenID.Equal, "OFF"),
+                                                                        new Core.ParseEnum<Option>.Seq(Option.INLINE_ON,                        "INLINE", Core.TokenID.Equal, "ON")
                                                                     );
     }
 }

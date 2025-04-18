@@ -12,6 +12,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public      abstract    bool                        callableFromCode    { get; }
         public      virtual     DeclarationService          DeclarationService  { get { throw new InvalidOperationException(EntityName + " is not a service");      } }
         public      virtual     bool                        HasEmitCode         { get { return true; } }
+        public      virtual     bool                        NeedUDTToNative     => false;
         public                  bool                        Transpiled          { get; protected set; }
 
         protected               bool                        _declarationTranspiled;

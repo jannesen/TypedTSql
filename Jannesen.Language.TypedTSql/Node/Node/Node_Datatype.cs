@@ -13,7 +13,8 @@ namespace Jannesen.Language.TypedTSql.Node
         public                  DataModel.ISqlType          SqlType                 { get { return _sqlType; } }
 
         private                 string                      _addSchema;
-        public                  DataModel.ISqlType          _sqlType;
+        private                 DataModel.ISqlType          _sqlType;
+        private                 bool                        _udtToNative;
 
         public                                              Node_Datatype(Core.ParserReader reader, bool defaultLength=false)
         {
@@ -45,11 +46,17 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             _sqlType = null;
             _sqlType = _transpileNode(context);
+            _udtToNative = context.DeclarationEntity.NeedUDTToNative;
         }
 
         public      override    void                        Emit(Core.EmitWriter emitWriter)
         {
-            if (_sqlType.ParentType != null) {
+            if (_udtToNative && (_sqlType.TypeFlags & DataModel.SqlTypeFlags.UserType) != 0) {
+                EmitCustom(emitWriter, (ew) => {
+                                            ew.WriteText(_sqlType.NativeType.NativeTypeString);
+                                        });
+            }
+            else if (_sqlType.ParentType != null) {
                 bool o = true;
 
                 foreach (var node in Children) {

@@ -16,6 +16,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
         private                 string                              _forName;
         private                 DataModel.VariableList              _variableList;
+        private                 bool                                _udtToNative;
         private                 bool                                _breakused;
                          
         public      static      bool                                CanParse(Core.ParserReader reader, IParseContext parseContext)
@@ -71,6 +72,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             _forName      = "__FOR" + (++contextBlock.RootContext.ForNr).ToString(System.Globalization.CultureInfo.InvariantCulture) + "_";
             _variableList = contextBlock.VariableList;
+            _udtToNative  = context.DeclarationEntity.NeedUDTToNative;
         }
         public      override    void                                Emit(EmitWriter emitWriter)
         {
@@ -85,7 +87,7 @@ namespace Jannesen.Language.TypedTSql.Node
 
             int indent = emitWriter.Linepos;
             emitWriter.WriteText("BEGIN");
-            Node_AssignVariable.EmitVarVariable(emitWriter, _variableList, indent + 4);
+            Node_AssignVariable.EmitVarVariable(emitWriter, _variableList, _udtToNative, indent + 4);
             emitWriter.WriteNewLine(indent + 4, "DECLARE ", namecursor, " CURSOR LOCAL", (m_Static ? " STATIC FORWARD_ONLY READ_ONLY" : " FAST_FORWARD"), "  FOR");
             emitWriter.WriteNewLine(indent + 8);  n_Select.Emit(emitWriter); n_QueryOptions?.Emit(emitWriter);
             emitWriter.WriteNewLine(indent + 4, "OPEN ", namecursor);
