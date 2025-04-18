@@ -22,7 +22,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
             public                                                          Receives(Core.ParserReader reader)
             {
-                ParseToken(reader);
+                ParseToken(reader, "RECEIVES");
 
                 if (ParseOptionalToken(reader, Core.TokenID.RETURNS) == null) {
                     if (JsonType.CanParse(reader)) {
@@ -38,6 +38,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             public      override    void                                    TranspileNode(Transpile.Context context)
             {
                 if (n_ReceivesType != null) {
+                    n_ReceivesType.TranspileNode(context);
                     _sqlType = ((LTTSQL.Node.ISqlType)n_ReceivesType).SqlType;
                 }
                 else {
