@@ -90,6 +90,7 @@ namespace Jannesen.Language.TypedTSql
 
                 Print("# drop all code from database");
                 ExecuteScript("Jannesen.Language.TypedTSql.SqlScripts.DropAllCode.sql");
+                ExecuteStatement("DBCC FREEPROCCACHE WITH NO_INFOMSGS;");
 
                 Print("# kill database connection");
                 ExecuteScript("Jannesen.Language.TypedTSql.SqlScripts.KillConnections.sql");
