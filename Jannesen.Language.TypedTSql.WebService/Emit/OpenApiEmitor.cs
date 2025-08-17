@@ -609,6 +609,10 @@ add_parameter:                  {
 
             var udtSchema = _getOpenApiSchema(declaration, entityTypeUser.NativeType);
 
+            if (entityTypeUser.TimeZone != null) {
+                udtSchema.SetAttribute("x-timezone", entityTypeUser.TimeZone);
+            }
+
             if (entityTypeUser.Attributes != null) {
                 foreach(var attr in entityTypeUser.Attributes) {
                     udtSchema.SetAttribute(attr.Attr.Name, attr.Value);

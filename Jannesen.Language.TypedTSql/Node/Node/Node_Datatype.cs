@@ -53,8 +53,8 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             if (_udtToNative && (_sqlType.TypeFlags & DataModel.SqlTypeFlags.UserType) != 0) {
                 EmitCustom(emitWriter, (ew) => {
-                                            ew.WriteText(_sqlType.NativeType.NativeTypeString);
-                                        });
+                                           ew.WriteText(_sqlType.NativeType.NativeTypeString);
+                                       });
             }
             else if (_sqlType.ParentType != null) {
                 bool o = true;

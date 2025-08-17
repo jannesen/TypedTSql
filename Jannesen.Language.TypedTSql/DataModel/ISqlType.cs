@@ -21,7 +21,8 @@ namespace Jannesen.Language.TypedTSql.DataModel
         CheckStrong     = 0x0200,
         CheckStrict     = 0x0300,
         Flags           = 0x1000,
-        RecVersion      = 0x2000
+        RecVersion      = 0x2000,
+        TimeZone        = 0x4000
     }
 
     public interface ISqlType
@@ -29,6 +30,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         SqlTypeFlags            TypeFlags           { get; }
         SqlTypeNative           NativeType          { get; }
         InterfaceList           Interfaces          { get; }
+        string                  TimeZone            { get; }
         object                  DefaultValue        { get; }
         ValueRecordList         Values              { get; }
         IColumnList             Columns             { get; }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Jannesen.Language.TypedTSql.Core;
 using Jannesen.Language.TypedTSql.Logic;
 using Jannesen.Language.TypedTSql.Library;
 
@@ -11,6 +12,9 @@ namespace Jannesen.Language.TypedTSql.Node
         public class With: Core.AstParseNode
         {
             public      readonly    DataModel.SqlTypeFlags          n_TypeFlags;
+            public      readonly    TokenWithSymbol                 n_TimeZone;
+
+            public                  string                          t_TimeZome  { get ; private set; }
 
             public                                                  With(Core.ParserReader reader)
             {
@@ -31,29 +35,43 @@ namespace Jannesen.Language.TypedTSql.Node
                     case DataModel.SqlTypeFlags.RecVersion:
                         n_TypeFlags |= f;
                         break;
+
+                    case DataModel.SqlTypeFlags.TimeZone:
+                        n_TypeFlags |= f;
+                        n_TimeZone = (TokenWithSymbol)ParseToken(reader, TokenID.Name, TokenID.QuotedName, TokenID.String);
+                        break;
                     }
                 }
                 while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
             }
-            public      override    void                            TranspileNode(Transpile.Context context)
+            public                  void                            TranspileNode(TypeDeclaration_User typeDeclaration, Transpile.Context context)
             {
+                t_TimeZome = null;
+
+                if (n_TimeZone != null) {
+                    if (!typeDeclaration.NativeType.canHaveTimeZone) {
+                        context.AddError(n_TimeZone, "Only smalldatetime, datetime, datetime2 can have a timezone.");
+                    }
+                    t_TimeZome = n_TimeZone.ValueString;
+                }
             }
 
             private static  Core.ParseEnum<DataModel.SqlTypeFlags>  _parseEnum = new Core.ParseEnum<DataModel.SqlTypeFlags>(
-                                                                                        "Type option",
-                                                                                        new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckTSql,    "TYPECHECK",    "TSQL"),
-                                                                                        new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckSafe,    "TYPECHECK",    "SAFE"),
-                                                                                        new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckStrong,  "TYPECHECK",    "STRONG"),
-                                                                                        new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckStrict,  "TYPECHECK",    "STRICT"),
-                                                                                        new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.Flags,        "FLAGS"),
-                                                                                        new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.RecVersion,   "RECVERSION")
-                                                                                    );
+                                                                                     "Type option",
+                                                                                     new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckTSql,    "TYPECHECK",    "TSQL"),
+                                                                                     new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckSafe,    "TYPECHECK",    "SAFE"),
+                                                                                     new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckStrong,  "TYPECHECK",    "STRONG"),
+                                                                                     new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.CheckStrict,  "TYPECHECK",    "STRICT"),
+                                                                                     new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.Flags,        "FLAGS"),
+                                                                                     new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.RecVersion,   "RECVERSION"),
+                                                                                     new Core.ParseEnum<DataModel.SqlTypeFlags>.Seq(DataModel.SqlTypeFlags.TimeZone,     "TIME",         "ZONE")
+                                                                                 );
         }
 
         public      override    DataModel.SymbolType            EntityType      { get { return DataModel.SymbolType.TypeUser;   } }
         public      override    DataModel.EntityType            Entity          { get { return _entity;                         } }
 
-        public      readonly    Core.TokenWithSymbol            n_TypeName;
+        public      readonly    TokenWithSymbol                 n_TypeName;
         public      readonly    Core.Token                      n_Parm1;
         public      readonly    Core.Token                      n_Parm2;
         public      readonly    IExprNode                       n_DefaultValue;
@@ -139,6 +157,7 @@ namespace Jannesen.Language.TypedTSql.Node
             n_Attributes?.TranspileNode(context);
             n_Values?.TranspileNode(context);
             n_InstallInto?.TranspileNode(context);
+            n_With?.TranspileNode(this, context);
             n_Values?.TranspileNode(this, context);
             n_InstallInto?.TranspileNode(this, context);
         }
@@ -147,7 +166,8 @@ namespace Jannesen.Language.TypedTSql.Node
             _entity.Transpiled((n_With != null ? n_With.n_TypeFlags : DataModel.SqlTypeFlags.CheckSafe),
                                n_Values?.Fields,
                                n_Values?.ValuesRecords,
-                               n_Attributes?.Attributes);
+                               n_Attributes?.Attributes,
+                               n_With?.t_TimeZome);
         }
 
         public      override    void                            Emit(Core.EmitWriter emitWriter, Declaration_TYPE type)

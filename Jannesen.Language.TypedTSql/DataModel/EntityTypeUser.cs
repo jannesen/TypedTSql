@@ -7,17 +7,41 @@ namespace Jannesen.Language.TypedTSql.DataModel
 {
     public class EntityTypeUser: EntityType
     {
+        public class NowSymbolClass: ISymbol
+        {
+            public          SymbolType                  Type                    => SymbolType.BuildinFunction;
+            public          string                      Name                    => "now";
+            public          string                      FullName                => Name;
+            public          object                      Declaration             => null;
+            public          ISymbol                     ParentSymbol            => null;
+            public          ISymbol                     SymbolNameReference     => null;
+        }
+
+
         public  override        SqlTypeFlags            TypeFlags           { get { testTranspiled(); return _typeFlags;    } }
         public  override        SqlTypeNative           NativeType          { get { if (_nativeType == null) throw new InvalidOperationException("Native type not set."); return _nativeType;   } }
         public  override        object                  DefaultValue        { get { return _nullValue;                      } }
         public  override        ValueRecordList         Values              { get { testTranspiled(); return _values;       } }
         public                  IAttributes             Attributes          => _attributes;
+        public  override        string                  TimeZone            => _timeZone;
+
+        public                  ISymbol                 NowSymbol
+        {
+            get {
+                if (_nowSymbol == null) {
+                    _nowSymbol = new NowSymbolClass();
+                }
+                return _nowSymbol;
+            }
+        }
 
         private                 SqlTypeFlags            _typeFlags;
         private                 SqlTypeNative           _nativeType;
         private                 object                  _nullValue;
         private                 ValueRecordList         _values;
         private                 IAttributes             _attributes;
+        private                 string                  _timeZone;
+        private                 ISymbol                 _nowSymbol;
 
         internal                                        EntityTypeUser(DataModel.EntityName name, EntityFlags flags): base(SymbolType.TypeUser, name, flags)
         {
@@ -44,7 +68,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
             _values     = null;
             _attributes = null;
         }
-        internal                void                    Transpiled(SqlTypeFlags typeFlags, ValueRecordFieldList fields, ValueRecordList values, IAttributes attributes)
+        internal                void                    Transpiled(SqlTypeFlags typeFlags, ValueRecordFieldList fields, ValueRecordList values, IAttributes attributes, string timeZone)
         {
             _typeFlags = typeFlags | SqlTypeFlags.SimpleType | SqlTypeFlags.UserType;
             _values    = values;
@@ -53,6 +77,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
                 _typeFlags |= SqlTypeFlags.Values;
 
             _attributes = attributes;
+            _timeZone   = timeZone;
 
             Transpiled();
         }

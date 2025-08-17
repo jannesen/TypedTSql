@@ -57,6 +57,14 @@ namespace Jannesen.Language.TypedTSql.DataModel
                        SystemType == SystemType.BigInt;
             }
         }
+        public                  bool                canHaveTimeZone
+        {
+            get {
+                return SystemType == SystemType.SmallDateTime  ||
+                       SystemType == SystemType.DateTime ||
+                       SystemType == SystemType.DateTime2;
+            }
+        }
         public                  bool                isVarLength
         {
             get {

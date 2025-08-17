@@ -11,7 +11,7 @@ namespace Jannesen.Language.TypedTSql.Core
         {
             public          DataModel.SymbolType        Type                    { get { return DataModel.SymbolType.NoSymbol;   } }
             public          string                      Name                    { get { return "";                              } }
-            public          string                      FullName             { get { return Name;                            } }
+            public          string                      FullName                { get { return Name;                            } }
             public          object                      Declaration             { get { return null;                            } }
             public          DataModel.ISymbol           ParentSymbol            { get { return null;                            } }
             public          DataModel.ISymbol           SymbolNameReference     { get { return null;                            } }

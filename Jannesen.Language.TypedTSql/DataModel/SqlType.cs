@@ -7,6 +7,7 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public      virtual     SqlTypeFlags            TypeFlags       { get { return SqlTypeFlags.None;   } }
         public      virtual     SqlTypeNative           NativeType      { get { throw new InvalidOperationException(this.GetType().Name + ": has no nativetype.");      } }
         public      virtual     InterfaceList           Interfaces      { get { throw new InvalidOperationException(this.GetType().Name + ": has no interfaces.");      } }
+        public      virtual     string                  TimeZone        { get { throw new InvalidOperationException(this.GetType().Name + ": has no time zone.");       } }
         public      virtual     object                  DefaultValue    { get { return null; } }
         public      virtual     ValueRecordList         Values          { get { throw new InvalidOperationException(this.GetType().Name + ": has no values.");          } }
         public      virtual     IColumnList             Columns         { get { throw new InvalidOperationException(this.GetType().Name + ": has no columns.");         } }
