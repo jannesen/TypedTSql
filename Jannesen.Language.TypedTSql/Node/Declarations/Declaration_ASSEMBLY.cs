@@ -86,23 +86,23 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             emitWriter.WriteText("DECLARE @image VARBINARY(max)=");
                 emitWriter.WriteValue(n_Image.BinaryData);
-                emitWriter.WriteText("\r\n");
-            emitWriter.WriteText("DECLARE @cur VARBINARY(max)=(SELECT f.[content] FROM sys.assemblies a inner join sys.assembly_files f ON f.[assembly_id] = a.[assembly_id] AND f.[file_id] = 1 WHERE a.[name]=" + Library.SqlStatic.QuoteString(n_Name.ValueString) + ")\r\n");
-            emitWriter.WriteText("IF @cur is null\r\n");
-            emitWriter.WriteText("BEGIN\r\n");
+                emitWriter.WriteText("\n");
+            emitWriter.WriteText("DECLARE @cur VARBINARY(max)=(SELECT f.[content] FROM sys.assemblies a inner join sys.assembly_files f ON f.[assembly_id] = a.[assembly_id] AND f.[file_id] = 1 WHERE a.[name]=" + Library.SqlStatic.QuoteString(n_Name.ValueString) + ")\n");
+            emitWriter.WriteText("IF @cur is null\n");
+            emitWriter.WriteText("BEGIN\n");
                 if (n_Permissingset != null && n_Permissingset.ValueString.ToUpperInvariant() == "SAFE")
-                    emitWriter.WriteText("    ALTER DATABASE CURRENT SET TRUSTWORTHY ON\r\n");
-                emitWriter.WriteText("    CREATE ASSEMBLY " + Library.SqlStatic.QuoteName(n_Name.ValueString) + "\r\n");
-                emitWriter.WriteText("      AUTHORIZATION " + Library.SqlStatic.QuoteName(n_Autorisation != null ? n_Autorisation.ValueString : "dbo") + "\r\n");
-                emitWriter.WriteText("               FROM @image\r\n");
-                if (n_Permissingset != null) emitWriter.WriteText("               WITH PERMISSION_SET=" + n_Permissingset.ValueString + "\r\n");
-            emitWriter.WriteText("END\r\n");
-            emitWriter.WriteText("ELSE IF @cur <> @image\r\n");
-            emitWriter.WriteText("BEGIN\r\n");
-                emitWriter.WriteText("    ALTER ASSEMBLY " + Library.SqlStatic.QuoteName(n_Name.ValueString) + "\r\n");
-                emitWriter.WriteText("              FROM @image\r\n");
-                if (n_Permissingset != null) emitWriter.WriteText("              WITH PERMISSION_SET=" + n_Permissingset.ValueString + "\r\n");
-            emitWriter.WriteText("END\r\n");
+                    emitWriter.WriteText("    ALTER DATABASE CURRENT SET TRUSTWORTHY ON\n");
+                emitWriter.WriteText("    CREATE ASSEMBLY " + Library.SqlStatic.QuoteName(n_Name.ValueString) + "\n");
+                emitWriter.WriteText("      AUTHORIZATION " + Library.SqlStatic.QuoteName(n_Autorisation != null ? n_Autorisation.ValueString : "dbo") + "\n");
+                emitWriter.WriteText("               FROM @image\n");
+                if (n_Permissingset != null) emitWriter.WriteText("               WITH PERMISSION_SET=" + n_Permissingset.ValueString + "\n");
+            emitWriter.WriteText("END\n");
+            emitWriter.WriteText("ELSE IF @cur <> @image\n");
+            emitWriter.WriteText("BEGIN\n");
+                emitWriter.WriteText("    ALTER ASSEMBLY " + Library.SqlStatic.QuoteName(n_Name.ValueString) + "\n");
+                emitWriter.WriteText("              FROM @image\n");
+                if (n_Permissingset != null) emitWriter.WriteText("              WITH PERMISSION_SET=" + n_Permissingset.ValueString + "\n");
+            emitWriter.WriteText("END\n");
         }
 
         public      override    Core.IAstNode                   GetNameToken()

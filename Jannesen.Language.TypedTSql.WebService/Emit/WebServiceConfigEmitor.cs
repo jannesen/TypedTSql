@@ -172,6 +172,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                                                                 Encoding           = new System.Text.UTF8Encoding(false),
                                                                 Indent             = true,
                                                                 IndentChars        = "\t",
+                                                                NewLineChars       = "\n",
                                                                 CloseOutput        = false
                                                             }))
                     {

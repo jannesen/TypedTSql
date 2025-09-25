@@ -181,7 +181,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public                  void                                    Emit(EmitContext emitContext)
         {
             using (var fileData = new MemoryStream()) {
-                using (var outStream = new StreamWriter(fileData, Encoding.UTF8, 4096, true)) {
+                using (var outStream = new StreamWriter(fileData, new UTF8Encoding(false), 4096, true)) {
+                    outStream.NewLine = "\n";
                     _yamlSerializer.Serialize(outStream, _openApiDocument);
                 }
 

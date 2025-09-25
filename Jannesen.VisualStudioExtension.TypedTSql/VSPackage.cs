@@ -36,7 +36,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         }
 
         public      const       string                                  PackageGuid     = "FCFDB553-8F52-420F-9195-E183E9E501DE";
-        public      const       string                                  Version         = "1.13.00.000";        //@VERSIONINFO
+        public      const       string                                  Version         = "1.13.01.000";        //@VERSIONINFO
         private static readonly Dictionary<Guid, ColorTheme>            _colorThemes    = new Dictionary<Guid, ColorTheme>()
                                                                                             {
                                                                                                 { new Guid("de3dbbcd-f642-433c-8353-8f1df4370aba"), ColorTheme.Light },
@@ -261,7 +261,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
             while (err.InnerException != null)
                     err = err.InnerException;
 
-            System.Diagnostics.Debug.WriteLine("ERROR:\r\n" + msg + "\r\nSTACKTRACE\r\n" + err.StackTrace);
+            System.Diagnostics.Debug.WriteLine("ERROR:\n" + msg + "\nSTACKTRACE\n" + err.StackTrace);
 #endif
 
             System.Windows.Forms.MessageBox.Show(msg, "ERROR", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);

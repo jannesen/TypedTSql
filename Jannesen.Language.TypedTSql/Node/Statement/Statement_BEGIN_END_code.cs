@@ -95,12 +95,12 @@ namespace Jannesen.Language.TypedTSql.Node
             if (setXACT_ABORT)                  setOn += ",XACT_ABORT";
 
             if (setOn.Length > 0) {
-                emitWriter.WriteText("    SET " + setOn.Substring(1) + " ON;\r\n");
+                emitWriter.WriteText("    SET " + setOn.Substring(1) + " ON;\n");
             }
 
-            if (setNUMERIC_ROUNDABORT)          emitWriter.WriteText("    SET NUMERIC_ROUNDABORT OFF;\r\n");
-            if (setTRANSACTION_ISOLATION_LEVEL) emitWriter.WriteText("    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;\r\n");
-            if (addLine)                        emitWriter.WriteText("\r\n");
+            if (setNUMERIC_ROUNDABORT)          emitWriter.WriteText("    SET NUMERIC_ROUNDABORT OFF;\n");
+            if (setTRANSACTION_ISOLATION_LEVEL) emitWriter.WriteText("    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;\n");
+            if (addLine)                        emitWriter.WriteText("\n");
         }
     }
 }

@@ -334,7 +334,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
                 try {
                     using (var fileData = new MemoryStream()) {
-                        using (var writer = new StreamWriter(fileData, System.Text.Encoding.UTF8, 256, true)) {
+                        using (var writer = new StreamWriter(fileData, new System.Text.UTF8Encoding(false), 256, true)) {
+                            writer.NewLine = "\n";
                             _imports.EmitFull(writer);
                             writer.WriteLine();
                             _simpletypes.EmitFull(writer);

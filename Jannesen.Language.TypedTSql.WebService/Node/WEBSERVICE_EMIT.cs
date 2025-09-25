@@ -77,15 +77,15 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
                 sqlStatement.Append("CREATE PROCEDURE ");
                     sqlStatement.Append(n_IndexProcedure.Fullname);
-                    sqlStatement.Append("\r\n");
+                    sqlStatement.Append("\n");
 
-                sqlStatement.Append("AS\r\n");
-                sqlStatement.Append("BEGIN\r\n");
-                sqlStatement.Append("    SET NOCOUNT,ANSI_NULLS,ANSI_PADDING,ANSI_WARNINGS,ARITHABORT,CONCAT_NULL_YIELDS_NULL,XACT_ABORT ON;\r\n");
-                sqlStatement.Append("    SET NUMERIC_ROUNDABORT OFF;\r\n");
-                sqlStatement.Append("    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;\r\n");
-                sqlStatement.Append("    SELECT [*]=[name]+':'+[method]\r\n");
-                sqlStatement.Append("      FROM (\r\n");
+                sqlStatement.Append("AS\n");
+                sqlStatement.Append("BEGIN\n");
+                sqlStatement.Append("    SET NOCOUNT,ANSI_NULLS,ANSI_PADDING,ANSI_WARNINGS,ARITHABORT,CONCAT_NULL_YIELDS_NULL,XACT_ABORT ON;\n");
+                sqlStatement.Append("    SET NUMERIC_ROUNDABORT OFF;\n");
+                sqlStatement.Append("    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;\n");
+                sqlStatement.Append("    SELECT [*]=[name]+':'+[method]\n");
+                sqlStatement.Append("      FROM (\n");
 
                 int i = 0;
 
@@ -100,15 +100,15 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                                 sqlStatement.Append(SqlStatic.QuoteNString(webMethod.n_Declaration.n_ServiceMethodName.n_Name.ValueString));
                                 sqlStatement.Append(", [method]=");
                                 sqlStatement.Append(SqlStatic.QuoteNString(method));
-                                sqlStatement.Append("\r\n");
+                                sqlStatement.Append("\n");
                         }
                     }
                 }
 
-                sqlStatement.Append("           ) x\r\n");
-                sqlStatement.Append("     WHERE (PERMISSIONS(OBJECT_ID([procname])) & 32) = 32\r\n");
-                sqlStatement.Append("  ORDER BY [name]\r\n");
-                sqlStatement.Append("   FOR XML PATH('value'),ROOT('root'),TYPE\r\n");
+                sqlStatement.Append("           ) x\n");
+                sqlStatement.Append("     WHERE (PERMISSIONS(OBJECT_ID([procname])) & 32) = 32\n");
+                sqlStatement.Append("  ORDER BY [name]\n");
+                sqlStatement.Append("   FOR XML PATH('value'),ROOT('root'),TYPE\n");
                 sqlStatement.Append("END");
 
                 if (emitContext.Database.ExecuteStatement(sqlStatement.ToString(), null, emitContext.AddEmitError) != 0)

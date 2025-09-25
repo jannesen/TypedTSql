@@ -44,14 +44,14 @@ namespace Jannesen.Language.TypedTSql.Node
                 emitWriter.WriteText(Library.SqlStatic.QuoteString(type.n_Name.n_EntitiyName.Schema));
                 emitWriter.WriteText(") AND [name]=");
                 emitWriter.WriteText(Library.SqlStatic.QuoteString(type.n_Name.n_EntitiyName.Name));
-                emitWriter.WriteText(" AND [is_table_type]=1);\r\n");
+                emitWriter.WriteText(" AND [is_table_type]=1);\n");
 
-            emitWriter.WriteText("IF @table_object_id IS NOT NULL\r\n");
+            emitWriter.WriteText("IF @table_object_id IS NOT NULL\n");
 
-            emitWriter.WriteText("BEGIN\r\n");
+            emitWriter.WriteText("BEGIN\n");
                 emitWriter.WriteText("    IF (SELECT COUNT(*) FROM sys.all_columns WHERE [object_id]=@table_object_id)<>");
                     emitWriter.WriteText(n_Table.n_Columns.Length.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                    emitWriter.WriteText("\r\n");
+                    emitWriter.WriteText("\n");
 
                     int column_id = 1;
 
@@ -129,27 +129,27 @@ namespace Jannesen.Language.TypedTSql.Node
                             emitWriter.WriteText(" AND [is_computed]=1");
                         }
 
-                        emitWriter.WriteText(")\r\n");
+                        emitWriter.WriteText(")\n");
 
                     ++column_id;
                 }
 
                 emitWriter.WriteText("        RAISERROR('Table type ");
                 emitWriter.WriteText(type.n_Name.n_EntitiyName.Fullname.Replace("'", "''"));
-                emitWriter.WriteText(" is invalid, please fix manual.', 16, 1);\r\n");
+                emitWriter.WriteText(" is invalid, please fix manual.', 16, 1);\n");
 
-            emitWriter.WriteText("END\r\n");
+            emitWriter.WriteText("END\n");
 
-            emitWriter.WriteText("ELSE\r\n");
+            emitWriter.WriteText("ELSE\n");
 
-            emitWriter.WriteText("BEGIN\r\n");
+            emitWriter.WriteText("BEGIN\n");
                 emitWriter.WriteText("    CREATE TYPE ");
                     emitWriter.WriteText(type.n_Name.n_EntitiyName.Fullname);
-                    emitWriter.WriteText("\r\n");
-                    emitWriter.WriteText("    AS TABLE\r\n");
+                    emitWriter.WriteText("\n");
+                    emitWriter.WriteText("    AS TABLE\n");
                     n_Table.Emit(emitWriter);
-            emitWriter.WriteText(";\r\n");
-            emitWriter.WriteText("END\r\n");
+            emitWriter.WriteText(";\n");
+            emitWriter.WriteText("END\n");
         }
     }
 }

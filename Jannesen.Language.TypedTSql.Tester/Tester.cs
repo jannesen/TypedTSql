@@ -35,7 +35,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
             try {
                 Console.WriteLine(directory);
 
-                using (var outputStream = new StreamWriter(directory + "\\output.txt")) {
+                using (var outputStream = new StreamWriter(directory + "\\output.txt") { NewLine = "\n" }) {
                     using (var database   = new LTTS.SqlDatabase(databasename)) {
                         outputStream.WriteLine("========== SQL CODE");
                         database.Output(outputStream, true);

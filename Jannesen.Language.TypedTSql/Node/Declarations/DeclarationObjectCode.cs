@@ -52,7 +52,7 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             if (reader.CurrentToken.isToken(Core.TokenID.BEGIN, Core.TokenID.EXTERNAL)) {
                 AddLeading(reader);
-                AddChild(new Node.Node_CustomNode("AS\r\n"));
+                AddChild(new Node.Node_CustomNode("AS\n"));
             }
             else
                 ParseToken(reader, Core.TokenID.AS);

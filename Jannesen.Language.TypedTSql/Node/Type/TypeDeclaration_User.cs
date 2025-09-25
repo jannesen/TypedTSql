@@ -176,10 +176,10 @@ namespace Jannesen.Language.TypedTSql.Node
                 emitWriter.WriteText(Library.SqlStatic.QuoteString(type.n_Name.n_EntitiyName.Schema));
                 emitWriter.WriteText(") AND [name]=");
                 emitWriter.WriteText(Library.SqlStatic.QuoteString(type.n_Name.n_EntitiyName.Name));
-                emitWriter.WriteText(");\r\n");
+                emitWriter.WriteText(");\n");
 
-            emitWriter.WriteText("IF @user_type_id IS NOT NULL\r\n");
-            emitWriter.WriteText("BEGIN\r\n");
+            emitWriter.WriteText("IF @user_type_id IS NOT NULL\n");
+            emitWriter.WriteText("BEGIN\n");
                 emitWriter.WriteText("    IF NOT EXISTS (");
                     emitWriter.WriteText("SELECT * FROM sys.types WHERE [user_type_id] = @user_type_id");
                     emitWriter.WriteText(" AND [system_type_id]=");
@@ -210,22 +210,22 @@ namespace Jannesen.Language.TypedTSql.Node
                         break;
                     }
 
-                    emitWriter.WriteText(")\r\n");
+                    emitWriter.WriteText(")\n");
 
                 emitWriter.WriteText("        RAISERROR('User defined type ");
                     emitWriter.WriteText(type.n_Name.n_EntitiyName.Fullname.Replace("'", "''"));
-                    emitWriter.WriteText(" is invalid, please fix manual.', 16, 1);\r\n");
-            emitWriter.WriteText("END\r\n");
+                    emitWriter.WriteText(" is invalid, please fix manual.', 16, 1);\n");
+            emitWriter.WriteText("END\n");
 
-            emitWriter.WriteText("ELSE\r\n");
+            emitWriter.WriteText("ELSE\n");
 
-            emitWriter.WriteText("BEGIN\r\n");
+            emitWriter.WriteText("BEGIN\n");
                 emitWriter.WriteText("    CREATE TYPE ");
                     emitWriter.WriteText(type.n_Name.n_EntitiyName.Fullname);
-                    emitWriter.WriteText("\r\n");
+                    emitWriter.WriteText("\n");
                 emitWriter.WriteText("    FROM " + _nativeType.NativeTypeString);
-                    emitWriter.WriteText(";\r\n");
-            emitWriter.WriteText("END\r\n");
+                    emitWriter.WriteText(";\n");
+            emitWriter.WriteText("END\n");
         }
         public      override    bool                            EmitInstallInto(EmitContext emitContext, int step)
         {

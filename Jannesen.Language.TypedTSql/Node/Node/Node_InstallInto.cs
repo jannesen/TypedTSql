@@ -590,7 +590,7 @@ namespace Jannesen.Language.TypedTSql.Node
             }
             private             void                        _emitNewline()
             {
-                _emitString.Append("\r\n");
+                _emitString.Append("\n");
             }
         }
     }

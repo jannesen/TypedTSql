@@ -85,7 +85,7 @@ namespace Jannesen.Language.TypedTSql.Core
         }
         public      virtual     void                    WriteNewLine(int indent)
         {
-            WriteText("\r\n");
+            WriteText("\n");
         }
         public                  void                    WriteNewLine(int indent, string text)
         {
@@ -204,8 +204,8 @@ namespace Jannesen.Language.TypedTSql.Core
         public      override    void                    WriteNewLine(int indent)
         {
             if (!_blankline) {
-                _stringBuilder.Append("\r\n");
-                _emitpos.Filepos += 2;
+                _stringBuilder.Append("\n");
+                _emitpos.Filepos += 1;
                 ++_emitpos.Lineno;
                 _emitpos.Linepos = 1;
             }

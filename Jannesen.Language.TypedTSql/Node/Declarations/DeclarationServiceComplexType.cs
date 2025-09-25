@@ -26,7 +26,7 @@ namespace Jannesen.Language.TypedTSql.Node
             {
                 EmitCustom(emitWriter, (ew) => {
                                 if (!ew.EmitOptions.DontEmitCustomComment)
-                                    ew.WriteText("\r\n");
+                                    ew.WriteText("\n");
 
                                 ew.WriteText("CREATE FUNCTION " + n_EntityName.Fullname);
                            });

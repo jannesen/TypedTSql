@@ -70,7 +70,7 @@ namespace Jannesen.Language.TypedTSql
 
         public                  void                                    Output(string filename)
         {
-            Output(new StreamWriter(filename, false, System.Text.Encoding.UTF8), false);
+            Output(new StreamWriter(filename, false, System.Text.Encoding.UTF8) { NewLine = "\n" }, false);
         }
         public                  void                                    Output(StreamWriter streamWriter, bool leaveOpen)
         {
@@ -103,16 +103,16 @@ namespace Jannesen.Language.TypedTSql
             lock(_lockObject) {
                 if (_needsResetSettings) {
                     try {
-                        ExecuteStatement("SET NOCOUNT                 ON;\r\n" +
-                                         "SET ANSI_WARNINGS           ON;\r\n" +
-                                         "SET ANSI_NULLS              ON;\r\n" +
-                                         "SET ANSI_PADDING            ON;\r\n" +
-                                         "SET QUOTED_IDENTIFIER       ON;\r\n" +
-                                         "SET CONCAT_NULL_YIELDS_NULL ON;\r\n" +
-                                         "SET NUMERIC_ROUNDABORT      OFF;\r\n" +
-                                         "SET LANGUAGE                US_ENGLISH;\r\n" +
-                                         "SET DATEFORMAT              YMD;\r\n" +
-                                         "SET DATEFIRST               7;\r\n" +
+                        ExecuteStatement("SET NOCOUNT                 ON;\n" +
+                                         "SET ANSI_WARNINGS           ON;\n" +
+                                         "SET ANSI_NULLS              ON;\n" +
+                                         "SET ANSI_PADDING            ON;\n" +
+                                         "SET QUOTED_IDENTIFIER       ON;\n" +
+                                         "SET CONCAT_NULL_YIELDS_NULL ON;\n" +
+                                         "SET NUMERIC_ROUNDABORT      OFF;\n" +
+                                         "SET LANGUAGE                US_ENGLISH;\n" +
+                                         "SET DATEFORMAT              YMD;\n" +
+                                         "SET DATEFIRST               7;\n" +
                                          "SET ARITHABORT              ON;");
                         _needsResetSettings = false;
                     }
@@ -124,7 +124,9 @@ namespace Jannesen.Language.TypedTSql
         }
         public                  void                                    ExecuteStatement(string statement)
         {
-            lock(_lockObject) {
+            statement = statement.Replace("\r\n", "\n");
+
+            lock (_lockObject) {
                 if (_output != null) {
                     _output.Write(statement);
 
@@ -134,7 +136,7 @@ namespace Jannesen.Language.TypedTSql
                     _output.WriteLine("GO");
                 }
 
-                using (SqlClient.SqlCommand sqlCmd = new SqlClient.SqlCommand()) {
+                using (var sqlCmd = new SqlCommand()) {
                     sqlCmd.CommandText    = statement;
                     sqlCmd.CommandType    = System.Data.CommandType.Text;
                     sqlCmd.Connection     = Connection;
