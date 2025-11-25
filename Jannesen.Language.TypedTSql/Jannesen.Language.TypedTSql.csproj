@@ -1,56 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D812B8B4-B1FE-4E62-9E32-D0AED385A6AF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Jannesen.Language.TypedTSql</RootNamespace>
-    <AssemblyName>Jannesen.Language.TypedTSql</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" IncludeAssets="build; analyzers; buildtransitive" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" IncludeAssets="build; analyzers; buildtransitive" PrivateAssets="all" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="*.cs" />
-    <Compile Include="Buildin/**/*.cs" />
-    <Compile Include="Core/*.cs" />
-    <Compile Include="DataModel/*.cs" />
-    <Compile Include="Internal/*.cs" />
-    <Compile Include="Library/*.cs" />
-    <Compile Include="Logic/*.cs" />
-    <Compile Include="Node/**/*.cs" />
-    <Compile Include="Token/*.cs" />
-    <Compile Include="Transpile/*.cs" />
-    <EmbeddedResource Include="SqlScripts\*.sql" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Jannesen.Language.TypedTSql</RootNamespace>
+		<AssemblyName>Jannesen.Language.TypedTSql</AssemblyName>
+
+		<Description>Jannesen TypedTSql Language</Description>
+		<AssemblyTitle>Jannesen.Language.TypedTSql</AssemblyTitle>
+	</PropertyGroup>
+
+	<Import Project="$(MSBuildThisFileDirectory)..\Jannesen.TypedTSql.props" />
+
+	<ItemGroup>
+		<Reference Include="System" />
+		<Reference Include="System.Data" />
+		<Reference Include="System.Xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="SqlScripts\*.sql" />
+		<EmbeddedResource Include="SqlScripts\*.sql" />
+	</ItemGroup>
+
 </Project>

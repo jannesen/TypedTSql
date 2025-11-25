@@ -4,3 +4,4 @@
 **/*.csproj.user
 packages
 *.vsix
+launchSettings.json

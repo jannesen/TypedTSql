@@ -1,0 +1,42 @@
+<Project>
+    <PropertyGroup>
+        <TypedTSqlVersion>1.13.02.001</TypedTSqlVersion>  <!-- @VERSIONINFO -->
+
+        <!-- TargetFramework -->
+        <TargetFramework>net472</TargetFramework>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
+        <!-- Code analyzers -->
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <WarningLevel>4</WarningLevel>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+        <!-- Assembly info -->
+        <Company>Jannesen B.V.</Company>
+        <Product>Jannesen TypedTSql</Product>
+        <Description>Jannesen Visual Studio Extensions TypedTSql</Description>
+        <AssemblyTitle>Jannesen.VisualStudioExtension.TypedTSql</AssemblyTitle>
+        <AssemblyVersion>$(TypedTSqlVersion)</AssemblyVersion>
+        <FileVersion>$(TypedTSqlVersion)</FileVersion>
+        <InformationalVersion>$(TypedTSqlVersion)</InformationalVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>none</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+    </PropertyGroup>
+
+</Project>

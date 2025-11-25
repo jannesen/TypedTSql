@@ -1,239 +1,238 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{D3E10662-B8C2-4B73-852D-C04ECEB5179B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Jannesen.VisualStudioExtension.TypedTSql</RootNamespace>
-    <AssemblyName>Jannesen.VisualStudioExtension.TypedTSql</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <GeneratePkgDefFile>true</GeneratePkgDefFile>
-    <UseCodebase>true</UseCodebase>
-    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
-    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
-    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
-    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
-    <CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
-    <StartAction>Program</StartAction>
-    <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
-    <StartArguments>/rootsuffix Exp</StartArguments>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DeployExtension>True</DeployExtension>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <OutputPath>bin\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DefineConstants>TRACE</DefineConstants>
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
-    <CopyVsixExtensionLocation>..\TypedTSql.vsix-content</CopyVsixExtensionLocation>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <!-- Woraround problem conflicting versions -->
-    <PackageReference Include="Microsoft.ServiceHub.Framework" Version="4.8.55" />
-    <PackageReference Include="System.Collections.Immutable" Version="9.0.8" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.9.37000" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.14.2094" />
-    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Sdk" Version="17.9.380" />
-    <PackageReference Include="Microsoft.Build" Version="17.13.26" />
-    <PackageReference Include="Microsoft.Build.Framework" Version="17.13.26" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.13.26" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" IncludeAssets="build; analyzers; buildtransitive" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" IncludeAssets="build; analyzers; buildtransitive" PrivateAssets="all" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Jannesen.Language.TypedTSql.WebService\Jannesen.Language.TypedTSql.WebService.csproj">
-      <Project>{e776ef11-1585-4107-a531-37484b7681b5}</Project>
-      <Name>Jannesen.Language.TypedTSql.WebService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Jannesen.Language.TypedTSql\Jannesen.Language.TypedTSql.csproj">
-      <Project>{d812b8b4-b1fe-4e62-9e32-d0aed385a6af}</Project>
-      <Name>Jannesen.Language.TypedTSql</Name>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.Build\Jannesen.VisualStudioExtension.TypedTSql.Build.csproj">
-      <Project>{091f7030-6776-45e3-b0fa-dbed1edff4d0}</Project>
-      <Name>Jannesen.VisualStudioExtension.TypedTSql.Build</Name>
-      <InstallRoot>MSBuild</InstallRoot>
-      <VSIXSubPath>Jannesen.TypedTSql</VSIXSubPath>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate\Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate.csproj">
-      <Project>{50e9ba1f-9572-4294-87fa-6de934e6c095}</Project>
-      <Name>Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate</Name>
-      <VSIXSubPath>ItemTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate\Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate.csproj">
-      <Project>{48b31bea-1e10-42ff-8c91-bf8fe2fde856}</Project>
-      <Name>Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Classification\ClassificationFactory.cs" />
-    <Compile Include="Classification\ClassificationFormats.cs" />
-    <Compile Include="Classification\ClassificationTypes.cs" />
-    <Compile Include="Classification\ColorManager.cs" />
-    <Compile Include="CPS\AlwaysAllowValidProjectReferenceChecker.cs" />
-    <Compile Include="CPS\ProjectProperties.cs" />
-    <Compile Include="CPS\TypedTSqlConfiguredProject.cs" />
-    <Compile Include="CPS\TypedTSqlUnconfiguredProject.cs" />
-    <Compile Include="CatalogExplorer\ContentControl.xaml.cs">
-      <DependentUpon>ContentControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CatalogExplorer\Item.cs" />
-    <Compile Include="CatalogExplorer\ItemColumn.cs" />
-    <Compile Include="CatalogExplorer\ItemColumns.cs" />
-    <Compile Include="CatalogExplorer\ItemEntity.cs" />
-    <Compile Include="CatalogExplorer\ItemEntityFunction.cs" />
-    <Compile Include="CatalogExplorer\ItemEntityFunctionScalar.cs" />
-    <Compile Include="CatalogExplorer\ItemEntityFunctionTable.cs" />
-    <Compile Include="CatalogExplorer\ItemEntityStoredProcedure.cs" />
-    <Compile Include="CatalogExplorer\ItemEntityTableUser.cs" />
-    <Compile Include="CatalogExplorer\ItemEntityTrigger.cs" />
-    <Compile Include="CatalogExplorer\ItemEntityType.cs" />
-    <Compile Include="CatalogExplorer\ItemEntityView.cs" />
-    <Compile Include="CatalogExplorer\ItemFolder.cs" />
-    <Compile Include="CatalogExplorer\ItemFolderBase.cs" />
-    <Compile Include="CatalogExplorer\ItemParameter.cs" />
-    <Compile Include="CatalogExplorer\ItemParameters.cs" />
-    <Compile Include="CatalogExplorer\ItemProject.cs" />
-    <Compile Include="CatalogExplorer\ItemReturnValue.cs" />
-    <Compile Include="CatalogExplorer\ItemValue.cs" />
-    <Compile Include="CatalogExplorer\ItemValues.cs" />
-    <Compile Include="CatalogExplorer\Panel.cs" />
-    <Page Include="CatalogExplorer\ContentControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CatalogExplorer\Styling.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Compile Include="Commands\CommandHandler2K.cs" />
-    <Compile Include="Commands\CommandHandler97.cs" />
-    <Compile Include="Commands\CustomMenuCommand.cs" />
-    <Content Include="Commands\CustomMenuIcons.png" />
-    <Compile Include="Editor\Classifier\ClassifierProvider.cs" />
-    <Compile Include="Editor\ErrorTagger\ErrorTaggerProvider.cs" />
-    <Compile Include="Editor\FindReferences\FindReferencesCommandHandler.cs" />
-    <Compile Include="Editor\GotoDefinition\GotoDefinitionCommandHandler.cs" />
-    <Compile Include="Editor\OutliningTagger\OutliningTaggerProvider.cs" />
-    <Compile Include="Editor\QuickFixes\ShowQuickFixesCommandArgsCommandHandler.cs" />
-    <Compile Include="Editor\QuickFixes\ShowQuickFixesForPositionCommandArgsCommandHandler.cs" />
-    <Compile Include="Editor\QuickInfo\QuickInfoControllerProvider.cs" />
-    <Compile Include="Editor\QuickInfo\QuickInfoSourceProvider.cs" />
-    <Compile Include="Editor\Rename\RenameCommandHandler.cs" />
-    <Compile Include="FindAllReferences\ContainingColumnDefinition.cs" />
-    <Compile Include="FindAllReferences\FindAllReferenceWindow.cs" />
-    <Compile Include="FindAllReferences\ReferenceEntry.cs" />
-    <Compile Include="FindAllReferences\TypedTSqlDefinitionBucket.cs" />
-    <Compile Include="FindAllReferences\UsageColumnDefinition.cs" />
-    <Compile Include="Rename\DatabaseItem.cs" />
-    <Compile Include="Rename\FileItem.cs" />
-    <Compile Include="Rename\FileLocationItem.cs" />
-    <Compile Include="Rename\PreviewList.cs" />
-    <Compile Include="Rename\RenameDialog.xaml.cs">
-      <DependentUpon>RenameDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Rename\Renamer.cs" />
-    <Page Include="Rename\RenameDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Compile Include="Editor\Classifier\Classifier.cs" />
-    <Compile Include="Editor\ErrorTagger\ErrorTagger.cs" />
-    <Compile Include="Editor\ExtensionBase.cs" />
-    <Compile Include="Editor\OutliningTagger\OutliningTagger.cs" />
-    <Compile Include="Editor\QuickInfo\QuickInfoController.cs" />
-    <Compile Include="Editor\QuickInfo\QuickInfoSource.cs" />
-    <Compile Include="Editor\TextViewOptions\TextViewCreationListener.cs" />
-    <Compile Include="LanguageService\ErrorList.cs" />
-    <Compile Include="LanguageService\FileResult.cs" />
-    <Compile Include="LanguageService\OutliningRegion.cs" />
-    <Compile Include="LanguageService\Project.cs" />
-    <Compile Include="LanguageService\QuickInfo.cs" />
-    <Compile Include="LanguageService\Service.cs" />
-    <Compile Include="LanguageService\TextBufferLanguageServiceProject.cs" />
-    <Compile Include="Library\Helpers.cs" />
-    <Compile Include="Library\StandardGlyphGroup.cs" />
-    <Compile Include="FileAndContentTypeDefinitions.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="VSPackage.cs" />
-    <Content Include="TypedTSql.ico">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <EmbeddedResource Include="VSPackage.resx">
-      <MergeWithCTO>true</MergeWithCTO>
-      <SubType>Designer</SubType>
-      <ManifestResourceName>VSPackage</ManifestResourceName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <VSCTCompile Include="Commands\CustomMenu.vsct">
-      <ResourceName>Menus.ctmenu</ResourceName>
-      <SubType>Designer</SubType>
-    </VSCTCompile>
-    <Content Include="FileIcons.pkgdef">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="source.extension.vsixmanifest" />
-  </ItemGroup>
-  <!-- Woraround missing exclude files in Microsoft.VsSDK.targets -->
-  <ItemGroup Condition="'$(IncludeSdkReferencesInVSIXContainer)'!='true'">
-    <SuppressFromVsix Include="Microsoft.VisualStudio.SolutionPersistence.dll" Visible="false" />
-    <SuppressFromVsix Include="System.Reflection.TypeExtensions.dll" Visible="false" />
-    <SuppressFromVsix Include="System.Text.Encodings.Web.dll" Visible="false" />
-    <SuppressFromVsix Include="Microsoft.VisualStudio.Linux.ConnectionManager.Store.dll" Visible="false" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
-  <PropertyGroup>
-    <PostBuildEvent>$(ProjectDir)PostBuild.cmd</PostBuildEvent>
-  </PropertyGroup>
+﻿<Project>
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+
+    <PropertyGroup>
+        <RootNamespace>Jannesen.VisualStudioExtension.TypedTSql</RootNamespace>
+        <AssemblyName>Jannesen.VisualStudioExtension.TypedTSql</AssemblyName>
+
+        <TargetVsixContainerName>Jannesen.TypedTSql.vsix</TargetVsixContainerName>
+        <TargetVsixContainer>$(MSBuildThisFileDirectory)..\$(TargetVsixContainerName)</TargetVsixContainer>
+        <UseCodebase>true</UseCodebase>
+        <IncludeCopyLocalReferencesInVSIXContainer>true</IncludeCopyLocalReferencesInVSIXContainer>
+
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+        <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+
+        <GeneratedVSPackageVersionFile>$(MSBuildThisFileDirectory)obj\Generated-VSPackage.Version.cs</GeneratedVSPackageVersionFile>
+    </PropertyGroup>
+
+    <Import Project="$(MSBuildThisFileDirectory)..\Jannesen.TypedTSql.props" />
+
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DeployExtension>false</DeployExtension>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.ComponentModel.Composition" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Design" />
+        <Reference Include="System.Drawing" />
+        <Reference Include="System.Windows.Forms" />
+        <Reference Include="System.Xaml" />
+        <Reference Include="System.Xml" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="PresentationCore" />
+        <Reference Include="PresentationFramework" />
+        <Reference Include="WindowsBase" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.14.2120" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.13.40008" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.VisualStudio.Text.UI" Version="17.14.249" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="17.14.249" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="17.14.249" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.VisualStudio.Editor" Version="17.14.249" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Sdk" Version="17.9.380" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.Build" Version="17.13.26" ExcludeAssets="runtime" PrivateAssets="runtime" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Jannesen.Language.TypedTSql.WebService\Jannesen.Language.TypedTSql.WebService.csproj">
+            <Name>Jannesen.Language.TypedTSql.WebService</Name>
+        </ProjectReference>
+        <ProjectReference Include="..\Jannesen.Language.TypedTSql\Jannesen.Language.TypedTSql.csproj">
+            <Name>Jannesen.Language.TypedTSql</Name>
+            <Private>True</Private>
+        </ProjectReference>
+        <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.Build\Jannesen.VisualStudioExtension.TypedTSql.Build.csproj">
+            <Name>Jannesen.VisualStudioExtension.TypedTSql.Build</Name>
+            <InstallRoot>MSBuild</InstallRoot>
+            <VSIXSubPath>Jannesen.TypedTSql</VSIXSubPath>
+            <Private>True</Private>
+        </ProjectReference>
+        <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate\Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate.csproj">
+            <Name>Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate</Name>
+            <VSIXSubPath>ItemTemplates</VSIXSubPath>
+            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+            <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+            <Private>True</Private>
+        </ProjectReference>
+        <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate\Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate.csproj">
+            <Name>Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate</Name>
+            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+            <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+            <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+            <Private>True</Private>
+        </ProjectReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="Classification\ClassificationFactory.cs" />
+        <Compile Include="Classification\ClassificationFormats.cs" />
+        <Compile Include="Classification\ClassificationTypes.cs" />
+        <Compile Include="Classification\ColorManager.cs" />
+        <Compile Include="CPS\AlwaysAllowValidProjectReferenceChecker.cs" />
+        <Compile Include="CPS\ProjectProperties.cs" />
+        <Compile Include="CPS\TypedTSqlConfiguredProject.cs" />
+        <Compile Include="CPS\TypedTSqlUnconfiguredProject.cs" />
+        <Compile Include="CatalogExplorer\ContentControl.xaml.cs">
+            <DependentUpon>ContentControl.xaml</DependentUpon>
+        </Compile>
+        <Compile Include="CatalogExplorer\Item.cs" />
+        <Compile Include="CatalogExplorer\ItemColumn.cs" />
+        <Compile Include="CatalogExplorer\ItemColumns.cs" />
+        <Compile Include="CatalogExplorer\ItemEntity.cs" />
+        <Compile Include="CatalogExplorer\ItemEntityFunction.cs" />
+        <Compile Include="CatalogExplorer\ItemEntityFunctionScalar.cs" />
+        <Compile Include="CatalogExplorer\ItemEntityFunctionTable.cs" />
+        <Compile Include="CatalogExplorer\ItemEntityStoredProcedure.cs" />
+        <Compile Include="CatalogExplorer\ItemEntityTableUser.cs" />
+        <Compile Include="CatalogExplorer\ItemEntityTrigger.cs" />
+        <Compile Include="CatalogExplorer\ItemEntityType.cs" />
+        <Compile Include="CatalogExplorer\ItemEntityView.cs" />
+        <Compile Include="CatalogExplorer\ItemFolder.cs" />
+        <Compile Include="CatalogExplorer\ItemFolderBase.cs" />
+        <Compile Include="CatalogExplorer\ItemParameter.cs" />
+        <Compile Include="CatalogExplorer\ItemParameters.cs" />
+        <Compile Include="CatalogExplorer\ItemProject.cs" />
+        <Compile Include="CatalogExplorer\ItemReturnValue.cs" />
+        <Compile Include="CatalogExplorer\ItemValue.cs" />
+        <Compile Include="CatalogExplorer\ItemValues.cs" />
+        <Compile Include="CatalogExplorer\Panel.cs" />
+        <Page Include="CatalogExplorer\ContentControl.xaml">
+            <SubType>Designer</SubType>
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Include="CatalogExplorer\Styling.xaml">
+            <SubType>Designer</SubType>
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Compile Include="Commands\CommandHandler2K.cs" />
+        <Compile Include="Commands\CommandHandler97.cs" />
+        <Compile Include="Commands\CustomMenuCommand.cs" />
+        <Content Include="Commands\CustomMenuIcons.png" />
+        <Compile Include="Editor\Classifier\ClassifierProvider.cs" />
+        <Compile Include="Editor\ErrorTagger\ErrorTaggerProvider.cs" />
+        <Compile Include="Editor\FindReferences\FindReferencesCommandHandler.cs" />
+        <Compile Include="Editor\GotoDefinition\GotoDefinitionCommandHandler.cs" />
+        <Compile Include="Editor\OutliningTagger\OutliningTaggerProvider.cs" />
+        <Compile Include="Editor\QuickFixes\ShowQuickFixesCommandArgsCommandHandler.cs" />
+        <Compile Include="Editor\QuickFixes\ShowQuickFixesForPositionCommandArgsCommandHandler.cs" />
+        <Compile Include="Editor\QuickInfo\QuickInfoControllerProvider.cs" />
+        <Compile Include="Editor\QuickInfo\QuickInfoSourceProvider.cs" />
+        <Compile Include="Editor\Rename\RenameCommandHandler.cs" />
+        <Compile Include="Editor\Classifier\Classifier.cs" />
+        <Compile Include="Editor\ErrorTagger\ErrorTagger.cs" />
+        <Compile Include="Editor\ExtensionBase.cs" />
+        <Compile Include="Editor\OutliningTagger\OutliningTagger.cs" />
+        <Compile Include="Editor\QuickInfo\QuickInfoController.cs" />
+        <Compile Include="Editor\QuickInfo\QuickInfoSource.cs" />
+        <Compile Include="Editor\TextViewOptions\TextViewCreationListener.cs" />
+        <Compile Include="FindAllReferences\ContainingColumnDefinition.cs" />
+        <Compile Include="FindAllReferences\FindAllReferenceWindow.cs" />
+        <Compile Include="FindAllReferences\ReferenceEntry.cs" />
+        <Compile Include="FindAllReferences\TypedTSqlDefinitionBucket.cs" />
+        <Compile Include="FindAllReferences\UsageColumnDefinition.cs" />
+        <Compile Include="Rename\DatabaseItem.cs" />
+        <Compile Include="Rename\FileItem.cs" />
+        <Compile Include="Rename\FileLocationItem.cs" />
+        <Compile Include="Rename\PreviewList.cs" />
+        <Compile Include="Rename\RenameDialog.xaml.cs">
+            <DependentUpon>RenameDialog.xaml</DependentUpon>
+        </Compile>
+        <Compile Include="Rename\Renamer.cs" />
+        <Page Include="Rename\RenameDialog.xaml">
+            <SubType>Designer</SubType>
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Compile Include="LanguageService\ErrorList.cs" />
+        <Compile Include="LanguageService\FileResult.cs" />
+        <Compile Include="LanguageService\OutliningRegion.cs" />
+        <Compile Include="LanguageService\Project.cs" />
+        <Compile Include="LanguageService\QuickInfo.cs" />
+        <Compile Include="LanguageService\Service.cs" />
+        <Compile Include="LanguageService\TextBufferLanguageServiceProject.cs" />
+        <Compile Include="Library\Helpers.cs" />
+        <Compile Include="Library\StandardGlyphGroup.cs" />
+        <Compile Include="FileAndContentTypeDefinitions.cs" />
+        <Compile Include="VSPackage.cs" />
+        <Content Include="TypedTSql.ico">
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <EmbeddedResource Include="VSPackage.resx">
+            <MergeWithCTO>true</MergeWithCTO>
+            <SubType>Designer</SubType>
+            <ManifestResourceName>VSPackage</ManifestResourceName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources.resx">
+            <SubType>Designer</SubType>
+        </EmbeddedResource>
+        <VSCTCompile Include="Commands\CustomMenu.vsct">
+            <ResourceName>Menus.ctmenu</ResourceName>
+            <SubType>Designer</SubType>
+        </VSCTCompile>
+        <Content Include="FileIcons.pkgdef">
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <None Include="source.extension.vsixmanifest" />
+    </ItemGroup>
+
+    <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+    <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="Exists('$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets')" />
+
+    <!-- Code to get version in correct places -->
+    <ItemGroup>
+        <Compile Include="$(GeneratedVSPackageVersionFile)" />
+    </ItemGroup>
+
+    <UsingTask TaskName="WriteVersionConstants" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+        <ParameterGroup>
+            <Filename ParameterType="System.String" Required="true" />
+            <Version ParameterType="System.String" Required="true" />
+        </ParameterGroup>
+        <Task>
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+        File.WriteAllText(Filename, @$"// <auto-generated/>
+namespace Jannesen.VisualStudioExtension.TypedTSql
+{{
+    public sealed partial class VSPackage
+    {{
+        public const string Version = ""{Version}"";
+    }}
+}}
+");
+]]>
+            </Code>
+        </Task>
+    </UsingTask>
+
+    <Target Name="GenerateAssemblyConstants" BeforeTargets="CoreCompile">
+        <WriteVersionConstants Filename="$(GeneratedVSPackageVersionFile)" Version="$(TypedTSqlVersion)" />
+    </Target>
+
+    <Target Name="GetVsixVersion" Outputs="$(_VsixVersion)">
+        <PropertyGroup>
+            <_VsixVersion>$(TypedTSqlVersion)</_VsixVersion>
+        </PropertyGroup>
+    </Target>
+
+    <!--
+        Work around problem CreatePkgDef ReflectionTypeLoadException
+        This a cause by dat async methods are rewriten to classes this can causes GetTypes to fail.        
+    -->
+    <ItemGroup>
+        <CreatePkgDefReferencedAssemblies Include="$(MSBuildToolsPath)\Microsoft.Build.dll" />
+    </ItemGroup>
+
 </Project>

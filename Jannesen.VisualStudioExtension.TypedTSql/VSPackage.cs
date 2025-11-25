@@ -25,7 +25,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(CatalogExplorer.Panel))]
     [ProvideService(typeof(LanguageService.Service), ServiceName = "TypedTSql Language Services")]
-    public sealed class VSPackage: AsyncPackage, IDisposable
+    public sealed partial class VSPackage: AsyncPackage, IDisposable
     {
         public enum ColorTheme
         {
@@ -36,7 +36,6 @@ namespace Jannesen.VisualStudioExtension.TypedTSql
         }
 
         public      const       string                                  PackageGuid     = "FCFDB553-8F52-420F-9195-E183E9E501DE";
-        public      const       string                                  Version         = "1.13.01.000";        //@VERSIONINFO
         private static readonly Dictionary<Guid, ColorTheme>            _colorThemes    = new Dictionary<Guid, ColorTheme>()
                                                                                             {
                                                                                                 { new Guid("de3dbbcd-f642-433c-8353-8f1df4370aba"), ColorTheme.Light },

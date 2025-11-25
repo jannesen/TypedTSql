@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Jannesen.VisualStudioExtension.TypedTSql" Version="1.13.01.000" Language="en-US" Publisher="Jannesen B.V."/> <!-- @VERSIONINFO -->
+        <Identity Id="Jannesen.VisualStudioExtension.TypedTSql" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Jannesen B.V."/>
         <DisplayName>Typed Transact SQL Visual Studio Extensions</DisplayName>
         <Description xml:space="preserve">Typed Transact SQL extensions for Visual Studio 2022</Description>
         <Icon>TypedTSql.ico</Icon>
