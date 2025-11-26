@@ -25,6 +25,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Classification
         public const string     Parameter       = "typedtsql.parameter";
         public const string     Column          = "typedtsql.column";
         public const string     UDTValue        = "typedtsql.udtvalue";
+        public const string     Error           = "typedtsql.error";
 
         // This disables "The field is never used" compiler's warning. Justification: the field is used by MEF.
 #pragma warning disable CS0169
@@ -79,6 +80,9 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Classification
 
         [Export(typeof(ClassificationTypeDefinition)), Name(UDTValue)]
         private static      ClassificationTypeDefinition        typeUDTValue;
+
+        [Export(typeof(ClassificationTypeDefinition)), Name(Error)]
+        private static      ClassificationTypeDefinition        typeError;
 #pragma warning restore IDE0051
 #pragma warning restore CS0169
     }

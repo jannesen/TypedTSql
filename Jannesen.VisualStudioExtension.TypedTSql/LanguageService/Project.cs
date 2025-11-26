@@ -374,7 +374,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 var token  = _transpiler.GetTokenAt(fullpath, point.TranslateTo(sourceFile.TextSnapshot, PointTrackingMode.Negative).Position);
 
                 if (token is LTTS_Core.TokenWithSymbol tokenWithSymbol && tokenWithSymbol.hasSymbol) {
-                    return new QuickInfo(sourceFile.TextSnapshot.CreateTrackingSpan(new Span(token.Beginning.Filepos, token.Ending.Filepos - token.Beginning.Filepos), SpanTrackingMode.EdgeExclusive), tokenWithSymbol.SymbolData);
+                    return new QuickInfo(token.Beginning.Filepos, token.Ending.Filepos, tokenWithSymbol.SymbolData);
                 }
 
                 return null;

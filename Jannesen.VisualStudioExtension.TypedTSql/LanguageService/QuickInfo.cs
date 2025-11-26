@@ -1,67 +1,51 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Adornments;
 using LTTS                  = Jannesen.Language.TypedTSql;
+using Jannesen.VisualStudioExtension.TypedTSql.Classification;
 using Jannesen.VisualStudioExtension.TypedTSql.Library;
 
 namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 {
     class QuickInfo
     {
-        public              ITrackingSpan       Span { get; private set; }
-        public              UIElement           Info { get; private set; }
-        public              Brush               _colorCategory;
-        public              Brush               _colorType;
-        public              Brush               _colorName;
+        public              int                         Begin       { get; private set; }
+        public              int                         End         { get; private set; }
+        public              object                      Info        { get; private set; }
 
-        public                                  QuickInfo(ITrackingSpan span, LTTS.DataModel.SymbolData symbolData)
+        public                                          QuickInfo(int begin, int end, LTTS.DataModel.SymbolData symbolData)
         {
-            switch(VSPackage.GetCurrentTheme()) {
-            case VSPackage.ColorTheme.Dark:
-                _colorCategory = Brushes.MediumSeaGreen;
-                _colorType     = Brushes.CornflowerBlue;
-                _colorName     = Brushes.White;
-                break;
-            case VSPackage.ColorTheme.Light:
-            case VSPackage.ColorTheme.Blue:
-            default:
-                _colorCategory = Brushes.MediumSeaGreen;
-                _colorType     = Brushes.MediumBlue;
-                _colorName     = Brushes.Black;
-                break;
-            }
-
-            Span = span;
-            Info = _processSymbolDate(symbolData, true);
+            Begin = begin;
+            End   = end;
+            Info  = _processSymbolDate(symbolData, true);
         }
 
-        private             UIElement           _processSymbolDate(LTTS.DataModel.SymbolData symbolData, bool details)
+        private static      object                      _processSymbolDate(LTTS.DataModel.SymbolData symbolData, bool details)
         {
             if (symbolData is LTTS.DataModel.SymbolUsage symbolUsage) { 
                 return _processSymbol(symbolUsage.Symbol, details);
             }
-            if (symbolData is LTTS.DataModel.SymbolSourceTarget symbolSourceTarget) { 
-                var info = new StackPanel() { Orientation=Orientation.Horizontal };
-                info.Children.Add(_processSymbol(symbolSourceTarget.Target.Symbol, details));
-                info.Children.Add(_textType(" = "));
-                info.Children.Add(_processSymbol(symbolSourceTarget.Source.Symbol, details));
-                return info;
+            if (symbolData is LTTS.DataModel.SymbolSourceTarget symbolSourceTarget) {
+                return new ContainerElement(ContainerElementStyle.Wrapped,
+                                _processSymbol(symbolSourceTarget.Target.Symbol, details),
+                                " = ",
+                                _processSymbol(symbolSourceTarget.Source.Symbol, details)
+                           );
             }
             if (symbolData is LTTS.DataModel.SymbolWildcard symbolWildcard) { 
-                var info = new StackPanel() { Orientation=Orientation.Vertical };
+                var elements = new List<object>();
 
                 foreach (var item in symbolWildcard.SymbolData) {
-                    info.Children.Add(_processSymbolDate(item, false));
+                    elements.Add(_processSymbolDate(item, false));
                 }
-                return info;
-            }
-            return null;
-        }
 
-        private             UIElement           _processSymbol(LTTS.DataModel.ISymbol symbol, bool details)
+                return new ContainerElement(ContainerElementStyle.Stacked, elements);
+            }
+
+            return "Symbol type " + symbolData.GetType().Name + " not implemeted.";
+        }
+        private static      object                      _processSymbol(LTTS.DataModel.ISymbol symbol, bool details)
         {
             try {
                 switch(symbol.Type) {
@@ -112,204 +96,191 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
                 case LTTS.DataModel.SymbolType.RowsetAlias:                             return _processRowAlias((LTTS.DataModel.RowSet)symbol);
                 default:
                     {
-                        var stackPanel = new StackPanel() { Orientation=Orientation.Horizontal };
-                            stackPanel.Children.Add(_textType(Helpers.SymbolTypeToString(symbol.Type)));
-                            stackPanel.Children.Add(_textName(symbol.FullName));
-                        return stackPanel;
+                        return _textElementTypeName(Helpers.SymbolTypeToString(symbol.Type), symbol.FullName);
                     }
                 }
             }
             catch(Exception err) {
-                var stackPanel = new StackPanel() { Orientation=Orientation.Horizontal, Background=Brushes.Red };
-                    stackPanel.Children.Add(new TextBox() { Text = Helpers.SymbolTypeToString(symbol.Type), Foreground=Brushes.White, Background=Brushes.Transparent, BorderThickness=new Thickness(0) });
-                    stackPanel.Children.Add(new TextBox() { Text = "ERROR: " + err.Message,          Foreground=Brushes.White, Background=Brushes.Transparent, BorderThickness=new Thickness(0) });
-                return stackPanel;
+                return new ClassifiedTextElement(
+                           new ClassifiedTextRun(ClassificationTypes.Error, "Type: " + Helpers.SymbolTypeToString(symbol.Type) + " ERROR: " + err.Message)
+                       );
             }
         }
-
-        private             UIElement           _processTypeUser(LTTS.DataModel.EntityTypeUser typeUser)
+        private static      ContainerElement            _processTypeUser(LTTS.DataModel.EntityTypeUser typeUser)
         {
-            var rtn = new StackPanel() { Orientation=Orientation.Vertical };
-
-            rtn.Children.Add(_stackPanelTypeName("user-type",   typeUser.EntityName.Fullname));
-            rtn.Children.Add(_stackPanelTypeName("native-type", typeUser.NativeType.ToString()));
-
-            return rtn;
+            return new ContainerElement(ContainerElementStyle.Stacked,
+                                        _textElementTypeName("user-type",   typeUser.EntityName.Fullname),
+                                        _textElementTypeName("native-type", typeUser.NativeType.ToString()));
         }
-        private             UIElement           _processExternalInterface(string type, LTTS.DataModel.Interface intf, bool details)
+        private static      ContainerElement            _processExternalInterface(string type, LTTS.DataModel.Interface intf, bool details)
         {
-            var rtn = new StackPanel() { Orientation=Orientation.Vertical };
+            var elments = new List<object>();
 
-                rtn.Children.Add(_stackPanelTypeName(type, LTTS.Library.SqlStatic.QuoteName(intf.Name)));
-
-                if (details) {
-                    if (intf.ParentSymbol != null)
-                        rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(intf.ParentSymbol, false)));
-
-                    if (intf.Returns != null)
-                        rtn.Children.Add(_stackPanelCategory("returns", _processType(intf.Returns)));
-                }
-            return rtn;
-        }
-        private             UIElement           _processUDTValue(LTTS.DataModel.ValueRecord valueRecord, bool details)
-        {
-            var rtn = new StackPanel() { Orientation=Orientation.Vertical };
-
-                rtn.Children.Add(_stackPanelTypeName("udt-value", LTTS.Library.SqlStatic.QuoteName(valueRecord.Name)));
-                rtn.Children.Add(_stackPanelTypeName("value", Helpers.ObjectValueToString(valueRecord.Value)));
-
-                if (details) {
-                    if (valueRecord.ParentSymbol != null)
-                        rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(valueRecord.ParentSymbol, false)));
-                }
-
-            return rtn;
-        }
-        private             UIElement           _processColumn(LTTS.DataModel.Column column, bool details)
-        {
-            var rtn = new StackPanel() { Orientation=Orientation.Vertical };
-
-                rtn.Children.Add(_stackPanelTypeName("column", LTTS.Library.SqlStatic.QuoteName(column.Name)));
-
-                if (details) {
-                    if (column.SqlType != null)
-                        rtn.Children.Add(_stackPanelCategory("type", _processType(column.SqlType)));
-
-                    if (column.ParentSymbol != null)
-                        rtn.Children.Add(_stackPanelCategory("parent", _processSymbol(column.ParentSymbol, false)));
-
-                    rtn.Children.Add(_stackPanelCategory("nullable", _textCatagory(column.isNullable ? "yes" : "no")));
-                }
-            return rtn;
-        }
-        private             UIElement           _processVariable(string type, LTTS.DataModel.Variable variable, bool details)
-        {
-            var rtn = new StackPanel() { Orientation=Orientation.Vertical };
-            rtn.Children.Add(_stackPanelTypeName(type, variable.Name));
+            elments.Add(_textElementTypeName(type, LTTS.Library.SqlStatic.QuoteName(intf.Name)));
 
             if (details) {
-                if (variable.SqlType != null)
-                    rtn.Children.Add(_stackPanelCategory("type", _processType(variable.SqlType)));
-
-                rtn.Children.Add(_stackPanelCategory("nullable", _textCatagory(variable.isNullable ? "yes" : "no")));
-            }
-
-            return rtn;
-        }
-        private             UIElement           _processRowAlias(LTTS.DataModel.RowSet rowset)
-        {
-            var rtn = new StackPanel() { Orientation=Orientation.Vertical };
-
-                rtn.Children.Add(_stackPanelTypeName("alias",  rowset.Name));
-
-                if (rowset.Source != null)
-                    rtn.Children.Add(_stackPanelCategory("source", _processSymbol(rowset.Source, true)));
-
-                rtn.Children.Add(_stackPanelCategory("nullable", _textCatagory(rowset.isNullable ? "yes" : "no")));
-
-            return rtn;
-        }
-        private             UIElement           _processIndex(LTTS.DataModel.Index index, bool details)
-        {
-            var rtn = new StackPanel() { Orientation=Orientation.Vertical };
-
-                rtn.Children.Add(_stackPanelTypeName("index", LTTS.Library.SqlStatic.QuoteName(index.Name)));
-
-                if (details) {
-                    if (index.Columns != null) {
-                        var indexes = new StringBuilder();
-
-                        for (int i = 0 ; i < index.Columns.Length ; ++i) {
-                            if (i > 0)
-                                indexes.Append(", ");
-
-                            indexes.Append(LTTS.Library.SqlStatic.QuoteName(index.Columns[i].Column.Name));
-                        }
-
-                        rtn.Children.Add(_stackPanelTypeName("columns", indexes.ToString()));
-                    }
-
-                    if (index.Filter != null)
-                        rtn.Children.Add(_stackPanelTypeName("where", index.Filter));
+                if (intf.ParentSymbol != null) {
+                    elments.Add(_elementPanelCategory("parent", _processSymbol(intf.ParentSymbol, false)));
                 }
 
-            return rtn;
-        }
-        private             UIElement           _processType(LTTS.DataModel.ISqlType sqlType)
-        {
-            var rtn = new StackPanel() { Orientation=Orientation.Vertical };
+                if (intf.Returns != null) {
+                    elments.Add(_elementPanelCategory("returns", _processType(intf.Returns)));
+                }
+            }
 
-                if (sqlType.Entity != null)
-                    rtn.Children.Add(_processSymbol(sqlType.Entity, true));
-                else
-                if ((sqlType.TypeFlags & LTTS.DataModel.SqlTypeFlags.SimpleType) != 0)
-                    rtn.Children.Add(_stackPanelTypeName("native-type", sqlType.NativeType.ToString()));
-                else
-                if (sqlType is LTTS.DataModel.EntityTypeExternal)
-                    rtn.Children.Add(_textName("type-external"));
-                else
-                if (sqlType is LTTS.DataModel.EntityTypeTable)
-                    rtn.Children.Add(_textName("type-table"));
-                else
-                if (sqlType is LTTS.DataModel.SqlTypeTable)
-                    rtn.Children.Add(_textName("table"));
-                else
-                if (sqlType is LTTS.DataModel.SqlTypeCursorRef)
-                    rtn.Children.Add(_textName("cursor-ref"));
-                else
-                if (sqlType is LTTS.DataModel.SqlTypeAny)
-                    rtn.Children.Add(_textName("ANY"));
-                else
-                if (sqlType is LTTS.DataModel.SqlTypeVoid)
-                    rtn.Children.Add(_textName("VOID"));
+            return new ContainerElement(ContainerElementStyle.Stacked, elments);
+        }
+        private static      ContainerElement            _processUDTValue(LTTS.DataModel.ValueRecord valueRecord, bool details)
+        {
+            var elments = new List<object>();
 
-            return rtn;
-        }
-        private             StackPanel          _stackPanelTypeName(string type, string name)
-        {
-            var rtn = new StackPanel() { Orientation=Orientation.Horizontal };
-            rtn.Children.Add(_textType(type));
-            rtn.Children.Add(_textName(name));
-            return rtn;
-        }
-        private             StackPanel          _stackPanelCategory(string category, UIElement panel)
-        {
-            var rtn = new StackPanel() { Orientation=Orientation.Horizontal };
+            elments.Add(_textElementTypeName("udt-value", LTTS.Library.SqlStatic.QuoteName(valueRecord.Name)));
+            elments.Add(_textElementTypeName("value", Helpers.ObjectValueToString(valueRecord.Value)));
 
-            rtn.Children.Add(_textCatagory(category));
-            rtn.Children.Add(panel);
+            if (details) {
+                if (valueRecord.ParentSymbol != null) {
+                    elments.Add(_elementPanelCategory("parent", _processSymbol(valueRecord.ParentSymbol, false)));
+                }
+            }
 
-            return rtn;
+            return new ContainerElement(ContainerElementStyle.Stacked, elments);
         }
-        private             TextBox             _textCatagory(string text)
+        private static      ContainerElement            _processColumn(LTTS.DataModel.Column column, bool details)
         {
-            return new TextBox()
-                        {
-                            Text            = text,
-                            Foreground      = _colorCategory,
-                            Background      = Brushes.Transparent,
-                            BorderThickness = new Thickness(0)
-                        };
+            var elments = new List<object>();
+
+            elments.Add(_textElementTypeName("column", LTTS.Library.SqlStatic.QuoteName(column.Name)));
+
+            if (details) {
+                if (column.SqlType != null) {
+                    elments.Add(_elementPanelCategory("type", _processType(column.SqlType)));
+                }
+
+                if (column.ParentSymbol != null) {
+                    elments.Add(_elementPanelCategory("parent", _processSymbol(column.ParentSymbol, false)));
+                }
+
+                elments.Add(_elementTextNullable(column.isNullable));
+            }
+
+            return new ContainerElement(ContainerElementStyle.Stacked, elments);
         }
-        private             TextBox             _textType(string text)
+        private static      ContainerElement            _processVariable(string type, LTTS.DataModel.Variable variable, bool details)
         {
-            return new TextBox()
-                        {
-                            Text            = text,
-                            Foreground      = _colorType,
-                            Background      = Brushes.Transparent,
-                            BorderThickness = new Thickness(0)
-                        };
+            var elments = new List<object>();
+
+            elments.Add(_textElementTypeName(type, variable.Name));
+
+            if (details) {
+                if (variable.SqlType != null) {
+                    elments.Add(_elementPanelCategory("type", _processType(variable.SqlType)));
+                }
+
+                elments.Add(_elementTextNullable(variable.isNullable));
+            }
+
+            return new ContainerElement(ContainerElementStyle.Stacked, elments);
         }
-        private             TextBox             _textName(string text)
+        private static      ContainerElement            _processRowAlias(LTTS.DataModel.RowSet rowset)
         {
-            return new TextBox()
-                        {
-                            Text            = text,
-                            Foreground      = _colorName,
-                            Background      = Brushes.Transparent,
-                            BorderThickness = new Thickness(0)
-                        };
+            var elments = new List<object>();
+
+            elments.Add(_elementPanelCategory("alias",  rowset.Name));
+
+            if (rowset.Source != null) {
+                elments.Add(_elementPanelCategory("source", _processSymbol(rowset.Source, true)));
+            }
+
+            elments.Add(_elementTextNullable(rowset.isNullable));
+
+            return new ContainerElement(ContainerElementStyle.Stacked, elments);
+        }
+        private static      ContainerElement            _processIndex(LTTS.DataModel.Index index, bool details)
+        {
+            var elments = new List<object>();
+
+            elments.Add(_textElementTypeName("index", LTTS.Library.SqlStatic.QuoteName(index.Name)));
+
+            if (details) {
+                if (index.Columns != null) {
+                    var indexes = new StringBuilder();
+
+                    for (int i = 0 ; i < index.Columns.Length ; ++i) {
+                        if (i > 0)
+                            indexes.Append(", ");
+
+                        indexes.Append(LTTS.Library.SqlStatic.QuoteName(index.Columns[i].Column.Name));
+                    }
+
+                    elments.Add(_textElementTypeName("columns", indexes.ToString()));
+                }
+
+                if (index.Filter != null) {
+                    elments.Add(_textElementTypeName("where", index.Filter));
+                }
+            }
+
+            return new ContainerElement(ContainerElementStyle.Stacked, elments);
+        }
+
+        private static      ContainerElement            _processType(LTTS.DataModel.ISqlType sqlType)
+        {
+            var elements = new List<object>();
+
+            if (sqlType.Entity != null)
+                elements.Add(_processSymbol(sqlType.Entity, true));
+            else
+            if ((sqlType.TypeFlags & LTTS.DataModel.SqlTypeFlags.SimpleType) != 0)
+                elements.Add(_textElementTypeName("native-type", sqlType.NativeType.ToString()));
+            else
+            if (sqlType is LTTS.DataModel.EntityTypeExternal)
+                elements.Add(_textElementName("type-external"));
+            else
+            if (sqlType is LTTS.DataModel.EntityTypeTable)
+                elements.Add(_textElementName("type-table"));
+            else
+            if (sqlType is LTTS.DataModel.SqlTypeTable)
+                elements.Add(_textElementName("table"));
+            else
+            if (sqlType is LTTS.DataModel.SqlTypeCursorRef)
+                elements.Add(_textElementName("cursor-ref"));
+            else
+            if (sqlType is LTTS.DataModel.SqlTypeAny)
+                elements.Add(_textElementName("ANY"));
+            else
+            if (sqlType is LTTS.DataModel.SqlTypeVoid)
+                elements.Add(_textElementName("VOID"));
+
+            return new ContainerElement(ContainerElementStyle.Stacked, elements);
+        }
+        private static      ContainerElement            _elementPanelCategory(string category, object panel)
+        {
+            return new ContainerElement(ContainerElementStyle.Wrapped,
+                                        _textElementComment(category + " "),
+                                        panel);
+        }
+        private static      ContainerElement            _elementTextNullable(bool nullable)
+        {
+            return _elementPanelCategory("nullable", _textElementComment(nullable ? "yes" : "no"));
+        }
+        private static      ClassifiedTextElement       _textElementComment(string name)
+        {
+            return new ClassifiedTextElement(
+                       new ClassifiedTextRun(ClassificationTypes.Comment, name)
+                   );
+        }
+        private static      ClassifiedTextElement       _textElementName(string name)
+        {
+            return new ClassifiedTextElement(
+                       new ClassifiedTextRun(ClassificationTypes.Name, name)
+                   );
+        }
+        private static      ClassifiedTextElement       _textElementTypeName(string type, string name)
+        {
+            return new ClassifiedTextElement(
+                       new ClassifiedTextRun(ClassificationTypes.Type, type + " "),
+                       new ClassifiedTextRun(ClassificationTypes.Name, name)
+                   );
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Classification
         public      readonly    IClassificationType                             cfParameter;
         public      readonly    IClassificationType                             cfColumn;
         public      readonly    IClassificationType                             cfUDTValue;
+        public      readonly    IClassificationType                             cfError;
 
         public                                                                  ClassificationFactory(IClassificationTypeRegistryService registry)
         {
@@ -43,6 +44,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Classification
             cfParameter       = registry.GetClassificationType(ClassificationTypes.Parameter);
             cfColumn          = registry.GetClassificationType(ClassificationTypes.Column);
             cfUDTValue        = registry.GetClassificationType(ClassificationTypes.UDTValue);
+            cfError           = registry.GetClassificationType(ClassificationTypes.Error);
         }
 
         public                  IClassificationType                             TokenClassificationType(LTTS.Core.Token token)

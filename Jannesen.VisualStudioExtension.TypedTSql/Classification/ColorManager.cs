@@ -77,6 +77,7 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Classification
                                         { ClassificationTypes.Parameter,       new DefaultClassificationColor(new ClassificationColor(Color.FromRgb(  0,   0,   0)), new ClassificationColor(Color.FromRgb(220, 220, 220))) },
                                         { ClassificationTypes.Column,          new DefaultClassificationColor(new ClassificationColor(Color.FromRgb( 32, 132,   0)), new ClassificationColor(Color.FromRgb(184, 215, 163))) },
                                         { ClassificationTypes.UDTValue,        new DefaultClassificationColor(new ClassificationColor(Color.FromRgb(  0,   0,   0)), new ClassificationColor(Color.FromRgb(220, 220, 220))) },
+                                        { ClassificationTypes.Error,           new DefaultClassificationColor(new ClassificationColor(Color.FromRgb(  0,   0,   0)), new ClassificationColor(Color.FromRgb(255,   0,   0))) },
                                     };
 
         private                     VSPackage.ColorTheme                    _currentTheme;

@@ -37,14 +37,14 @@
         <Reference Include="WindowsBase" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.14.2120" />
+        <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.14.2120" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.13.40008" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.VisualStudio.Text.UI" Version="17.14.249" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="17.14.249" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="17.14.249" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.VisualStudio.Editor" Version="17.14.249" ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.VisualStudio.Language" Version="17.14.249" ExcludeAssets="runtime" />
         <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Sdk" Version="17.9.380" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build" Version="17.13.26" ExcludeAssets="runtime" PrivateAssets="runtime" />
+        <PackageReference Include="Microsoft.Build" Version="17.13.26" ExcludeAssets="runtime" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Jannesen.Language.TypedTSql.WebService\Jannesen.Language.TypedTSql.WebService.csproj">
@@ -121,22 +121,21 @@
         <Compile Include="Commands\CommandHandler97.cs" />
         <Compile Include="Commands\CustomMenuCommand.cs" />
         <Content Include="Commands\CustomMenuIcons.png" />
+        
+        <Compile Include="Editor\ExtensionBase.cs" />
+        <Compile Include="Editor\Classifier\Classifier.cs" />
         <Compile Include="Editor\Classifier\ClassifierProvider.cs" />
+        <Compile Include="Editor\ErrorTagger\ErrorTagger.cs" />
         <Compile Include="Editor\ErrorTagger\ErrorTaggerProvider.cs" />
         <Compile Include="Editor\FindReferences\FindReferencesCommandHandler.cs" />
         <Compile Include="Editor\GotoDefinition\GotoDefinitionCommandHandler.cs" />
+        <Compile Include="Editor\OutliningTagger\OutliningTagger.cs" />
         <Compile Include="Editor\OutliningTagger\OutliningTaggerProvider.cs" />
         <Compile Include="Editor\QuickFixes\ShowQuickFixesCommandArgsCommandHandler.cs" />
         <Compile Include="Editor\QuickFixes\ShowQuickFixesForPositionCommandArgsCommandHandler.cs" />
-        <Compile Include="Editor\QuickInfo\QuickInfoControllerProvider.cs" />
         <Compile Include="Editor\QuickInfo\QuickInfoSourceProvider.cs" />
-        <Compile Include="Editor\Rename\RenameCommandHandler.cs" />
-        <Compile Include="Editor\Classifier\Classifier.cs" />
-        <Compile Include="Editor\ErrorTagger\ErrorTagger.cs" />
-        <Compile Include="Editor\ExtensionBase.cs" />
-        <Compile Include="Editor\OutliningTagger\OutliningTagger.cs" />
-        <Compile Include="Editor\QuickInfo\QuickInfoController.cs" />
         <Compile Include="Editor\QuickInfo\QuickInfoSource.cs" />
+        <Compile Include="Editor\Rename\RenameCommandHandler.cs" />
         <Compile Include="Editor\TextViewOptions\TextViewCreationListener.cs" />
         <Compile Include="FindAllReferences\ContainingColumnDefinition.cs" />
         <Compile Include="FindAllReferences\FindAllReferenceWindow.cs" />

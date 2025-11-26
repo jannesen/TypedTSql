@@ -248,5 +248,19 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Classification
                 BackgroundColor = fontColor.BackgroundColor;
             }
         }
+
+        [Export(typeof(EditorFormatDefinition)), ClassificationType(ClassificationTypeNames = ClassificationTypes.Error)]
+        [Name("TTSQL Error"), DisplayName("TTSQL Error")]
+        [UserVisible(true), Order(Before = Priority.Default)]
+        internal sealed class ClassifierFormatError: ClassificationFormatDefinition
+        {
+            [ImportingConstructor]
+            public ClassifierFormatError(ColorManager colorManager)
+            {
+                var fontColor = colorManager.GetDefaultColors(ClassificationTypes.Error);
+                ForegroundColor = fontColor.ForegroundColor;
+                BackgroundColor = fontColor.BackgroundColor;
+            }
+        }
     }
 }
