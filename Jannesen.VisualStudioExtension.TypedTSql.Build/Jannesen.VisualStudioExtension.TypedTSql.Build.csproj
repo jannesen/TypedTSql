@@ -22,6 +22,8 @@
 		<PackageReference Include="Microsoft.Build"				Version="18.0.2" ExcludeAssets="runtime" />
 		<PackageReference Include="Microsoft.Build.Framework"	Version="18.0.2" ExcludeAssets="runtime" />
 		<PackageReference Include="Microsoft.Build.Tasks.Core"	Version="18.0.2" ExcludeAssets="runtime" />
+        <!-- Workaround problem that YamlDotNet is not in vsix.$MSBUILD -->
+		<PackageReference Include="YamlDotNet" Version="16.3.0" IncludeAssets="runtime" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Jannesen.Language.TypedTSql\Jannesen.Language.TypedTSql.csproj">
