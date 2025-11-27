@@ -8,7 +8,6 @@
         <TargetVsixContainerName>Jannesen.TypedTSql.vsix</TargetVsixContainerName>
         <TargetVsixContainer>$(MSBuildThisFileDirectory)..\$(TargetVsixContainerName)</TargetVsixContainer>
         <UseCodebase>true</UseCodebase>
-        <IncludeCopyLocalReferencesInVSIXContainer>true</IncludeCopyLocalReferencesInVSIXContainer>
 
         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
         <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
@@ -47,33 +46,35 @@
         <PackageReference Include="Microsoft.Build" Version="17.13.26" ExcludeAssets="runtime" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Jannesen.Language.TypedTSql.WebService\Jannesen.Language.TypedTSql.WebService.csproj">
-            <Name>Jannesen.Language.TypedTSql.WebService</Name>
-        </ProjectReference>
         <ProjectReference Include="..\Jannesen.Language.TypedTSql\Jannesen.Language.TypedTSql.csproj">
             <Name>Jannesen.Language.TypedTSql</Name>
-            <Private>True</Private>
+        </ProjectReference>
+        <ProjectReference Include="..\Jannesen.Language.TypedTSql.WebService\Jannesen.Language.TypedTSql.WebService.csproj">
+            <Name>Jannesen.Language.TypedTSql.WebService</Name>
         </ProjectReference>
         <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.Build\Jannesen.VisualStudioExtension.TypedTSql.Build.csproj">
             <Name>Jannesen.VisualStudioExtension.TypedTSql.Build</Name>
             <InstallRoot>MSBuild</InstallRoot>
-            <VSIXSubPath>Jannesen.TypedTSql</VSIXSubPath>
-            <Private>True</Private>
+            <VSIXSubPath>Jannesen.TypedTSql</VSIXSubPath>            
+            <Private>True</Private>            
         </ProjectReference>
         <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate\Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate.csproj">
             <Name>Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate</Name>
             <VSIXSubPath>ItemTemplates</VSIXSubPath>
+            <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup;</IncludeOutputGroupsInVSIX>
             <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-            <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
             <Private>True</Private>
         </ProjectReference>
         <ProjectReference Include="..\Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate\Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate.csproj">
             <Name>Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate</Name>
-            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-            <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+            <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup;</IncludeOutputGroupsInVSIX>
             <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
             <Private>True</Private>
         </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+		<PackageReference Include="YamlDotNet" Version="16.3.0" />
     </ItemGroup>
 
     <ItemGroup>
