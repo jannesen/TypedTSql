@@ -7,7 +7,7 @@ namespace Jannesen.Language.TypedTSql.Node
     // https://msdn.microsoft.com/en-us/library/ms188385.aspx
     public class Query_Select_OrderBy: Core.AstParseNode
     {
-        public      readonly    Query_Select_OrderByItem[]      n_Items;
+        public      readonly    Expr_with_COLLATE[]             n_Items;
         public      readonly    IExprNode                       n_Offset;
         public      readonly    IExprNode                       n_Rows;
 
@@ -16,16 +16,7 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseToken(reader, Core.TokenID.ORDER);
             ParseToken(reader, Core.TokenID.BY);
 
-            {
-                var items = new List<Query_Select_OrderByItem>();
-
-                do {
-                    items.Add(AddChild(new Query_Select_OrderByItem(reader)));
-                }
-                while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
-
-                n_Items = items.ToArray();
-            }
+            n_Items = ParseItems(reader, (r) => new Expr_with_COLLATE(r));
 
             if (ParseOptionalToken(reader, "OFFSET") != null) {
                 n_Offset = ParseExpression(reader);

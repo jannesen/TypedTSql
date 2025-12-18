@@ -32,7 +32,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
                 n_Expression.TranspileNode(context);
                 n_WithinGroupOrderBy?.TranspileNode(context);
 
-                if (n_WithinGroupOrderBy.n_Items.Length != 1) {
+                if (n_WithinGroupOrderBy.n_OrderByItems.Length != 1) {
                     throw new TranspileException(n_WithinGroupOrderBy, "function must have exactly one expression.");
                 }
 
@@ -41,9 +41,9 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 
                 Validate.ConstNumber(n_Expression, 0, 1);
 
-                if (n_WithinGroupOrderBy.n_Items[0].n_Expression.isValid()) {
-                    Validate.ValueIntFloat(n_WithinGroupOrderBy.n_Items[0].n_Expression);
-                    _sqlType = n_WithinGroupOrderBy.n_Items[0].n_Expression.SqlType;
+                if (n_WithinGroupOrderBy.n_OrderByItems[0].n_Expression.isValid()) {
+                    Validate.ValueIntFloat(n_WithinGroupOrderBy.n_OrderByItems[0].n_Expression);
+                    _sqlType = n_WithinGroupOrderBy.n_OrderByItems[0].n_Expression.SqlType;
                 }
             }
             catch(Exception err) {

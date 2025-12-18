@@ -2,12 +2,12 @@
 
 namespace Jannesen.Language.TypedTSql.Node
 {
-    public class Query_Select_OrderByItem: Core.AstParseNode
+    public class Expr_with_COLLATE: Core.AstParseNode
     {
         public      readonly    IExprNode                       n_Expression;
         public      readonly    Core.Token                      n_Collate;
 
-        public                                                  Query_Select_OrderByItem(Core.ParserReader reader)
+        public                                                  Expr_with_COLLATE(Core.ParserReader reader)
         {
             n_Expression = ParseExpression(reader);
 

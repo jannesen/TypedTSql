@@ -239,6 +239,17 @@ namespace Jannesen.Language.TypedTSql.Core
         {
             return AddChild(new Node.Node_AssignVariable(reader));
         }
+        public                  T[]                                 ParseItems<T>(ParserReader reader, Func<ParserReader, T> construct) where T: Core.AstParseNode
+        {
+            var items = new List<T>();
+
+            do {
+                items.Add(AddChild(construct(reader)));
+            }
+            while (ParseOptionalToken(reader, Core.TokenID.Comma) != null);
+
+            return items.ToArray();
+        }
 
         public                  Token                               ParseInteger(ParserReader reader)
         {
