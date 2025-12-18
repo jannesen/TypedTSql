@@ -23,7 +23,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 
             ParseToken(reader, Core.TokenID.RrBracket);
 
-            n_WithinGroupOrderBy = new Node_WITHIN_GROUP_ORDER_BY(reader);
+           AddChild(n_WithinGroupOrderBy = new Node_WITHIN_GROUP_ORDER_BY(reader));
         }
 
         public      override    void                                TranspileNode(Transpile.Context context)

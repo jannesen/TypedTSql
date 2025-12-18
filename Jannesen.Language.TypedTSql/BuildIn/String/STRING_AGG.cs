@@ -28,7 +28,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
             ParseToken(reader, Core.TokenID.RrBracket);
 
             if (Node_WITHIN_GROUP_ORDER_BY.CanParse(reader)) {
-                n_WithinGroupOrderBy = new Node_WITHIN_GROUP_ORDER_BY(reader);
+                AddChild(n_WithinGroupOrderBy = new Node_WITHIN_GROUP_ORDER_BY(reader));
             }
         }
 
@@ -44,7 +44,7 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 
                 if (_valueFlags.isValid()) {
                     Validate.Value(n_Expression);
-                    Validate.ConstString(n_Separator);
+                    //Validate.ConstString(n_Separator);
 
                     var sqlType = n_Expression.SqlType;
                     if (sqlType != null && !(sqlType is DataModel.SqlTypeAny)) {
