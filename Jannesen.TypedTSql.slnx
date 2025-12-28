@@ -1,0 +1,27 @@
+<Solution>
+  <Folder Name="/doc/">
+    <File Path="Doc/webmethod.md" />
+    <File Path="Doc/webservice.md" />
+    <File Path="todo.md" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="DEBUGGING.md" />
+    <File Path="Jannesen.TypedTSql.props" />
+    <File Path="LICENSE.txt" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+    <File Path="todo.md" />
+    <File Path="VSExp-Clean.cmd" />
+  </Folder>
+  <Project Path="Jannesen.Language.TypedTSql.Tester/Jannesen.Language.TypedTSql.Tester.csproj" />
+  <Project Path="Jannesen.Language.TypedTSql.WebService/Jannesen.Language.TypedTSql.WebService.csproj" />
+  <Project Path="Jannesen.Language.TypedTSql/Jannesen.Language.TypedTSql.csproj" />
+  <Project Path="Jannesen.VisualStudioExtension.TypedTSql.Build/Jannesen.VisualStudioExtension.TypedTSql.Build.csproj" />
+  <Project Path="Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate/Jannesen.VisualStudioExtension.TypedTSql.ItemTemplate.csproj" />
+  <Project Path="Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate/Jannesen.VisualStudioExtension.TypedTSql.ProjectTemplate.csproj" />
+  <Project Path="Jannesen.VisualStudioExtension.TypedTSql/Jannesen.VisualStudioExtension.TypedTSql.csproj">
+    <BuildDependency Project="Jannesen.VisualStudioExtension.TypedTSql.Build/Jannesen.VisualStudioExtension.TypedTSql.Build.csproj" />
+  </Project>
+</Solution>
