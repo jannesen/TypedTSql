@@ -17,11 +17,14 @@
 
     <Import Project="$(MSBuildThisFileDirectory)..\Jannesen.TypedTSql.props" />
 
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <DeployExtension>false</DeployExtension>
-    </PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DeployExtension>true</DeployExtension>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DeployExtension>false</DeployExtension>
+	</PropertyGroup>
 
-    <ItemGroup>
+	<ItemGroup>
         <Reference Include="System" />
         <Reference Include="System.ComponentModel.Composition" />
         <Reference Include="System.Data" />

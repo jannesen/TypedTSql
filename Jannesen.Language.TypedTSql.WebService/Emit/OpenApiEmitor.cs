@@ -467,7 +467,7 @@ add_parameter:                  {
         {
             if (webMethod.n_Declaration.n_Attributes?.Attributes != null) {
                 foreach (var a in webMethod.n_Declaration.n_Attributes?.Attributes) {
-                    operation.SetAttribute(a.Attr.Name, a.Value);
+                    operation.SetAttribute("x-" + a.Attr.Name, a.Value);
                 }
             }
 
