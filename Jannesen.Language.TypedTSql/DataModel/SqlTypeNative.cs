@@ -48,6 +48,15 @@ namespace Jannesen.Language.TypedTSql.DataModel
         public      readonly    Int16               MaxLength;
         public      readonly    byte                Precision;
         public      readonly    byte                Scale;
+        public                  bool                isString
+        {
+            get {
+                return SystemType == SystemType.VarChar  ||
+                       SystemType == SystemType.NVarChar ||
+                       SystemType == SystemType.Char     ||
+                       SystemType == SystemType.NChar;
+            }
+        }
         public                  bool                isInteger
         {
             get {

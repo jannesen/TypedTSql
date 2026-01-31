@@ -304,6 +304,12 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
 
             if (transpiler.ErrorCount == 0) {
                 start = DateTime.UtcNow;
+                transpiler.Analyze(_typedtsqlcatalog);
+                _onEmitMessage("Analyze: " + (DateTime.UtcNow - start).TotalSeconds.ToString("F2", System.Globalization.CultureInfo.InvariantCulture) + " sec.");
+            }
+
+            if (transpiler.ErrorCount == 0) {
+                start = DateTime.UtcNow;
 
                 transpiler.Emit(new LTTS.EmitOptions()
                                     {

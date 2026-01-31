@@ -149,49 +149,54 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                         emitors[i].AddWebMethod(webMethod);
                     }
                     catch(Exception err) {
-                        EmitError emitError = null;
-
-                        if (err is EmitError) {
-                            emitError = (EmitError)err;
-                        }
-                        else
-                        if (err is EmitException emitException) {
-                            if (emitException.Declaration is LTTSQL.DataModel.DocumentSpan documentSpan) {
-                                emitError = new EmitError(documentSpan.Filename,
-                                                          documentSpan.Beginning.Lineno,
-                                                          documentSpan.Beginning.Linepos,
-                                                          "Emit proxy error: " + err.Message);
-                            }
-                            else
-                            if (emitException.Declaration is LTTSQL.Core.IAstNode astNode) {
-                                var token = astNode.GetFirstToken(Core.GetTokenMode.RemoveWhiteSpaceAndComment);
-                                if (token != null) {
-                                    emitError = new EmitError(emitContext.Transpiler.GetSourceFile(token).Filename,
-                                                              token.Beginning.Lineno,
-                                                              token.Beginning.Linepos,
-                                                              "Emit proxy error: " + err.Message);
-                                }
-                            }
-                        }
-
-                        if (emitError == null) {
-                            emitError = new EmitError(WebService.EntityName.Fullname + ": Emit proxy error: " + err.Message);
-                        }
-
-                        emitContext.AddEmitError(emitError);
+                        emitContext.AddEmitError(_exceptionToEmitErro(emitContext, err));
                     }
                 }
             }
 
             if (n_Index != null) {
                 for (int i = 0 ; i < emitors.Length ;  ++i) {
-                    emitors[i].AddIndexMethod(n_Index, n_IndexProcedure.Fullname);
+                    try {
+                        emitors[i].AddIndexMethod(n_Index, n_IndexProcedure.Fullname);
+                    }
+                    catch(Exception err) {
+                        emitContext.AddEmitError(_exceptionToEmitErro(emitContext, err));
+                    }
                 }
             }
 
             for (int i = 0 ; i < emitors.Length ;  ++i) {
                 emitors[i].Emit(emitContext);
             }
+        }
+
+        private                 EmitError          _exceptionToEmitErro(EmitContext emitContext, Exception err)
+        {
+            if (err is EmitError) {
+                return (EmitError)err;
+            }
+
+            if (err is EmitException emitException) {
+                if (emitException.Declaration is LTTSQL.DataModel.DocumentSpan documentSpan) {
+                    return new EmitError(documentSpan.Filename,
+                                         documentSpan.Beginning.Lineno,
+                                         documentSpan.Beginning.Linepos,
+                                         "Emit proxy error: " + err.Message);
+                }
+
+                else
+                if (emitException.Declaration is LTTSQL.Core.IAstNode astNode) {
+                    var token = astNode.GetFirstToken(Core.GetTokenMode.RemoveWhiteSpaceAndComment);
+                    if (token != null) {
+                        return new EmitError(emitContext.Transpiler.GetSourceFile(token).Filename,
+                                             token.Beginning.Lineno,
+                                             token.Beginning.Linepos,
+                                             "Emit proxy error: " + err.Message);
+                    }
+                }
+            }
+
+            return new EmitError(WebService.EntityName.Fullname + ": Emit proxy error: " + err.Message);
         }
     }
 }

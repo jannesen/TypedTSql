@@ -624,7 +624,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         {
             var targetType = target.SqlType;
 
-            if (_assign(targetType, expr, output, target.isSaveCast))
+            if (AssignAllowed(targetType, expr, output, target.isSaveCast))
                 return ;
 
             if ((targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrong || targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrict) && expr is Node.IExprNode)
@@ -649,7 +649,7 @@ namespace Jannesen.Language.TypedTSql.Logic
                 throw new Exception("Cannot assign a value to a computed column.");
             }
 
-            if (_assign(targetType, expr, false))
+            if (AssignAllowed(targetType, expr, false))
                 return ;
 
             if ((targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrong || targetType.getTypeCheckMode() == DataModel.SqlTypeFlags.CheckStrict) && expr is Node.IExprNode)
@@ -662,7 +662,7 @@ namespace Jannesen.Language.TypedTSql.Logic
         }
         public      static      void                        Assign(Transpile.Context context, DataModel.ISqlType target, DataModel.IExprResult expr)
         {
-            if (_assign(target, expr, false))
+            if (AssignAllowed(target, expr, false))
                 return ;
 
             throw new Exception("Not allowed to assign a " + expr.SqlType.ToString() + " to " + target.ToString() + ".");
@@ -992,13 +992,13 @@ namespace Jannesen.Language.TypedTSql.Logic
                 var argument   = arguments[narg];
                 var targetType = parameter.SqlType;
 
-                if (!_assign(targetType, argument, false, parameter.isSaveCast))
+                if (!AssignAllowed(targetType, argument, false, parameter.isSaveCast))
                     return new Exception("Not allowed to assign a " + argument.SqlType.ToString() + " to " + targetType.ToString() + ".");
             }
 
             return null;
         }
-        public      static      bool                        _assign(DataModel.ISqlType targetType, DataModel.IExprResult sourceExpr, bool output=false, bool saveCast=false)
+        public      static      bool                        AssignAllowed(DataModel.ISqlType targetType, DataModel.IExprResult sourceExpr, bool output=false, bool saveCast=false)
         {
             var sourceFlags = sourceExpr.ValueFlags;
 

@@ -44,8 +44,13 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.Build
                         transpiler.LoadExtensions("Jannesen.Language.TypedTSql.WebService");
                         transpiler.Parse(Directory.GetFiles(directory, "*.ttsql", SearchOption.AllDirectories));
 
+                        var globalCatalog = new LTTS.GlobalCatalog(database);
+
                         if (transpiler.ErrorCount == 0)
-                            transpiler.Transpile(new LTTS.GlobalCatalog(database));
+                            transpiler.Transpile(globalCatalog);
+
+                        if (transpiler.ErrorCount == 0)
+                            transpiler.Analyze(globalCatalog);
 
                         if (transpiler.ErrorCount == 0) {
                             transpiler.Emit(new LTTS.EmitOptions()

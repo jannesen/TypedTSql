@@ -164,6 +164,7 @@ namespace Jannesen.Language.TypedTSql
                 if (ErrorCount == 0)
                     passCount = _transpileEntity(transpileContext);
             }
+
 #if DEBUG
             if (ErrorCount == 0)
                 _checkTranspile();
@@ -171,6 +172,12 @@ namespace Jannesen.Language.TypedTSql
             _transpileCount++;
 
             return passCount;
+        }
+        public              void                                    Analyze(GlobalCatalog globalCatalog)
+        {
+            foreach (var entityDeclaration in EntityDeclarations) {
+                entityDeclaration.CodeAnalyze(this, globalCatalog);
+            }
         }
         public              void                                    Emit(EmitOptions emitOptions, SqlDatabase database, HashSet<string> changedSourceFiles = null)
         {

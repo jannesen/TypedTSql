@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using YamlDotNet.Serialization;
 using LTTSQL = Jannesen.Language.TypedTSql;
-using Jannesen.Language.TypedTSql.Logic;
+using Jannesen.Language.TypedTSql.WebService.Node;
 
 namespace Jannesen.Language.TypedTSql.WebService.Emit
 {
@@ -124,11 +124,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         }
 
         public      readonly        string                                  Filename;
-        public      readonly        Node.WEBSERVICE_EMITOR_OPENAPI          ConfigNode;
+        public      readonly        Node.WEBSERVICE_EMITOR_OPENAPI           ConfigNode;
 
         private     readonly        OpenApiDocument                         _openApiDocument;
         private     readonly        Dictionary<object, OpenApiSchemaRef>    _typeSchemaMap;
-
         private     static          ISerializer                             _yamlSerializer = _initSerializer();
 
         public                                                          OpenApiEmitor(Node.WEBSERVICE_EMITOR_OPENAPI configNode, string baseEmitDirectory)
@@ -153,7 +152,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public                  void                                    AddWebMethod(Node.WEBMETHOD webMethod)
         {
             if (ConfigNode.n_Path == null || webMethod.n_Name.StartsWith(ConfigNode.n_Path)) {
-                var path     = webMethod.n_Name.Contains("{") ? (new NameNormalizer()).Normalize(webMethod.n_Name) : "/" + webMethod.n_Name;
+                var path     = _getPath(webMethod);
                 var pathItem = _getCreatePathItem(path);
 
                 foreach (var method in webMethod.n_Declaration.n_Methods) {
@@ -177,7 +176,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public                  void                                    AddIndexMethod(string pathname, string procedureName)
         {
         }
-
         public                  void                                    Emit(EmitContext emitContext)
         {
             using (var fileData = new MemoryStream()) {
@@ -249,7 +247,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                                     throw new EmitException(parameter, "requestbody already declared with textjson:");
                                 }
 
-                                operation.requestBody = _openApiBodyContentType("DATA", "application/json", _getOpenApiSchema(parameter.n_Type, jsonType.SqlType.JsonSchema));
+                                operation.requestBody = _openApiBodyContentType("DATA", "application/json", _getOpenApiSchema(parameter));
                             }
                         }
                     }
@@ -271,7 +269,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                             case "querystring":
                                 @in = "query";
 add_parameter:                  {
-                                    var typeschema = _getOpenApiSchema(parameter, parameter.SqlType);
+                                    var typeschema = _getOpenApiSchema(parameter);
                                     if (parameter.Parameter?.DefaultValue != default) {
                                         if (typeschema is OpenApiSchemaType s) {
                                             s.@default = parameter.Parameter.DefaultValue;
@@ -316,7 +314,7 @@ add_parameter:                  {
                                                             };
                                 }
 
-                                _addPropertyToRequest(parameter, operation, name, _getOpenApiSchema(parameter, parameter.SqlType), !parameterIsOptional && parameter.n_Options.n_Required);
+                                _addPropertyToRequest(parameter, operation, name, _getOpenApiSchema(parameter), !parameterIsOptional && parameter.n_Options.n_Required);
                                 break;
 
                             case "header":
@@ -361,8 +359,8 @@ add_parameter:                  {
 
             switch(handler) {
             case "sql-json2":
-                if (method != "DELETE" && webMethod.n_returns != null && webMethod.n_returns.Count > 0) {
-                    _addReponse(operation, "application/json", _getOpenApiSchema(webMethod.n_returns));
+                if (method != "DELETE" && webMethod.n_Returns != null && webMethod.n_Returns.Count > 0) {
+                    _addReponse(operation, "application/json", _getOpenApiSchema(webMethod.n_Returns));
                 }
                 else {
                     operation.responses.Add("200", new OpenApiBody() {
@@ -467,28 +465,35 @@ add_parameter:                  {
         {
             if (webMethod.n_Declaration.n_Attributes?.Attributes != null) {
                 foreach (var a in webMethod.n_Declaration.n_Attributes?.Attributes) {
-                    operation.SetAttribute("x-" + a.Attr.Name, a.Value);
+                    operation.SetAttribute(a.Attr.Name, a.Value);
                 }
             }
 
-            if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
-                switch(operation.x_kind) {
-                case "select-lookup":
-                case "select-search":
-                    var selectValueType = webMethod.t_SelectValueType;
+            if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0 &&
+                (ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Logical) == 0) {
+                var selectValueType = _getSelectValueType(webMethod);
+                if (selectValueType != null) {
+                    if (!(_typeSchemaMap.TryGetValue(selectValueType, out var schemaRef) && schemaRef.schema is OpenApiSchemaType schema)) {
+                        throw new EmitException(webMethod.n_Declaration.n_ServiceMethodName, "Can't find related schema for select-value.");
+                    }
 
-                    if (selectValueType != null && _typeSchemaMap.TryGetValue(selectValueType, out var schemaRef) &&
-                        schemaRef.schema is OpenApiSchemaType schema) {
-                        schema.SetAttribute("x-" + operation.x_kind, path);
-                    }
-                    else {
-                        throw new EmitException(webMethod.n_Declaration.n_ServiceMethodName, "Can't find related schema for '" + operation.x_kind + "'");
-                    }
-                    break;
+                    schema.SetAttribute("x-" + webMethod.n_Declaration.n_Kind, _getPath(webMethod));
                 }
             }
         }
 
+        private                 OpenApiSchema                           _getOpenApiSchema(Node.WEBMETHOD.ServiceParameter parameter)
+        {
+            if (parameter.n_Type is Node.JsonType jsonType) {
+                return _getOpenApiSchema(parameter, jsonType.n_Schema.n_Schema);
+            }
+
+            if (parameter.n_Type is Node.ComplexType complexType && (ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Logical) != 0) {
+                return _getOpenApiSchema(parameter, complexType.WebComplexType);
+            }
+
+            return _getOpenApiSchema(parameter, parameter.SqlType);
+        }
         private                 OpenApiSchema                           _getOpenApiSchema(List<Node.RETURNS> returns)
         {
             if (returns.Count == 1) {
@@ -508,32 +513,7 @@ add_parameter:                  {
         private                 OpenApiSchema                           _getOpenApiSchema(object declaration, LTTSQL.Node.IExprNode expression)
         {
             if (expression is LTTSQL.Node.Expr_ServiceComplexType complexType) {
-                if (_typeSchemaMap.TryGetValue(complexType.DeclarationComplexType, out var schemaRef)) {
-                    return schemaRef;
-                }
-
-                var schema = new OpenApiSchemaType() {
-                              type       = "object",
-                              properties = new OpenApiSchemaProperties()
-                           };
-
-                foreach(var column in complexType.ResponseColumns) {
-                    if (!column.ResultColumn.isNullable) {
-                        schema.AddRequired(column.n_FieldName.ValueString);
-                    }
-                    schema.properties.Add(column.n_FieldName.ValueString, _getOpenApiSchema(column, column.n_Expression));
-                }
-
-                if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
-                    if ((complexType.DeclarationComplexType as Node.WEBCOMPLEXTYPE).ReceivesSqlType is LTTSQL.DataModel.EntityTypeUser postUdt) {
-                        schema.SetAttribute("x-value-schema", _getOpenApiSchema(declaration, postUdt));
-                    }
-
-                    return _addOpenApiSchema(_schemaName(complexType), complexType.DeclarationComplexType, schema);
-                }
-                else {
-                    return schema;
-                }
+                return _getOpenApiSchema(declaration, (Node.WEBCOMPLEXTYPE)(complexType.DeclarationComplexType));
             }
 
             if (expression is LTTSQL.Node.IExprResponseNode exprResponseNode) {
@@ -562,6 +542,67 @@ add_parameter:                  {
                 return _getOpenApiSchema(declaration, expression.SqlType);
             }
         }
+        private                 OpenApiSchema                           _getOpenApiSchema(object declaration, Node.WEBCOMPLEXTYPE complexType)
+        {
+            if (_typeSchemaMap.TryGetValue(complexType, out var schemaRef)) {
+                return schemaRef;
+            }
+
+            OpenApiSchemaWithAttributes   schema;
+
+            if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Logical) != 0) {
+                var responseSchema = _getOpenApiSchema(complexType.ResponseNode);
+                var requestSchema  = complexType.n_Receives != null
+                                        ? _getOpenApiSchema(declaration, complexType.n_Receives)
+                                        : _getOpenApiSchema(declaration, complexType.n_Parameters.n_Parameters[0].Parameter?.SqlType);
+
+                if (requestSchema != null) {
+                    var logicalSchema = new OpenApiSchemaOneOf() { oneOf = new ComparableHashSet<OpenApiSchema>() { requestSchema, responseSchema } };
+                    logicalSchema.SetAttribute("x-oneOf-mapping", "Request, Response");
+                    schema = logicalSchema;
+                }
+                else {
+                    schema = responseSchema;
+                }
+            }
+            else {
+                var responseSchema = _getOpenApiSchema(complexType.ResponseNode);
+                if (complexType.ReceivesSqlType is LTTSQL.DataModel.EntityTypeUser postUdt) {
+                    responseSchema.SetAttribute("x-value-schema", _getOpenApiSchema(declaration, postUdt));
+                }
+                schema = responseSchema;
+            }
+
+            var attributes = complexType.n_Attributes;
+            if (attributes != null) {
+                foreach(var a in attributes.Attributes) {
+                    schema.SetAttribute(a.Attr.Name, a.Value);
+                }
+            }
+
+            if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Type) != 0) {
+                return _addOpenApiSchema(_schemaName(complexType), complexType, schema);
+            }
+            else {
+                return schema;
+            }
+        }
+        private                 OpenApiSchema                           _getOpenApiSchema(object declaration, Node.WEBCOMPLEXTYPE.Receives recieves)
+        {
+            if (recieves.n_ReceivesType == null) {
+                return null;
+            }
+
+            if (recieves.n_ReceivesType is JsonType jsonType) {
+                return _getOpenApiSchema(declaration, jsonType.n_Schema.n_Schema);
+            }
+
+            if (recieves.n_ReceivesType is Node.ComplexType complexType) {
+                return _getOpenApiSchema(declaration, complexType.WebComplexType);
+            }
+
+            return _getOpenApiSchema(declaration,  recieves.SqlType);
+        }
         private                 OpenApiSchemaType                       _getOpenApiSchema(LTTSQL.Node.IExprResponseNode exprResponseNode)
         {
             var rtn = new OpenApiSchemaType() {
@@ -580,10 +621,6 @@ add_parameter:                  {
         }
         private                 OpenApiSchema                           _getOpenApiSchema(object declaration, LTTSQL.DataModel.ISqlType sqlType)
         {
-            if ((sqlType.TypeFlags & DataModel.SqlTypeFlags.Json) != 0) {
-                return _getOpenApiSchema(declaration, sqlType.JsonSchema);
-            }
-
             if (sqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
                 return _getOpenApiSchema(declaration, entityTypeUser);
             }
@@ -675,37 +712,54 @@ add_parameter:                  {
                 return etschema;
             }
         }
-        private                 OpenApiSchema                           _getOpenApiSchema(object declaration, LTTSQL.DataModel.JsonSchema jsonSchema)
+        private                 OpenApiSchema                           _getOpenApiSchema(object declaration, Node.JsonType.JsonSchema.JsonSchemaElement element)
         {
-            if (jsonSchema is LTTSQL.DataModel.JsonSchemaObject jsonObject) {
+            if (element is Node.JsonType.JsonSchema.JsonSchemaValue value) {
+                if (value.n_Type is Node.ComplexType complexType) {
+                    if ((ConfigNode.n_Component & Node.WEBSERVICE_EMITOR_OPENAPI.OptimizeComponent.Logical) == 0) {
+                        if (complexType.WebComplexType.n_Receives == null) {
+                            return _getOpenApiSchema(declaration, value.SqlType);
+                        }
+
+                        if (complexType.WebComplexType.n_Receives.n_ReceivesType != null) {
+                           return _getOpenApiSchema(declaration, complexType.WebComplexType.n_Receives);
+                        }
+                    }
+
+                    return _getOpenApiSchema(declaration, complexType.WebComplexType);
+                }
+
+                return _getOpenApiSchema(declaration, value.SqlType);
+            }
+
+            if (element is Node.JsonType.JsonSchema.JsonSchemaObject obj)
+            {
                 var schema = new OpenApiSchemaType() {
                                  type       = "object",
                                  properties = new OpenApiSchemaProperties(),
                              };
 
-                foreach(var property in jsonObject.Properties) {
-                    schema.properties.Add(property.Name, _getOpenApiSchema(declaration, property.JsonSchema));
+                foreach(var property in obj.n_Properties) {
+                    schema.properties.Add(property.n_Name.ValueString,
+                                          _getOpenApiSchema(declaration, property.n_JsonSchemaElement));
 
-                    if (property.JsonSchema is LTTSQL.DataModel.JsonSchemaValue jsv && (jsv.Flags & DataModel.JsonFlags.Required) != 0) {
-                        schema.AddRequired(property.Name);
+                    if ((property.n_JsonSchemaElement.n_Flags & DataModel.JsonFlags.Required) != 0) {
+                        schema.AddRequired(property.n_Name.ValueString);
                     }
                 }
 
                 return schema;
             }
 
-            if (jsonSchema is LTTSQL.DataModel.JsonSchemaArray jsonArray) {
+            if (element is Node.JsonType.JsonSchema.JsonSchemaArray array)
+            {
                 return new OpenApiSchemaType() {
                            type  = "array",
-                           items = _getOpenApiSchema(declaration, jsonArray.JsonSchema)
+                           items = _getOpenApiSchema(declaration, array.n_JsonSchemaElement)
                        };
             }
 
-            if (jsonSchema is LTTSQL.DataModel.JsonSchemaValue jsonValue) {
-                return _getOpenApiSchema(declaration, jsonValue.SqlType);
-            }
-
-            throw new EmitException(declaration, "Can't create openapischema for " + jsonSchema.GetType().Name + ".");
+            throw new InvalidOperationException("Invalid jsonschema type.");
         }
         private static          OpenApiSchemaType                       _getOpenApiSchema(object declaration, LTTSQL.DataModel.SqlTypeNative nativeType)
         {
@@ -902,9 +956,9 @@ add_parameter:                  {
                                  }
                    };
         }
-        private static          string                                  _schemaName(LTTSQL.Node.Expr_ServiceComplexType complexType)
+        private static          string                                  _schemaName(Node.WEBCOMPLEXTYPE complexType)
         {
-            return "ct." + complexType.n_Name.ValueString.Replace('/', '.').Replace(':', '.');
+            return "ct." + complexType.n_Declaration.n_ServiceTypeName.n_Name.ValueString.Replace('/', '.').Replace(':', '.');
         }
         private static          string                                  _schemaName(LTTSQL.DataModel.EntityType entityType)
         {
@@ -915,6 +969,61 @@ add_parameter:                  {
             }
             rtn += entityType.EntityName.Name.Replace('/', '.').Replace(':', '.');
             return rtn;
+        }
+        private static          DataModel.EntityTypeUser                _getSelectValueType(Node.WEBMETHOD webMethod)
+        {
+            switch(webMethod.n_Declaration.n_Kind) {
+            case "select-lookup": {
+                    DataModel.EntityTypeUser found  = null;
+                    int                             n      = 0;
+
+                    foreach(WEBMETHOD.ServiceParameter p in webMethod.n_Parameters.n_Parameters) {
+                        if (!(p.n_Options != null && p.n_Options.n_Security)) {
+                            if (p.Parameter.SqlType is DataModel.EntityTypeUser entityTypeUser) {
+                                found = entityTypeUser;
+                            }
+                            ++n;
+                        }
+                    }
+
+                    if (found != null && n == 1) {
+                        return found;
+                    }
+
+                    throw new EmitException(webMethod.n_Declaration, "Can't determin select-type for 'select-lookup'");
+                }
+
+            case "select-search": {
+                    foreach(var r in webMethod.n_Returns) {
+                        if (r.SqlType is LTTSQL.DataModel.SqlTypeResponseNode reponseNodeType) {
+                            switch(reponseNodeType.NodeType) {
+                            case LTTSQL.DataModel.ResponseNodeType.ArrayValue: {
+                                    if (reponseNodeType.Columns?[0].SqlType?.Columns?[0].SqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
+                                        return entityTypeUser;
+                                    }
+                                }
+                                break;
+
+                            case LTTSQL.DataModel.ResponseNodeType.ArrayObject: {
+                                    if (reponseNodeType.Columns?[0]?.SqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
+                                        return entityTypeUser;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    throw new EmitException(webMethod.n_Declaration, "Can't determin select-type for 'select-search'");
+                }
+
+            default:
+                return null;
+            }
+        }
+        private static          string                                  _getPath(Node.WEBMETHOD webMethod)
+        {
+            return webMethod.n_Name.Contains("{") ? (new NameNormalizer()).Normalize(webMethod.n_Name) : "/" + webMethod.n_Name;
         }
 
         private static          ISerializer                             _initSerializer()

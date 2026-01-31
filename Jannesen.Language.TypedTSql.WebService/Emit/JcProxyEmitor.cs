@@ -453,8 +453,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                 if (_textjson != null)          declareProxy.Request_type  = _textjson;
                 else if (_reqArgs.Count > 0)    declareProxy.Request_type  = _proxyFile.getRecord(_reqArgs.ToArray());
 
-                if (webMethod.n_returns != null) {
-                    var expression = webMethod.n_returns[0].n_Expression;
+                if (webMethod.n_Returns != null) {
+                    var expression = webMethod.n_Returns[0].n_Expression;
 
                     if (expression is LTTSQL.Node.IExprResponseNode exprResponseNode)
                         declareProxy.Response_type = _getTypeResponseNode(exprResponseNode);
@@ -676,7 +676,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public                  void                                    AddIndexMethod(string pathname, string procedureName)
         {
         }
-
         public                  void                                    Emit(EmitContext emitContext)
         {
             foreach(var proxyFileFile in _proxyFiles.Values) {

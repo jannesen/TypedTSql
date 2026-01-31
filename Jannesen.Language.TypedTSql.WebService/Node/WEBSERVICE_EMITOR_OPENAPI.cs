@@ -7,9 +7,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
     {
         public enum OptimizeComponent
         {
-            None     = 0x00,
-            Type     = 0x01,
-            Object   = 0x02
+            None    = 0x00,
+            Type    = 0x01,
+            Object  = 0x02,
+            Logical = 0x04
         }
 
         public      readonly    string                          n_File;
@@ -20,9 +21,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
         private static  Core.ParseEnum<OptimizeComponent>       _parseComponent = new Core.ParseEnum<OptimizeComponent>(
                                                                                       "Component generation option",
-                                                                                      new Core.ParseEnum<OptimizeComponent>.Seq(OptimizeComponent.None,   "NONE"),
-                                                                                      new Core.ParseEnum<OptimizeComponent>.Seq(OptimizeComponent.Type,   "TYPE"),
-                                                                                      new Core.ParseEnum<OptimizeComponent>.Seq(OptimizeComponent.Object, "OBJECT")
+                                                                                      new Core.ParseEnum<OptimizeComponent>.Seq(OptimizeComponent.None,     "NONE"),
+                                                                                      new Core.ParseEnum<OptimizeComponent>.Seq(OptimizeComponent.Type,     "TYPE"),
+                                                                                      new Core.ParseEnum<OptimizeComponent>.Seq(OptimizeComponent.Object,   "OBJECT"),
+                                                                                      new Core.ParseEnum<OptimizeComponent>.Seq(OptimizeComponent.Logical,  "LOGICAL")
                                                                                   );
 
         public                                                  WEBSERVICE_EMITOR_OPENAPI(LTTSQL.Core.ParserReader reader, LTTSQL.Node.IParseContext parseContext)

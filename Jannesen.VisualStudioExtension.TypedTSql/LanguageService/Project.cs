@@ -718,6 +718,11 @@ namespace Jannesen.VisualStudioExtension.TypedTSql.LanguageService
 
             if (_globalCatalog != null) {
                 _transpiler.Transpile(_globalCatalog);
+
+                if (_transpiler.ErrorCount == 0) {
+                    _transpiler.Analyze(_globalCatalog);
+                }
+
                 _setWork(WorkFlags.TranspileDone);
             }
         }
