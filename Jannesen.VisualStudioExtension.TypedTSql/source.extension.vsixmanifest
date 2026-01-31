@@ -3,17 +3,17 @@
     <Metadata>
         <Identity Id="Jannesen.VisualStudioExtension.TypedTSql" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Jannesen B.V."/>
         <DisplayName>Typed Transact SQL Visual Studio Extensions</DisplayName>
-        <Description xml:space="preserve">Typed Transact SQL extensions for Visual Studio 2022</Description>
+        <Description xml:space="preserve">Typed Transact SQL extensions for Visual Studio 2026</Description>
         <Icon>TypedTSql.ico</Icon>
     </Metadata>
     <Installation AllUsers="true">
-        <InstallationTarget Id="Microsoft.VisualStudio.Community"  Version="[17.0, 18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.Community"  Version="[18.0, 19.0)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.Pro"        Version="[17.0, 18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.Pro"        Version="[18.0, 19.0)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
-        <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[17.0, 18.0)">
+        <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[18.0, 19.0)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
     </Installation>
@@ -21,7 +21,7 @@
         <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
     </Dependencies>
     <Prerequisites>
-        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,18.0)" DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[18.0,19.0)" DisplayName="Visual Studio core editor" />
     </Prerequisites>
     <Assets>
         <Asset Type="Microsoft.VisualStudio.VsPackage"       d:Source="Project" d:ProjectName="Jannesen.VisualStudioExtension.TypedTSql"                  Path="|Jannesen.VisualStudioExtension.TypedTSql;PkgdefProjectOutputGroup|"                />

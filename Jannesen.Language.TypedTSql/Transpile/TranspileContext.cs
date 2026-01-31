@@ -27,6 +27,8 @@ namespace Jannesen.Language.TypedTSql.Transpile
             DefineAttribute(new TAttribute(null, "multiple-of",     TAttributeType.Number));
             DefineAttribute(new TAttribute(null, "pattern",         TAttributeType.String));
             DefineAttribute(new TAttribute(null, "date-accuracy",   TAttributeType.Number));
+            DefineAttribute(new TAttribute(null, "select-lookup",   TAttributeType.String));
+            DefineAttribute(new TAttribute(null, "select-search",   TAttributeType.String));
             DefineAttribute(new TAttribute(null, "select-source",   TAttributeType.Enum, new TAttributeEnumValue[] {
                                                                                              new TAttributeEnumValue(null, "static"),
                                                                                              new TAttributeEnumValue(null, "remote"),

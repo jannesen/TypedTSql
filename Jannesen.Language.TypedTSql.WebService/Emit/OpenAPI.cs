@@ -41,17 +41,29 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
 
     internal class OpenApiOperation: IYamlConvertible
     {
+        public              string                                  description             { get; set; }
         public              OpenApiSecurityList                     security                { get; set; }
         public              OpenApiParameters                       parameters              { get; set; }
         public              OpenApiBody                             requestBody             { get; set; }
         public              OpenApiResponses                        responses               { get; set; }
         public              int?                                    x_timeout               { get; set; }
         public              string                                  x_kind                  { get; set; }
-
         private             ComparableDictionary<string, object>    _attributes             { get; set; }
 
         public              void                                    SetAttribute(string name, object value)
         {
+            if (!name.StartsWith("x-")) {
+                switch(name) {
+                case "description":
+                    description = value?.ToString();
+                    break;
+
+                default:
+                    name = "x-" + name;
+                    break;
+                }
+            }
+
             if (_attributes == null) _attributes = new ComparableDictionary<string, object>();
             _attributes.Add(name, value);
         }
@@ -172,6 +184,36 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
     {
     }
 
+    internal abstract class OpenApiSchemaWithAttributes: OpenApiSchema
+    {
+        protected           ComparableDictionary<string, object>    _attributes             { get; set; }
+
+        public  virtual     object                                  GetAttribute(string name)
+        {
+            return  (_attributes != null && _attributes.TryGetValue(name, out var found)) ? found : null;
+        }
+        public  abstract    void                                    SetAttribute(string name, object value);
+        protected           void                                    SetAttr(string name, object value)
+        {
+            switch(name) {
+            case "select-lookup":
+            case "select-search":
+                name = "x-" + name;
+                if (!((string)value).StartsWith("/")) {
+                    value = "/" + (string)value;
+                }
+                break;
+            }
+
+            if (!name.StartsWith("x-")) {
+                name = "x-" + name;
+            }
+
+            if (_attributes == null) _attributes = new ComparableDictionary<string, object>();
+            _attributes.Add(name, value);
+        }
+    }
+
     internal class OpenApiSchemaRef: OpenApiSchema
     {
         [YamlMember(Alias="$ref")]
@@ -200,7 +242,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         }
     }
 
-    internal class OpenApiSchemaType: OpenApiSchema, IYamlConvertible
+    internal class OpenApiSchemaType: OpenApiSchemaWithAttributes, IYamlConvertible
     {
         public              string                                  type                    { get; set; }
         public              string                                  format                  { get; set; }
@@ -216,8 +258,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public              object                                  multipleOf              { get; set; }
         public              string                                  pattern                 { get; set; }
 
-        private             ComparableDictionary<string, object>    _attributes             { get; set; }
-
         public              void                                    AddRequired(string name)
         {
             if (required == null) {
@@ -226,41 +266,31 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
             required.Add(name);
         }
 
-        public              object                                  GetAttribute(string name)
+        public  override    void                                    SetAttribute(string name, object value)
         {
-            return  (_attributes != null && _attributes.TryGetValue(name, out var found)) ? found : null;
-        }
-        public              void                                    SetAttribute(string name, object value)
-        {
-            if (!name.StartsWith("x-")) {
-                switch(name) {
-                case "description":
-                    description = (string)value;
-                    return;
+            switch(name) {
+            case "description":
+                description = value?.ToString();
+                return;
 
-                case "min-length":      minLength   = (int)(Int64)value;    return;
-                case "max-length":      maxLength   = (int)(Int64)value;    return;
-                case "min-value":       minValue    = value;                return;
-                case "max-value":       maxValue    = value;                return;
-                case "multiple-of":     multipleOf  = value;                return;
-                case "pattern":         pattern    = (string)value;         return;
-                case "precision": {
-                        var m = new Decimal(1);
-                        var i = (int)(Int64)value;
-                        while (i-- > 0) {
-                            m /= 10;
-                        }
-                        multipleOf = m;
+            case "min-length":      minLength   = (int)(Int64)value;    return;
+            case "max-length":      maxLength   = (int)(Int64)value;    return;
+            case "min-value":       minValue    = value;                return;
+            case "max-value":       maxValue    = value;                return;
+            case "multiple-of":     multipleOf  = value;                return;
+            case "pattern":         pattern    = (string)value;         return;
+            case "precision": {
+                    var m = new Decimal(1);
+                    var i = (int)(Int64)value;
+                    while (i-- > 0) {
+                        m /= 10;
                     }
-                    return;
-                default:
-                    name = "x-" + name;
-                    break;
+                    multipleOf = m;
                 }
+                return;
             }
 
-            if (_attributes == null) _attributes = new ComparableDictionary<string, object>();
-            _attributes.Add(name, value);
+            SetAttr(name, value);
         }
 
         public  static      bool                                    operator == (OpenApiSchemaType left, OpenApiSchemaType right)
@@ -384,9 +414,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         }
     }
 
-    internal class OpenApiSchemaOneOf: OpenApiSchema
+    internal class OpenApiSchemaOneOf: OpenApiSchemaWithAttributes, IYamlConvertible
     {
-        public ComparableHashSet<OpenApiSchema>                     oneOf                   { get; set; }
+        public              string                                  description             { get; set; }
+        public              ComparableHashSet<OpenApiSchema>        oneOf                   { get; set; }
 
         public  static      bool                                    operator == (OpenApiSchemaOneOf obj1, OpenApiSchemaOneOf obj2)
         {
@@ -406,6 +437,35 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
         public  override    int                                     GetHashCode()
         {
             return oneOf.GetHashCode();
+        }
+
+        public  override    void                                    SetAttribute(string name, object value)
+        {
+            switch(name) {
+            case "description":
+                description = value?.ToString();
+                return;
+            }
+
+            SetAttr(name, value);
+        }
+
+                            void                                    IYamlConvertible.Read(IParser parser, Type expectedType, ObjectDeserializer nestedObjectDeserializer)
+        {
+            throw new InvalidOperationException("OpenApiSchemaType Deserializer not supported."); 
+        }
+                            void                                    IYamlConvertible.Write(IEmitter emitter, ObjectSerializer nestedObjectSerializer)
+        {
+            var x = new Dictionary<string, object>();
+            x.Add("oneOf", oneOf);
+
+            if (_attributes  != null) {
+                foreach (var o in _attributes) {
+                    x.Add(o.Key, o.Value);
+                }
+            }
+
+            nestedObjectSerializer(x);
         }
     }
 }

@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <TypedTSqlVersion>1.13.04.000</TypedTSqlVersion>  <!-- @VERSIONINFO -->
+        <TypedTSqlVersion>1.21.00.000</TypedTSqlVersion>  <!-- @VERSIONINFO -->
 
         <!-- TargetFramework -->
         <TargetFramework>net472</TargetFramework>

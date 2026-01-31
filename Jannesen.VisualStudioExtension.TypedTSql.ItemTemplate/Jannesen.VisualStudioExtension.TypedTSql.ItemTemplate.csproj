@@ -15,7 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.14.2120" />
+		<PackageReference Include="Microsoft.VSSDK.BuildTools"					Version="18.0.136-preview1"		ExcludeAssets="runtime"	/>
 	</ItemGroup>
 
 	<ItemGroup>

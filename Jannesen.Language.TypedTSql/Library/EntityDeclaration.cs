@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Jannesen.Language.TypedTSql.Node;
+using Jannesen.Language.TypedTSql.Transpile;
+using System;
 using System.IO;
 using System.Text;
 
@@ -32,6 +34,18 @@ namespace Jannesen.Language.TypedTSql.Library
                 }
                 catch(NeedsTranspileException) {
                     needtranspile = true;
+                }
+                catch(Exception err) {
+                    context.AddError(Declaration, err);
+                }
+            }
+        }
+        public                  void                            CodeAnalyze(Transpiler transpiler, GlobalCatalog globalCatalog)
+        {
+            if (Declaration is ICodeAnalyze codeAnalyze) {
+                var context = new AnalyzeContext(transpiler, globalCatalog, SourceFile);
+                try {
+                    codeAnalyze.CodeAnalyze(context);
                 }
                 catch(Exception err) {
                     context.AddError(Declaration, err);

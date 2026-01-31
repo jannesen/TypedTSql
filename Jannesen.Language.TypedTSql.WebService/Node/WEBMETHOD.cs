@@ -178,11 +178,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     n_WebHttpHandler = "sql-json2";
                 }
 
-                string name = n_ServiceMethodName.n_ServiceEntitiyName.Name + "/" + _sqlName();
-                foreach(var method in n_Methods)
-                    name += ":" + method.ToUpperInvariant();
-
-                n_EntityName        = new LTTSQL.DataModel.EntityName(n_ServiceMethodName.n_ServiceEntitiyName.Schema, name);
+                n_EntityName = n_ServiceMethodName.BuildEntityName(n_Methods);
             }
 
             public      override        void                                TranspileNode(LTTSQL.Transpile.Context context)
@@ -211,51 +207,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                 }
 
                 return null;
-            }
-            private                     string                              _sqlName()
-            {
-                string path = n_ServiceMethodName.n_Name.ValueString;
-
-                if (path.IndexOf('{') < 0)
-                    return path;
-
-                StringBuilder   rtn = new StringBuilder(path.Length);
-                int             n = 0;
-
-                for (int i = 0 ; i < path.Length ; ++i) {
-                    char c = path[i];
-
-                    switch(c) {
-                    case '{':
-                        if (n == 0)
-                            rtn.Append("{X}");
-
-                        ++n;
-                        break;
-
-                    case '}':
-                        if (n > 0)
-                            --n;
-                        break;
-
-                    default:
-                        if (c < ' ')
-                            throw new TranspileException(n_ServiceMethodName.n_Name, "Invalid character in name");
-
-                        if (n == 0) {
-                            if (!(('A' <= c && c <= 'Z') ||
-                                  ('a' <= c && c <= 'z') ||
-                                  ('0' <= c && c <= '9') ||
-                                  (c == '-' || c == '_' || c == '~' || c == ':' || c == '/' || c == '.')))
-                                throw new TranspileException(n_ServiceMethodName.n_Name, "Invalid character in name");
-
-                            rtn.Append(c);
-                        }
-                        break;
-                    }
-                }
-
-                return rtn.ToString();
             }
         }
         public class ServiceParameter: LTTSQL.Node.Node_Parameter
@@ -428,9 +379,7 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
         public      readonly    ServiceDeclaration                      n_Declaration;
         public      readonly    string                                  n_Name;
-        public                  List<RETURNS>                           n_returns                   { get; private set; }
-
-        public                  LTTSQL.DataModel.EntityTypeUser         t_SelectValueType           { get; private set; }
+        public                  List<RETURNS>                           n_Returns                   { get; private set; }
 
         public      override    LTTSQL.DataModel.EntityName             EntityName                  { get { return n_Declaration.n_EntityName;                           } }
         public      override    LTTSQL.DataModel.EntityName             ServiceName                 { get { return n_Declaration.n_ServiceMethodName.n_ServiceEntitiyName; } }
@@ -450,8 +399,6 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
 
         public      override    void                                    TranspileNode(LTTSQL.Transpile.Context context)
         {
-            t_SelectValueType = null;
-
             if (!_declarationTranspiled) {
                 n_Declaration.TranspileNode(context);
                 if (DeclarationService == null || !DeclarationService.IsMember(this))
@@ -483,102 +430,12 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             TranspileStatement(context);
 
             if (n_Declaration.n_WebHttpHandler == "sql-json2") {
-                if (n_Declaration.n_JcProxy != null && n_returns != null && n_returns.Count != 1) {
+                if (n_Declaration.n_JcProxy != null && n_Returns != null && n_Returns.Count != 1) {
                     context.AddError(this, "sql-json2 and proxy only support 1 RETURNS");
                 }
             }
 
-            t_SelectValueType = _transpileSelectValueType(context);
-
-            if (t_SelectValueType != null) {
-                if (!(t_SelectValueType.Attributes?.Find("select-source")?.Value is string s && s == "remote")) {
-                    context.AddError(this.n_Declaration, "Source type '" + t_SelectValueType.EntityName.Fullname + "' is has not the attribute [select-source] = [remote].");
-                }
-            }
-
             Transpiled = true;
-        }
-
-        public                  LTTSQL.DataModel.EntityTypeUser         _transpileSelectValueType(LTTSQL.Transpile.Context context)
-        {
-            switch(n_Declaration.n_Kind) {
-            case "select-lookup": {
-                    DataModel.EntityTypeUser found  = null;
-                    int                             n      = 0;
-
-                    foreach(WEBMETHOD.ServiceParameter p in n_Parameters.n_Parameters) {
-                        if (!(p.n_Options != null && p.n_Options.n_Security)) {
-                            if (p.Parameter.SqlType is DataModel.EntityTypeUser entityTypeUser) {
-                                found = entityTypeUser;
-                            }
-                            ++n;
-                        }
-                    }
-
-                    if (found != null && n == 1) {
-                        return found;
-                    }
-
-                    context.AddError(n_Parameters, "Can't determin select-type for 'select-lookup'");
-                    return null;
-                }
-
-            case "select-search": {
-                    LTTSQL.DataModel.EntityTypeUser     selectValueType = null;
-
-                    foreach(var r in n_returns) {
-                        if (r.SqlType is LTTSQL.DataModel.SqlTypeResponseNode reponseNodeType) {
-                            switch(reponseNodeType.NodeType) {
-                            case LTTSQL.DataModel.ResponseNodeType.ArrayValue: {
-                                    if (reponseNodeType.Columns?[0].SqlType?.Columns?[0].SqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
-                                        if (t_SelectValueType != null) {
-                                            context.AddError(r, "Can't determin select-type for 'select-search'");
-                                            return null;
-                                        }
-
-                                        selectValueType = entityTypeUser;
-                                    }
-                                    else {
-                                        context.AddError(r, "Can't determin select-type for 'select-search'");
-                                        return null;
-                                    }
-                                }
-                                break;
-
-                            case LTTSQL.DataModel.ResponseNodeType.ArrayObject: {
-                                    if (reponseNodeType.Columns?[0]?.SqlType is LTTSQL.DataModel.EntityTypeUser entityTypeUser) {
-                                        if (t_SelectValueType != null) {
-                                            context.AddError(r, "Can't determin select-type for 'select-search'");
-                                            return null;
-                                        }
-
-                                        selectValueType = entityTypeUser;
-                                    }
-                                    else {
-                                        context.AddError(r, "Can't determin select-type for 'select-search'");
-                                        return null;
-                                    }
-                                }
-                                break;
-                            default:
-                                context.AddError(r, "Can't determin select-type for 'select-search'");
-                                return null;
-
-                            }
-                        }
-                    }
-
-                    if (selectValueType != null) {
-                        return selectValueType;
-                    }
-
-                    context.AddError(this, "Can't determin select-type for 'select-search'");
-                    return null;
-                }
-
-            default:
-                return null;
-            }
         }
 
                                 LTTSQL.Node.Statement                   LTTSQL.Node.IParseContext.StatementParent          => null;
@@ -592,10 +449,10 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
             if (RETURNS.CanParse(reader)) {
                 var returns = new RETURNS(reader, this);
 
-                if (n_returns == null)
-                    n_returns = new List<RETURNS>();
+                if (n_Returns == null)
+                    n_Returns = new List<RETURNS>();
 
-                n_returns.Add(returns);
+                n_Returns.Add(returns);
 
                 return returns;
             }

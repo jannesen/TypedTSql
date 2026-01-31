@@ -52,4 +52,8 @@ namespace Jannesen.Language.TypedTSql.Node
         void        UseGotoLabel(Core.Token token);
         string      GetGotoLabel(Core.Token token);
     }
+    public interface ICodeAnalyze
+    {
+        void            CodeAnalyze(Transpile.AnalyzeContext context);
+    }
 }

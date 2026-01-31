@@ -75,14 +75,14 @@ namespace Jannesen.Language.TypedTSql.WebService.Emit
                             }
                         }
 
-                        if (_webMethod.n_returns != null && method != "DELETE") {
-                            for (int i = 0 ; i < _webMethod.n_returns.Count ; ++i) {
-                                var rtn = _webMethod.n_returns[i];
+                        if (_webMethod.n_Returns != null && method != "DELETE") {
+                            for (int i = 0 ; i < _webMethod.n_Returns.Count ; ++i) {
+                                var rtn = _webMethod.n_Returns[i];
 
                                 bool dup = false;
 
                                 for (int j = 0 ; j < i ; ++j) {
-                                    if (rtn.ResponseTypeName == _webMethod.n_returns[j].ResponseTypeName) {
+                                    if (rtn.ResponseTypeName == _webMethod.n_Returns[j].ResponseTypeName) {
                                         dup = true;
                                         break;
                                     }

@@ -17,11 +17,14 @@
 
     <Import Project="$(MSBuildThisFileDirectory)..\Jannesen.TypedTSql.props" />
 
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <DeployExtension>false</DeployExtension>
-    </PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DeployExtension>true</DeployExtension>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DeployExtension>false</DeployExtension>
+	</PropertyGroup>
 
-    <ItemGroup>
+	<ItemGroup>
         <Reference Include="System" />
         <Reference Include="System.ComponentModel.Composition" />
         <Reference Include="System.Data" />
@@ -36,15 +39,12 @@
         <Reference Include="WindowsBase" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.14.2120" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.13.40008" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.VisualStudio.Text.UI" Version="17.14.249" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="17.14.249" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.VisualStudio.Editor" Version="17.14.249" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.VisualStudio.Language" Version="17.14.249" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Sdk" Version="17.9.380" ExcludeAssets="runtime" />
-        <PackageReference Include="Microsoft.Build" Version="17.13.26" ExcludeAssets="runtime" />
-    </ItemGroup>
+		<PackageReference Include="Microsoft.VSSDK.BuildTools"					Version="18.0.136-preview1"		ExcludeAssets="runtime"	/>
+		<PackageReference Include="Microsoft.VisualStudio.Shell.15.0"			Version="18.0.1755-preview.1"	ExcludeAssets="runtime" />
+        <PackageReference Include="Microsoft.VisualStudio.Editor"               Version="18.0.300-preview"      ExcludeAssets="runtime" />
+		<PackageReference Include="Microsoft.VisualStudio.ProjectSystem.Sdk"	Version="18.0.221-pre"			ExcludeAssets="runtime" />
+		<PackageReference Include="Microsoft.Build"				                Version="18.0.2"                ExcludeAssets="runtime" />
+	</ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Jannesen.Language.TypedTSql\Jannesen.Language.TypedTSql.csproj">
             <Name>Jannesen.Language.TypedTSql</Name>
