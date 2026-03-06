@@ -252,8 +252,8 @@ namespace Jannesen.Language.TypedTSql.WebService.Node
                     AddChild(jsonType.ParseSchema(reader));
                 }
                 else {
-                    n_Type   = AddChild(ComplexType.CanParse(reader) ? (LTTSQL.Core.AstParseNode)new ComplexType(reader)
-                                                                     : (LTTSQL.Core.AstParseNode)new LTTSQL.Node.Node_Datatype(reader));
+                    n_Type    = AddChild(ComplexType.CanParse(reader) ? (LTTSQL.Core.AstParseNode)new ComplexType(reader)
+                                                                      : (LTTSQL.Core.AstParseNode)new LTTSQL.Node.Node_Datatype(reader));
                     n_Source  = AddChild(new ParameterSource(reader));
                     n_Options = AddChild(new ParameterOptions(reader));
                 }
