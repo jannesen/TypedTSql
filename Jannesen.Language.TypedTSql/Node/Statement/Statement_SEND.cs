@@ -54,7 +54,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    void                                TranspileNode(Transpile.Context context)
         {
             n_ConversationHandles.TranspileNodes(context);
-            n_MessageBodyExpression.TranspileNode(context);
+            n_MessageBodyExpression?.TranspileNode(context);
 
             Core.TokenWithSymbol.SetNoSymbol(n_MessageTypeName);
 

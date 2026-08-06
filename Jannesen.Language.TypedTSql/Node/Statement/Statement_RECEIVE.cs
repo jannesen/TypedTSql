@@ -23,7 +23,7 @@ namespace Jannesen.Language.TypedTSql.Node
                                                                                               new DataModel.ColumnDS("message_type_name",	    DataModel.SqlTypeNative.NVarChar_256),
                                                                                               new DataModel.ColumnDS("message_type_id",	        DataModel.SqlTypeNative.Int),
                                                                                               new DataModel.ColumnDS("validation",	            DataModel.SqlTypeNative.NChar_2),
-                                                                                              new DataModel.ColumnDS("message_body",	        DataModel.SqlTypeNative.VarBinary_MAX),
+                                                                                              new DataModel.ColumnDS("message_body",	        DataModel.SqlTypeNative.VarBinary_MAX,  flags:DataModel.ValueFlags.Nullable),
                                                                                           });
 
         public      readonly    IExprNode                           n_Top;
