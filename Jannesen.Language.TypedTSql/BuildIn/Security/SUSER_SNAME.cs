@@ -13,8 +13,11 @@ namespace Jannesen.Language.TypedTSql.BuildIn.Func
 
         protected   override    DataModel.ISqlType          TranspileReturnType(IExprNode[] arguments)
         {
-            Validate.NumberOfArguments(arguments, 0, 2);
-            Validate.ValueString(arguments[0]);
+            Validate.NumberOfArguments(arguments, 0, 1);
+
+            if (arguments.Length > 0) {
+                Validate.ValueBinary(arguments[0]);
+            }
 
             return DataModel.SqlTypeNative.NVarChar_128;
         }
