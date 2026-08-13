@@ -32,7 +32,6 @@ namespace Jannesen.Language.TypedTSql.Node
                     break;
 
                 case DataModel.JoinType.LEFT_OUTER:
-                case DataModel.JoinType.FULL_OUTER:
                 case DataModel.JoinType.CROSS_JOIN:
                 case DataModel.JoinType.CROSS_APPLY:
                 case DataModel.JoinType.OUTER_APPLY:
@@ -41,8 +40,15 @@ namespace Jannesen.Language.TypedTSql.Node
 
                 case DataModel.JoinType.RIGHT_OUTER:
                     for (int j = 0 ; j < i ; ++j) {
-                        rowNullable[i] = true;
+                        rowNullable[j] = true;
                     }
+                    break;
+
+                case DataModel.JoinType.FULL_OUTER:
+                    for (int j = 0 ; j < i ; ++j) {
+                        rowNullable[j] = true;
+                    }
+                    rowNullable[i] = true;
                     break;
                 }
             }
