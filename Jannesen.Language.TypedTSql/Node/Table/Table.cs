@@ -17,6 +17,7 @@ namespace Jannesen.Language.TypedTSql.Node
         public      readonly    TableType                       Type;
         public      readonly    Table_Column[]                  n_Columns;
         public      readonly    Table_Constraint[]              n_Constraints;
+        public      readonly    Table_Index[]                   n_Indexes;
 
         public                  DataModel.ColumnList            Columns                 { get; private set; }
         public                  DataModel.IndexList             Indexes                 { get; private set; }
@@ -25,24 +26,25 @@ namespace Jannesen.Language.TypedTSql.Node
         {
             Type = type;
 
-            var columns    = new List<Table_Column>();
-            var constraint = new List<Table_Constraint>();
+            var columns     = new List<Table_Column>();
+            var constraints = new List<Table_Constraint>();
+            var indexes     = new List<Table_Index>();
 
             ParseToken(reader, Core.TokenID.LrBracket);
 
             do {
                 if (reader.CurrentToken.isNameOrQuotedName) {
                     if (Table_ColumnComputed.CanParse(reader, type))
-                        _addChild<Table_Column>(ref columns, new Table_ColumnComputed(reader, type));
+                        _addChild(ref columns, new Table_ColumnComputed(reader, type));
                     else
-                        _addChild<Table_Column>(ref columns, new Table_ColumnData(reader, type));
+                        _addChild(ref columns, new Table_ColumnData(reader, type));
                 }
                 else {
-                    if (Table_ConstraintCheck.CanParse(reader, type))
-                        _addChild<Table_Constraint>(ref constraint, new Table_ConstraintCheck(reader, type));
+                    if (Table_Constraint.CanParse(reader, type))
+                        _addChild(ref constraints, new Table_Constraint(reader, type));
                     else
-                    if (Table_ConstraintIndex.CanParse(reader, type))
-                        _addChild<Table_Constraint>(ref constraint, new Table_ConstraintIndex(reader, type));
+                    if (Table_Index.CanParse(reader, type))
+                        _addChild(ref indexes, new Table_Index(reader, type));
                     else
                         throw new ParseException(reader.CurrentToken, "Unexpected " + reader.CurrentToken.ToString() + ".");
                 }
@@ -52,7 +54,8 @@ namespace Jannesen.Language.TypedTSql.Node
             ParseToken(reader, Core.TokenID.RrBracket);
 
             n_Columns     = columns.ToArray();
-            n_Constraints = constraint.ToArray();
+            n_Constraints = constraints.ToArray();
+            n_Indexes     = indexes.ToArray();
         }
 
         public      override    void                            TranspileNode(Transpile.Context context)
@@ -75,18 +78,18 @@ namespace Jannesen.Language.TypedTSql.Node
                 this.Columns = columns;
             }
 
-            if (n_Constraints != null) {
+            if (n_Constraints != null || n_Indexes != null) {
                 var contextRowSet = new Transpile.ContextRowSets(context, Columns);
                 n_Constraints.TranspileNodes(contextRowSet);
+                n_Indexes.TranspileNodes(contextRowSet);
 
                 var indexes = new DataModel.IndexList(4);
 
-                foreach (var constraint in n_Constraints) {
-                    if (constraint is Table_ConstraintIndex) {
-                        var index = ((Table_ConstraintIndex)constraint).t_Index;
-
-                        if (!indexes.TryAdd(index))
-                            context.AddError(constraint, "Index [" + index.Name + "] already defined.");
+                foreach (var indexNode in n_Indexes) {
+                    if (indexNode.t_Index != null) {
+                        if (!indexes.TryAdd(indexNode.t_Index)) {
+                            context.AddError(indexNode, "Index already defined.");
+                        }
                     }
                 }
 

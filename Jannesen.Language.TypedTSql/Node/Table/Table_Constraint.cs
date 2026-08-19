@@ -2,23 +2,55 @@
 
 namespace Jannesen.Language.TypedTSql.Node
 {
-    public abstract class Table_Constraint: Core.AstParseNode
-    {
-        public      readonly    Core.TokenWithSymbol        n_Name;
+    //      < table_constraint > ::=
+    //      [ CONSTRAINT constraint_name ]
+    //      {
+    //          { PRIMARY KEY | UNIQUE }
+    //              [ CLUSTERED | NONCLUSTERED ]
+    //              (column [ ASC | DESC ] [ ,...n ] )
+    //              [
+    //                 |WITH ( <index_option> [ , ...n ] )
+    //              ]
+    //              [ ON { partition_scheme_name (partition_column_name)
+    //                  | filegroup | "default" } ]
+    //          | FOREIGN KEY
+    //              ( column [ ,...n ] )
+    //              REFERENCES referenced_table_name [ ( ref_column [ ,...n ] ) ]
+    //              [ ON DELETE { NO ACTION | CASCADE | SET NULL | SET DEFAULT } ]
+    //              [ ON UPDATE { NO ACTION | CASCADE | SET NULL | SET DEFAULT } ]
+    //              [ NOT FOR REPLICATION ]
+    //          | CHECK [ NOT FOR REPLICATION ] ( logical_expression )
+    public class Table_Constraint: Core.AstParseNode
+    { 
+        public      readonly    IExprNode                   n_Expression;
 
+        public      static      bool                        CanParse(Core.ParserReader reader, TableType type)
+        {
+            switch(type) {
+            case TableType.Temp:
+                return reader.CurrentToken.isToken(Core.TokenID.CONSTRAINT) &&
+                       reader.Peek(3)[2].isToken(Core.TokenID.CHECK);
+
+            case TableType.Variable:
+            case TableType.Type:
+                return reader.CurrentToken.isToken(Core.TokenID.CHECK);
+            }
+
+            return false;
+        }
         public                                              Table_Constraint(Core.ParserReader reader, TableType type)
         {
-//          if (type == TableType.Temp)
-//          {
-//              ParseToken(reader, Core.TokenID.CONSTRAINT);
-//              n_Name = ParseName(reader);
-//          }
+            ParseToken(reader, Core.TokenID.CHECK);
+            ParseToken(reader, Core.TokenID.LrBracket);
+            n_Expression = ParseExpression(reader);
+            ParseToken(reader, Core.TokenID.RrBracket);
         }
 
         public      override    void                        TranspileNode(Transpile.Context context)
         {
-//          if (n_Name != null)
-//              context.AddError(this, "Named constraint are system width and there for not allowed.");
+            base.TranspileNode(context);
+
+            n_Expression.TranspileNode(context);
         }
     }
 }

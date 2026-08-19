@@ -22,7 +22,7 @@ namespace Jannesen.Language.TypedTSql.Node
     //              [ ON UPDATE { NO ACTION | CASCADE | SET NULL | SET DEFAULT } ]
     //              [ NOT FOR REPLICATION ]
     //          | CHECK [ NOT FOR REPLICATION ] ( logical_expression )
-    public class Table_ConstraintIndex: Table_Constraint
+    public class Table_Index: Core.AstParseNode
     {
         public class Column: Core.AstParseNode
         {
@@ -54,6 +54,7 @@ namespace Jannesen.Language.TypedTSql.Node
             }
         }
 
+        public      readonly    Core.TokenWithSymbol        n_Name;
         public      readonly    DataModel.IndexFlags        n_Flags;
         public      readonly    Column[]                    n_Columns;
         public                  DataModel.Index             t_Index                 { get; private set; }
@@ -63,27 +64,35 @@ namespace Jannesen.Language.TypedTSql.Node
             switch(type) {
             case TableType.Temp:
                 return reader.CurrentToken.isToken(Core.TokenID.CONSTRAINT) &&
-                       reader.Peek(3)[2].isToken(Core.TokenID.PRIMARY, Core.TokenID.UNIQUE);
+                       reader.Peek(3)[2].isToken(Core.TokenID.PRIMARY);
 
             case TableType.Variable:
             case TableType.Type:
-                return reader.CurrentToken.isToken(Core.TokenID.PRIMARY, Core.TokenID.UNIQUE);
+                return reader.CurrentToken.isToken(Core.TokenID.PRIMARY, Core.TokenID.INDEX);
             }
 
             return false;
         }
-        public                                              Table_ConstraintIndex(Core.ParserReader reader, TableType type): base (reader, type)
+        public                                              Table_Index(Core.ParserReader reader, TableType type)
         {
-            switch(reader.CurrentToken.validateToken(Core.TokenID.PRIMARY, Core.TokenID.UNIQUE)) {
+            switch(reader.CurrentToken.validateToken(Core.TokenID.PRIMARY, Core.TokenID.INDEX)) {
             case Core.TokenID.PRIMARY:
                 ParseToken(reader, Core.TokenID.PRIMARY);
                 ParseToken(reader, Core.TokenID.KEY);
                 n_Flags |= DataModel.IndexFlags.PrimaryKey;
                 break;
 
-            case Core.TokenID.UNIQUE:
-                ParseToken(reader, Core.TokenID.UNIQUE);
-                n_Flags |= DataModel.IndexFlags.Unique;
+            case Core.TokenID.INDEX:
+                ParseToken(reader, Core.TokenID.INDEX);
+                n_Name = ParseName(reader);
+
+                if (ParseOptionalToken(reader, Core.TokenID.UNIQUE) != null) {
+                    n_Flags |= DataModel.IndexFlags.Unique;
+                }
+
+                if (ParseOptionalToken(reader, Core.TokenID.CLUSTERED) == null) {
+                    ParseOptionalToken(reader, Core.TokenID.NONCLUSTERED);
+                }
                 break;
             }
 
@@ -104,20 +113,21 @@ namespace Jannesen.Language.TypedTSql.Node
         public      override    void                        TranspileNode(Transpile.Context context)
         {
             n_Columns.TranspileNodes(context);
-            base.TranspileNode(context);
 
             var columns = new DataModel.IndexColumn[n_Columns.Length];
 
-            for (int i = 0 ; i < n_Columns.Length ; ++i)
+            for (int i = 0 ; i < n_Columns.Length ; ++i) {
                 columns[i] = n_Columns[i].t_IndexColumn;
+            }
 
             if (n_Name != null) {
                 t_Index = new DataModel.Index(n_Flags,
                                               n_Name.ValueString,
                                               columns,
                                               declaration:n_Name);
-                if (t_Index != null)
+                if (t_Index != null) {
                     n_Name.SetSymbolUsage(t_Index, DataModel.SymbolUsageFlags.Declaration);
+                }
             }
             else {
                 t_Index = new DataModel.Index(n_Flags, "", columns);
