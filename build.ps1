@@ -52,30 +52,43 @@ if ($args.Length -eq 0) {
 
 $argn = 0
 
-Set-Location $PSScriptRoot
+try {
+    Push-Location $PSScriptRoot
 
-Write-Host "# Work in: $(Get-Location)"
+    Write-Host "# Work in: $(Get-Location)"
 
-while ($argn -lt $args.Length) {
-    switch($args[$argn]) {
-    "publish" {
-            Cmd-Publish
-            $argn = $argn + 1
+    while ($argn -lt $args.Length) {
+        switch($args[$argn]) {
+        "publish" {
+                Cmd-Publish
+                $argn = $argn + 1
+            }
+
+        "install" {
+                Cmd-Install
+                $argn = $argn + 1
+            }
+
+        "cleanup" {
+                Cmd-Cleanup
+                $argn = $argn + 1
+            }        
+
+        default {
+                Write-Host "Unknown cmd " $args[$argn]
+                Exit 1
+            }
         }
-
-    "install" {
-            Cmd-Install
-            $argn = $argn + 1
-        }
-
-    "cleanup" {
-            Cmd-Cleanup
-            $argn = $argn + 1
-        }        
-
-    default {
-		    Write-Host "Unknown cmd " $args[$argn]
-		    Exit 1
-	    }
     }
+}
+catch {
+    Write-Host 'ERROR:' -ForegroundColor Red
+    $ex = $_.Exception
+    while ($ex -ne $null) {
+        Write-Host "    $($ex.Message)" -ForegroundColor Red
+        $ex = $ex.InnerException
+    }
+}
+finally {
+    Pop-Location
 }
